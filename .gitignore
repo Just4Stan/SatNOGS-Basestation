@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# KiCad lock files
+*.lck
+**/*.lck
+
+# KiCad footprint cache
+fp-info-cache
+**/fp-info-cache
+
+# Claude Code
+.claude/
+CLAUDE.md
+
+# Thesis and reference papers (not for public distribution)
+Papers/
+ThesisPaper/
+
+# Build artifacts
+**/build/
+**/cmake-build-*/
+**/.pio/
+**/*.elf
+**/*.map
+
+# LaTeX build artifacts
+ThesisPaper/**/*.aux
+ThesisPaper/**/*.log
+ThesisPaper/**/*.out
+ThesisPaper/**/*.toc
+ThesisPaper/**/*.bbl
+ThesisPaper/**/*.blg
+ThesisPaper/**/*.synctex.gz
+ThesisPaper/**/*.fdb_latexmk
+ThesisPaper/**/*.fls
+
+# Keep only the latest compiled firmware at root
+firmware-*.uf2
+!firmware.uf2

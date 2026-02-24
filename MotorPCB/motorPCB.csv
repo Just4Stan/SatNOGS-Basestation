@@ -1,0 +1,18 @@
+"Id";"Designator";"Footprint";"Quantity";"Designation";"Supplier and ref";
+1;"R11,R6,R9,R7,R1,R8,R10,R12";"R_0805_2012Metric_Pad1.20x1.40mm_HandSolder";8;"10k";;;
+2;"R5,R2,R4,R3";"R_0805_2012Metric_Pad1.20x1.40mm_HandSolder";4;"100R";;;
+3;"TP11,TP7,TP15,TP10,TP3,TP8,TP18,TP5,TP16,TP2,TP1,TP14,TP17,TP9,TP4,TP13,TP6,TP12";"smallpad";18;"~";;;
+4;"C26,C21,C3,C2,C15,C4,C13,C1";"C_0805_2012Metric_Pad1.18x1.45mm_HandSolder";8;"100nF";;;
+5;"C10,C24,C19,C11,C12,C23,C22,C25";"C_0805_2012Metric_Pad1.18x1.45mm_HandSolder";8;"10uF";;;
+6;"L2";"L_Bourns-SRN4018";1;"15uH";;;
+7;"R14";"R_0805_2012Metric_Pad1.20x1.40mm_HandSolder";1;"22.1k";;;
+8;"J6";"CONN-TH_S6B-XH-A-LF-SN";1;"JST_AZ";;;
+9;"U8,U2";"HSOP-16_L13.5-W6.4-P1.00-LS9.6-BL-EP";2;"TB6642FG,8,EL";;;
+10;"J3";"CONN-TH_S2B-XH-A-LF-SN";1;"END_AZ";;;
+11;"R13";"R_0805_2012Metric_Pad1.20x1.40mm_HandSolder";1;"88.7k";;;
+12;"U5";"COMM-SMD_L51.0-W21.0-P2.54_SC0916";1;"PICO";;;
+13;"J7";"CONN-TH_S2B-XH-A-LF-SN";1;"END_EL";;;
+14;"J2";"CONN-TH_S6B-XH-A-LF-SN";1;"JST_EL";;;
+15;"C14";"C_1206_3216Metric_Pad1.33x1.80mm_HandSolder";1;"4.7uF";;;
+16;"U1,U3";"AMASS_XT30PW-M_1x02_P2.50mm_Horizontal";2;"XT30PW-M";;;
+17;"U6";"SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BR";1;"TPS560430XFDBVT";;;

@@ -1,0 +1,158 @@
+(footprint "button"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at -1.5 -3 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "a060c8c9-3e17-4060-a8e8-ca25ca4a49f9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "button"
+		(at -0.175 2.725 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "a510f8cf-41c7-4c5a-a97a-4ef0df4e408a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "981999a2-da4b-4516-943b-50908be0027e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "ccd4f895-04b0-4aca-8acf-bbbc1e170bee")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e79d888d-8ce7-457c-a341-2b01b6ea97d9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -2 -2)
+		(end 2 2)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.SilkS")
+		(uuid "62f42841-7b21-4332-8ee5-c9961f54388e")
+	)
+	(fp_circle
+		(center -4 -1.9)
+		(end -3.776393 -1.9)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill solid)
+		(layer "F.SilkS")
+		(uuid "a7ac6092-98a4-41e5-a162-1382ce0df794")
+	)
+	(fp_circle
+		(center 0 0)
+		(end 0.5 -1)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(fill none)
+		(layer "F.SilkS")
+		(uuid "de17c9b9-c8e5-4b32-b9ff-d66226b606f4")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "89aa0869-e496-46e1-a1db-606c06bcfc47")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -3 -1.875)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "07758c9f-2656-49df-b16b-6413fd1adbae")
+	)
+	(pad "2" smd roundrect
+		(at 3 -1.875)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "0e985e8e-24fd-4f90-ae50-471d4649f036")
+	)
+	(pad "3" smd roundrect
+		(at -3 1.875)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "d6ebb063-b7d3-4762-b46c-f3dd3ddbdd18")
+	)
+	(pad "4" smd roundrect
+		(at 3 1.875)
+		(size 1 0.75)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "c966669c-3dcb-4810-aa34-5da6780524c4")
+	)
+	(model "${KIPRJMOD}/components.pretty/button.stp"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 90)
+		)
+	)
+)

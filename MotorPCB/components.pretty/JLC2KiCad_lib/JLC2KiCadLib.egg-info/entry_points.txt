@@ -1,0 +1,2 @@
+[console_scripts]
+JLC2KiCadLib = JLC2KiCadLib.JLC2KiCadLib:main
