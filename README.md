@@ -116,18 +116,78 @@ Connect: `pio device monitor` or any serial terminal at 115200 baud.
 - Default gains: Kp=0.15, Ki=0.03, Kd=0.02 (runtime tunable)
 - D-term low-pass filtered, duty output smoothed for jerk-free tracking
 - Anti-windup, endstop safety gates, driver fault detection
-- 20 kHz PWM, max duty 35%
+- 20 kHz PWM, max duty 95% (35 deg/s slew, full 360° in ~10s)
+
+### Slew speed vs duty
+
+| Duty | Speed (deg/s) | 360° time |
+|------|--------------|-----------|
+| 35%  | 11.2         | 32s       |
+| 55%  | 18.9         | 19s       |
+| 75%  | 26.9         | 13s       |
+| 95%  | 35.0         | 10s       |
 
 ## SatNOGS integration
 
+Tested end-to-end on **Raspberry Pi 3 Model A+** (Bookworm arm64) with the Pico connected via USB.
+
+### Raspberry Pi setup
+
 ```sh
-# On Raspberry Pi
-rotctld -m 204 -r /dev/ttyACM0
+# Install hamlib
+sudo apt install libhamlib-utils
+
+# Create systemd service for rotctld
+sudo tee /etc/systemd/system/rotctld.service > /dev/null << 'EOF'
+[Unit]
+Description=Hamlib rotctld for SatNOGS rotator
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rotctld -m 204 -r /dev/ttyACM0 -s 115200 -T 0.0.0.0
+Restart=always
+RestartSec=5
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl enable --now rotctld
+```
+
+### Verify from any machine on the network
+
+```sh
+# Query position
+echo "p" | nc <pi-ip> 4533
+
+# Move to AZ 90, EL 30
+echo "P 90.0 30.0" | nc <pi-ip> 4533
+```
+
+### Real satellite tracking
+
+```sh
+# On the Pi (requires: pip install ephem pyserial)
+python3 track_satellite.py --list              # upcoming passes
+python3 track_satellite.py --sat "ISS"         # track specific satellite
+python3 track_satellite.py                     # auto-pick next pass
+```
+
+### SatNOGS client (optional)
+
+```sh
+curl -sfL https://satno.gs/install | sh -s --    # Ansible-based install
+sudo satnogs-setup                                # configure station
 ```
 
 Configure `satnogs-client`:
 - `SATNOGS_ROT_MODEL=ROT_MODEL_NETROTCTL`
 - `SATNOGS_ROT_PORT=localhost:4533`
+
+> **Note**: The SatNOGS Docker install requires ~1 GB RAM. A Pi 3 A+ (512 MB) can run it but is tight. Pi 3B+ or Pi 4 recommended for the full SatNOGS stack.
 
 ## Design philosophy
 

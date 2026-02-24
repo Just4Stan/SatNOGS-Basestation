@@ -18,7 +18,7 @@ constexpr float kElTicksPerDegree = 126.1f; // 64 ticks/rev × 516:1 gearbox × 
 
 // Direction conventions: if an axis moves the wrong way, flip the sign.
 constexpr bool kAzInvert = false;
-constexpr bool kElInvert = false;
+constexpr bool kElInvert = true;
 
 // Endstop polarity: true means GPIO reads 0 when switch is pressed.
 constexpr bool kEndstopActiveLow = true;
@@ -46,7 +46,7 @@ constexpr float kDutyFilterAlpha = 0.05f; // duty output smoothing (0..1, lower 
 
 // PWM
 constexpr uint32_t kPwmHz = 20000;
-constexpr float kMaxDuty = 0.35f; // 0..1 (capped for smooth motion)
+constexpr float kMaxDuty = 0.95f; // 0..1 (linear up to 95%; 100% can trip driver overcurrent on stall)
 constexpr float kMinDuty = 0.15f; // 0..1 (kept for homing reference; not used in PID)
 
 // Homing

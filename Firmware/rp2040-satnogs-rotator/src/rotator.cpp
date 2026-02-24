@@ -116,7 +116,7 @@ void Rotator::set_target(float az_deg, float el_deg) {
 
 void Rotator::set_target_az(float az_deg) {
   manual_mode_ = false;
-  target_az_deg_ = choose_wrapped_target(az_deg, az_deg_, config::kAzMinDeg, config::kAzMaxDeg);
+  target_az_deg_ = clamp_deg(az_deg, config::kAzMinDeg, config::kAzMaxDeg);
 }
 
 void Rotator::set_target_el(float el_deg) {

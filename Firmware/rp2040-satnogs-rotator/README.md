@@ -31,9 +31,11 @@ pio device monitor   # serial console
 2. Motor PWM channels configured (20 kHz, IN1/IN2 direction mode)
 3. Quadrature encoders initialized with GPIO interrupts (both edges, both channels)
 4. ADXL345 IMU probed on SPI0 (optional — works without it)
-5. If `kUseEndstopHoming = true`: homing sequence runs (searches for endstops)
-6. Otherwise: starts in manual mode (motors off, encoders counting)
-7. Main loop runs: 100 Hz control tick + serial command parsing + 1 Hz LED heartbeat
+5. **EL calibrated from IMU** — accelerometer gravity vector sets the initial elevation angle
+6. **AZ assumed 0 (North)** — point the antenna north before powering on
+7. If `kUseEndstopHoming = true`: homing sequence runs (searches for endstops)
+8. Otherwise: starts in manual mode (motors off, encoders counting)
+9. Main loop runs: 100 Hz control tick + serial command parsing + 1 Hz LED heartbeat
 
 ### Control modes
 
@@ -47,12 +49,12 @@ The firmware has three control modes:
 
 - Full PID with anti-windup and filtered derivative
 - Default gains: Kp=0.15, Ki=0.03, Kd=0.02 (tunable at runtime via `KP`/`KI`/`KD` serial commands)
-- 0.05 deg deadband: within this range, P and I output are zero but D-term acts as an active brake
+- 0.05 deg deadband: within this range, output is zero (prevents limit-cycle oscillation)
 - No minimum duty floor — the I-term handles stiction naturally (a forced minimum causes limit-cycle oscillation)
 - D-term uses exponential low-pass filter (alpha=0.15) to prevent derivative spikes from encoder noise
 - Duty output smoothing (alpha=0.05) for jerk-free continuous tracking
-- Max duty capped at 35% (`kMaxDuty` in config.h)
-- `STOP` command snaps target to current position and clears all PID state
+- Max duty 95% (`kMaxDuty` in config.h) — gives ~35 deg/s slew speed
+- `STOP` command snaps target to current position and clears all PID state (including duty filter)
 
 ### EasyComm protocol
 
@@ -81,3 +83,13 @@ In `config.h`:
 
 - `kUseEndstopHoming = false` — set `true` once endstop switches are wired
 - `kIgnoreDriverFaults = true` — set `false` for production (24V motor supply connected)
+- `kElInvert = true` — EL motor direction is inverted relative to encoder
+- `kMaxDuty = 0.95` — max PWM duty (95% = ~35 deg/s; 100% can trip driver overcurrent on stall)
+
+### AZ target handling
+
+AZ targets are clamped to the ±360° soft limits without shortest-path wrapping. This means commanding `AZ350` from `AZ0` always rotates forward 350°, not backward 10°. The rotator rewinds between satellite passes via `PARK` (returns to AZ 0).
+
+### IMU calibration
+
+The ADXL345 accelerometer reads the gravity vector at boot to determine the initial elevation angle. Use `RECAL` to re-read the IMU and reset the EL reference without rebooting. The IMU is mounted on the motor PCB — ensure the PCB is level with the antenna mounting plane for accurate calibration.
