@@ -1,0 +1,3 @@
+Change Component Designator: OldDesignator=R? NewDesignator=R29
+Change Component Designator: OldDesignator=R? NewDesignator=R30
+Added Member To Class: ClassName=MCU Member=Component R30 Resistor

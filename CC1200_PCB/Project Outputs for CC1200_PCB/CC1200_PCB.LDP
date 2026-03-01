@@ -1,0 +1,4 @@
+Layer Pairs Export File for PCB: C:\Users\robbe\OneDrive - KU Leuven\Master\Thesis\CC1200_PCB\CC1200_PCB.PcbDoc
+LayersSetName=Top_Bot_Thru_Holes|DrillFile=cc1200_pcb-roundholes.txt|DrillLayers=gtl,g1,g2,gbl
+LayersSetName=Top_Bot_Slot_Holes|DrillFile=cc1200_pcb-slotholes.txt|DrillLayers=gtl,g1,g2,gbl
+LayersSetName=Counterholes_Bottom|DrillFile=cc1200_pcb-roundholes.tx4|DrillLayers=g1,g2,gbl

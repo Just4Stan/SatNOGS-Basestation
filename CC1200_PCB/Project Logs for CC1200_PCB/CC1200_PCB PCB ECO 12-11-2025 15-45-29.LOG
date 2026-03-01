@@ -1,0 +1,12 @@
+Removed Pin From Net: NetName=USB_CON_P Pin=IC1-1
+Removed Pin From Net: NetName=USB_CON_N Pin=IC1-3
+Removed Pin From Net: NetName=USBD_N Pin=IC1-4
+Removed Pin From Net: NetName=USBD_P Pin=IC1-6
+Added Pin To Net: NetName=USB_CON_N Pin=IC1-1
+Added Pin To Net: NetName=USB_CON_P Pin=IC1-3
+Added Pin To Net: NetName=USBD_P Pin=IC1-4
+Added Pin To Net: NetName=USBD_N Pin=IC1-6
+Added Rule: Name=Schematic Supply Nets_8
+Added Rule: Name=Schematic Supply Nets_9
+Added Rule: Name=Schematic Supply Nets_10
+Added Rule: Name=Schematic Supply Nets_11

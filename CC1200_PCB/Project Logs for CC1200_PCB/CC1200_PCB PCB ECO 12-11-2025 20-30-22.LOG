@@ -1,0 +1,12 @@
+Added Pin To Net: NetName=CC1200_CSN Pin=IC2-11
+Added Pin To Net: NetName=CC1200_CSN Pin=U6-32
+Added Net: Name=CC1200_CSN
+Added Pin To Net: NetName=CC1200_MISO Pin=IC2-9
+Added Pin To Net: NetName=CC1200_MISO Pin=U6-31
+Added Net: Name=CC1200_MISO
+Added Pin To Net: NetName=CC1200_MOSI Pin=IC2-7
+Added Pin To Net: NetName=CC1200_MOSI Pin=U6-30
+Added Net: Name=CC1200_MOSI
+Added Pin To Net: NetName=CC1200_SCK Pin=IC2-8
+Added Pin To Net: NetName=CC1200_SCK Pin=U6-29
+Added Net: Name=CC1200_SCK

@@ -1,0 +1,4 @@
+Record=TopLevelDocument|FileName=MCU.SchDoc|SheetNumber=1
+Record=SheetSymbol|SourceDocument=MCU.SchDoc|Designator=Peripherals|SchDesignator=Peripherals|FileName=Peripherals.SchDoc|SheetNumber=3|SymbolType=Normal|RawFileName=Peripherals.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=MCU.SchDoc|Designator=PWR|SchDesignator=PWR|FileName=PWR.SchDoc|SheetNumber=2|SymbolType=Normal|RawFileName=PWR.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 
+Record=SheetSymbol|SourceDocument=MCU.SchDoc|Designator=RF|SchDesignator=RF|FileName=RF.SchDoc|SheetNumber=4|SymbolType=Normal|RawFileName=RF.SchDoc|DesignItemId= |SourceLibraryName= |ObjectKind=Sheet Symbol|RevisionGUID= |ItemGUID= |VaultGUID= 

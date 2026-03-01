@@ -1,0 +1,30 @@
+Added Component: Designator=MP1(FP-54-CBSA-2_0X2_0X0_5-MFG)
+Add component (AddParameter): Name = "Height"; Value = "12.7mm"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "NexarPartId"; Value = "91548778"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=MP1-1
+Added Pin To Net: NetName=GND Pin=MP1-2
+Added Pin To Net: NetName=GND Pin=MP1-3
+Added Pin To Net: NetName=GND Pin=MP1-4
+Added Pin To Net: NetName=GND Pin=MP1-5
+Added Pin To Net: NetName=GND Pin=MP1-6
+Added Pin To Net: NetName=GND Pin=MP1-7
+Added Pin To Net: NetName=GND Pin=MP1-8
+Added Pin To Net: NetName=GND Pin=MP1-9
+Added Pin To Net: NetName=GND Pin=MP1-10
+Added Pin To Net: NetName=GND Pin=MP1-11
+Added Pin To Net: NetName=GND Pin=MP1-12
+Added Pin To Net: NetName=GND Pin=MP1-13
+Added Pin To Net: NetName=GND Pin=MP1-14
+Added Pin To Net: NetName=GND Pin=MP1-15
+Added Pin To Net: NetName=GND Pin=MP1-16
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=Default
+Added Member To Class: ClassName=RF Member=Component MP1 54-CBSA-2.0X2.0X0.5

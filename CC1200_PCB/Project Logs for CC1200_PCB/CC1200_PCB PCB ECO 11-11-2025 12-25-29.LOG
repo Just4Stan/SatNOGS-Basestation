@@ -1,0 +1,22 @@
+Change Component Designator: OldDesignator=C? NewDesignator=C53
+Change Component Designator: OldDesignator=C? NewDesignator=C54
+Change Component Designator: OldDesignator=C? NewDesignator=C55
+Change Component Designator: OldDesignator=C? NewDesignator=C56
+Change Component Designator: OldDesignator=C? NewDesignator=C57
+Change Component Designator: OldDesignator=C? NewDesignator=C58
+Change Component Designator: OldDesignator=C? NewDesignator=C59
+Change Component Designator: OldDesignator=C? NewDesignator=C60
+Change Component Designator: OldDesignator=C? NewDesignator=C61
+Change Component Designator: OldDesignator=C? NewDesignator=C62
+Change Component Designator: OldDesignator=C? NewDesignator=C63
+Change Component Designator: OldDesignator=Y? NewDesignator=Y2
+Added Member To Class: ClassName=RF Member=Component C53 Capacitor
+Added Member To Class: ClassName=RF Member=Component C54 Capacitor
+Added Member To Class: ClassName=RF Member=Component C55 Capacitor
+Added Member To Class: ClassName=RF Member=Component C56 Capacitor
+Added Member To Class: ClassName=RF Member=Component C57 Capacitor
+Added Member To Class: ClassName=RF Member=Component C58 Capacitor
+Added Member To Class: ClassName=RF Member=Component C59 Capacitor
+Added Member To Class: ClassName=RF Member=Component C60 Capacitor
+Added Member To Class: ClassName=RF Member=Component C61 Capacitor
+Added Member To Class: ClassName=RF Member=Component C63 Capacitor

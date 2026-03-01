@@ -1,0 +1,12 @@
+Added Pin To Net: NetName=I2C0_SDA Pin=U1-8
+Added Pin To Net: NetName=I2C0_SCL Pin=U1-9
+Added Pin To Net: NetName=CC1200_GPIO0 Pin=IC2-10
+Added Pin To Net: NetName=CC1200_GPIO0 Pin=U6-34
+Added Net: Name=CC1200_GPIO0
+Added Pin To Net: NetName=CC1200_GPIO2 Pin=IC2-4
+Added Pin To Net: NetName=CC1200_GPIO2 Pin=U6-35
+Added Net: Name=CC1200_GPIO2
+Added Pin To Net: NetName=CC1200_GPIO3 Pin=IC2-3
+Added Pin To Net: NetName=CC1200_GPIO3 Pin=U6-36
+Added Net: Name=CC1200_GPIO3
+Added Member To Class: ClassName=MCU Member=Component R? Resistor

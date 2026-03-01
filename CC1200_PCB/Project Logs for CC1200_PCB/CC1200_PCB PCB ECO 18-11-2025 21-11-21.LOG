@@ -1,0 +1,12 @@
+Change Component Footprint: Designator=MP1 Old Footprint=36503205S New Footprint=36906326S
+Change Component Comment : Designator=MP1 Old Comment=36503205S New Comment=36906326S
+Change Managed Component Library Link : Designator=MP1 Old VaultGUID=B7D15EC3-160A-466F-A46C-7801FE6295A7 New VaultGUID=B7D15EC3-160A-466F-A46C-7801FE6295A7 Old ItemGUID=00ACEBD7-C5D4-44D8-B5CB-D70E2D2F6159 New ItemGUID=84E1CE53-7081-4977-BFDB-40614D8C05DC Old RevisionGUID=CF508EA2-F2D3-4CAE-8E91-79627933840F New RevisionGUID=C99A8065-FE2D-4737-9E94-8DFA3AB0D94C
+Change component parameters: Designator = "MP1" ("MP1"); Footprint = "36503205S"; UniqueID = "\CFOWBUZS\FLBNBVHW" ("\CFOWBUZS\FLBNBVHW")
+Change component parameters (AddParameter): Name = "Core Material"; Value = "Steel"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Height"; Value = "5.8mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Length"; Value = "31.6mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Max Operating Temperature"; Value = "125°C"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Min Operating Temperature"; Value = "-40°C"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "NexarPartId"; Value = "78870950"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "RoHS"; Value = "Compliant"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Width"; Value = "31.6mm"; VariantName = "[No Variations]"

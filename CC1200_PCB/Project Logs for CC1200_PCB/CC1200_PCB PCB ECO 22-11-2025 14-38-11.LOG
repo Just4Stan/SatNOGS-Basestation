@@ -1,0 +1,3 @@
+Change Component Footprint: Designator=U4 Old Footprint=DRB0008B_V New Footprint=DRB0008B_V
+Change Managed Component Library Link : Designator=U4 Old VaultGUID=B7D15EC3-160A-466F-A46C-7801FE6295A7 New VaultGUID= Old ItemGUID=3FA96CA4-6AE6-4969-B942-971D8F5D1AEF New ItemGUID= Old RevisionGUID=8C7616CB-EF6C-45B3-84E1-DA7445DEFCDA New RevisionGUID=
+Added Member To Class: ClassName=PWR Member=Component U4 TPS2113ADRBT

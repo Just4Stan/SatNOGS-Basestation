@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "components")(type "KiCad")(uri "${KIPRJMOD}/components.kicad_sym")(options "")(descr ""))
+  (lib (name "RF_HAT-altium-import")(type "KiCad")(uri "${KIPRJMOD}/RF_HAT-altium-import.kicad_sym")(options "")(descr ""))
+)

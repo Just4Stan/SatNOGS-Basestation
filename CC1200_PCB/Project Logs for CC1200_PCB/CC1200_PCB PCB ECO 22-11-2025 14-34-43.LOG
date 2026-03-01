@@ -1,0 +1,8 @@
+Removed Pin From Net: NetName=GND Pin=U4-2
+Removed Pin From Net: NetName=VSNS Pin=U4-3
+Removed Pin From Net: NetName=ILIM Pin=U4-4
+Removed Pin From Net: NetName=GND Pin=U4-5
+Removed Pin From Net: NetName=Vbus Pin=U4-6
+Removed Pin From Net: NetName=Vselect_OUT Pin=U4-7
+Removed Pin From Net: NetName=+5 Pin=U4-8
+Removed Pin From Net: NetName=GND Pin=U4-9

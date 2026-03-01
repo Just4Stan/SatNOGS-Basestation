@@ -1,0 +1,3 @@
+Removed Member From Class: ClassName=RF Member=J1
+Change Component Designator: OldDesignator=J1 NewDesignator=J2
+Added Member To Class: ClassName=RF Member=Component J2 CON-SMA-EDGE-S

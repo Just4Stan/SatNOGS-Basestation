@@ -1,0 +1,12 @@
+Change Footprint: Cannot match pads with new footprint in component :MP? Footprint:36702092
+Change Component Comment : Designator=MP? Old Comment=3670384 New Comment=36702092
+Change Managed Component Library Link : Designator=MP? Old VaultGUID=B7D15EC3-160A-466F-A46C-7801FE6295A7 New VaultGUID=B7D15EC3-160A-466F-A46C-7801FE6295A7 Old ItemGUID=B20A5AB1-EACE-4B4A-A6AF-F5F8CC1A0A40 New ItemGUID=FE643A90-1BB8-4EF6-8C54-45E92653FC1B Old RevisionGUID=8AB172CA-8DC7-4FB8-ADE0-E7679D01DEE9 New RevisionGUID=97ACFA76-D0B7-4AD1-9841-2757346CBE48
+Change component parameters: Designator = "MP?" ("MP?"); Footprint = "3670384"; UniqueID = "\CFOWBUZS\SPZCJKQL" ("\CFOWBUZS\SPZCJKQL")
+Change component parameters (AddParameter): Name = "Core Material"; Value = "Steel"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Height"; Value = "2mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Length"; Value = "20.9mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Max Operating Temperature"; Value = "125°C"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Min Operating Temperature"; Value = "-40°C"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "NexarPartId"; Value = "115851610"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "RoHS"; Value = "Compliant"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Width"; Value = "15.3mm"; VariantName = "[No Variations]"

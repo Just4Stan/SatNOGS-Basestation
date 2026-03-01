@@ -1,0 +1,14 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [CC1200_PCB.PrjPcb]
+   Generated File[CC1200_PCB-RoundHoles.TXT]
+   Generated File[CC1200_PCB-SlotHoles.TXT]
+   Generated File[CC1200_PCB-RoundHoles.TX4]
+   Generated File[CC1200_PCB.LDP]
+   Generated File[CC1200_PCB.DRR]
+
+
+Files Generated   : 5
+Documents Printed : 0
+
+Finished Output Generation At 10:50:06 On 23/11/2025

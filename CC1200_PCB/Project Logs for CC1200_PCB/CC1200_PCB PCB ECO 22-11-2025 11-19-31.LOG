@@ -1,0 +1,11 @@
+Removed Pin From Net: NetName=GND Pin=U3-10
+Removed Pin From Net: NetName=GND Pin=U3-11
+Removed Pin From Net: NetName=GND Pin=U3-12
+Removed Pin From Net: NetName=GND Pin=U3-13
+Removed Pin From Net: NetName=GND Pin=U5-10
+Removed Pin From Net: NetName=GND Pin=U5-11
+Removed Pin From Net: NetName=GND Pin=U5-12
+Removed Pin From Net: NetName=GND Pin=U5-13
+Added Pin To Net: NetName=CC1200_RESET Pin=IC2-2
+Added Pin To Net: NetName=CC1200_RESET Pin=U6-37
+Added Net: Name=CC1200_RESET

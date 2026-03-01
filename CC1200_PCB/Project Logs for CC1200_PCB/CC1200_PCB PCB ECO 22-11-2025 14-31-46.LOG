@@ -1,0 +1,37 @@
+Removed Pin From Net: NetName=GND Pin=U4-2
+Removed Pin From Net: NetName=VSNS Pin=U4-3
+Removed Pin From Net: NetName=ILIM Pin=U4-4
+Removed Pin From Net: NetName=GND Pin=U4-5
+Removed Pin From Net: NetName=Vbus Pin=U4-6
+Removed Pin From Net: NetName=Vselect_OUT Pin=U4-7
+Removed Pin From Net: NetName=+5 Pin=U4-8
+Removed Pin From Net: NetName=GND Pin=U4-9
+Removed Member From Class: ClassName=PWR Member=U4
+Added Component: Designator=U?(DRB0008B_V)
+Add component (AddParameter): Name = "ComponentLink1Description"; Value = "Datasheet"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "ComponentLink1URL"; Value = "http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=TPS2113A&fileType=pdf"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "DatasheetVersion"; Value = "SBVS045C"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Eco-Plan"; Value = "Green (RoHS & no Sb/Br)"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "IN1 Output Current(Max)(A)"; Value = "1.25"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "IN1 rDS(on)(Typ)(mOhm)"; Value = "84"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "IN1, IN2 Input Voltage(Max)(V)"; Value = "5.5"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "IN1, IN2 Input Voltage(Min)(V)"; Value = "2.8"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "IN2 Output Current(Max)(A)"; Value = "1.25"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "IN2 rDS(on)(Typ)(Ohms)"; Value = "0.084"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Manufacturer"; Value = "Texas Instruments"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Mounting Technology"; Value = "Surface Mount"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Number of Inputs"; Value = "2"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "8-Pin Plastic Small Outline No-Lead, 3 x 3 x 1 mm Body, 0.65 mm Pitch, Exposed Pad"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "DRB0008B"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageVersion"; Value = "revK, Jun-2012"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PartNumber"; Value = "TPS2113ADRBT"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SubFamily"; Value = "Power Multiplexer (MUX)"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=U?-2
+Added Pin To Net: NetName=VSNS Pin=U?-3
+Added Pin To Net: NetName=ILIM Pin=U?-4
+Added Pin To Net: NetName=GND Pin=U?-5
+Added Pin To Net: NetName=Vbus Pin=U?-6
+Added Pin To Net: NetName=Vselect_OUT Pin=U?-7
+Added Pin To Net: NetName=+5 Pin=U?-8
+Added Pin To Net: NetName=GND Pin=U?-9
+Added Member To Class: ClassName=PWR Member=Component U? TPS2113ADRBT

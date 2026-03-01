@@ -1,0 +1,5 @@
+Added Pin To Net: NetName=STAT_LED_B Pin=U6-15
+Added Pin To Net: NetName=STAT_LED_G Pin=U6-16
+Added Pin To Net: NetName=STAT_LED_R Pin=U6-17
+Added Pin To Net: NetName=STAT_LED Pin=U6-18
+Added Member To Class: ClassName=MCU Member=Component R29 Resistor
