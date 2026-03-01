@@ -1,0 +1,12 @@
+(module 0603murata2 (layer F.Cu) (tedit 570AD2C1)
+  (fp_text reference R34 (at -2.1 0) (layer F.SilkS)
+    (effects (font (size 1 1) (thickness 0.17)))
+  )
+  (fp_text value 470 (at 0.61 1.18) (layer F.SilkS) hide
+    (effects (font (size 0.5 0.5) (thickness 0.1)))
+  )
+  (fp_line (start 0 0.55) (end 1.27 0.55) (layer F.SilkS) (width 0.17))
+  (fp_line (start 0 -0.55) (end 1.27 -0.55) (layer F.SilkS) (width 0.17))
+  (pad 1 smd trapezoid (at 0 0) (size 0.65 0.7) (layers F.Cu F.Paste F.Mask))
+  (pad 2 smd trapezoid (at 1.27 0) (size 0.65 0.7) (layers F.Cu F.Paste F.Mask))
+)

@@ -1,0 +1,9 @@
+(fp_lib_table
+  (lib (name libs)(type KiCad)(uri "$(KIPRJMOD)/libs")(options "")(descr ""))
+  (lib (name BMI-S-x06)(type KiCad)(uri "$(KIPRJMOD)/libs/BMI-S-x06.pretty")(options "")(descr ""))
+  (lib (name comms_upsat)(type KiCad)(uri "$(KIPRJMOD)/libs/comms_upsat.pretty")(options "")(descr ""))
+  (lib (name via)(type KiCad)(uri "$(KIPRJMOD)/libs/via.pretty")(options "")(descr ""))
+  (lib (name cc1120)(type KiCad)(uri "$(KIPRJMOD)/libs/lsf-kicad-libs/cc1120.pretty")(options "")(descr ""))
+  (lib (name RF5110G)(type KiCad)(uri /home/liknus/git/lsf-kicad-libs/RF5110G.pretty)(options "")(descr ""))
+  (lib (name hrs-df11)(type KiCad)(uri "$(KIPRJMOD)/libs/lsf-kicad-libs/hrs-df11.pretty")(options "")(descr ""))
+)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-RF HAT - Dual CC1200 Transceiver HAT for Raspberry Pi 3A+
+RF HAT — Dual CC1200 Transceiver HAT for Raspberry Pi 3A+
 
 Generates a KiCad 9 project with hierarchical sheets using circuit-synth.
 Architecture:
@@ -14,79 +14,233 @@ Usage:
     python3 rf_hat_circuit.py
     # Open RF_HAT_out/RF_HAT.kicad_pro in KiCad
 
-The auto-placement is rough - open in KiCad and rearrange components visually.
-The netlist connectivity is the important part; layout is manual.
+RF Matching Network — 3-path topology
+======================================
+Based on M17 CC1200_HAT (SP5WWP/DB9MAT, Rev B, verified +14dBm at 433 MHz)
+and TI reference designs SWRR122 (420-470 MHz) / TIDR220 (169 MHz).
 
-Design Sources & Matching Network Verification:
-================================================
-Common elements (both bands):
-  - CC1200 datasheet: SWRS123D (Figure 6-1 typical application circuit)
-  - Crystal: 40 MHz, NDK NX3225SA (per SWRS123D Section 4.14, 38.4-40 MHz)
-  - Crystal load caps: 15 pF (SWRS123D Section 4.14, min 10 pF)
-  - RBIAS: 56k (standard CC120X value, confirmed in TIDR222 BOM R14=56k)
-  - DCPL caps: 100 nF per pin (SWRS123D Figure 6-1)
-  - Ferrite bead: 1k@100MHz (TIDR222 BOM L1=BLM15HG102SN1D)
-  - EXT_XOSC tied to GND (SWRS123D: ground when using crystal on Q1/Q2)
-  - Bypass caps: 47 nF x7 on VDD (TIDU921 BOM, Murata GRM155R71E473KA88D)
+Component naming follows M17 schematic designators for easy visual mapping.
+See topology diagram in _cc1200_passives() docstring.
 
-UHF 420-470 MHz matching network:
-  - Source: SWRR122 (CC1200EM 420-470 MHz Reference Design)
-  - Values extracted from Altium import (cc1200_altium_ref.kicad_sch) which
-    contains SWRR122 part numbers:
-    L: 56nH (LQG18HN56NJ00D), 56nH, 27nH (LQG18HN27NJ00D), 27nH,
-       15nH (LQG18HN15NJ00D), 43nH (LQG18HN43NJ00), 22nH (LQG18HN22NJ00D),
-       15nH
-    C: 5.1pF (06035A5R1CAT2A), 56pF (06035A560JAT2A), 100pF (06035A101JAT2A),
-       39pF (06035A390JAT2A), 5.1pF, 6.2pF (06035A6R2CAT2A),
-       2.2pF (06035A2R2CAT2A), 5.1pF
-    PLL: 1.5nF (GCM188R71H152KA37D)
-  - Also cross-referenced with TIDU921 Figure 13 (420-470 MHz band schematic)
-
-VHF 136-160 MHz matching network:
-  - No official TI CC1200 reference design exists for 136-160 MHz band.
-  - Closest TI reference: CC1120EM 169 MHz (TIDR220/TIDR222, 164-192 MHz).
-  - Values scaled from 169 MHz reference for lower 144 MHz target:
-    larger inductors reflect longer wavelength (e.g. 270nH vs 220nH).
-  - VHF matching network WILL NEED VNA tuning during board bring-up.
-  - PLL: 1.8nF (slightly larger than UHF 1.5nF for lower frequency)
-
-WARNING: The matching networks are starting points from reference designs.
-Final tuning with a VNA is essential for optimal TX/RX performance,
-especially the VHF band which has no exact TI reference.
+UHF 432 MHz — M17 CC1200_HAT / TI SWRR122 (exact match)
+VHF 144 MHz — TI CC1120EM 169 MHz (TIDR220/222), scaled for 144 MHz
+              WARNING: VHF values need VNA tuning during board bring-up.
 """
 
 from circuit_synth import Component, Net, circuit
 
 
 # =============================================================================
-# Helper: place one CC1200 with all passives
+# Helper: CC1200 with 3-path RF topology
 # =============================================================================
 def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
-                     r_bias_val, r_pa_val,
-                     l_values, c_match_values,
-                     c_xosc_val, c_pll_val):
-    """Wire CC1200 power, crystal, decoupling, matching network, and SMA."""
+                     r_bias_val, c_xosc_val, c_pll_val,
+                     # PA bias: AVDD → R_pa (C_bias across) → L_choke → PA
+                     r_pa_val, l_choke_val, c_pa_bias_val,
+                     # TX: PA → C_series → L1 → L2 → L3 → C_dc → SMA
+                     c_series_val, l_tx_vals, c_feedback_val, c_shunt_val,
+                     c_dc_val,
+                     # TRX: TRX_SW → C_trx → mn2, TRX_SW → L_trx → balun
+                     c_trx_val, l_trx_val,
+                     # LNA differential balun
+                     l_bridge_val, l_bias_p_val, l_n_val, c_p_val, c_n_val):
+    """Wire CC1200 power, crystal, decoupling, and 3-path RF matching network.
 
-    # --- Ferrite bead: BLM15HG102SN1D per TIDR222 BOM L1 ---
-    # +3.3V -> ferrite bead -> filtered rail -> CC1200 VDD pins
+    RF Matching Network Topology (M17 designators shown for UHF):
+    =============================================================
+
+    PA BIAS PATH (DC feed to PA pin):
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        AVDD_FILT ─── R3(18Ω) ──┬── L4(56nH) ─── PA pin 17
+                      C5(56pF)──┘
+                      across R3
+
+    TX MATCHING (PA → SMA):
+    ~~~~~~~~~~~~~~~~~~~~~~~
+        PA pin 17 ─── C2(39pF) ─┬─ L1(15nH) ─┬─ L2(43nH) ─┬─ L3(22nH) ─┬─ C27(1nF) ── SMA
+                                |              |             |             |   DC block
+                          C1(2.2pF)──┘    C3(5.1pF)    C4(6.2pF)
+                          feedback         to TRX_SW    to GND
+
+    TRX COUPLING (TX/RX switch):
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        TRX_SW pin 18 ──┬── C3(5.1pF) ── mn2 (L1/L2 junction)
+                        └── L9(15nH)  ── balun center
+
+    LNA DIFFERENTIAL BALUN (RX input):
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        LNA_P pin 19 ──┬── L7(56nH) ── LNA_N pin 20
+                       ├── L6(27nH) ── GND  (bias path)
+                       └── C8(5.1pF) ── balun center
+                                            ├── L8(27nH) ── LNA_N pin 20
+                                            └── L9(15nH) ── TRX_SW pin 18
+
+        LNA_N pin 20 ──┬── L7(56nH) ── LNA_P (bridge)
+                       ├── L8(27nH) ── balun center
+                       └── C9(5.1pF) ── GND  (shunt)
+
+    References:
+        UHF: M17 CC1200_HAT (github.com/M17-Project/CC1200_HAT-hw)
+             TI SWRR122, CC120XEM-420-470-RD
+        VHF: TI TIDR220/222, CC1120EM 169 MHz Reference Design
+             Values scaled ~17% for 144 MHz (needs VNA tuning)
+    """
+
+    # --- Ferrite bead: +3.3V → FB → filtered rail ---
     fb = Component(symbol="Device:FerriteBead", ref="FB", value="1k@100MHz",
                     footprint="Inductor_SMD:L_0603_1608Metric")
     avdd_filt = Net(f"{prefix}_AVDD_FILT")
     fb[1] += vcc_3v3
     fb[2] += avdd_filt
+
+    # =================================================================
+    # RF MATCHING NETWORK — created first for low ref designators
+    # Component order follows M17 schematic: L1-L4, L6-L9, C1-C9, C27
+    # =================================================================
+
+    pa_net = Net(f"{prefix}_PA")
+    cc["PA"] += pa_net
+    mn1 = Net(f"{prefix}_MN1")      # PA → C2 → [mn1] → L1
+    mn2 = Net(f"{prefix}_MN2")      # L1 → [mn2] → L2 (also C3/TRX tap)
+    mn3 = Net(f"{prefix}_MN3")      # L2 → [mn3] → L3 (also C4 shunt)
+    ant_pre = Net(f"{prefix}_ANT_PRE")  # L3 → [ant_pre] → C27
+    ant_net = Net(f"{prefix}_ANT")      # C27 → [ant] → SMA
+    bias_node = Net(f"{prefix}_PA_BIAS")
+    trx_net = Net(f"{prefix}_TRX")
+    cc["TRX_SW"] += trx_net
+    balun_center = Net(f"{prefix}_BALUN")
+    lna_p = Net(f"{prefix}_LNA_P")
+    lna_n = Net(f"{prefix}_LNA_N")
+    cc["LNA_P"] += lna_p
+    cc["LNA_N"] += lna_n
+
+    # --- TX series inductors (M17: L1, L2, L3) ---
+    l1 = Component(symbol="Device:L", ref="L", value=l_tx_vals[0],  # M17 L1
+                     footprint="Inductor_SMD:L_0603_1608Metric")
+    l1[1] += mn1
+    l1[2] += mn2
+
+    l2 = Component(symbol="Device:L", ref="L", value=l_tx_vals[1],  # M17 L2
+                     footprint="Inductor_SMD:L_0603_1608Metric")
+    l2[1] += mn2
+    l2[2] += mn3
+
+    l3 = Component(symbol="Device:L", ref="L", value=l_tx_vals[2],  # M17 L3
+                     footprint="Inductor_SMD:L_0603_1608Metric")
+    l3[1] += mn3
+    l3[2] += ant_pre
+
+    # --- PA bias choke (M17: L4) ---
+    l_choke = Component(symbol="Device:L", ref="L", value=l_choke_val,  # M17 L4
+                          footprint="Inductor_SMD:L_0603_1608Metric")
+    l_choke[1] += bias_node
+    l_choke[2] += pa_net
+
+    # --- TRX coupling inductor (M17: L9 → our L5) ---
+    l_trx = Component(symbol="Device:L", ref="L", value=l_trx_val,  # M17 L9
+                        footprint="Inductor_SMD:L_0603_1608Metric")
+    l_trx[1] += balun_center
+    l_trx[2] += trx_net
+
+    # --- LNA differential balun inductors (M17: L6, L7, L8) ---
+    l_bp = Component(symbol="Device:L", ref="L", value=l_bias_p_val,  # M17 L6
+                      footprint="Inductor_SMD:L_0603_1608Metric")
+    l_bp[1] += lna_p
+    l_bp[2] += gnd
+
+    l_br = Component(symbol="Device:L", ref="L", value=l_bridge_val,  # M17 L7
+                      footprint="Inductor_SMD:L_0603_1608Metric")
+    l_br[1] += lna_p
+    l_br[2] += lna_n
+
+    l_ln = Component(symbol="Device:L", ref="L", value=l_n_val,       # M17 L8
+                      footprint="Inductor_SMD:L_0603_1608Metric")
+    l_ln[1] += lna_n
+    l_ln[2] += balun_center
+
+    # --- TX matching caps (M17: C1, C2, C3, C4) ---
+    c_fb = Component(symbol="Device:C", ref="C", value=c_feedback_val,  # M17 C1
+                      footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_fb[1] += mn1
+    c_fb[2] += mn2
+
+    c_ser = Component(symbol="Device:C", ref="C", value=c_series_val,   # M17 C2
+                       footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_ser[1] += pa_net
+    c_ser[2] += mn1
+
+    c_trx = Component(symbol="Device:C", ref="C", value=c_trx_val,     # M17 C3
+                        footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_trx[1] += trx_net
+    c_trx[2] += mn2
+
+    c_sh = Component(symbol="Device:C", ref="C", value=c_shunt_val,    # M17 C4
+                      footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_sh[1] += mn3
+    c_sh[2] += gnd
+
+    # --- PA bias caps (M17: C5, C6, C7) ---
+    c_bias = Component(symbol="Device:C", ref="C", value=c_pa_bias_val,  # M17 C5
+                        footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_bias[1] += bias_node
+    c_bias[2] += avdd_filt
+
+    c_pa1 = Component(symbol="Device:C", ref="C", value="10nF",   # M17 C6
+                        footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_pa1[1] += avdd_filt
+    c_pa1[2] += gnd
+
+    c_pa2 = Component(symbol="Device:C", ref="C", value="100pF",  # M17 C7
+                        footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_pa2[1] += avdd_filt
+    c_pa2[2] += gnd
+
+    # --- LNA balun caps (M17: C8, C9) ---
+    c_lp = Component(symbol="Device:C", ref="C", value=c_p_val,    # M17 C8
+                      footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_lp[1] += balun_center
+    c_lp[2] += lna_p
+
+    c_ln = Component(symbol="Device:C", ref="C", value=c_n_val,    # M17 C9
+                      footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_ln[1] += lna_n
+    c_ln[2] += gnd
+
+    # --- DC blocking cap before SMA (M17: C27) ---
+    c_dc = Component(symbol="Device:C", ref="C", value=c_dc_val,   # M17 C27
+                      footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_dc[1] += ant_pre
+    c_dc[2] += ant_net
+
+    # --- PA bias resistor (M17: R3) ---
+    r_pa = Component(symbol="Device:R", ref="R", value=r_pa_val,   # M17 R3
+                      footprint="Resistor_SMD:R_0603_1608Metric")
+    r_pa[1] += avdd_filt
+    r_pa[2] += bias_node
+
+    # --- SMA connector ---
+    sma = Component(symbol="Connector:Conn_Coaxial", ref="J", value="SMA",
+                     footprint="Connector_Coaxial:SMA_Amphenol_132289_EdgeMount")
+    sma[1] += ant_net
+    sma[2] += gnd
+
+    # =================================================================
+    # POWER, CRYSTAL, DECOUPLING (higher ref designators)
+    # =================================================================
+
+    # Ferrite bead post-filter cap
     c_f = Component(symbol="Device:C", ref="C", value="10nF",
                      footprint="Capacitor_SMD:C_0603_1608Metric")
     c_f[1] += avdd_filt
     c_f[2] += gnd
 
-    # --- Power: VDD pins per SWRS123D pinout ---
-    # All VDD pins fed from filtered rail (after ferrite bead)
+    # --- Power: AVDD pins fed from filtered rail ---
     for pin in [1, 5, 12, 13, 15, 22, 25, 27, 28]:
         cc[pin] += avdd_filt
     cc[33] += gnd       # GND exposed pad
     cc["EXT_XOSC"] += gnd  # Ground when using crystal (SWRS123D)
 
-    # --- 40 MHz crystal ---
+    # --- 40 MHz crystal (NDK NX3225SA per SWRS123D Section 4.14) ---
     xtal = Component(symbol="Device:Crystal_GND24", ref="Y",
                       value="40MHz",
                       footprint="Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm")
@@ -99,7 +253,7 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
     xtal[2] += gnd
     xtal[4] += gnd
 
-    # Crystal load caps
+    # Crystal load caps (15pF per SWRS123D)
     for net in [xosc_q1, xosc_q2]:
         c = Component(symbol="Device:C", ref="C", value=c_xosc_val,
                        footprint="Capacitor_SMD:C_0603_1608Metric")
@@ -107,7 +261,7 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
         c[2] += gnd
 
     # --- RBIAS: 56k per CC120X standard (TIDR222 BOM R14) ---
-    r_bias = Component(symbol="Device:R", ref="R", value=r_bias_val,
+    r_bias = Component(symbol="Device:R", ref="R", value=r_bias_val,  # M17 R14
                         footprint="Resistor_SMD:R_0603_1608Metric")
     rbias_net = Net(f"{prefix}_RBIAS")
     cc["RBIAS"] += rbias_net
@@ -124,7 +278,7 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
         cap[1] += net
         cap[2] += gnd
 
-    # --- PLL loop filter ---
+    # --- PLL loop filter (M17: C16) ---
     c_pll = Component(symbol="Device:C", ref="C", value=c_pll_val,
                        footprint="Capacitor_SMD:C_0603_1608Metric")
     lpf0 = Net(f"{prefix}_LPF0")
@@ -134,54 +288,13 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
     c_pll[1] += lpf0
     c_pll[2] += lpf1
 
-    # --- Bypass caps: 47nF per VDD pin (TIDU921 BOM) ---
+    # --- Bypass caps on AVDD_FILT rail (TIDU921 BOM) ---
     for val in ["220nF", "10nF", "47nF", "47nF",
                 "47nF", "47nF", "47nF", "47nF", "47nF"]:
         c = Component(symbol="Device:C", ref="C", value=val,
                        footprint="Capacitor_SMD:C_0603_1608Metric")
         c[1] += avdd_filt
         c[2] += gnd
-
-    # --- RF matching network ---
-    pa_net = Net(f"{prefix}_PA")
-    cc["PA"] += pa_net
-
-    r_pa = Component(symbol="Device:R", ref="R", value=r_pa_val,
-                      footprint="Resistor_SMD:R_0603_1608Metric")
-    mn1 = Net(f"{prefix}_MN1")
-    r_pa[1] += pa_net
-    r_pa[2] += mn1
-
-    # Inductor chain
-    prev = mn1
-    for i, val in enumerate(l_values):
-        l = Component(symbol="Device:L", ref="L", value=val,
-                       footprint="Inductor_SMD:L_0603_1608Metric")
-        nxt = Net(f"{prefix}_LN{i}")
-        l[1] += prev
-        l[2] += nxt
-        prev = nxt
-    ant_net = prev
-
-    # Shunt caps at inductor nodes (clamped to available nodes)
-    num_nodes = len(l_values)
-    for i, val in enumerate(c_match_values):
-        c = Component(symbol="Device:C", ref="C", value=val,
-                       footprint="Capacitor_SMD:C_0603_1608Metric")
-        idx = min(i, num_nodes - 1)
-        c[1] += Net(f"{prefix}_LN{idx}")
-        c[2] += gnd
-
-    # LNA + T/R switch — both connect to antenna node
-    cc["LNA_P"] += ant_net
-    cc["LNA_N"] += gnd
-    cc["TRX_SW"] += ant_net
-
-    # SMA
-    sma = Component(symbol="Connector:Conn_Coaxial", ref="J", value="SMA",
-                     footprint="Connector_Coaxial:SMA_Amphenol_132289_EdgeMount")
-    sma[1] += ant_net
-    sma[2] += gnd
 
 
 # =============================================================================
@@ -223,27 +336,54 @@ def rf_hat():
     # ===================== Sheet 1: CC1200 UHF 432 MHz =====================
     @circuit(name="CC1200_UHF_432MHz")
     def cc1200_uhf_sheet():
-        """CC1200 UHF 432 MHz transceiver with matching network"""
+        """CC1200 UHF 432 MHz — M17/SWRR122 matching network"""
         cc = Component(symbol="RF:CC1200", ref="U", value="CC1200RHBR",
                         footprint="Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm")
-        # SPI + control
-        cc["SCLK"] += uhf_sclk
-        cc["SI"] += uhf_mosi
-        cc["SO(GPIO1)"] += uhf_miso
+
+        # SPI with 100Ω series resistors (per M17: R4, R5, R6)
+        for name, ext_net, cc_pin in [("SCLK", uhf_sclk, "SCLK"),
+                                       ("MOSI", uhf_mosi, "SI"),
+                                       ("MISO", uhf_miso, "SO(GPIO1)")]:
+            r = Component(symbol="Device:R", ref="R", value="100R",
+                           footprint="Resistor_SMD:R_0603_1608Metric")
+            cc_side = Net(f"UHF_{name}_CC")
+            r[1] += ext_net
+            r[2] += cc_side
+            cc[cc_pin] += cc_side
+
+        # CS and RESET with 10k pull-ups (per M17: R7, R9)
         cc["~{CS}"] += uhf_csn
         cc["~{RESET}"] += uhf_reset
+        for net in [uhf_csn, uhf_reset]:
+            r = Component(symbol="Device:R", ref="R", value="10k",
+                           footprint="Resistor_SMD:R_0603_1608Metric")
+            r[1] += vcc_3v3
+            r[2] += net
+
+        # GPIO
         cc["GPIO0"] += uhf_gpio0
         cc["GPIO2"] += uhf_gpio2
         cc["GPIO3"] += uhf_gpio3
-        # Passives: SWRR122 ref design (CC1200EM 420-470 MHz), see docstring
+
+        # RF passives — UHF 432 MHz
+        # Source: M17 CC1200_HAT Rev B (SP5WWP, verified +14dBm at 433.475 MHz)
+        # Cross-ref: TI SWRR122 (CC1200EM 420-470 MHz Reference Design)
         _cc1200_passives(cc, "UHF", vcc_3v3, gnd,
-                          r_bias_val="56k", r_pa_val="18R",
-                          l_values=["56nH", "56nH", "27nH", "27nH",
-                                    "15nH", "43nH", "22nH", "15nH"],
-                          c_match_values=["5.1pF", "56pF", "100pF", "39pF",
-                                          "5.1pF", "6.2pF", "2.2pF", "5.1pF"],
-                          c_xosc_val="15pF", c_pll_val="1.5nF")
-        # Test points
+                          r_bias_val="56k", c_xosc_val="15pF", c_pll_val="1.5nF",
+                          # PA bias
+                          r_pa_val="18R", l_choke_val="56nH", c_pa_bias_val="56pF",
+                          # TX matching
+                          c_series_val="39pF",
+                          l_tx_vals=["15nH", "43nH", "22nH"],
+                          c_feedback_val="2.2pF", c_shunt_val="6.2pF",
+                          c_dc_val="1nF",
+                          # TRX coupling
+                          c_trx_val="5.1pF", l_trx_val="15nH",
+                          # LNA differential balun
+                          l_bridge_val="56nH", l_bias_p_val="27nH",
+                          l_n_val="27nH", c_p_val="5.1pF", c_n_val="5.1pF")
+
+        # Test points on SPI signals
         for net in [uhf_sclk, uhf_mosi, uhf_miso, uhf_csn]:
             tp = Component(symbol="Connector:TestPoint", ref="TP",
                             footprint="TestPoint:TestPoint_Pad_D1.0mm")
@@ -254,25 +394,55 @@ def rf_hat():
     # ===================== Sheet 2: CC1200 VHF 144 MHz =====================
     @circuit(name="CC1200_VHF_144MHz")
     def cc1200_vhf_sheet():
-        """CC1200 VHF 144 MHz transceiver with matching network"""
+        """CC1200 VHF 144 MHz — TIDR220 adapted, needs VNA tuning"""
         cc = Component(symbol="RF:CC1200", ref="U", value="CC1200RHBR",
                         footprint="Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm")
-        cc["SCLK"] += vhf_sclk
-        cc["SI"] += vhf_mosi
-        cc["SO(GPIO1)"] += vhf_miso
+
+        # SPI with 100Ω series resistors
+        for name, ext_net, cc_pin in [("SCLK", vhf_sclk, "SCLK"),
+                                       ("MOSI", vhf_mosi, "SI"),
+                                       ("MISO", vhf_miso, "SO(GPIO1)")]:
+            r = Component(symbol="Device:R", ref="R", value="100R",
+                           footprint="Resistor_SMD:R_0603_1608Metric")
+            cc_side = Net(f"VHF_{name}_CC")
+            r[1] += ext_net
+            r[2] += cc_side
+            cc[cc_pin] += cc_side
+
+        # CS and RESET with 10k pull-ups
         cc["~{CS}"] += vhf_csn
         cc["~{RESET}"] += vhf_reset
+        for net in [vhf_csn, vhf_reset]:
+            r = Component(symbol="Device:R", ref="R", value="10k",
+                           footprint="Resistor_SMD:R_0603_1608Metric")
+            r[1] += vcc_3v3
+            r[2] += net
+
+        # GPIO
         cc["GPIO0"] += vhf_gpio0
         cc["GPIO2"] += vhf_gpio2
         cc["GPIO3"] += vhf_gpio3
-        # Passives: adapted from CC1120EM 169 MHz (TIDR222), needs VNA tuning
+
+        # RF passives — VHF 144 MHz
+        # Source: TI CC1120EM 169 MHz (TIDR220 schematic, TIDR222 BOM)
+        # Inductors scaled up ~17% for 144 MHz (lower freq → larger L)
+        # WARNING: Starting values only — VNA tuning required!
         _cc1200_passives(cc, "VHF", vcc_3v3, gnd,
-                          r_bias_val="56k", r_pa_val="22R",
-                          l_values=["270nH", "22nH", "120nH", "82nH",
-                                    "180nH", "100nH", "47nH"],
-                          c_match_values=["100pF", "100pF", "15pF", "1.5pF",
-                                          "15pF", "15pF", "15pF", "100pF"],
-                          c_xosc_val="15pF", c_pll_val="1.8nF")
+                          r_bias_val="56k", c_xosc_val="15pF", c_pll_val="1.8nF",
+                          # PA bias
+                          r_pa_val="22R", l_choke_val="270nH", c_pa_bias_val="100pF",
+                          # TX matching
+                          c_series_val="100pF",
+                          l_tx_vals=["22nH", "120nH", "82nH"],
+                          c_feedback_val="1.5pF", c_shunt_val="15pF",
+                          c_dc_val="100pF",
+                          # TRX coupling
+                          c_trx_val="15pF", l_trx_val="47nH",
+                          # LNA differential balun
+                          l_bridge_val="180nH", l_bias_p_val="100nH",
+                          l_n_val="100nH", c_p_val="15pF", c_n_val="15pF")
+
+        # Test points on SPI signals
         for net in [vhf_sclk, vhf_mosi, vhf_miso, vhf_csn]:
             tp = Component(symbol="Connector:TestPoint", ref="TP",
                             footprint="TestPoint:TestPoint_Pad_D1.0mm")
@@ -339,8 +509,8 @@ def rf_hat():
         pi[2] += vcc_5v
         pi[4] += vcc_5v
         pi["GND"] += gnd
-        pi[8] += uart_tx     # GPIO14/TXD
-        pi[10] += uart_rx    # GPIO15/RXD
+        pi[8] += uart_rx     # GPIO14/TXD → Pico RX (crossover)
+        pi[10] += uart_tx    # GPIO15/RXD ← Pico TX (crossover)
         # Pi 3.3V (not primary supply, just connected)
         vcc_3v3_pi = Net("VCC_3V3_PI")
         pi[1] += vcc_3v3_pi

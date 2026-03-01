@@ -1,0 +1,6 @@
+(fp_lib_table
+  (lib (name hrs-fx8c)(type KiCad)(uri /home/liknus/git/lsf-kicad-libs/hrs-fx8c.pretty)(options "")(descr ""))
+  (lib (name hrs-df11)(type KiCad)(uri /home/liknus/git/hrs-df11-library/hrs-df11.pretty)(options "")(descr ""))
+  (lib (name gps-pqnav)(type KiCad)(uri "$(KIPRJMOD)/gps-pqnav.pretty")(options "")(descr ""))
+  (lib (name libs)(type KiCad)(uri /home/liknus/git/upsat/upsat-comms-hardware/libs)(options "")(descr ""))
+)

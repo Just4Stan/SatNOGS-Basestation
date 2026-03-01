@@ -1,0 +1,3 @@
+[submodule "libs/lsf-kicad-libs"]
+	path = libs/lsf-kicad-libs
+	url = git@github.com:librespacefoundation/lsf-kicad-libs.git

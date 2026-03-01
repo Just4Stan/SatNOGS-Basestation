@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name murata-dzb4-b)(type KiCad)(uri /home/liknus/git/lsf-kicad-libs/murata-dzb4-b.pretty)(options "")(descr ""))
+  (lib (name rfstrip)(type KiCad)(uri "$(KIPRJMOD)/rfstrip.pretty")(options "")(descr ""))
+)

@@ -1,0 +1,11 @@
+(sym_lib_table
+  (version 0)
+  (lib (name "upsat-comms-hardware-rescue")(type "Legacy")(uri "${KIPRJMOD}/upsat-comms-hardware-rescue.lib")(options "")(descr ""))
+  (lib (name "sma")(type "Legacy")(uri "${KIPRJMOD}/libs/sma.lib")(options "")(descr ""))
+  (lib (name "txco_tg_5021cg")(type "Legacy")(uri "${KIPRJMOD}/libs/txco_tg_5021cg.lib")(options "")(descr ""))
+  (lib (name "stm32f407vg")(type "Legacy")(uri "${KIPRJMOD}/libs/stm32f407vg.lib")(options "")(descr ""))
+  (lib (name "opa320")(type "Legacy")(uri "${KIPRJMOD}/libs/opa320.lib")(options "")(descr ""))
+  (lib (name "TPS79930")(type "Legacy")(uri "${KIPRJMOD}/libs/TPS79930.lib")(options "")(descr ""))
+  (lib (name "PE4259")(type "Legacy")(uri "${KIPRJMOD}/libs/PE4259.lib")(options "")(descr ""))
+  (lib (name "FA_128_")(type "Legacy")(uri "${KIPRJMOD}/libs/FA_128_.lib")(options "")(descr ""))
+)
