@@ -7,7 +7,115 @@
 	(title_block
 		(title "RF_HAT")
 	)
-	(lib_symbols)
+	(lib_symbols
+		(symbol "Mechanical:MountingHole_Pad"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole_Pad"
+				(at 0 4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole with connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*Pad*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_Pad_0_1"
+				(circle
+					(center 0 1.27)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MountingHole_Pad_1_1"
+				(pin input line
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
 	(text_box "Dual CC1200 Transceiver HAT for Raspberry Pi 3A+"
 		(exclude_from_sim no)
 		(at 184 110 0)
@@ -171,6 +279,17 @@
 		)
 		(uuid "51185c84-d5d0-4f6e-824b-28604e16132d")
 	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 331.47 123.19 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "53c9e9e6-d84c-42db-91e9-fed152cb1a49")
+	)
 	(hierarchical_label "VHF_MISO"
 		(shape input)
 		(at 206.85 58.42 0)
@@ -302,6 +421,17 @@
 			(justify left)
 		)
 		(uuid "93a2c4ec-b530-48b5-8626-383c4c656e6c")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 307.34 110.49 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "963efa90-9844-4f46-9651-90dd20336c97")
 	)
 	(hierarchical_label "+3.3V"
 		(shape input)
@@ -457,6 +587,17 @@
 		)
 		(uuid "cb23ed8f-2548-403c-b4c7-ed7d149b1c45")
 	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 331.47 110.49 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "cc439c11-a241-4fe6-9dd2-5d77073b38d7")
+	)
 	(hierarchical_label "UART_RX"
 		(shape input)
 		(at 206.85 22.86 0)
@@ -467,6 +608,17 @@
 			(justify left)
 		)
 		(uuid "cc95ac49-6c16-46b4-96d0-97c6abb15738")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 307.34 123.19 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d1ba2728-f5fa-4ba6-89ab-2a61b21f7a4c")
 	)
 	(hierarchical_label "UHF_MISO"
 		(shape input)
@@ -522,6 +674,274 @@
 			(justify left)
 		)
 		(uuid "fcf6719f-e434-40a8-b115-7786f4333c88")
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 331.47 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "33fac5aa-0ca2-425a-8503-57be4ed2a6f7")
+		(property "Reference" "H4"
+			(at 334.01 118.1099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 334.01 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5_ISO14580_Pad"
+			(at 331.47 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 331.47 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 331.47 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "00abf9a4-c850-4369-b9d2-b3eeb357a0ea")
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+					(reference "H4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 307.34 120.65 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3a69903c-b236-4f35-ac07-7b33d75b72a0")
+		(property "Reference" "H1"
+			(at 309.88 118.1099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 309.88 120.6499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5_ISO14580_Pad"
+			(at 307.34 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 307.34 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 307.34 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c19f1250-786f-4428-93cb-2e06b974a28c")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 331.47 107.95 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "aa3c5b56-f476-4852-99c3-6a7bbdd49e73")
+		(property "Reference" "H3"
+			(at 334.01 105.4099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 334.01 107.9499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5_ISO14580_Pad"
+			(at 331.47 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 331.47 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 331.47 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c2fb8449-15fe-4b05-b71d-02c4adaf5cc6")
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 307.34 107.95 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "adfb8fea-b73b-406f-8232-06e2b56f6e41")
+		(property "Reference" "H2"
+			(at 309.88 105.4099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole_Pad"
+			(at 309.88 107.9499 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.7mm_M2.5_ISO14580_Pad"
+			(at 307.34 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 307.34 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 307.34 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ec712064-29bf-4271-a37e-6db504dc34b9")
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(sheet
 		(at 160.02 12.7)

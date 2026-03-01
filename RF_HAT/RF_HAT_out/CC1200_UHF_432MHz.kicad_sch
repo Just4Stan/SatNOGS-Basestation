@@ -178,113 +178,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Connector:TestPoint"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0.762)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "TP"
-				(at 0 6.858 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "TestPoint"
-				(at 0 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 5.08 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 5.08 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "test point"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "test point tp"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "Pin* Test*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "TestPoint_0_1"
-				(circle
-					(center 0 3.302)
-					(radius 0.762)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "TestPoint_1_1"
-				(pin passive line
-					(at 0 0 90)
-					(length 2.54)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -1896,7 +1789,7 @@
 		)
 		(uuid "140e1358-d2fc-49eb-a62b-2c01ef602549")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 35.56 0)
 		(effects
@@ -1962,7 +1855,7 @@
 		)
 		(uuid "18fdf48b-fea2-4f74-a933-e87e61ed013f")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 228.6 123.19 90)
 		(effects
@@ -2071,17 +1964,6 @@
 			(justify right)
 		)
 		(uuid "410af396-bf4a-4bba-a954-dc0e12b4d169")
-	)
-	(hierarchical_label "UHF_MISO"
-		(shape input)
-		(at 330.2 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "43378ee7-3478-488a-b76e-214c8561d6b5")
 	)
 	(hierarchical_label "UHF_MOSI"
 		(shape input)
@@ -2204,7 +2086,7 @@
 		)
 		(uuid "521ef35b-8c14-4473-a078-3d991581417f")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 45.72 0)
 		(effects
@@ -2225,17 +2107,6 @@
 			(justify left)
 		)
 		(uuid "57172f31-00b8-4747-9160-4d53f4238c47")
-	)
-	(hierarchical_label "UHF_CSN"
-		(shape input)
-		(at 355.6 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5741e4c8-8129-4439-856e-40c43b7b5453")
 	)
 	(hierarchical_label "UHF_LN3"
 		(shape input)
@@ -2347,7 +2218,7 @@
 		)
 		(uuid "63f6590e-e202-47cc-824d-aa0a44463bcd")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 355.6 123.19 90)
 		(effects
@@ -2358,7 +2229,7 @@
 		)
 		(uuid "643a4a29-7ffd-4cae-a2e8-d8e305a7c7fe")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 25.4 0)
 		(effects
@@ -2380,7 +2251,7 @@
 		)
 		(uuid "66ad4a9d-ff0e-42d4-9600-7b3fff3dcd2c")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 304.8 123.19 90)
 		(effects
@@ -2412,6 +2283,17 @@
 			(justify left)
 		)
 		(uuid "735fcd70-206d-45dd-86c9-81e0d5f1d8ce")
+	)
+	(hierarchical_label "UHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 27.94 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "749d5885-4013-4ea7-b1a6-6da70fde4415")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2479,7 +2361,7 @@
 		)
 		(uuid "85bf3028-512f-4404-8e30-a4dc4a556304")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 279.4 123.19 90)
 		(effects
@@ -2523,17 +2405,6 @@
 		)
 		(uuid "93ff0eb9-750b-4822-95c8-d3cad0a9c4d1")
 	)
-	(hierarchical_label "UHF_MOSI"
-		(shape input)
-		(at 304.8 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "940063d9-2e0c-4ceb-80c0-ff61c2a107a2")
-	)
 	(hierarchical_label "GND"
 		(shape input)
 		(at 373.38 35.56 270)
@@ -2566,17 +2437,6 @@
 			(justify left)
 		)
 		(uuid "9868dd53-9443-480d-b426-096912297d5e")
-	)
-	(hierarchical_label "UHF_SCLK"
-		(shape input)
-		(at 279.4 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "98a27860-b801-4093-a5fa-2e0ca1257c32")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2655,7 +2515,7 @@
 		)
 		(uuid "9ee69581-a51b-4566-a7eb-298d7286d74a")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 40.64 0)
 		(effects
@@ -2677,7 +2537,7 @@
 		)
 		(uuid "a0f5be50-e799-4194-a5d0-11216384d70b")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 38.1 0)
 		(effects
@@ -2798,7 +2658,7 @@
 		)
 		(uuid "b875e3d3-37bc-42f4-987a-4bfe69b57e7e")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 205.74 123.19 90)
 		(effects
@@ -2820,7 +2680,7 @@
 		)
 		(uuid "bc322706-0e66-4e37-9f73-382b4e8b0418")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 30.48 179.07 90)
 		(effects
@@ -2886,7 +2746,7 @@
 		)
 		(uuid "c21e3a35-d641-4221-99f0-2bb8aa96c63d")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 330.2 123.19 90)
 		(effects
@@ -2897,7 +2757,7 @@
 		)
 		(uuid "c4cbc916-2710-46d2-adaa-a6bce9846976")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 25.4 0)
 		(effects
@@ -2963,7 +2823,7 @@
 		)
 		(uuid "caa5d48e-812e-4bec-ba24-546610322ac5")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 30.48 0)
 		(effects
@@ -2974,7 +2834,7 @@
 		)
 		(uuid "cbcb4c87-787f-4bf1-ae80-f2e4ad721f3a")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 254 123.19 90)
 		(effects
@@ -2985,7 +2845,7 @@
 		)
 		(uuid "cd61aa6c-f315-4f03-bef2-8fc147c35a90")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 43.18 0)
 		(effects
@@ -3150,7 +3010,7 @@
 		)
 		(uuid "ec1ceccf-cd20-4160-9982-a4637d5ae4f0")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 378.46 123.19 90)
 		(effects
@@ -3238,7 +3098,7 @@
 		)
 		(uuid "fd54ade7-1bb0-450c-97cd-9d8f098a351b")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 48.26 0)
 		(effects
@@ -3814,96 +3674,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 355.6 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "24490687-837c-46aa-9a8e-d987698bcfc7")
-		(property "Reference" "TP4"
-			(at 355.6 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 355.6 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 360.68 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 355.6 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 355.6 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-			(at 358.14 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 358.14 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 358.14 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "38d430d4-9187-4579-9a73-ce83120d6831")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-					(reference "TP4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 355.6 127 0)
 		(unit 1)
@@ -4180,96 +3950,6 @@
 			(project ""
 				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 					(reference "C9")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 279.4 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3d9bca16-6277-49f1-81d2-3d30dd317760")
-		(property "Reference" "TP1"
-			(at 279.4 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 284.48 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f9d2ba32-baf2-40a5-b97b-49b80068d916")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-					(reference "TP1")
 					(unit 1)
 				)
 			)
@@ -6156,186 +5836,6 @@
 			(project ""
 				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 					(reference "C20")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 330.2 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b32c02b0-92e1-4fc0-bb5a-b14ec6ae16f0")
-		(property "Reference" "TP3"
-			(at 330.2 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 335.28 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8944a0e3-16a5-4760-ac01-6b12eea6440b")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-					(reference "TP3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 304.8 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b8b628f2-38ff-47c6-a57e-3aab2f3fd1c9")
-		(property "Reference" "TP2"
-			(at 304.8 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 304.8 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 309.88 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 304.8 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 304.8 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0a5ee989-4391-4594-8cb3-7d2a623ab26a")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
-					(reference "TP2")
 					(unit 1)
 				)
 			)

@@ -178,113 +178,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Connector:TestPoint"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0.762)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "TP"
-				(at 0 6.858 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "TestPoint"
-				(at 0 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 5.08 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 5.08 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "test point"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "test point tp"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "Pin* Test*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "TestPoint_0_1"
-				(circle
-					(center 0 3.302)
-					(radius 0.762)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "TestPoint_1_1"
-				(pin passive line
-					(at 0 0 90)
-					(length 2.54)
-					(name "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Device:C"
 			(pin_numbers
 				(hide yes)
@@ -1797,17 +1690,6 @@
 		)
 		(uuid "773790b4-d833-4e01-9f45-63c8f9d1e60a")
 	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 180.34 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "003e4a83-43e8-4c64-acf1-4961c8db3837")
-	)
 	(hierarchical_label "VHF_LN6"
 		(shape input)
 		(at 63.5 66.04 0)
@@ -1840,17 +1722,6 @@
 			(justify left)
 		)
 		(uuid "09a2554c-2a42-4637-a897-6198a32b5bd7")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 43.18 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "09c06681-da5f-42c1-8762-e3da818587de")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -1918,39 +1789,6 @@
 		)
 		(uuid "162242ad-1822-47d0-81e6-6af2d3b8a98d")
 	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 48.26 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "1991dac1-d8d3-4cc0-afe8-4d0a6b06024c")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 38.1 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "1ad89e7b-e229-46cd-ac4e-4a181b530d34")
-	)
-	(hierarchical_label "VHF_MISO"
-		(shape input)
-		(at 304.8 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1c614754-97b7-4723-8259-c0ecd83797d9")
-	)
 	(hierarchical_label "VHF_RESET"
 		(shape input)
 		(at 27.94 25.4 180)
@@ -1961,17 +1799,6 @@
 			(justify right)
 		)
 		(uuid "1d45016a-9a57-40b1-961f-fc317ec66056")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 30.48 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "24b73b11-46c9-4bed-ac5b-c6b1f9728d59")
 	)
 	(hierarchical_label "VHF_DCPL_XOSC"
 		(shape input)
@@ -1995,6 +1822,17 @@
 		)
 		(uuid "26b4268d-8060-4adb-8d7d-99745642e3bb")
 	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 27.94 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "27ff18d7-45af-40cc-92d3-d9d65eb27ae1")
+	)
 	(hierarchical_label "VHF_CSN"
 		(shape input)
 		(at 27.94 30.48 180)
@@ -2006,27 +1844,16 @@
 		)
 		(uuid "281db07f-c250-467d-8cb6-1830bdb832db")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "VHF_AVDD_FILT"
 		(shape input)
-		(at 63.5 45.72 0)
+		(at 63.5 48.26 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "2906f33f-7dcf-48d9-846c-23e89767cc07")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 254 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "2a3550bd-06dd-4295-9403-757a467a7066")
+		(uuid "286a23f8-bfe0-4d78-b9aa-c360bafb1e0a")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2039,16 +1866,16 @@
 		)
 		(uuid "2b2d9650-cf61-47a1-ba67-5e1759f025b1")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "VHF_AVDD_FILT"
 		(shape input)
-		(at 355.6 123.19 90)
+		(at 304.8 123.19 90)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "30863f02-b51b-45fd-991e-4ab5b7b234fd")
+		(uuid "2e64d505-c92b-47f2-aeff-56a271d24782")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2127,6 +1954,17 @@
 		)
 		(uuid "3bb505b8-65ac-44f1-a9b8-f9a8adaed317")
 	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 43.18 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3fcea36b-8426-4ae6-819d-8f2b6882d426")
+	)
 	(hierarchical_label "GND"
 		(shape input)
 		(at 401.32 36.83 270)
@@ -2204,6 +2042,17 @@
 		)
 		(uuid "5292d116-88ba-400d-88b3-9b91a868e1c1")
 	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 228.6 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5386d2c5-ce67-4526-b60f-684214727634")
+	)
 	(hierarchical_label "GND"
 		(shape input)
 		(at 55.88 186.69 270)
@@ -2225,6 +2074,17 @@
 			(justify right)
 		)
 		(uuid "548c77fc-d562-4e98-805f-166cb9e8551f")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 180.34 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "554205a4-604d-4c13-a1e1-41fab1626f0b")
 	)
 	(hierarchical_label "VHF_LPF0"
 		(shape input)
@@ -2291,6 +2151,39 @@
 			(justify right)
 		)
 		(uuid "5cfd3151-3636-4c7d-a58d-a3f37ec14114")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 279.4 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5d08a8f7-388d-42cf-924f-2950cac46c7a")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 355.6 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5fa70cc2-4f00-4d98-a630-d4ee70cfbf5e")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 330.2 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5fb14235-8014-4da3-a02c-81f267c86372")
 	)
 	(hierarchical_label "VHF_MN1"
 		(shape input)
@@ -2369,17 +2262,6 @@
 		)
 		(uuid "6cfd290d-ac54-4d8e-9520-d23f0f4e7a06")
 	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 330.2 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "6e805cfa-136f-4733-a405-a49760c82a17")
-	)
 	(hierarchical_label "VHF_SCLK"
 		(shape input)
 		(at 27.94 33.02 180)
@@ -2391,7 +2273,7 @@
 		)
 		(uuid "71e109fd-e2ce-4322-b8c7-3ca3f7af93f1")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "VHF_AVDD_FILT"
 		(shape input)
 		(at 378.46 123.19 90)
 		(effects
@@ -2400,7 +2282,7 @@
 			)
 			(justify left)
 		)
-		(uuid "72f868bc-76eb-43f5-9231-85016f7fa43e")
+		(uuid "73d02bc9-d122-4d90-8465-cf7d9f813ed6")
 	)
 	(hierarchical_label "VHF_GPIO0"
 		(shape input)
@@ -2512,7 +2394,7 @@
 		)
 		(uuid "82dd6e64-18ef-4f0d-80b2-5cc6713be203")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "VHF_AVDD_FILT"
 		(shape input)
 		(at 63.5 35.56 0)
 		(effects
@@ -2521,7 +2403,7 @@
 			)
 			(justify left)
 		)
-		(uuid "837e8f20-baaa-4f16-96a7-20762b9f5183")
+		(uuid "8c69b836-2709-4fca-b846-4cc768f360b6")
 	)
 	(hierarchical_label "VHF_LN6"
 		(shape input)
@@ -2688,6 +2570,17 @@
 		)
 		(uuid "99ec363f-6bd0-4043-9ff6-d207295de452")
 	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 30.48 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9bfeb81c-77f7-4a3d-b9d0-83ffd72d0c96")
+	)
 	(hierarchical_label "VHF_XOSC_Q2"
 		(shape input)
 		(at 27.94 55.88 180)
@@ -2698,17 +2591,6 @@
 			(justify right)
 		)
 		(uuid "9ce2829f-f761-46aa-be97-ce8337d052de")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 25.4 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "9e09a759-2243-4686-9503-91cd6c0be1de")
 	)
 	(hierarchical_label "VHF_LN4"
 		(shape input)
@@ -2743,39 +2625,6 @@
 		)
 		(uuid "a5ff537a-d961-4003-b0d0-cc8caf8c8b20")
 	)
-	(hierarchical_label "VHF_MOSI"
-		(shape input)
-		(at 279.4 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "ad96adf2-7b97-484f-b846-ae7fd86936fa")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 228.6 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "af57bd9a-d5f8-4947-9d9d-7616b7a725c5")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 205.74 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b2c55d6a-6d25-4823-8b29-3571944e8943")
-	)
 	(hierarchical_label "VHF_LN2"
 		(shape input)
 		(at 104.14 179.07 90)
@@ -2798,6 +2647,17 @@
 		)
 		(uuid "b5b31bb4-584b-4fa5-8c58-4a3626058c90")
 	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 205.74 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b654575b-e649-4e22-87d8-a664e004f48f")
+	)
 	(hierarchical_label "VHF_DCPL_XOSC"
 		(shape input)
 		(at 63.5 60.96 0)
@@ -2808,6 +2668,17 @@
 			(justify left)
 		)
 		(uuid "b84a1212-ecf9-4d09-b5dd-f4485c41f7ac")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 45.72 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b9490a03-3614-4956-9e19-e452e5308c8b")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -3007,17 +2878,6 @@
 		)
 		(uuid "d95a28a0-8d50-4d74-9b86-2d178612e779")
 	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 40.64 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "da7578da-f06f-47d3-8f22-34a7737990d9")
-	)
 	(hierarchical_label "VHF_LPF0"
 		(shape input)
 		(at 27.94 68.58 180)
@@ -3029,16 +2889,16 @@
 		)
 		(uuid "de48e653-f627-434a-b7d6-12882c6f0b74")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "VHF_AVDD_FILT"
 		(shape input)
-		(at 63.5 25.4 0)
+		(at 254 123.19 90)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "de4d0393-e70f-4a31-b517-0ad5b491abee")
+		(uuid "e247f60f-f70a-43f8-8934-3c59bb306ba5")
 	)
 	(hierarchical_label "VHF_LN1"
 		(shape input)
@@ -3051,27 +2911,16 @@
 		)
 		(uuid "e32e5638-04de-4f6b-83e5-61650857d8ca")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "VHF_AVDD_FILT"
 		(shape input)
-		(at 304.8 123.19 90)
+		(at 63.5 25.4 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "e43ce00e-4433-42b6-be5b-4900bb0a721b")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 279.4 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "e47d7a37-d19f-436b-a9dd-6fd6b6ae92fb")
+		(uuid "e612c6e0-0454-4f57-a264-71bd6505d384")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -3116,17 +2965,6 @@
 			(justify right)
 		)
 		(uuid "ea86f7eb-5e1e-48d2-a1f8-a9340582ef5a")
-	)
-	(hierarchical_label "VHF_CSN"
-		(shape input)
-		(at 330.2 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "ead2d60c-79ea-4c06-9328-1e2ce1a2c776")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -3183,17 +3021,6 @@
 		)
 		(uuid "f3a49562-8b5d-453f-8468-5ddce9370962")
 	)
-	(hierarchical_label "VHF_SCLK"
-		(shape input)
-		(at 254 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "f4676543-c8e3-4e0d-bedc-997b41fa4f43")
-	)
 	(hierarchical_label "VHF_LN6"
 		(shape input)
 		(at 322.58 39.37 270)
@@ -3215,6 +3042,28 @@
 			(justify left)
 		)
 		(uuid "f7c09f29-a665-4407-a742-156aa249b9fa")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 38.1 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f9bedc79-4189-4919-aafa-42cf5da65440")
+	)
+	(hierarchical_label "VHF_AVDD_FILT"
+		(shape input)
+		(at 63.5 40.64 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fdca670d-cb3f-4c76-9dcd-28a41acb8e6c")
 	)
 	(hierarchical_label "VHF_GPIO2"
 		(shape input)
@@ -3698,96 +3547,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 304.8 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "156fee60-9107-46cc-b174-4235e352be4d")
-		(property "Reference" "TP7"
-			(at 304.8 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 304.8 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 309.88 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 304.8 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 304.8 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0da886a0-b284-4f58-999e-a5be190465f3")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-					(reference "TP7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 180.34 182.88 0)
 		(unit 1)
@@ -4170,96 +3929,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 330.2 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3be5fee8-41db-4088-b5b8-79b04a6f9e93")
-		(property "Reference" "TP8"
-			(at 330.2 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 335.28 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c1e2cc60-79d3-44a5-9af1-15131527ef18")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-					(reference "TP8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 330.2 127 0)
 		(unit 1)
@@ -4630,96 +4299,6 @@
 			(project ""
 				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
 					(reference "C42")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 279.4 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "566c5e9d-200a-4680-8dd7-04bfd7ec47b9")
-		(property "Reference" "TP6"
-			(at 279.4 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 284.48 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "55dec5e3-a6a6-474a-85e8-8f329880ba8a")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-					(reference "TP6")
 					(unit 1)
 				)
 			)
@@ -6036,96 +5615,6 @@
 			(project ""
 				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
 					(reference "R3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 254 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bb662bff-4714-49a7-80f9-410908843d18")
-		(property "Reference" "TP5"
-			(at 254 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 254 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 259.08 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 254 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 254 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-			(at 256.54 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 256.54 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 256.54 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8726bb46-1e91-4f0c-8135-64a59374a417")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/be5c3a7c-20a8-4363-bf30-6bf9f0e1f8f2"
-					(reference "TP5")
 					(unit 1)
 				)
 			)

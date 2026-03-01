@@ -67,11 +67,22 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
                      c_xosc_val, c_pll_val):
     """Wire CC1200 power, crystal, decoupling, matching network, and SMA."""
 
+    # --- Ferrite bead: BLM15HG102SN1D per TIDR222 BOM L1 ---
+    # +3.3V -> ferrite bead -> filtered rail -> CC1200 VDD pins
+    fb = Component(symbol="Device:FerriteBead", ref="FB", value="1k@100MHz",
+                    footprint="Inductor_SMD:L_0603_1608Metric")
+    avdd_filt = Net(f"{prefix}_AVDD_FILT")
+    fb[1] += vcc_3v3
+    fb[2] += avdd_filt
+    c_f = Component(symbol="Device:C", ref="C", value="10nF",
+                     footprint="Capacitor_SMD:C_0603_1608Metric")
+    c_f[1] += avdd_filt
+    c_f[2] += gnd
+
     # --- Power: VDD pins per SWRS123D pinout ---
-    # Pins 1(VDD_GUARD), 5(DVDD), 12(DVDD), 13(AVDD_IF), 15(AVDD_RF),
-    #      22(AVDD_SYNTH1), 25(AVDD_PFD_CHP), 27(AVDD_XOSC), 28(DCPL_SYNTH2)
+    # All VDD pins fed from filtered rail (after ferrite bead)
     for pin in [1, 5, 12, 13, 15, 22, 25, 27, 28]:
-        cc[pin] += vcc_3v3
+        cc[pin] += avdd_filt
     cc[33] += gnd       # GND exposed pad
     cc["EXT_XOSC"] += gnd  # Ground when using crystal (SWRS123D)
 
@@ -128,19 +139,8 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
                 "47nF", "47nF", "47nF", "47nF", "47nF"]:
         c = Component(symbol="Device:C", ref="C", value=val,
                        footprint="Capacitor_SMD:C_0603_1608Metric")
-        c[1] += vcc_3v3
+        c[1] += avdd_filt
         c[2] += gnd
-
-    # --- Ferrite bead: BLM15HG102SN1D per TIDR222 BOM L1 ---
-    fb = Component(symbol="Device:FerriteBead", ref="FB", value="1k@100MHz",
-                    footprint="Inductor_SMD:L_0603_1608Metric")
-    avdd_filt = Net(f"{prefix}_AVDD_FILT")
-    fb[1] += vcc_3v3
-    fb[2] += avdd_filt
-    c_f = Component(symbol="Device:C", ref="C", value="10nF",
-                     footprint="Capacitor_SMD:C_0603_1608Metric")
-    c_f[1] += avdd_filt
-    c_f[2] += gnd
 
     # --- RF matching network ---
     pa_net = Net(f"{prefix}_PA")

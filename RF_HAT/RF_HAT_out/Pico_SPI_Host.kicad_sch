@@ -8,145 +8,6 @@
 		(title "RF_HAT")
 	)
 	(lib_symbols
-		(symbol "Device:C"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0.254)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "C"
-				(at 0.635 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "C"
-				(at 0.635 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0.9652 -3.81 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Unpolarized capacitor"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "cap capacitor"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "C_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "C_0_1"
-				(polyline
-					(pts
-						(xy -2.032 0.762) (xy 2.032 0.762)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.032 -0.762) (xy 2.032 -0.762)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "C_1_1"
-				(pin passive line
-					(at 0 3.81 270)
-					(length 2.794)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -3.81 90)
-					(length 2.794)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "MCU_Module:RaspberryPi_Pico"
 			(pin_names
 				(offset 0.762)
@@ -1210,17 +1071,6 @@
 	)
 	(hierarchical_label "+3.3V"
 		(shape input)
-		(at 99.06 29.21 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "19973a39-2f10-4cfa-ba55-669048dd796a")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
 		(at 55.88 30.48 90)
 		(effects
 			(font
@@ -1262,17 +1112,6 @@
 			(justify right)
 		)
 		(uuid "3b0dba45-f5da-4cea-9190-30578e9a130e")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 99.06 36.83 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3b97da65-6fec-4c3f-b474-83dd4a8956ca")
 	)
 	(hierarchical_label "VHF_MOSI"
 		(shape input)
@@ -1406,17 +1245,6 @@
 		)
 		(uuid "9ab86dcb-5935-483d-bfc7-0bac9a0bfe32")
 	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 121.92 36.83 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "9c39e62e-93b6-4d19-885f-a0f2fe59608a")
-	)
 	(hierarchical_label "VHF_MISO"
 		(shape input)
 		(at 73.66 55.88 0)
@@ -1504,17 +1332,6 @@
 			(justify right)
 		)
 		(uuid "e6b267f0-ec9f-483a-a6b3-428908772164")
-	)
-	(hierarchical_label "+5V"
-		(shape input)
-		(at 121.92 29.21 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f111425c-19a2-4ffc-b20a-c0d6f5fd27e5")
 	)
 	(hierarchical_label "UHF_SCLK"
 		(shape input)
@@ -1730,194 +1547,6 @@
 			(project ""
 				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/16f3d7a1-68b1-4f0c-967e-8cb2238fdf39"
 					(reference "U3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 99.06 33.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "bcd36e6c-0c25-43da-9360-5ff57ef7f8da")
-		(property "Reference" "C51"
-			(at 99.695 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 99.695 30.48 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 100.0252 29.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 99.06 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 99.06 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/16f3d7a1-68b1-4f0c-967e-8cb2238fdf39"
-			(at 101.6 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 101.6 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 101.6 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "cbce0b9d-3f8e-4e50-bbab-7fb4674137b7")
-		)
-		(pin "2"
-			(uuid "1dc712cb-7fff-47ed-8bbf-2318815aac35")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/16f3d7a1-68b1-4f0c-967e-8cb2238fdf39"
-					(reference "C51")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 121.92 33.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "c35dadaa-d422-4923-bcdd-feeab40d743b")
-		(property "Reference" "C52"
-			(at 122.555 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 122.555 30.48 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 122.8852 29.21 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 121.92 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 121.92 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/16f3d7a1-68b1-4f0c-967e-8cb2238fdf39"
-			(at 124.46 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 124.46 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
-			(at 124.46 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c07561d0-f1a5-4dd2-adba-698e4603e8b4")
-		)
-		(pin "2"
-			(uuid "f06d268d-9387-4772-bbce-bf57875335d5")
-		)
-		(instances
-			(project ""
-				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/16f3d7a1-68b1-4f0c-967e-8cb2238fdf39"
-					(reference "C52")
 					(unit 1)
 				)
 			)
