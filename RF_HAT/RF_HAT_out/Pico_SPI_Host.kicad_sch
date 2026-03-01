@@ -1,7 +1,7 @@
 (kicad_sch
 	(version 20250114)
-	(generator "circuit_synth")
-	(generator_version "0.8.36")
+	(generator "eeschema")
+	(generator_version "9.0")
 	(uuid "5012d287-c68e-4ebc-9e42-22b943a98660")
 	(paper "A3")
 	(title_block
@@ -207,11 +207,11 @@
 							)
 						)
 					)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM0_A output line)
-					(alternate SPI0_RX input line)
-					(alternate UART0_TX output line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM0_A" output line)
+					(alternate "SPI0_RX" input line)
+					(alternate "UART0_TX" output line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 12.7 0)
@@ -230,10 +230,10 @@
 							)
 						)
 					)
-					(alternate I2C0_SCL bidirectional clock)
-					(alternate PWM0_B bidirectional line)
-					(alternate UART0_RX input line)
-					(alternate USB_VBUS_DET passive line)
+					(alternate "I2C0_SCL" bidirectional clock)
+					(alternate "PWM0_B" bidirectional line)
+					(alternate "UART0_RX" input line)
+					(alternate "USB_VBUS_DET" passive line)
 					(alternate "~{SPI0_CSn}" bidirectional line)
 				)
 				(pin bidirectional line
@@ -253,11 +253,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM1_A output line)
-					(alternate SPI0_SCK bidirectional clock)
-					(alternate UART0_CTS input line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM1_A" output line)
+					(alternate "SPI0_SCK" bidirectional clock)
+					(alternate "UART0_CTS" input line)
+					(alternate "USB_VBUS_EN" output line)
 				)
 				(pin bidirectional line
 					(at -22.86 7.62 0)
@@ -276,11 +276,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SCL bidirectional clock)
-					(alternate PWM1_B bidirectional line)
-					(alternate SPI0_TX output line)
-					(alternate UART0_RTS output line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C1_SCL" bidirectional clock)
+					(alternate "PWM1_B" bidirectional line)
+					(alternate "SPI0_TX" output line)
+					(alternate "UART0_RTS" output line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 5.08 0)
@@ -299,11 +299,11 @@
 							)
 						)
 					)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM2_A output line)
-					(alternate SPI0_RX input line)
-					(alternate UART1_TX output line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM2_A" output line)
+					(alternate "SPI0_RX" input line)
+					(alternate "UART1_TX" output line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 2.54 0)
@@ -322,10 +322,10 @@
 							)
 						)
 					)
-					(alternate I2C0_SCL bidirectional clock)
-					(alternate PWM2_B bidirectional line)
-					(alternate UART1_RX input line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "I2C0_SCL" bidirectional clock)
+					(alternate "PWM2_B" bidirectional line)
+					(alternate "UART1_RX" input line)
+					(alternate "USB_VBUS_EN" output line)
 					(alternate "~{SPI0_CSn}" bidirectional line)
 				)
 				(pin bidirectional line
@@ -345,11 +345,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM3_A output line)
-					(alternate SPI0_SCK bidirectional clock)
-					(alternate UART1_CTS input line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM3_A" output line)
+					(alternate "SPI0_SCK" bidirectional clock)
+					(alternate "UART1_CTS" input line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 -2.54 0)
@@ -368,11 +368,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SCL bidirectional clock)
-					(alternate PWM3_B bidirectional line)
-					(alternate SPI0_TX output line)
-					(alternate UART1_RTS output line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "I2C1_SCL" bidirectional clock)
+					(alternate "PWM3_B" bidirectional line)
+					(alternate "SPI0_TX" output line)
+					(alternate "UART1_RTS" output line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 -5.08 0)
@@ -391,11 +391,11 @@
 							)
 						)
 					)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM4_A output line)
-					(alternate SPI1_RX input line)
-					(alternate UART1_TX output line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM4_A" output line)
+					(alternate "SPI1_RX" input line)
+					(alternate "UART1_TX" output line)
+					(alternate "USB_VBUS_EN" output line)
 				)
 				(pin bidirectional line
 					(at -22.86 -7.62 0)
@@ -414,10 +414,10 @@
 							)
 						)
 					)
-					(alternate I2C0_SCL bidirectional clock)
-					(alternate PWM4_B bidirectional line)
-					(alternate UART1_RX input line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C0_SCL" bidirectional clock)
+					(alternate "PWM4_B" bidirectional line)
+					(alternate "UART1_RX" input line)
+					(alternate "USB_OVCUR_DET" input line)
 					(alternate "~{SPI1_CSn}" bidirectional line)
 				)
 				(pin bidirectional line
@@ -437,11 +437,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM5_A output line)
-					(alternate SPI1_SCK bidirectional clock)
-					(alternate UART1_CTS input line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM5_A" output line)
+					(alternate "SPI1_SCK" bidirectional clock)
+					(alternate "UART1_CTS" input line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 -12.7 0)
@@ -460,11 +460,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SCL bidirectional clock)
-					(alternate PWM5_B bidirectional line)
-					(alternate SPI1_TX output line)
-					(alternate UART1_RTS output line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "I2C1_SCL" bidirectional clock)
+					(alternate "PWM5_B" bidirectional line)
+					(alternate "SPI1_TX" output line)
+					(alternate "UART1_RTS" output line)
+					(alternate "USB_VBUS_EN" output line)
 				)
 				(pin bidirectional line
 					(at -22.86 -15.24 0)
@@ -483,11 +483,11 @@
 							)
 						)
 					)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM6_A output line)
-					(alternate SPI1_RX input line)
-					(alternate UART0_TX output line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM6_A" output line)
+					(alternate "SPI1_RX" input line)
+					(alternate "UART0_TX" output line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin bidirectional line
 					(at -22.86 -17.78 0)
@@ -506,10 +506,10 @@
 							)
 						)
 					)
-					(alternate I2C0_SCL bidirectional clock)
-					(alternate PWM6_B bidirectional line)
-					(alternate UART0_RX input line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "I2C0_SCL" bidirectional clock)
+					(alternate "PWM6_B" bidirectional line)
+					(alternate "UART0_RX" input line)
+					(alternate "USB_VBUS_DET" input line)
 					(alternate "~{SPI1_CSn}" bidirectional line)
 				)
 				(pin bidirectional line
@@ -529,11 +529,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM7_A output line)
-					(alternate SPI1_SCK bidirectional clock)
-					(alternate UART0_CTS input line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM7_A" output line)
+					(alternate "SPI1_SCK" bidirectional clock)
+					(alternate "UART0_CTS" input line)
+					(alternate "USB_VBUS_EN" output line)
 				)
 				(pin bidirectional line
 					(at -22.86 -22.86 0)
@@ -552,11 +552,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SCL bidirectional clock)
-					(alternate PWM7_B bidirectional line)
-					(alternate SPI1_TX output line)
-					(alternate UART0_RTS output line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C1_SCL" bidirectional clock)
+					(alternate "PWM7_B" bidirectional line)
+					(alternate "SPI1_TX" output line)
+					(alternate "UART0_RTS" output line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin power_in line
 					(at -5.08 38.1 270)
@@ -575,7 +575,7 @@
 							)
 						)
 					)
-					(alternate VSYS_OUT power_out line)
+					(alternate "VSYS_OUT" power_out line)
 				)
 				(pin power_out line
 					(at 0 38.1 270)
@@ -594,7 +594,7 @@
 							)
 						)
 					)
-					(alternate VBUS_IN power_in line)
+					(alternate "VBUS_IN" power_in line)
 				)
 				(pin passive line
 					(at 0 -35.56 90)
@@ -689,7 +689,7 @@
 							)
 						)
 					)
-					(alternate GND_IN power_in line)
+					(alternate "GND_IN" power_in line)
 				)
 				(pin passive line
 					(at 0 -35.56 90)
@@ -764,11 +764,11 @@
 							)
 						)
 					)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM0_A output line)
-					(alternate SPI0_RX input line)
-					(alternate UART0_TX output line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM0_A" output line)
+					(alternate "SPI0_RX" input line)
+					(alternate "UART0_TX" output line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin bidirectional line
 					(at 22.86 10.16 180)
@@ -787,10 +787,10 @@
 							)
 						)
 					)
-					(alternate I2C0_SCL bidirectional clock)
-					(alternate PWM0_B bidirectional line)
-					(alternate UART0_RX input line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "I2C0_SCL" bidirectional clock)
+					(alternate "PWM0_B" bidirectional line)
+					(alternate "UART0_RX" input line)
+					(alternate "USB_VBUS_EN" output line)
 					(alternate "~{SPI0_CSn}" bidirectional line)
 				)
 				(pin bidirectional line
@@ -810,11 +810,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM1_A output line)
-					(alternate SPI0_SCK bidirectional clock)
-					(alternate UART0_CTS input line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM1_A" output line)
+					(alternate "SPI0_SCK" bidirectional clock)
+					(alternate "UART0_CTS" input line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin bidirectional line
 					(at 22.86 5.08 180)
@@ -833,11 +833,11 @@
 							)
 						)
 					)
-					(alternate I2C1_SCL bidirectional clock)
-					(alternate PWM1_B bidirectional line)
-					(alternate SPI0_TX output line)
-					(alternate UART0_RTS output line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "I2C1_SCL" bidirectional clock)
+					(alternate "PWM1_B" bidirectional line)
+					(alternate "SPI0_TX" output line)
+					(alternate "UART0_RTS" output line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin bidirectional line
 					(at 22.86 2.54 180)
@@ -856,12 +856,12 @@
 							)
 						)
 					)
-					(alternate CLOCK_GPIN0 input clock)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM2_A output line)
-					(alternate SPI0_RX input line)
-					(alternate UART1_TX output line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "CLOCK_GPIN0" input clock)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM2_A" output line)
+					(alternate "SPI0_RX" input line)
+					(alternate "UART1_TX" output line)
+					(alternate "USB_VBUS_EN" output line)
 				)
 				(pin bidirectional line
 					(at 22.86 0 180)
@@ -880,11 +880,11 @@
 							)
 						)
 					)
-					(alternate CLOCK_GPOUT0 output clock)
-					(alternate I2C0_SCL bidirectional clock)
-					(alternate PWM2_B bidirectional line)
-					(alternate UART1_RX input line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "CLOCK_GPOUT0" output clock)
+					(alternate "I2C0_SCL" bidirectional clock)
+					(alternate "PWM2_B" bidirectional line)
+					(alternate "UART1_RX" input line)
+					(alternate "USB_OVCUR_DET" input line)
 					(alternate "~{SPI0_CSn}" bidirectional line)
 				)
 				(pin bidirectional line
@@ -904,12 +904,12 @@
 							)
 						)
 					)
-					(alternate CLOCK_GPIN1 input clock)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM3_A output line)
-					(alternate SPI0_SCK bidirectional clock)
-					(alternate UART1_CTS input line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "CLOCK_GPIN1" input clock)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM3_A" output line)
+					(alternate "SPI0_SCK" bidirectional clock)
+					(alternate "UART1_CTS" input line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin power_in line
 					(at 22.86 -7.62 180)
@@ -946,13 +946,13 @@
 							)
 						)
 					)
-					(alternate ADC0 input line)
-					(alternate GPIO26 bidirectional line)
-					(alternate I2C1_SDA bidirectional line)
-					(alternate PWM5_A output line)
-					(alternate SPI1_SCK bidirectional clock)
-					(alternate UART1_CTS input line)
-					(alternate USB_VBUS_EN output line)
+					(alternate "ADC0" input line)
+					(alternate "GPIO26" bidirectional line)
+					(alternate "I2C1_SDA" bidirectional line)
+					(alternate "PWM5_A" output line)
+					(alternate "SPI1_SCK" bidirectional clock)
+					(alternate "UART1_CTS" input line)
+					(alternate "USB_VBUS_EN" output line)
 				)
 				(pin bidirectional line
 					(at 22.86 -15.24 180)
@@ -971,13 +971,13 @@
 							)
 						)
 					)
-					(alternate ADC1 input line)
-					(alternate GPIO27 bidirectional line)
-					(alternate I2C1_SCL bidirectional clock)
-					(alternate PWM5_B bidirectional line)
-					(alternate SPI1_TX output line)
-					(alternate UART1_RTS output line)
-					(alternate USB_OVCUR_DET input line)
+					(alternate "ADC1" input line)
+					(alternate "GPIO27" bidirectional line)
+					(alternate "I2C1_SCL" bidirectional clock)
+					(alternate "PWM5_B" bidirectional line)
+					(alternate "SPI1_TX" output line)
+					(alternate "UART1_RTS" output line)
+					(alternate "USB_OVCUR_DET" input line)
 				)
 				(pin bidirectional line
 					(at 22.86 -17.78 180)
@@ -996,13 +996,13 @@
 							)
 						)
 					)
-					(alternate ADC2 input line)
-					(alternate GPIO28 bidirectional line)
-					(alternate I2C0_SDA bidirectional line)
-					(alternate PWM6_A output line)
-					(alternate SPI1_RX input line)
-					(alternate UART0_TX output line)
-					(alternate USB_VBUS_DET input line)
+					(alternate "ADC2" input line)
+					(alternate "GPIO28" bidirectional line)
+					(alternate "I2C0_SDA" bidirectional line)
+					(alternate "PWM6_A" output line)
+					(alternate "SPI1_RX" input line)
+					(alternate "UART0_TX" output line)
+					(alternate "USB_VBUS_DET" input line)
 				)
 				(pin power_out line
 					(at 22.86 -22.86 180)
@@ -1021,150 +1021,328 @@
 							)
 						)
 					)
-					(alternate GND passive line)
+					(alternate "GND" passive line)
 				)
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:C"
-			(pin_numbers
-				(hide yes)
-			)
-			(pin_names
-				(offset 0.254)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "C"
-				(at 0.635 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "C"
-				(at 0.635 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0.9652 -3.81 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Unpolarized capacitor"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "cap capacitor"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "C_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "C_0_1"
-				(polyline
-					(pts
-						(xy -2.032 0.762) (xy 2.032 0.762)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.032 -0.762) (xy 2.032 -0.762)
-					)
-					(stroke
-						(width 0.508)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "C_1_1"
-				(pin passive line
-					(at 0 3.81 270)
-					(length 2.794)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 0 -3.81 90)
-					(length 2.794)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
+	)
+	(text_box "Raspberry Pi Pico - SPI host for both CC1200s"
+		(exclude_from_sim no)
+		(at 184 110 0)
+		(size 80 30)
+		(margins 1 1 1 1)
+		(stroke
+			(width 0)
+			(type solid)
 		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.2 1.2)
+			)
+			(justify left top)
+		)
+		(uuid "9dd1f40d-c3c4-4a94-908e-882c83cdd6b4")
+	)
+	(hierarchical_label "UHF_RESET"
+		(shape input)
+		(at 27.94 73.66 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "17d2a043-c82e-4e6d-bc0b-f1ee54abec00")
+	)
+	(hierarchical_label "UART_TX"
+		(shape input)
+		(at 27.94 53.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "1943ac29-4281-4ef6-8c83-8f234179774b")
+	)
+	(hierarchical_label "VHF_RESET"
+		(shape input)
+		(at 73.66 66.04 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "21d01b96-94c0-42d6-a79d-f66a9b837802")
+	)
+	(hierarchical_label "UHF_GPIO3"
+		(shape input)
+		(at 27.94 68.58 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "23e31d23-6450-4a24-883e-009fe62108c2")
+	)
+	(hierarchical_label "VHF_GPIO2"
+		(shape input)
+		(at 73.66 68.58 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "270f2398-0936-47fe-8f75-98b5800deb28")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "31fe50ae-8aa5-47eb-b604-653a2ad25b63")
+	)
+	(hierarchical_label "VHF_CSN"
+		(shape input)
+		(at 73.66 58.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "327c1cc3-6dfd-4806-88c9-a5b7dc3bff86")
+	)
+	(hierarchical_label "UHF_MOSI"
+		(shape input)
+		(at 27.94 81.28 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3475e915-d255-46f7-8606-52fef709a7d1")
+	)
+	(hierarchical_label "UHF_GPIO2"
+		(shape input)
+		(at 27.94 76.2 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4c517d71-7490-4f58-aa50-f9115581446b")
+	)
+	(hierarchical_label "UHF_GPIO0"
+		(shape input)
+		(at 27.94 71.12 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4fbd9ea3-2452-4f67-b34f-79f37aca40ad")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "582d7171-f147-48da-9efb-87f036f7ca15")
+	)
+	(hierarchical_label "VHF_GPIO0"
+		(shape input)
+		(at 73.66 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "718f04ba-a472-4d19-9c5c-73a30828f367")
+	)
+	(hierarchical_label "VHF_SCLK"
+		(shape input)
+		(at 73.66 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7aa3777e-351e-477a-898f-f2c36b7af9c1")
+	)
+	(hierarchical_label "VHF_GPIO3"
+		(shape input)
+		(at 73.66 81.28 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8be2e1e6-51a6-4cf7-ba8a-ec17669980d6")
+	)
+	(hierarchical_label "VHF_MOSI"
+		(shape input)
+		(at 73.66 63.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "99d10323-6701-40e9-917b-435f47de1ed7")
+	)
+	(hierarchical_label "+5V"
+		(shape input)
+		(at 45.72 30.48 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9ce01963-1d8c-4c79-8f03-3f8b70a1442a")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a1d7ebec-4ee3-4bbe-975d-a1b4ed2de289")
+	)
+	(hierarchical_label "UHF_CSN"
+		(shape input)
+		(at 27.94 86.36 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "aff84189-8adf-4749-95e4-27d2acc487c8")
+	)
+	(hierarchical_label "UART_RX"
+		(shape input)
+		(at 27.94 55.88 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bba7dcc6-374c-4c78-a315-42f821f4e7e1")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c4a00818-c6ee-4ad3-9a72-1c50b3f5b1d2")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 55.88 30.48 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ce7cb9ec-4864-43ba-b9b3-e9a498da3182")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d041da45-80e8-4df8-bfbe-a1d3d69f69cf")
+	)
+	(hierarchical_label "UHF_MISO"
+		(shape input)
+		(at 27.94 83.82 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d204ee01-0d4b-4f60-81e0-b3243212f554")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d9f06f7f-6a5c-4a12-b72a-aae64861cbe7")
+	)
+	(hierarchical_label "VHF_MISO"
+		(shape input)
+		(at 73.66 55.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "df0906f3-4777-4dcc-911c-a2b627048b01")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 104.14 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e2757968-24c9-47a3-95bd-8e874469b978")
+	)
+	(hierarchical_label "UHF_SCLK"
+		(shape input)
+		(at 27.94 78.74 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "eda97e20-9472-46d0-97b5-ff33c6ff25bc")
 	)
 	(symbol
 		(lib_id "MCU_Module:RaspberryPi_Pico")
@@ -1174,10 +1352,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced no)
 		(uuid "befaece2-dc95-434b-8bde-e4ba6293d706")
 		(property "Reference" "U3"
-			(at 31.75 104.14 0.0000)
+			(at 31.75 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1186,7 +1363,7 @@
 			)
 		)
 		(property "Value" "RaspberryPi_Pico"
-			(at 58.42 104.14 0.0000)
+			(at 58.42 104.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -1194,13 +1371,29 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Module:RaspberryPi_Pico_Common_Unspecified"
-			(at 50.8 21.59 0.0000)
+		(property "Footprint" "Module:RaspberryPi_Pico_Common_SMD"
+			(at 50.8 21.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 50.8 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 50.8 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/9ee7e274-140e-48fc-a71a-d6e497a55bd8"
@@ -1358,525 +1551,6 @@
 				)
 			)
 		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 99.06 33.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced no)
-		(uuid "81b81ad6-3286-4c86-aca4-feba614e88b0")
-		(property "Reference" "C51"
-			(at 99.695 35.56 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 99.695 30.48 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 100.0252 29.21 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/9ee7e274-140e-48fc-a71a-d6e497a55bd8"
-			(at 101.6 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 101.6 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 101.6 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6cba56c0-7136-4152-a609-5f93b2195249")
-		)
-		(pin "2"
-			(uuid "160c7288-10d9-4c94-88bb-fdd8fa31d9ba")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/9ee7e274-140e-48fc-a71a-d6e497a55bd8"
-					(reference "C51")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 121.92 33.02 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced no)
-		(uuid "f4554e3d-f998-484a-999e-17e19847dba5")
-		(property "Reference" "C52"
-			(at 122.555 35.56 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 122.555 30.48 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 122.8852 29.21 0.0000)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/9ee7e274-140e-48fc-a71a-d6e497a55bd8"
-			(at 124.46 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 124.46 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 124.46 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "a4e796e4-b01c-4a22-b6d3-1bf017cccb8c")
-		)
-		(pin "2"
-			(uuid "460f28c0-82bf-4246-aba0-5c21fd8936ac")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/9ee7e274-140e-48fc-a71a-d6e497a55bd8"
-					(reference "C52")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(hierarchical_label "UART_TX"
-		(shape input)
-		(at 27.94 53.34 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1943ac29-4281-4ef6-8c83-8f234179774b")
-	)
-	(hierarchical_label "UART_RX"
-		(shape input)
-		(at 27.94 55.88 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "bba7dcc6-374c-4c78-a315-42f821f4e7e1")
-	)
-	(hierarchical_label "UHF_GPIO3"
-		(shape input)
-		(at 27.94 68.58 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "23e31d23-6450-4a24-883e-009fe62108c2")
-	)
-	(hierarchical_label "UHF_GPIO0"
-		(shape input)
-		(at 27.94 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "4fbd9ea3-2452-4f67-b34f-79f37aca40ad")
-	)
-	(hierarchical_label "UHF_RESET"
-		(shape input)
-		(at 27.94 73.66 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "17d2a043-c82e-4e6d-bc0b-f1ee54abec00")
-	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 27.94 76.2 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "4c517d71-7490-4f58-aa50-f9115581446b")
-	)
-	(hierarchical_label "UHF_SCLK"
-		(shape input)
-		(at 27.94 78.74 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "eda97e20-9472-46d0-97b5-ff33c6ff25bc")
-	)
-	(hierarchical_label "UHF_MOSI"
-		(shape input)
-		(at 27.94 81.28 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3475e915-d255-46f7-8606-52fef709a7d1")
-	)
-	(hierarchical_label "UHF_MISO"
-		(shape input)
-		(at 27.94 83.82 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d204ee01-0d4b-4f60-81e0-b3243212f554")
-	)
-	(hierarchical_label "UHF_CSN"
-		(shape input)
-		(at 27.94 86.36 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "aff84189-8adf-4749-95e4-27d2acc487c8")
-	)
-	(hierarchical_label "+5V"
-		(shape input)
-		(at 45.72 30.48 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "9ce01963-1d8c-4c79-8f03-3f8b70a1442a")
-	)
-	(hierarchical_label "+5V"
-		(shape input)
-		(at 121.92 29.21 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "ce988f3c-6913-4a80-a4bf-26a0a8cda0ec")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e2757968-24c9-47a3-95bd-8e874469b978")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d9f06f7f-6a5c-4a12-b72a-aae64861cbe7")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "a1d7ebec-4ee3-4bbe-975d-a1b4ed2de289")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d041da45-80e8-4df8-bfbe-a1d3d69f69cf")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c4a00818-c6ee-4ad3-9a72-1c50b3f5b1d2")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "582d7171-f147-48da-9efb-87f036f7ca15")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 104.14 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "31fe50ae-8aa5-47eb-b604-653a2ad25b63")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 99.06 36.83 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "8ba0958c-dbc3-4e4b-9f53-5765593a52f2")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 121.92 36.83 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "0cc7e37e-3426-442e-9f0f-dc1e2ae6e1e2")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 55.88 30.48 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "ce7cb9ec-4864-43ba-b9b3-e9a498da3182")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 99.06 29.21 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "dfb7f026-0584-476a-a5bd-f2c32cea2b43")
-	)
-	(hierarchical_label "VHF_MISO"
-		(shape input)
-		(at 73.66 55.88 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "df0906f3-4777-4dcc-911c-a2b627048b01")
-	)
-	(hierarchical_label "VHF_CSN"
-		(shape input)
-		(at 73.66 58.42 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "327c1cc3-6dfd-4806-88c9-a5b7dc3bff86")
-	)
-	(hierarchical_label "VHF_SCLK"
-		(shape input)
-		(at 73.66 60.96 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "7aa3777e-351e-477a-898f-f2c36b7af9c1")
-	)
-	(hierarchical_label "VHF_MOSI"
-		(shape input)
-		(at 73.66 63.5 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "99d10323-6701-40e9-917b-435f47de1ed7")
-	)
-	(hierarchical_label "VHF_RESET"
-		(shape input)
-		(at 73.66 66.04 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "21d01b96-94c0-42d6-a79d-f66a9b837802")
-	)
-	(hierarchical_label "VHF_GPIO2"
-		(shape input)
-		(at 73.66 68.58 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "270f2398-0936-47fe-8f75-98b5800deb28")
-	)
-	(hierarchical_label "VHF_GPIO0"
-		(shape input)
-		(at 73.66 71.12 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "718f04ba-a472-4d19-9c5c-73a30828f367")
-	)
-	(hierarchical_label "VHF_GPIO3"
-		(shape input)
-		(at 73.66 81.28 0.0000)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "8be2e1e6-51a6-4cf7-ba8a-ec17669980d6")
-	)
-	(text_box "Raspberry Pi Pico - SPI host for both CC1200s"
-		(exclude_from_sim no)
-		(at 184 110 0)
-		(size 80 30)
-		(margins 1 1 1 1)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(fill
-			(type none)
-		)
-		(effects
-			(font
-				(size 1.2 1.2)
-			)
-			(justify left top)
-		)
-		(uuid "9dd1f40d-c3c4-4a94-908e-882c83cdd6b4")
 	)
 	(sheet_instances
 		(path "/"

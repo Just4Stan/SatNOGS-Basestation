@@ -1,7 +1,7 @@
 (kicad_sch
 	(version 20250114)
-	(generator "circuit_synth")
-	(generator_version "0.8.36")
+	(generator "eeschema")
+	(generator_version "9.0")
 	(uuid "d6d5ea61-0fbb-4c6a-bb02-cfd41bbf0dfa")
 	(paper "A3")
 	(title_block
@@ -822,6 +822,180 @@
 			(embedded_fonts no)
 		)
 	)
+	(text_box "Raspberry Pi 40-pin GPIO header - UART passthrough"
+		(exclude_from_sim no)
+		(at 184 110 0)
+		(size 80 30)
+		(margins 1 1 1 1)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.2 1.2)
+			)
+			(justify left top)
+		)
+		(uuid "152ade8c-d5c6-4b65-9c39-0f936125c0ec")
+	)
+	(hierarchical_label "+5V"
+		(shape input)
+		(at 45.72 33.02 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1843e7cc-8d4f-4f2f-b823-9391fad56d04")
+	)
+	(hierarchical_label "UART_TX"
+		(shape input)
+		(at 30.48 43.18 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "47f5b9da-f86a-4706-bc47-5541c70d164e")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "49765e6e-3fbc-4afb-8dc7-8564e5e57361")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4e5423b0-1a7d-48e6-b071-c27a96634b04")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5660f0db-c46a-469f-9b33-28bbdbedca7b")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6496c50d-7ce8-4c5f-b5a9-5581b808ed7c")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "70522ff3-3ae6-4a2f-bbb6-0e52eadd2495")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "91b5df6f-fb32-4e49-b56b-cd9e69770c52")
+	)
+	(hierarchical_label "VCC_3V3_PI"
+		(shape input)
+		(at 55.88 33.02 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "95e389c7-6627-4377-a728-1c215bfe32b7")
+	)
+	(hierarchical_label "VCC_3V3_PI"
+		(shape input)
+		(at 55.88 33.02 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bc4e7cae-64d5-4f31-abd3-15403e7494b6")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bcc5990a-ac5f-4c7e-a89c-8bf91ca34671")
+	)
+	(hierarchical_label "UART_RX"
+		(shape input)
+		(at 30.48 45.72 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ef9242f7-54cc-4971-91e0-c2d61d46d8bd")
+	)
+	(hierarchical_label "+5V"
+		(shape input)
+		(at 45.72 33.02 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f8f79bfe-4d9f-4652-9d14-8f3e683e0f8e")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 50.8 99.06 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fd63bc50-5a49-4001-ba6b-30da99ed6a70")
+	)
 	(symbol
 		(lib_id "Connector:Raspberry_Pi_2_3")
 		(at 50.8 66.04 0)
@@ -830,10 +1004,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced no)
 		(uuid "c33eead3-2fcb-4701-9ad2-24ffbf8685ee")
 		(property "Reference" "J3"
-			(at 33.02 97.79 0.0000)
+			(at 33.02 97.79 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -842,7 +1015,7 @@
 			)
 		)
 		(property "Value" "Raspberry_Pi_2_3"
-			(at 60.96 34.29 0.0000)
+			(at 60.96 34.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -851,12 +1024,28 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical"
-			(at 50.8 66.04 0.0000)
+			(at 50.8 66.04 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 50.8 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 50.8 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 			)
 		)
 		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/96fd858e-f400-4385-b5e2-13759435a1c9"
@@ -1014,180 +1203,6 @@
 				)
 			)
 		)
-	)
-	(hierarchical_label "UART_TX"
-		(shape input)
-		(at 30.48 43.18 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "47f5b9da-f86a-4706-bc47-5541c70d164e")
-	)
-	(hierarchical_label "UART_RX"
-		(shape input)
-		(at 30.48 45.72 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "ef9242f7-54cc-4971-91e0-c2d61d46d8bd")
-	)
-	(hierarchical_label "+5V"
-		(shape input)
-		(at 45.72 33.02 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "1843e7cc-8d4f-4f2f-b823-9391fad56d04")
-	)
-	(hierarchical_label "+5V"
-		(shape input)
-		(at 45.72 33.02 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "f8f79bfe-4d9f-4652-9d14-8f3e683e0f8e")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "bcc5990a-ac5f-4c7e-a89c-8bf91ca34671")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "fd63bc50-5a49-4001-ba6b-30da99ed6a70")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "70522ff3-3ae6-4a2f-bbb6-0e52eadd2495")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "4e5423b0-1a7d-48e6-b071-c27a96634b04")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5660f0db-c46a-469f-9b33-28bbdbedca7b")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "6496c50d-7ce8-4c5f-b5a9-5581b808ed7c")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "49765e6e-3fbc-4afb-8dc7-8564e5e57361")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 50.8 99.06 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "91b5df6f-fb32-4e49-b56b-cd9e69770c52")
-	)
-	(hierarchical_label "VCC_3V3_PI"
-		(shape input)
-		(at 55.88 33.02 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "bc4e7cae-64d5-4f31-abd3-15403e7494b6")
-	)
-	(hierarchical_label "VCC_3V3_PI"
-		(shape input)
-		(at 55.88 33.02 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "95e389c7-6627-4377-a728-1c215bfe32b7")
-	)
-	(text_box "Raspberry Pi 40-pin GPIO header - UART passthrough"
-		(exclude_from_sim no)
-		(at 184 110 0)
-		(size 80 30)
-		(margins 1 1 1 1)
-		(stroke
-			(width 0)
-			(type solid)
-		)
-		(fill
-			(type none)
-		)
-		(effects
-			(font
-				(size 1.2 1.2)
-			)
-			(justify left top)
-		)
-		(uuid "152ade8c-d5c6-4b65-9c39-0f936125c0ec")
 	)
 	(sheet_instances
 		(path "/"
