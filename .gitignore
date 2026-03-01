@@ -2,9 +2,12 @@
 .DS_Store
 **/.DS_Store
 
-# KiCad lock files
+# KiCad lock files and auto-saves
 *.lck
 **/*.lck
+_autosave-*
+**/_autosave-*
+~*.kicad_*
 
 # KiCad footprint cache
 fp-info-cache
@@ -22,6 +25,12 @@ CLAUDE.md
 # Thesis and reference papers (not for public distribution)
 Papers/
 ThesisPaper/
+
+# Python cache
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
 
 # Build artifacts
 **/build/
