@@ -2,7 +2,7 @@
 	(version 20250114)
 	(generator "eeschema")
 	(generator_version "9.0")
-	(uuid "d2ccda41-d660-40d3-b077-bc667bf30c73")
+	(uuid "60e1f87d-0243-4383-8175-079f1cc29873")
 	(paper "A3")
 	(title_block
 		(title "RF_HAT")
@@ -1795,183 +1795,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "f250c753-6c6a-4d0f-88c9-92edf0100311")
-	)
-	(hierarchical_label "UHF_AVDD_FILT"
-		(shape input)
-		(at 401.32 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "00036521-4bdf-419a-9b8a-d2ad946e637c")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 35.56 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "014b2140-df82-40f6-b3ae-93ddcffccfea")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 27.94 58.42 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "01c49975-ab98-4883-b963-1208cc5ddb54")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 27.94 58.42 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "037b1876-e4ce-44b6-b543-4314a27d0479")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 129.54 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "03d89b0f-f8e6-4405-b5f1-940229352c4e")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 30.48 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "06b8ab72-5b38-4a8b-8820-62def3448489")
-	)
-	(hierarchical_label "UHF_GPIO3"
-		(shape input)
-		(at 27.94 48.26 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "074dac3d-3ff7-44f0-b375-8c863d471e23")
-	)
-	(hierarchical_label "UHF_PA"
-		(shape input)
-		(at 63.5 76.2 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "077a03fc-c560-4a26-a405-efe51b28ba94")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 378.46 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "09cd1db5-8366-48e4-b526-cb4f3ff0448d")
-	)
-	(hierarchical_label "UHF_LN3"
-		(shape input)
-		(at 274.32 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0a29c8d0-93cd-4ff7-85db-ba945540ebb3")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 104.14 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "17151f97-be08-4208-910a-ef53b8705f14")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 279.4 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "18eb77c6-0c82-4259-9c37-5fa1148b24d8")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 154.94 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1eede03a-1e5b-4ba4-a91a-5e5756af3578")
-	)
-	(hierarchical_label "UHF_LN7"
-		(shape input)
-		(at 347.98 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1faf64bb-1669-4430-ab62-4cc8cdd9f82c")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 355.6 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "1fc3cd9a-4c45-4c2f-bdac-cbaec5a56e77")
-	)
-	(hierarchical_label "UHF_CSN"
-		(shape input)
-		(at 27.94 30.48 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "213a2089-b80f-4428-890f-e5676954e54a")
+		(uuid "a169cc59-2a11-465b-bd9c-aa7c677ba6e5")
 	)
 	(hierarchical_label "UHF_LN7"
 		(shape input)
@@ -1982,51 +1806,7 @@
 			)
 			(justify left)
 		)
-		(uuid "2309c94c-ed8b-4e63-8f7d-100c070ebf89")
-	)
-	(hierarchical_label "UHF_LN0"
-		(shape input)
-		(at 78.74 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "24ae94cb-bb6f-45e6-9edd-8e407c5cb1b8")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 40.64 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "252eca38-69a1-47e2-b0cf-6d4bfa9712e5")
-	)
-	(hierarchical_label "UHF_DCPL_VCO"
-		(shape input)
-		(at 63.5 55.88 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "25d1c7ed-ffa2-4eaf-b134-49f3106c4266")
-	)
-	(hierarchical_label "UHF_LPF1"
-		(shape input)
-		(at 180.34 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "27184466-bde3-4640-885c-2a3573f5877d")
+		(uuid "08bb9406-32ed-4174-bfd1-f6ac6028094f")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2037,7 +1817,7 @@
 			)
 			(justify right)
 		)
-		(uuid "295bf8a5-ed46-4b92-b9c6-b2a503a37795")
+		(uuid "0a052bae-a742-4ba7-8e98-3d1d02727298")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2048,128 +1828,29 @@
 			)
 			(justify left)
 		)
-		(uuid "2e8a1a4e-2468-438f-b489-c7d1bb436116")
+		(uuid "0a716c32-232c-4daa-90f1-128d517ad28d")
 	)
-	(hierarchical_label "GND"
+	(hierarchical_label "UHF_GPIO0"
 		(shape input)
-		(at 30.48 186.69 270)
+		(at 27.94 43.18 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "2ec17ca7-5186-4cbd-a3b3-f81c731ed98b")
+		(uuid "0b228786-50bc-4663-a53d-5697b98efaae")
 	)
-	(hierarchical_label "GND"
+	(hierarchical_label "UHF_LPF0"
 		(shape input)
-		(at 378.46 130.81 270)
+		(at 27.94 68.58 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "34322597-b7c2-4fa1-af26-30f5b18fb41d")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 228.6 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "35dbbcde-35c7-4ec6-b69c-b0241c23633c")
-	)
-	(hierarchical_label "UHF_RBIAS"
-		(shape input)
-		(at 27.94 63.5 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "36fe3288-4f51-4a9f-97bf-cb3e2f01c722")
-	)
-	(hierarchical_label "UHF_PA"
-		(shape input)
-		(at 147.32 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "37a173b7-1fff-4aff-852e-8b642ec43ba5")
-	)
-	(hierarchical_label "UHF_LN7"
-		(shape input)
-		(at 63.5 71.12 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "3b0ebf37-6c88-4569-858e-3cc699eeca69")
-	)
-	(hierarchical_label "UHF_XOSC_Q2"
-		(shape input)
-		(at 27.94 55.88 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3c0ab4a9-f51c-4087-8088-e3c7f6788120")
-	)
-	(hierarchical_label "UHF_DCPL"
-		(shape input)
-		(at 63.5 53.34 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "3d6421a6-bb4f-49ac-ab5a-493dad31854e")
-	)
-	(hierarchical_label "UHF_LN2"
-		(shape input)
-		(at 223.52 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "3ed1399e-b292-4b2e-95bc-1be690e1837b")
-	)
-	(hierarchical_label "UHF_CSN"
-		(shape input)
-		(at 355.6 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "420469ad-4eb9-443d-913c-34cff21e635a")
-	)
-	(hierarchical_label "UHF_MOSI"
-		(shape input)
-		(at 304.8 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "427c70b9-50e2-4db3-8828-b8afbdfd395a")
+		(uuid "0c9cc47e-3d75-4425-9225-91b5ed000952")
 	)
 	(hierarchical_label "UHF_LN6"
 		(shape input)
@@ -2180,84 +1861,7 @@
 			)
 			(justify left)
 		)
-		(uuid "42f61de0-891e-47c4-97df-c7675b867ddf")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 78.74 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "43b80766-069d-4e51-bfad-db7ed2addcb5")
-	)
-	(hierarchical_label "UHF_LN3"
-		(shape input)
-		(at 154.94 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "4558d1f5-4931-4261-98c5-67d86e25fbef")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 25.4 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "459d8b68-9cf4-408d-b18a-ac9aeebdd56a")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 228.6 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "488fbaf0-43f8-48ed-8440-4aed71e961cc")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 45.72 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "4966c63f-4b23-4520-98c9-b241f85f9e0d")
-	)
-	(hierarchical_label "UHF_LN5"
-		(shape input)
-		(at 205.74 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "4a155772-3cf5-4a7b-b0e3-e18489e31f43")
-	)
-	(hierarchical_label "UHF_RBIAS"
-		(shape input)
-		(at 124.46 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "4bfb15b9-50e7-4455-872d-2a2fe5e60c10")
+		(uuid "0f282e3d-6f26-4743-bee2-cf1cf5fbce67")
 	)
 	(hierarchical_label "UHF_RBIAS"
 		(shape input)
@@ -2268,711 +1872,7 @@
 			)
 			(justify right)
 		)
-		(uuid "4d0c2ec0-922f-4ff6-aefe-ef92b623a19f")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 27.94 76.2 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "4dcc2b65-e3c9-4864-b410-c7918b8e2857")
-	)
-	(hierarchical_label "UHF_XOSC_Q1"
-		(shape input)
-		(at 90.17 38.1 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "50294ccc-a308-4b0b-a4af-68b41b86cd14")
-	)
-	(hierarchical_label "UHF_GPIO3"
-		(shape input)
-		(at 27.94 48.26 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5760fec4-7696-44b8-baa5-9fcc7eff778f")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 304.8 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "5a825e93-ff0c-4699-b0bd-6d1e3ee480a5")
-	)
-	(hierarchical_label "UHF_SCLK"
-		(shape input)
-		(at 27.94 33.02 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5a9debca-6ced-4d31-806a-8165fe2d5879")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 330.2 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "5acded9a-76d3-4be8-8cd0-7fb039bde664")
-	)
-	(hierarchical_label "UHF_RESET"
-		(shape input)
-		(at 27.94 25.4 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5aea456b-ffc5-4e49-92dd-c3391e066f3d")
-	)
-	(hierarchical_label "UHF_MN1"
-		(shape input)
-		(at 147.32 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5b345a1e-9588-417f-9293-250133c80fd0")
-	)
-	(hierarchical_label "UHF_SCLK"
-		(shape input)
-		(at 27.94 33.02 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5d6f11b2-f9cd-495f-aaf8-5e9ae67aeeec")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 78.74 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5f3adcce-b30f-4a7c-a5b6-d60ca0809a20")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 30.48 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "61b35cfd-c432-4a03-b2c6-66c6d9b0db9f")
-	)
-	(hierarchical_label "UHF_LN7"
-		(shape input)
-		(at 63.5 66.04 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "626bd909-9976-40d2-81d3-addfcf67ee20")
-	)
-	(hierarchical_label "UHF_XOSC_Q1"
-		(shape input)
-		(at 27.94 53.34 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "64805ec0-19ec-4051-b868-b81a5ca7bab1")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 373.38 35.56 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "685e1ae1-6afc-4080-b160-beaada344d9b")
-	)
-	(hierarchical_label "UHF_LN7"
-		(shape input)
-		(at 63.5 71.12 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "68ebd517-cbd8-4a0a-a368-79c088f7279c")
-	)
-	(hierarchical_label "UHF_LN2"
-		(shape input)
-		(at 129.54 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "698fae8f-6672-48d7-ab81-c3d89dfaa486")
-	)
-	(hierarchical_label "UHF_LN4"
-		(shape input)
-		(at 297.18 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "69c667a1-2aa9-4c4e-9815-61b263a8d2a5")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 55.88 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "6f0604ef-a3d8-4f0c-8812-510d642a5dce")
-	)
-	(hierarchical_label "UHF_GPIO0"
-		(shape input)
-		(at 27.94 43.18 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "70e8274c-8528-48a4-9ae0-aac96e5b16b2")
-	)
-	(hierarchical_label "UHF_LN6"
-		(shape input)
-		(at 347.98 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "72eeb70e-0feb-473c-9fc7-43edbc515861")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 129.54 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "745d17d8-f172-409c-9ea9-8c03f5e76407")
-	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 27.94 45.72 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "78411581-9534-42cb-841d-c471ae69c504")
-	)
-	(hierarchical_label "UHF_LN3"
-		(shape input)
-		(at 248.92 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "795aaed9-33f8-469a-934b-aa92a9d84b5e")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 48.26 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "7b7387bd-5a54-4e07-9f03-941dfcaf5e4e")
-	)
-	(hierarchical_label "UHF_DCPL_XOSC"
-		(shape input)
-		(at 63.5 60.96 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "7c32b97b-24ca-40d2-a85b-0cd93c3a673b")
-	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 27.94 45.72 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "7cda8f44-ee71-40da-b688-a7b10e0846dd")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 93.98 43.18 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "7d08e27b-a07a-4290-8a82-f5066ab9adc2")
-	)
-	(hierarchical_label "UHF_AVDD_FILT"
-		(shape input)
-		(at 55.88 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "80272675-a7e2-473f-88f3-9412ff3c2de7")
-	)
-	(hierarchical_label "UHF_LPF1"
-		(shape input)
-		(at 27.94 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "82b6cef5-9df0-4103-a7a2-4995ce4f2873")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 205.74 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "83a1d853-5ddc-4415-aa44-1ee3e48d9c2d")
-	)
-	(hierarchical_label "UHF_LN1"
-		(shape input)
-		(at 223.52 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "84c85575-a102-4381-bdc0-109323bbc37a")
-	)
-	(hierarchical_label "UHF_MISO"
-		(shape input)
-		(at 27.94 38.1 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "84f419a5-67ef-4caa-98bf-3921a80ea854")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 30.48 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "86abc759-5446-413f-a73c-e2cb26e9b67c")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 63.5 68.58 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "8ce1f2ff-1f72-4d47-9d65-4247e703d5d1")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 304.8 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "8d43e6ed-6c08-4bd2-a6ba-582522b5a19b")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 25.4 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "90252147-fd98-4a87-953d-91e0a202ffed")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 401.32 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "9107b0f3-27f7-43f2-94e1-7db0d7e2935f")
-	)
-	(hierarchical_label "UHF_LPF1"
-		(shape input)
-		(at 27.94 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "912a0b90-6f4a-4bc6-9a83-284efe751d67")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 63.5 43.18 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "924b59b7-579d-4405-a457-51929cc87615")
-	)
-	(hierarchical_label "UHF_LN4"
-		(shape input)
-		(at 180.34 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "96f89b15-a516-4255-a2b1-e87076f678fb")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 154.94 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "9831d9c7-6385-4cfa-969b-31cad2bb678d")
-	)
-	(hierarchical_label "UHF_GPIO0"
-		(shape input)
-		(at 27.94 43.18 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "98782abf-aac1-4056-a487-927cb7a9ed8d")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 205.74 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "989daa14-fc95-46b1-b1b2-8c66482cd16c")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 279.4 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a55ba514-e64c-46e7-b0f4-e87e2c0ee9e7")
-	)
-	(hierarchical_label "UHF_MISO"
-		(shape input)
-		(at 27.94 38.1 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "a647116a-7af4-492f-8797-6740aa140fc1")
-	)
-	(hierarchical_label "UHF_XOSC_Q2"
-		(shape input)
-		(at 97.79 38.1 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "aa854b32-76a0-4697-9b8a-73c0831ae24b")
-	)
-	(hierarchical_label "UHF_DCPL_PFD"
-		(shape input)
-		(at 129.54 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b336576c-f8d8-4256-9258-3e161aaa25ce")
-	)
-	(hierarchical_label "UHF_XOSC_Q1"
-		(shape input)
-		(at 30.48 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b538adc8-7fd5-4cfb-ac26-1cc9071d8906")
-	)
-	(hierarchical_label "UHF_RESET"
-		(shape input)
-		(at 27.94 25.4 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "b5b5143d-2714-406a-8a1b-c7bc2af905da")
-	)
-	(hierarchical_label "UHF_LN7"
-		(shape input)
-		(at 368.3 30.48 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "b6ce75af-6d4e-4186-91c8-20505f436d74")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 330.2 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "b856adba-67c8-45a2-88b7-d6aa38116ab1")
-	)
-	(hierarchical_label "UHF_CSN"
-		(shape input)
-		(at 27.94 30.48 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "baa2021c-6fdb-4660-8d97-1b3e8b0a6737")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 180.34 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "baab345e-6f06-40e3-b6ee-8a7e6bc52b95")
-	)
-	(hierarchical_label "UHF_LPF0"
-		(shape input)
-		(at 180.34 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "bb16d3b0-82ec-46bd-9bb7-7146de005311")
-	)
-	(hierarchical_label "UHF_DCPL_XOSC"
-		(shape input)
-		(at 154.94 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "bb95aa18-764f-41b4-9632-5d676d87be2e")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 63.5 68.58 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "beeb925e-07c5-4144-8187-032d633cfcfa")
-	)
-	(hierarchical_label "UHF_LPF0"
-		(shape input)
-		(at 27.94 68.58 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c14cc8d7-f749-4ea0-b492-4db883dd498b")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 254 186.69 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c1db94b0-b38a-440f-86af-f546fa7e48a6")
-	)
-	(hierarchical_label "UHF_LN7"
-		(shape input)
-		(at 254 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c2ae9f98-7200-4b4a-9ccd-bbf16306aba3")
-	)
-	(hierarchical_label "UHF_LN6"
-		(shape input)
-		(at 322.58 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "c377f6bd-aed9-468d-bdfb-ea3f0b664ddc")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 205.74 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c43b13f8-3b36-43e1-9103-afc826067840")
-	)
-	(hierarchical_label "UHF_PA"
-		(shape input)
-		(at 63.5 76.2 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "cab0dabc-9f67-4294-9f85-f6c74f5e9082")
-	)
-	(hierarchical_label "UHF_DCPL_PFD"
-		(shape input)
-		(at 63.5 58.42 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "cb490bb8-0208-4cb4-ae09-da284d69b5b7")
-	)
-	(hierarchical_label "+3.3V"
-		(shape input)
-		(at 254 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "cbb5b538-1c2a-4d5f-b56f-74888f12b456")
+		(uuid "11196f25-e0f4-4833-bd13-3ff9b7f231fe")
 	)
 	(hierarchical_label "GND"
 		(shape input)
@@ -2983,62 +1883,161 @@
 			)
 			(justify right)
 		)
-		(uuid "ce298a76-b6bd-4ab4-93d0-f262350389cb")
+		(uuid "125d6b73-4235-4e24-81d4-6d37321e449d")
 	)
-	(hierarchical_label "UHF_LN4"
+	(hierarchical_label "GND"
 		(shape input)
-		(at 274.32 39.37 270)
+		(at 330.2 130.81 270)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "cea2b130-42dc-4e0a-a46a-dc0fe41ebbf4")
+		(uuid "140e1358-d2fc-49eb-a62b-2c01ef602549")
 	)
-	(hierarchical_label "UHF_LN1"
+	(hierarchical_label "+3.3V"
 		(shape input)
-		(at 198.12 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d1bde5a9-03fd-4e77-9a1f-056682aad76d")
-	)
-	(hierarchical_label "UHF_XOSC_Q1"
-		(shape input)
-		(at 27.94 53.34 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d2b3e1e5-2c72-41d7-b58d-fafd9447925a")
-	)
-	(hierarchical_label "UHF_LPF0"
-		(shape input)
-		(at 27.94 68.58 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d81b83a4-6d8a-4e29-a44c-40b9a4c15d3e")
-	)
-	(hierarchical_label "UHF_MN1"
-		(shape input)
-		(at 172.72 31.75 90)
+		(at 63.5 35.56 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "dda3c6db-90cf-4f25-8e6b-9fac218e524d")
+		(uuid "150bc550-392e-426e-bcf2-a4eba14dd924")
+	)
+	(hierarchical_label "UHF_DCPL_PFD"
+		(shape input)
+		(at 129.54 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "15ea326f-0f5d-4cff-b2e4-753cf89af570")
+	)
+	(hierarchical_label "UHF_LN3"
+		(shape input)
+		(at 274.32 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1622b641-8e88-40b8-afa0-593f25aa863f")
+	)
+	(hierarchical_label "UHF_RBIAS"
+		(shape input)
+		(at 124.46 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "165a7003-2aa8-4e3a-bbd9-2a6ccadb5781")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 228.6 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "16b4d7ce-1fa0-4ce6-be95-e2f8bff067c4")
+	)
+	(hierarchical_label "UHF_RBIAS"
+		(shape input)
+		(at 27.94 63.5 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "18fdf48b-fea2-4f74-a933-e87e61ed013f")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 228.6 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2afe47a5-49ae-4edc-a5d2-c40610162073")
+	)
+	(hierarchical_label "UHF_XOSC_Q1"
+		(shape input)
+		(at 30.48 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2b0d3d62-e93d-4fbf-9112-ae83ea55aa7d")
+	)
+	(hierarchical_label "UHF_LN4"
+		(shape input)
+		(at 297.18 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2bf24763-dca6-40b8-a444-3143a6d1aa3e")
+	)
+	(hierarchical_label "UHF_PA"
+		(shape input)
+		(at 63.5 76.2 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2dc09510-09b9-4194-934d-2f6b4021871b")
+	)
+	(hierarchical_label "UHF_SCLK"
+		(shape input)
+		(at 27.94 33.02 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "306e5da7-77af-4c30-b61a-acbb0c91c339")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 27.94 76.2 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "367f4e95-09fe-46fa-9149-b65a0b8cf932")
+	)
+	(hierarchical_label "UHF_DCPL_VCO"
+		(shape input)
+		(at 63.5 55.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "36a7a33e-33d4-447d-afd7-b905937af566")
 	)
 	(hierarchical_label "UHF_LN0"
 		(shape input)
@@ -3049,29 +2048,29 @@
 			)
 			(justify left)
 		)
-		(uuid "dda52b10-55aa-41fa-87e3-7d42d25474a8")
+		(uuid "3c97bc7d-f0c3-4a28-baef-f5d4c8e2179a")
 	)
-	(hierarchical_label "UHF_MOSI"
+	(hierarchical_label "GND"
 		(shape input)
-		(at 27.94 35.56 180)
+		(at 27.94 58.42 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "df7134dc-327e-4740-a95b-fc7146b2a734")
+		(uuid "3dd26b50-650f-4959-b442-41d7d3035b95")
 	)
-	(hierarchical_label "+3.3V"
+	(hierarchical_label "UHF_CSN"
 		(shape input)
-		(at 63.5 38.1 0)
+		(at 27.94 30.48 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left)
+			(justify right)
 		)
-		(uuid "e3190581-2ec4-4cb8-a681-cd71828732c0")
+		(uuid "410af396-bf4a-4bba-a954-dc0e12b4d169")
 	)
 	(hierarchical_label "UHF_MISO"
 		(shape input)
@@ -3082,73 +2081,7 @@
 			)
 			(justify right)
 		)
-		(uuid "e602a3e3-9ea9-48c2-946d-f5cff3773984")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 254 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e7937262-3880-400d-9117-b3087c1530c0")
-	)
-	(hierarchical_label "UHF_LN0"
-		(shape input)
-		(at 172.72 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e8303619-f758-49e6-aad8-a99bf6a84f2f")
-	)
-	(hierarchical_label "UHF_XOSC_Q2"
-		(shape input)
-		(at 55.88 123.19 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "e880b9ef-cee6-4fd0-853a-2630b29064e8")
-	)
-	(hierarchical_label "UHF_XOSC_Q2"
-		(shape input)
-		(at 27.94 55.88 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e9f10997-8823-4454-b767-27964e9d13ba")
-	)
-	(hierarchical_label "UHF_LN2"
-		(shape input)
-		(at 248.92 31.75 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "ea9d2e3b-0c2f-4819-bab8-f08d847adc6c")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 104.14 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "ee0a5235-2621-4f01-8973-2fe8f5207d87")
+		(uuid "43378ee7-3478-488a-b76e-214c8561d6b5")
 	)
 	(hierarchical_label "UHF_MOSI"
 		(shape input)
@@ -3159,84 +2092,40 @@
 			)
 			(justify right)
 		)
-		(uuid "f0e899e6-e185-4bb5-b09b-35da9dfda345")
+		(uuid "46d495d1-d734-4a4c-bbcb-9895fa2a498b")
 	)
-	(hierarchical_label "UHF_DCPL"
+	(hierarchical_label "UHF_LPF1"
 		(shape input)
-		(at 78.74 123.19 90)
+		(at 27.94 71.12 180)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify left)
+			(justify right)
 		)
-		(uuid "f15a7395-4885-4fa7-95cc-e05e4b985643")
+		(uuid "481ef6f2-21c1-4b24-9da1-791fd4223cc3")
+	)
+	(hierarchical_label "UHF_LPF0"
+		(shape input)
+		(at 27.94 68.58 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4a35cb62-2bed-42af-aaca-34dfdf8bcc56")
 	)
 	(hierarchical_label "GND"
 		(shape input)
-		(at 124.46 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "f2970139-d493-4306-84e3-204c06299b03")
-	)
-	(hierarchical_label "UHF_LN5"
-		(shape input)
-		(at 322.58 31.75 90)
+		(at 63.5 68.58 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left)
 		)
-		(uuid "f318605c-3bfa-4bf3-a13e-9a4d54b4937f")
-	)
-	(hierarchical_label "UHF_LN5"
-		(shape input)
-		(at 297.18 39.37 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "f949b28a-593b-4691-bf7c-eb1e3d327b6a")
-	)
-	(hierarchical_label "GND"
-		(shape input)
-		(at 355.6 130.81 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "fa0b73cb-5973-4af3-ac7e-295039db2b0c")
-	)
-	(hierarchical_label "UHF_SCLK"
-		(shape input)
-		(at 279.4 177.8 270)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "fa0c84b2-be42-4152-a7c6-2f2eca6ed107")
-	)
-	(hierarchical_label "UHF_LN1"
-		(shape input)
-		(at 104.14 179.07 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "ff4f6227-4962-422e-b1a5-ef1940a5ba0c")
+		(uuid "4a49df89-3d83-4639-bb72-fbb37b95632e")
 	)
 	(hierarchical_label "UHF_DCPL_VCO"
 		(shape input)
@@ -3247,207 +2136,1130 @@
 			)
 			(justify left)
 		)
-		(uuid "ffd46042-5f7d-4586-ba4c-3c30ed03aab7")
+		(uuid "4b1bbeaa-f46c-46c6-a114-9f68dc18a386")
+	)
+	(hierarchical_label "UHF_LN1"
+		(shape input)
+		(at 104.14 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4c1a257a-383e-48db-8f6b-90f6a2447b57")
+	)
+	(hierarchical_label "UHF_LN7"
+		(shape input)
+		(at 63.5 66.04 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4d93d1ee-3558-4e34-bb90-adc5bea7d5cb")
+	)
+	(hierarchical_label "UHF_LN2"
+		(shape input)
+		(at 129.54 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4ec24974-d33b-423f-83a5-4d755eacbeba")
+	)
+	(hierarchical_label "UHF_MISO"
+		(shape input)
+		(at 27.94 38.1 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "50cb4659-ca56-4a8a-a24c-1c16fe10ec63")
+	)
+	(hierarchical_label "UHF_DCPL"
+		(shape input)
+		(at 63.5 53.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "51a71216-d6e1-4355-9335-46346890cc71")
+	)
+	(hierarchical_label "UHF_XOSC_Q1"
+		(shape input)
+		(at 90.17 38.1 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "521ef35b-8c14-4473-a078-3d991581417f")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 45.72 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "554cc906-93fb-4d13-bcb2-a20de5346f0b")
+	)
+	(hierarchical_label "UHF_LN6"
+		(shape input)
+		(at 347.98 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "57172f31-00b8-4747-9160-4d53f4238c47")
+	)
+	(hierarchical_label "UHF_CSN"
+		(shape input)
+		(at 355.6 177.8 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5741e4c8-8129-4439-856e-40c43b7b5453")
+	)
+	(hierarchical_label "UHF_LN3"
+		(shape input)
+		(at 248.92 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5788215c-86ef-40f5-bd44-9c7ed1313fbe")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 205.74 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5b2ddc87-b0d9-4b5f-a37a-cc8c63c36798")
+	)
+	(hierarchical_label "UHF_DCPL"
+		(shape input)
+		(at 78.74 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5b683237-48bc-43bc-a39c-1f91e4ff23ac")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 93.98 43.18 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5c3f17d8-a77f-4abd-bc18-a70e073370cc")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 78.74 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5c7de592-f5b3-4a31-8fe6-d22d5803b39b")
+	)
+	(hierarchical_label "UHF_XOSC_Q2"
+		(shape input)
+		(at 27.94 55.88 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5e4be9c6-d26b-4d01-86ef-5d288c24dffd")
+	)
+	(hierarchical_label "UHF_LN3"
+		(shape input)
+		(at 154.94 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "602b527a-edcc-490e-b645-fd8592311623")
+	)
+	(hierarchical_label "UHF_GPIO0"
+		(shape input)
+		(at 27.94 43.18 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "60576050-14b0-437d-bd80-d0432a2a0b6a")
+	)
+	(hierarchical_label "UHF_LN0"
+		(shape input)
+		(at 78.74 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6151ad8b-83a0-4a22-8a86-6352cccb92c6")
+	)
+	(hierarchical_label "UHF_LN0"
+		(shape input)
+		(at 172.72 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "63f6590e-e202-47cc-824d-aa0a44463bcd")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 355.6 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "643a4a29-7ffd-4cae-a2e8-d8e305a7c7fe")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 25.4 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6652e30f-876e-4e32-b0c6-713daf4e84b2")
+	)
+	(hierarchical_label "UHF_PA"
+		(shape input)
+		(at 63.5 76.2 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "66ad4a9d-ff0e-42d4-9600-7b3fff3dcd2c")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 304.8 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "66d6216a-9e3b-478f-b627-bcc319000c46")
+	)
+	(hierarchical_label "UHF_MOSI"
+		(shape input)
+		(at 27.94 35.56 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "69ef5372-5874-445e-8d75-e2fc82625bf7")
+	)
+	(hierarchical_label "UHF_LN7"
+		(shape input)
+		(at 63.5 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "735fcd70-206d-45dd-86c9-81e0d5f1d8ce")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 104.14 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7582d440-7453-4e96-8e4c-86d1d72fa351")
+	)
+	(hierarchical_label "UHF_DCPL_XOSC"
+		(shape input)
+		(at 63.5 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "77641eb7-faf6-4a72-b001-354fb28aca31")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 304.8 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7848a190-d651-4055-951a-7ea9572ded5f")
+	)
+	(hierarchical_label "UHF_SCLK"
+		(shape input)
+		(at 27.94 33.02 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7d0fcf31-e002-47a0-be50-dac4a4c1e7c2")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 355.6 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "816aead4-946b-4211-8540-ebdf832deb14")
+	)
+	(hierarchical_label "UHF_MN1"
+		(shape input)
+		(at 147.32 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "85bf3028-512f-4404-8e30-a4dc4a556304")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 279.4 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "867bd331-63cb-468e-aeed-be7ba5ab55d1")
+	)
+	(hierarchical_label "UHF_AVDD_FILT"
+		(shape input)
+		(at 401.32 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8a45f708-040d-429f-bbcc-46a1d2978503")
+	)
+	(hierarchical_label "UHF_LN6"
+		(shape input)
+		(at 322.58 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "907b2e88-dbe1-455b-bcd3-e07cf8ce6494")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 401.32 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "93ff0eb9-750b-4822-95c8-d3cad0a9c4d1")
+	)
+	(hierarchical_label "UHF_MOSI"
+		(shape input)
+		(at 304.8 177.8 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "940063d9-2e0c-4ceb-80c0-ff61c2a107a2")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 373.38 35.56 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "94ffd03b-a1b7-42c1-96ee-1d6d5ea6d725")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 205.74 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "959541ce-ecec-4038-b864-89f2362b3f0d")
+	)
+	(hierarchical_label "UHF_DCPL_PFD"
+		(shape input)
+		(at 63.5 58.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9868dd53-9443-480d-b426-096912297d5e")
+	)
+	(hierarchical_label "UHF_SCLK"
+		(shape input)
+		(at 279.4 177.8 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "98a27860-b801-4093-a5fa-2e0ca1257c32")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 378.46 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "98c30785-f898-4a8d-a6b5-02034b2e820f")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 129.54 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "98ed45db-5799-4510-8c76-27a9bcca768e")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 30.48 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9a05ca34-4a52-455e-9bea-c09038501f7c")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 104.14 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9c6ab335-55f7-4f88-a4da-7ad336675cec")
+	)
+	(hierarchical_label "UHF_LN7"
+		(shape input)
+		(at 347.98 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9c6c97e7-1f2d-4548-831c-d458c56f65de")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 154.94 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9eda6feb-e0a4-4c26-ba6e-2f602111f8a5")
+	)
+	(hierarchical_label "UHF_LN2"
+		(shape input)
+		(at 248.92 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9ee69581-a51b-4566-a7eb-298d7286d74a")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 40.64 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a0589038-931a-40d6-ac5a-e0ff97afd533")
+	)
+	(hierarchical_label "UHF_LN5"
+		(shape input)
+		(at 322.58 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a0f5be50-e799-4194-a5d0-11216384d70b")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 38.1 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a26beea2-9c40-4d54-8b8e-0ff48b7851ad")
+	)
+	(hierarchical_label "UHF_CSN"
+		(shape input)
+		(at 27.94 30.48 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a33a168f-c922-4613-baba-8f99b9329451")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 129.54 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a48a6b9f-b8a3-496e-9a9c-05646e7a9fde")
+	)
+	(hierarchical_label "UHF_XOSC_Q1"
+		(shape input)
+		(at 27.94 53.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a91ba0af-f88d-442d-8f31-34e86c993532")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 78.74 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ab4960a3-baee-4d95-b63d-a624480ac8b0")
+	)
+	(hierarchical_label "UHF_AVDD_FILT"
+		(shape input)
+		(at 55.88 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ae18295d-4c1a-4a5f-b341-455a73ba07f0")
+	)
+	(hierarchical_label "UHF_LN1"
+		(shape input)
+		(at 198.12 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b0267f8c-f96b-4600-9dcd-5299ecf6691b")
+	)
+	(hierarchical_label "UHF_XOSC_Q2"
+		(shape input)
+		(at 27.94 55.88 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b0bcae54-bfda-4a9f-9fc5-f6b665f62931")
+	)
+	(hierarchical_label "UHF_LN7"
+		(shape input)
+		(at 63.5 71.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b128ac07-4857-4f56-95b4-4cf3a048a2f5")
+	)
+	(hierarchical_label "UHF_LN2"
+		(shape input)
+		(at 223.52 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b5c5e64b-9cfc-4503-a7d3-d4ff913e1e9e")
+	)
+	(hierarchical_label "UHF_GPIO2"
+		(shape input)
+		(at 27.94 45.72 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b875e3d3-37bc-42f4-987a-4bfe69b57e7e")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 205.74 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bb5f1b1e-da3e-4c2f-9c97-601d54796b2a")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 279.4 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bc322706-0e66-4e37-9f73-382b4e8b0418")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 30.48 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bc61cc48-e0e4-4c1b-a651-14b9ee269a39")
+	)
+	(hierarchical_label "UHF_RESET"
+		(shape input)
+		(at 27.94 25.4 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bda0dea4-f9a7-472f-a300-cce926ca9aea")
+	)
+	(hierarchical_label "UHF_DCPL_XOSC"
+		(shape input)
+		(at 154.94 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "be22a88d-131d-4ca6-bf1c-563b46ec9aeb")
+	)
+	(hierarchical_label "UHF_XOSC_Q1"
+		(shape input)
+		(at 27.94 53.34 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bfda200c-5121-4fb0-8b0c-f31f9bec36f3")
+	)
+	(hierarchical_label "UHF_MISO"
+		(shape input)
+		(at 27.94 38.1 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c136a03c-121e-4191-a6a4-1e97b1ec9bef")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 254 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c21e3a35-d641-4221-99f0-2bb8aa96c63d")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 330.2 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c4cbc916-2710-46d2-adaa-a6bce9846976")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 25.4 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c77e1096-2323-4744-89c1-127375506539")
+	)
+	(hierarchical_label "UHF_LN5"
+		(shape input)
+		(at 205.74 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c87a97c5-fd52-48e8-84f8-112704a41a4e")
+	)
+	(hierarchical_label "UHF_XOSC_Q2"
+		(shape input)
+		(at 97.79 38.1 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c8bec374-c9e3-4cbf-8366-f79637da55c2")
+	)
+	(hierarchical_label "UHF_LN1"
+		(shape input)
+		(at 223.52 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c9650a47-91dc-4296-b5b2-3baea5dc1eee")
+	)
+	(hierarchical_label "UHF_GPIO3"
+		(shape input)
+		(at 27.94 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c9a9f482-b48a-47c0-9147-6ac292bd2a54")
+	)
+	(hierarchical_label "UHF_LPF0"
+		(shape input)
+		(at 180.34 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "caa5d48e-812e-4bec-ba24-546610322ac5")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 30.48 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cbcb4c87-787f-4bf1-ae80-f2e4ad721f3a")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 254 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cd61aa6c-f315-4f03-bef2-8fc147c35a90")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 43.18 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cfb3c940-215b-46ca-897e-649f3e9bbf8d")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 63.5 68.58 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d13f0762-a374-4cd7-a8d5-45638a14c869")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 30.48 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d3f0f04d-ce7b-4f4d-8aca-35bec9815ad7")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 124.46 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d4c304c0-3627-4b26-bbf7-945cf2734c07")
+	)
+	(hierarchical_label "UHF_LN4"
+		(shape input)
+		(at 180.34 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d6621d45-ef9b-4387-b6d0-ad767ae6992b")
+	)
+	(hierarchical_label "UHF_LPF1"
+		(shape input)
+		(at 27.94 71.12 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "dbe54ec0-0361-423d-97ec-5238ef873619")
+	)
+	(hierarchical_label "UHF_LN4"
+		(shape input)
+		(at 274.32 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "dd5b72d6-87c5-46fb-b888-469a0e4d2763")
+	)
+	(hierarchical_label "UHF_LN5"
+		(shape input)
+		(at 297.18 39.37 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e326bf58-4e3e-494f-9bf9-a825813ca843")
+	)
+	(hierarchical_label "UHF_LN7"
+		(shape input)
+		(at 368.3 30.48 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e3c626d6-f059-497c-be13-16244dac781b")
+	)
+	(hierarchical_label "UHF_LN7"
+		(shape input)
+		(at 254 179.07 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e46ec602-bfea-4fcd-abee-848cd45969c4")
+	)
+	(hierarchical_label "UHF_GPIO3"
+		(shape input)
+		(at 27.94 48.26 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e56afa5d-2fb7-44cf-8160-6f19de9cbbf9")
+	)
+	(hierarchical_label "UHF_GPIO2"
+		(shape input)
+		(at 27.94 45.72 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e6d74243-7912-4ffb-819e-ead66ea61835")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 154.94 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e78f416c-4f04-4618-a370-492d3841f5f1")
+	)
+	(hierarchical_label "UHF_RESET"
+		(shape input)
+		(at 27.94 25.4 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e92adc06-4801-4807-8ffc-28cbca994a8a")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 180.34 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ec1ceccf-cd20-4160-9982-a4637d5ae4f0")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 378.46 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "edab2ffe-0cad-4391-9836-104d653ecbb1")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 27.94 58.42 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ee601245-fb32-49b8-8d8a-782227fc5bc8")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 254 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "eff6fb44-2e28-404d-b70b-aa26524ddc11")
+	)
+	(hierarchical_label "UHF_XOSC_Q2"
+		(shape input)
+		(at 55.88 123.19 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f48846b6-cc28-4e5b-8cc1-773a0d7365a8")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 55.88 186.69 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f60f38e5-3b29-433c-a6f6-de741040b08b")
+	)
+	(hierarchical_label "UHF_PA"
+		(shape input)
+		(at 147.32 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f88105f5-bff7-4972-bf3d-a78cd94224f2")
+	)
+	(hierarchical_label "UHF_MN1"
+		(shape input)
+		(at 172.72 31.75 90)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fa0e69ff-1483-469c-9d3c-88e805abc8b8")
+	)
+	(hierarchical_label "UHF_LPF1"
+		(shape input)
+		(at 180.34 130.81 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fd54ade7-1bb0-450c-97cd-9d8f098a351b")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 63.5 48.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fdeacef3-dcc5-4690-be07-396f558074b0")
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 78.74 127 0)
+		(at 304.8 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "00d38139-ca68-4cd2-8eaf-e3740d6428d5")
-		(property "Reference" "C3"
-			(at 79.375 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 79.375 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 79.7052 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 78.74 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 78.74 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 81.28 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 81.28 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 81.28 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "db9633ab-65fb-4fb6-8dca-1b6fdf40b3ee")
-		)
-		(pin "2"
-			(uuid "2eea4e66-c967-4d24-b4a3-552da24fbd4b")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 180.34 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "1a0301dc-cc43-435a-93e4-4f3349c5386c")
-		(property "Reference" "C7"
-			(at 180.975 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1.5nF"
-			(at 180.975 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 181.3052 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 180.34 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 180.34 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 182.88 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 182.88 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 182.88 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "68cd42da-931f-4e97-8cea-6e4c2ed712c2")
-		)
-		(pin "2"
-			(uuid "5a172840-7bf2-435d-bbfd-5772f8c8b007")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 355.6 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "1c28235d-2efb-4ebb-9b9d-d4844314a0c2")
-		(property "Reference" "C14"
-			(at 356.235 129.54 0)
+		(uuid "01ca1410-6c89-49d3-9120-56b2af1d4a96")
+		(property "Reference" "C12"
+			(at 305.435 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3456,7 +3268,7 @@
 			)
 		)
 		(property "Value" "47nF"
-			(at 356.235 124.46 0)
+			(at 305.435 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3464,8 +3276,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 356.5652 123.19 0)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 305.7652 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3474,7 +3286,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 355.6 127 0)
+			(at 304.8 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3482,15 +3294,15 @@
 			)
 		)
 		(property "Description" ""
-			(at 355.6 127 0)
+			(at 304.8 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 358.14 132.0799 0)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 307.34 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3499,7 +3311,7 @@
 			)
 		)
 		(property "project_name" "RF_HAT"
-			(at 358.14 132.0799 0)
+			(at 307.34 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3507,8 +3319,8 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 358.14 132.0799 0)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 307.34 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3517,15 +3329,297 @@
 			)
 		)
 		(pin "1"
-			(uuid "83a9be00-67fe-4054-bff5-f89a16dfc442")
+			(uuid "6f5ed865-e8a1-4509-a2d0-1ad47603248f")
 		)
 		(pin "2"
-			(uuid "785bfa16-bd30-4363-8abf-1e05945b2f98")
+			(uuid "0809bff8-a02c-462e-94d2-0d2bd4110823")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C14")
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 147.32 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0c79f57b-b53b-423c-920e-349b6ea2c1cb")
+		(property "Reference" "R2"
+			(at 149.352 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "18R"
+			(at 147.32 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 145.542 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 147.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 147.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 149.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 149.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 149.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "446f4b45-0006-4bbf-9fcd-9e02c93d9d74")
+		)
+		(pin "2"
+			(uuid "2d11d4ad-8415-46f8-a746-eb41e5a3c320")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "R2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 330.2 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0dfbd9de-2fb1-4733-a4ac-a318e6412371")
+		(property "Reference" "C13"
+			(at 330.835 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 330.835 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 331.1652 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 330.2 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 330.2 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 332.74 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 332.74 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 332.74 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e798fdd3-d5a5-47f5-8046-8a23437890ec")
+		)
+		(pin "2"
+			(uuid "204c1661-5457-401f-bd74-7db3eeb86250")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C13")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 378.46 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0e721a15-efc5-47e1-85c1-24adb35e6393")
+		(property "Reference" "C15"
+			(at 379.095 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 379.095 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 379.4252 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 378.46 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 378.46 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 381 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 381 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 381 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "920d0f30-cb63-40cc-a127-213771d5fca2")
+		)
+		(pin "2"
+			(uuid "cee3352c-7a0f-46d8-b90c-84f1999dbbea")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C15")
 					(unit 1)
 				)
 			)
@@ -3539,7 +3633,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "251068db-6e54-4566-bbdc-edc6879b102b")
+		(uuid "15dcedd0-b80d-4342-9830-d29c41e64397")
 		(property "Reference" "J1"
 			(at 373.634 33.528 0)
 			(effects
@@ -3583,7 +3677,7 @@
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 			(at 375.92 35.5599 0)
 			(effects
 				(font
@@ -3601,7 +3695,7 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
 			(at 375.92 35.5599 0)
 			(effects
 				(font
@@ -3611,2825 +3705,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "f4b2c157-6563-4edf-9b8c-df519d32ab91")
+			(uuid "cab1a54c-9388-46ad-8010-67b669565204")
 		)
 		(pin "2"
-			(uuid "c138f85f-2db6-43e4-9e1c-14ca3286baf6")
+			(uuid "15969e18-90fe-4857-a5e3-0cd89e665a8e")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 					(reference "J1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 205.74 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "2605c2a8-1756-4a22-9c3a-530c582b7407")
-		(property "Reference" "C8"
-			(at 206.375 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "220nF"
-			(at 206.375 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 206.7052 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 205.74 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 205.74 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 208.28 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 208.28 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 208.28 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "5449a5e4-6cd2-491f-8aff-a0167978d01d")
-		)
-		(pin "2"
-			(uuid "9ea49799-2347-4427-8ca0-8a99d0bc38cb")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 180.34 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "36214c53-cca7-49d5-af4a-34fcb69fa6d6")
-		(property "Reference" "C22"
-			(at 180.975 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "5.1pF"
-			(at 180.975 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 181.3052 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 180.34 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 180.34 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 182.88 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 182.88 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 182.88 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "55b0c738-9be9-4fb9-8b0d-43800d7278f5")
-		)
-		(pin "2"
-			(uuid "3f3a05e4-dc21-4748-a35c-45d5836290e7")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C22")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 104.14 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "39e824b1-e84d-48ab-bfa7-2af7cf3d0d1e")
-		(property "Reference" "C19"
-			(at 104.775 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "56pF"
-			(at 104.775 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 105.1052 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 104.14 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 104.14 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 106.68 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 106.68 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 106.68 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6d44e023-c9c1-44dd-9c5d-993a48218bf3")
-		)
-		(pin "2"
-			(uuid "dcd9b7f1-83f5-4dd1-a88e-cbe6ea7c54b7")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C19")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 228.6 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "3e6780f3-daaf-4230-8956-329f7cfa13d5")
-		(property "Reference" "C24"
-			(at 229.235 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "2.2pF"
-			(at 229.235 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 229.5652 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 228.6 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 228.6 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 231.14 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 231.14 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 231.14 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "0398d27d-9c24-47be-bef4-589e97231db0")
-		)
-		(pin "2"
-			(uuid "dccbe864-931a-4a09-a15f-08ed7716b776")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C24")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 228.6 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "4508c26d-72f1-4485-8600-d7419327151b")
-		(property "Reference" "C9"
-			(at 229.235 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "10nF"
-			(at 229.235 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 229.5652 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 228.6 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 228.6 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 231.14 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 231.14 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 231.14 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d7044ec9-8299-49a5-bad6-61f7a17b6f30")
-		)
-		(pin "2"
-			(uuid "32b4c204-1052-40d6-ab7b-53ddd5cc74cb")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C9")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:L")
-		(at 322.58 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "48d5df5e-745e-4eb1-93c8-02b396a85b18")
-		(property "Reference" "L7"
-			(at 321.31 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "22nH"
-			(at 324.485 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
-			(at 322.58 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 322.58 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 322.58 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 325.12 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 325.12 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 325.12 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "06cd7372-4270-4468-9a06-b57a6d5e22f9")
-		)
-		(pin "2"
-			(uuid "eabd4156-5a93-4389-a9bb-b2cdbc5450d1")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "L7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 279.4 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "49b2a6d8-d9ba-45c7-b721-4a9306698c9b")
-		(property "Reference" "C11"
-			(at 280.035 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "47nF"
-			(at 280.035 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 280.3652 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 279.4 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 279.4 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 281.94 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 281.94 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 281.94 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "48a38df7-3e33-42ed-aff7-86b8c2a00d6f")
-		)
-		(pin "2"
-			(uuid "732f09f4-dad2-42f0-b402-e2daa3e68eba")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C11")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 147.32 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "4d879bef-e8a0-4a5d-ab3b-4a28e0da0df5")
-		(property "Reference" "R2"
-			(at 149.352 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "18R"
-			(at 147.32 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 145.542 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 147.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 147.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 149.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 149.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 149.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "7c2c5b4a-7754-4de2-9c59-bf3e1df87fee")
-		)
-		(pin "2"
-			(uuid "3964cd96-66fb-4e56-8e33-5c7576ca07b8")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 154.94 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "5054ee81-767f-4337-a606-716dae554618")
-		(property "Reference" "C21"
-			(at 155.575 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "39pF"
-			(at 155.575 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 155.9052 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 154.94 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 154.94 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 157.48 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 157.48 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 157.48 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ab9fab1d-47bc-4ca9-9047-9b8c9c74682e")
-		)
-		(pin "2"
-			(uuid "35b6b3f5-6c50-400a-b6f0-1e7ae06263e8")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C21")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 104.14 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "55fe5d9e-ec78-4956-a2cc-750b5d260711")
-		(property "Reference" "C4"
-			(at 104.775 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 104.775 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 105.1052 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 104.14 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 104.14 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 106.68 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 106.68 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 106.68 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "e3e9a371-7f41-4218-859f-91576b8d25ed")
-		)
-		(pin "2"
-			(uuid "ff863922-0dbb-4353-a63e-b045cb8f8916")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 30.48 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "57cdec9c-6802-4075-8364-07afc708c6e7")
-		(property "Reference" "C1"
-			(at 31.115 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "15pF"
-			(at 31.115 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 31.4452 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 30.48 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 30.48 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 33.02 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 33.02 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 33.02 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f1cfe688-f9a4-4ea2-8b71-f4260ea0ce5c")
-		)
-		(pin "2"
-			(uuid "fa10d35f-86ea-4633-879e-0315effda107")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:L")
-		(at 347.98 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "5fcfe12c-41f1-43a5-b5ab-a72e8a851d5a")
-		(property "Reference" "L8"
-			(at 346.71 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "15nH"
-			(at 349.885 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
-			(at 347.98 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 347.98 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 347.98 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 350.52 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 350.52 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 350.52 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "52c3ea2d-f2d7-488a-bf58-55c7e11e556f")
-		)
-		(pin "2"
-			(uuid "594240d9-25a0-46dd-a599-d940590f22ae")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "L8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 254 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "636877ad-7798-45ff-aff7-2569e4f84080")
-		(property "Reference" "C25"
-			(at 254.635 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "5.1pF"
-			(at 254.635 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 254.9652 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 254 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 254 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 256.54 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 256.54 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 256.54 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "89b8dc7f-65d5-485d-a577-5dcee810a8c0")
-		)
-		(pin "2"
-			(uuid "7f46c45b-17d7-4593-8e4f-477bd9759354")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C25")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:L")
-		(at 172.72 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "66c594a2-b7c1-42f8-83d8-fb9298285aa9")
-		(property "Reference" "L1"
-			(at 171.45 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "56nH"
-			(at 174.625 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
-			(at 172.72 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 172.72 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 172.72 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 175.26 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 175.26 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 175.26 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "303ba078-82a5-471d-955e-259ec8a038b0")
-		)
-		(pin "2"
-			(uuid "28a4dc97-ea0f-44e8-b748-181f7d13c86a")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "L1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 330.2 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "6d8a2151-ad4d-41c2-8c1d-3b06fe7ddb4a")
-		(property "Reference" "TP3"
-			(at 330.2 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 335.28 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 330.2 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 332.74 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "7fb798fe-01c5-4796-8bb0-ffce63d93a69")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "TP3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:R")
-		(at 124.46 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7669aea9-e68c-4164-8e27-5a39311f139b")
-		(property "Reference" "R1"
-			(at 126.492 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "56k"
-			(at 124.46 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 122.682 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 124.46 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 124.46 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 127 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 127 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 127 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "79b6f8d1-4fdc-475f-a132-8ed6f83c996d")
-		)
-		(pin "2"
-			(uuid "f6040549-ad0e-4fac-bf18-1cf3131f4c4b")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "R1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 205.74 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "76b24810-8b02-4c69-b356-3acbd4f60482")
-		(property "Reference" "C23"
-			(at 206.375 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "6.2pF"
-			(at 206.375 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 206.7052 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 205.74 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 205.74 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 208.28 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 208.28 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 208.28 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "e7ff0324-8c50-4f2b-8df5-023c11f40ceb")
-		)
-		(pin "2"
-			(uuid "699d8846-9da7-4381-838a-996f7806ae83")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C23")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:L")
-		(at 223.52 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7d7339cb-94f4-4cf6-abfa-5ec5314bb097")
-		(property "Reference" "L3"
-			(at 222.25 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "27nH"
-			(at 225.425 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
-			(at 223.52 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 223.52 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 223.52 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 226.06 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 226.06 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 226.06 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b5f5f9ec-6344-4b27-b7d5-79dd768d18cb")
-		)
-		(pin "2"
-			(uuid "4f9d6794-6daa-4b3d-89ce-36e3977ac2e8")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "L3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:Crystal_GND24")
-		(at 93.98 38.1 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "7ea584ab-d8dd-428e-91cf-0a95708e6f36")
-		(property "Reference" "Y1"
-			(at 97.155 43.18 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "40MHz"
-			(at 97.155 41.275 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
-			(at 93.98 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 93.98 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 93.98 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 96.52 43.1799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 96.52 43.1799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 96.52 43.1799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "06594f2f-a954-4782-a7fb-378f1d0936bb")
-		)
-		(pin "2"
-			(uuid "6dc4f571-0392-47c3-859c-ead6164ef739")
-		)
-		(pin "4"
-			(uuid "bc804df4-ff82-4bae-b1ae-ca74b05ffcab")
-		)
-		(pin "3"
-			(uuid "80f41782-fe51-4d73-bc07-4389fb50312e")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "Y1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 129.54 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "840ecbb6-4c3c-48be-a00a-8e1434830178")
-		(property "Reference" "C20"
-			(at 130.175 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100pF"
-			(at 130.175 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 130.5052 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 129.54 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 129.54 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 132.08 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 132.08 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 132.08 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "bb62d197-ed01-4bc5-9ced-f609e0a58cc4")
-		)
-		(pin "2"
-			(uuid "6123f555-ff06-4711-9bfb-ac408c19c3c4")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C20")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 355.6 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "8fb5bce1-a9e5-4332-8106-5180693511d4")
-		(property "Reference" "TP4"
-			(at 355.6 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 355.6 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 360.68 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 355.6 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 355.6 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 358.14 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 358.14 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 358.14 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8741844e-2de7-40c2-8632-a65338e741bc")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "TP4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 330.2 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a702ef11-49db-4670-a7eb-fed5a7688bb4")
-		(property "Reference" "C13"
-			(at 330.835 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "47nF"
-			(at 330.835 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 331.1652 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 330.2 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 330.2 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 332.74 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 332.74 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 332.74 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "3d98532f-25c4-419d-a001-ee20f0c1820c")
-		)
-		(pin "2"
-			(uuid "09238fb1-e92e-43e9-ab02-8fc0a977053f")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C13")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 304.8 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ad0c4e7f-f030-4ae4-be08-18148b675283")
-		(property "Reference" "C12"
-			(at 305.435 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "47nF"
-			(at 305.435 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 305.7652 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 304.8 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 304.8 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 307.34 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 307.34 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 307.34 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "200fdc8d-ae32-4dbb-bf62-1c5a38acc37c")
-		)
-		(pin "2"
-			(uuid "112a0f2f-5a97-43b1-b70a-ca69ac4350bc")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C12")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "RF:CC1200")
-		(at 45.72 50.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ad78e0b2-d4ae-4104-b7e8-b45559b4e438")
-		(property "Reference" "U1"
-			(at 33.02 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "CC1200RHBR"
-			(at 35.56 21.59 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm"
-			(at 60.96 80.01 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 45.72 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 45.72 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 48.26 55.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 48.26 55.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 48.26 55.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "aa4f2a2f-836c-4459-9f96-2485d268b51e")
-		)
-		(pin "11"
-			(uuid "efacca0d-43da-4b2f-b922-8f4d6ee3b6b1")
-		)
-		(pin "8"
-			(uuid "d3821e38-f117-4be3-a50e-d3cfb47cd82e")
-		)
-		(pin "7"
-			(uuid "a51d2b57-132a-448d-8bad-bce54ad3ffed")
-		)
-		(pin "9"
-			(uuid "34cebcba-c925-4f84-b55e-fadb7547afe7")
-		)
-		(pin "10"
-			(uuid "087a3074-5c41-43fa-bdd2-8734f8df39ca")
-		)
-		(pin "4"
-			(uuid "dab37898-6149-403e-ba3a-6bf98da51b0d")
-		)
-		(pin "3"
-			(uuid "31c29f0e-d9a9-47f8-b152-fc26f9375564")
-		)
-		(pin "30"
-			(uuid "19420bde-bc9c-4956-9ca1-9d6afcdbfeb4")
-		)
-		(pin "31"
-			(uuid "5898a0e3-33b6-41cd-adcc-d2cf1f1d3975")
-		)
-		(pin "32"
-			(uuid "92a74059-e1ea-4243-a08d-75b8c63726e7")
-		)
-		(pin "14"
-			(uuid "49e4c8b9-ae9c-42e2-ab00-5a380425d658")
-		)
-		(pin "23"
-			(uuid "1f909718-ad6d-472c-9813-465f2fe188b4")
-		)
-		(pin "24"
-			(uuid "5f15681a-4a8e-42aa-aef5-d947e28b6891")
-		)
-		(pin "33"
-			(uuid "4c7d6fda-aa2e-41e5-8503-8015f8d063ab")
-		)
-		(pin "5"
-			(uuid "8412abae-cddc-49f9-b44d-ee975398d650")
-		)
-		(pin "12"
-			(uuid "6e8c59e9-6332-4244-93d3-44716ddee17a")
-		)
-		(pin "1"
-			(uuid "0940cd9e-77c0-4988-8204-7862726848e6")
-		)
-		(pin "13"
-			(uuid "194dd190-1cd6-44a1-a62c-77f5827fdc6f")
-		)
-		(pin "15"
-			(uuid "ca6b7bc3-490b-46be-8622-f89377895dfe")
-		)
-		(pin "25"
-			(uuid "b26e7fa4-4469-4639-b435-743bc92492fa")
-		)
-		(pin "28"
-			(uuid "c9f12a36-d423-4c59-9bf0-70471eb78b6a")
-		)
-		(pin "22"
-			(uuid "a90393f6-e9a9-40c2-9757-3676e27f9c6c")
-		)
-		(pin "27"
-			(uuid "81e1823b-7cfd-4431-a48b-2ef808423d8d")
-		)
-		(pin "6"
-			(uuid "daf1027b-3abb-4f7f-bbba-28cc019efb78")
-		)
-		(pin "21"
-			(uuid "260e1100-c5a7-48c5-a917-dfb41633cb4c")
-		)
-		(pin "26"
-			(uuid "13e81dcb-be3d-472b-aa8f-740639a59e39")
-		)
-		(pin "29"
-			(uuid "2fa380d7-c7c9-4fe7-9204-a42edb2a6207")
-		)
-		(pin "19"
-			(uuid "ebf1a8a9-b07c-4649-8cd2-214969c9ab94")
-		)
-		(pin "20"
-			(uuid "6f22b4b1-b27d-4e28-92d4-3899b6be52dc")
-		)
-		(pin "18"
-			(uuid "5dca0d68-45a6-4d86-a11c-c882226468c2")
-		)
-		(pin "17"
-			(uuid "2f1ccc06-c96c-4f65-8f0e-fc4035b332b9")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "U1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:FerriteBead")
-		(at 401.32 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b16397cb-a338-4dc2-b754-ba87c5841da0")
-		(property "Reference" "FB1"
-			(at 397.51 36.195 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "1k@100MHz"
-			(at 405.13 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0402_1005Metric"
-			(at 399.542 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 401.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 401.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 403.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 403.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 403.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "e44d8e90-34ab-428d-856d-9254e223a0b6")
-		)
-		(pin "2"
-			(uuid "1b4df5e5-0f1f-4613-a668-8ce54e08b6e7")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "FB1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:L")
-		(at 274.32 35.56 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b2b7240e-15ea-4720-bfa0-a8953c03f88f")
-		(property "Reference" "L5"
-			(at 273.05 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "15nH"
-			(at 276.225 35.56 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
-			(at 274.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 274.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 274.32 35.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 276.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 276.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 276.86 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "c45d93a8-1d8f-43ea-8f4c-36f598847247")
-		)
-		(pin "2"
-			(uuid "fdaf8376-375b-48c7-862e-6b527d814aa8")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "L5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 129.54 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "b667b217-b98b-46f0-8a02-1502f864540b")
-		(property "Reference" "C5"
-			(at 130.175 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 130.175 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 130.5052 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 129.54 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 129.54 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 132.08 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 132.08 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 132.08 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "50667e44-2716-45bc-88a2-c5a4ead37fdc")
-		)
-		(pin "2"
-			(uuid "db7de6a4-d498-47c4-8fa5-27ab067c7b19")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 154.94 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "ba438f4b-bd82-4441-a462-7779abdafc32")
-		(property "Reference" "C6"
-			(at 155.575 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100nF"
-			(at 155.575 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 155.9052 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 154.94 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 154.94 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 157.48 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 157.48 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 157.48 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "dbc6a143-4c99-42e1-b0bf-bfda94b25568")
-		)
-		(pin "2"
-			(uuid "64a3652e-7347-4d02-aae9-85f13350d515")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:TestPoint")
-		(at 279.4 177.8 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "c3e79993-64f5-4dac-86a1-d8b8368497ba")
-		(property "Reference" "TP1"
-			(at 279.4 184.658 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 284.48 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 279.4 177.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 281.94 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9c6fb5a1-0f27-41d1-8358-a1fe3b59264d")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "TP1")
 					(unit 1)
 				)
 			)
@@ -6443,7 +3727,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d3960168-1f63-4a3b-8086-01670efee9fc")
+		(uuid "1f119a2f-2424-4a9d-9b93-45892ef1039e")
 		(property "Reference" "L6"
 			(at 295.91 35.56 90)
 			(effects
@@ -6487,7 +3771,7 @@
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 			(at 299.72 40.6399 0)
 			(effects
 				(font
@@ -6505,7 +3789,7 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
 			(at 299.72 40.6399 0)
 			(effects
 				(font
@@ -6515,14 +3799,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "87f918e7-d7f4-41af-90a9-1a0a6a66252b")
+			(uuid "0c10f128-8764-4368-a5a7-989247fe525a")
 		)
 		(pin "2"
-			(uuid "e4ef0d2c-9c55-4392-adc0-b6f7424dc8df")
+			(uuid "7b35ce1a-9eb0-45c5-b438-10837f178511")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 					(reference "L6")
 					(unit 1)
 				)
@@ -6530,204 +3814,16 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 30.48 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d5fe7c62-e693-49ae-b339-f1bcbe9315e8")
-		(property "Reference" "C16"
-			(at 31.115 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "47nF"
-			(at 31.115 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 31.4452 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 30.48 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 30.48 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 33.02 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 33.02 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 33.02 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "3a80b13f-b3d1-4fee-977d-682ea7529e7c")
-		)
-		(pin "2"
-			(uuid "6e68f745-57c5-4f93-95f0-b9ede26f502e")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C16")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 378.46 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d674dd03-58b5-48dc-baa7-07faf732e335")
-		(property "Reference" "C15"
-			(at 379.095 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "47nF"
-			(at 379.095 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 379.4252 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 378.46 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 378.46 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 381 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 381 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 381 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d5df83f5-dcdb-47e7-9676-7bea90529ad1")
-		)
-		(pin "2"
-			(uuid "544b30ac-1af2-4640-9bec-2864c6061695")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:TestPoint")
-		(at 304.8 177.8 0)
+		(at 355.6 177.8 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d6b21a06-fd01-4532-a7eb-6b03a1d71b45")
-		(property "Reference" "TP2"
-			(at 304.8 184.658 0)
+		(uuid "24490687-837c-46aa-9a8e-d987698bcfc7")
+		(property "Reference" "TP4"
+			(at 355.6 184.658 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6736,7 +3832,7 @@
 			)
 		)
 		(property "Value" "~"
-			(at 304.8 177.8 0)
+			(at 355.6 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6744,7 +3840,7 @@
 			)
 		)
 		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
-			(at 309.88 177.8 0)
+			(at 360.68 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6753,7 +3849,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 304.8 177.8 0)
+			(at 355.6 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6761,15 +3857,15 @@
 			)
 		)
 		(property "Description" ""
-			(at 304.8 177.8 0)
+			(at 355.6 177.8 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 307.34 182.8799 0)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 358.14 182.8799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6778,7 +3874,7 @@
 			)
 		)
 		(property "project_name" "RF_HAT"
-			(at 307.34 182.8799 0)
+			(at 358.14 182.8799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6786,99 +3882,8 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 307.34 182.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "fb108dd4-5e86-49e3-9cb6-0cac8f15082d")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "TP2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 78.74 182.88 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d6dbf59f-7c6c-49af-9bd1-3cb8c8e9d0f7")
-		(property "Reference" "C18"
-			(at 79.375 185.42 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "5.1pF"
-			(at 79.375 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 79.7052 179.07 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 78.74 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 78.74 182.88 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 81.28 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 81.28 187.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 81.28 187.9599 0)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 358.14 182.8799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6887,15 +3892,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "3a75edbe-a02b-4b15-b043-81a063354c64")
-		)
-		(pin "2"
-			(uuid "fd79712b-4215-4e4b-9ea6-58879e2af0e4")
+			(uuid "38d430d4-9187-4579-9a73-ce83120d6831")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C18")
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "TP4")
 					(unit 1)
 				)
 			)
@@ -6903,109 +3905,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 55.88 127 0)
+		(at 355.6 127 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d751a8f6-9dea-4f68-814a-014ec6354cff")
-		(property "Reference" "C2"
-			(at 56.515 129.54 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "15pF"
-			(at 56.515 124.46 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 56.8452 123.19 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 55.88 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 55.88 127 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 58.42 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "project_name" "RF_HAT"
-			(at 58.42 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 58.42 132.0799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "54a78d9b-3175-4619-9201-e401de4a8bf8")
-		)
-		(pin "2"
-			(uuid "45ff2e6b-97e9-4fc3-b5ac-e5e96d68408e")
-		)
-		(instances
-			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 254 127 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d916b8e5-5960-4650-b4c4-13f9cc0b3d21")
-		(property "Reference" "C10"
-			(at 254.635 129.54 0)
+		(uuid "30361705-79ec-4b1a-8bf1-ef39c5049446")
+		(property "Reference" "C14"
+			(at 356.235 129.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7014,7 +3922,7 @@
 			)
 		)
 		(property "Value" "47nF"
-			(at 254.635 124.46 0)
+			(at 356.235 124.46 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7022,8 +3930,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 254.9652 123.19 0)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 356.5652 123.19 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7032,7 +3940,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 254 127 0)
+			(at 355.6 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7040,15 +3948,15 @@
 			)
 		)
 		(property "Description" ""
-			(at 254 127 0)
+			(at 355.6 127 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 256.54 132.0799 0)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 358.14 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7057,7 +3965,7 @@
 			)
 		)
 		(property "project_name" "RF_HAT"
-			(at 256.54 132.0799 0)
+			(at 358.14 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7065,8 +3973,8 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 256.54 132.0799 0)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 358.14 132.0799 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7075,15 +3983,763 @@
 			)
 		)
 		(pin "1"
-			(uuid "b578ca5a-675d-4516-ba64-f94f0a7d49d3")
+			(uuid "69adbccf-1dcf-4f25-a325-822e6db09881")
 		)
 		(pin "2"
-			(uuid "6f9ec653-487d-49b2-9fbc-2b4fefae02fc")
+			(uuid "e7887c80-c1ae-4326-933e-e49ac2d8f9bf")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C10")
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 279.4 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "31c67aed-d37e-43d3-8141-19689ccd0d22")
+		(property "Reference" "C11"
+			(at 280.035 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 280.035 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 280.3652 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 281.94 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 281.94 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 281.94 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bfa06cd3-49ef-4db3-9665-b6e73b6709be")
+		)
+		(pin "2"
+			(uuid "3b99905d-187a-4c4a-8488-02d7219db494")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C11")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 228.6 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3217e24f-ad5c-46b4-afb3-db9f3e6839b3")
+		(property "Reference" "C9"
+			(at 229.235 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10nF"
+			(at 229.235 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 229.5652 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 228.6 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 228.6 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 231.14 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 231.14 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 231.14 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f65ce6cd-76bb-4b80-8f1d-d09a107fcd42")
+		)
+		(pin "2"
+			(uuid "a23d6ed3-633a-4abf-befa-8d0935ce30d7")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 279.4 177.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3d9bca16-6277-49f1-81d2-3d30dd317760")
+		(property "Reference" "TP1"
+			(at 279.4 184.658 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 279.4 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 284.48 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 281.94 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 281.94 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 281.94 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f9d2ba32-baf2-40a5-b97b-49b80068d916")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "TP1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 180.34 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "429cb9e4-acd3-437b-9ad4-672696338f70")
+		(property "Reference" "C22"
+			(at 180.975 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "5.1pF"
+			(at 180.975 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 181.3052 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 180.34 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 180.34 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 182.88 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 182.88 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 182.88 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7bb00c20-e0b2-4b9f-9348-375dbce9971f")
+		)
+		(pin "2"
+			(uuid "beb24ead-0140-4e92-add9-54ad612b1c42")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:FerriteBead")
+		(at 401.32 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "483265b7-ea22-4697-92b4-d529d40d4106")
+		(property "Reference" "FB1"
+			(at 397.51 36.195 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1k@100MHz"
+			(at 405.13 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 399.542 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 401.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 401.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 403.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 403.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 403.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "94729d65-a0e8-44c5-95ed-946e096c2d60")
+		)
+		(pin "2"
+			(uuid "dc48362a-e1a7-481b-b650-33630b17afb3")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "FB1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 254 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "493b348b-7aac-4f1a-9079-9e1c54321bcd")
+		(property "Reference" "C25"
+			(at 254.635 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "5.1pF"
+			(at 254.635 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 254.9652 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 254 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 254 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 256.54 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 256.54 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 256.54 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a622bad7-c594-4576-b19b-46019eef13b6")
+		)
+		(pin "2"
+			(uuid "e1489901-7aab-4dec-ba66-2356645e5c34")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 205.74 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4e109010-2a0d-4b92-beb9-5ef808983fd1")
+		(property "Reference" "C8"
+			(at 206.375 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "220nF"
+			(at 206.375 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 206.7052 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 205.74 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 205.74 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 208.28 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 208.28 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 208.28 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3b6a3f71-ec3b-4a3e-82eb-dd1705d3a57d")
+		)
+		(pin "2"
+			(uuid "67ca9d56-5dbe-499d-b70d-81fd474b24f4")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 104.14 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "516420e7-8f16-4e54-96e3-78bbd0ba726b")
+		(property "Reference" "C4"
+			(at 104.775 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 104.775 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 105.1052 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 104.14 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 106.68 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 106.68 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 106.68 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "499f98ba-c6d1-45ca-90d9-ba6f255171fe")
+		)
+		(pin "2"
+			(uuid "68985646-2340-4e18-9aee-50cd1d19586d")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C4")
 					(unit 1)
 				)
 			)
@@ -7097,7 +4753,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d9628a36-58de-4fd3-b2a2-2a5769061c2e")
+		(uuid "5c209a50-fe7f-41c2-bcf4-69369ea2723f")
 		(property "Reference" "L4"
 			(at 247.65 35.56 90)
 			(effects
@@ -7141,7 +4797,7 @@
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 			(at 251.46 40.6399 0)
 			(effects
 				(font
@@ -7159,7 +4815,7 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
 			(at 251.46 40.6399 0)
 			(effects
 				(font
@@ -7169,15 +4825,1893 @@
 			)
 		)
 		(pin "1"
-			(uuid "1ca5e3f5-6f80-48f9-938d-0b0fb3fe0885")
+			(uuid "1ce4209a-1742-4ed0-b80c-1027590dfc11")
 		)
 		(pin "2"
-			(uuid "d0da2ab6-527a-41b2-b6c9-bb2036d4d11c")
+			(uuid "669787b9-a458-4a51-9736-1e9afda2f04b")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 					(reference "L4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:L")
+		(at 322.58 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5d62dc47-e0a4-40bb-b3ba-e98b39c0038b")
+		(property "Reference" "L7"
+			(at 321.31 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22nH"
+			(at 324.485 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 322.58 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 322.58 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 322.58 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 325.12 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 325.12 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 325.12 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "12534dc7-0daf-42d9-96ef-fd987d5a088c")
+		)
+		(pin "2"
+			(uuid "e037bc7f-b3b7-4995-b813-bdb936db23d4")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "L7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 254 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "617f55da-c590-4bbf-bfac-6ed881399c2f")
+		(property "Reference" "C10"
+			(at 254.635 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 254.635 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 254.9652 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 254 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 254 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 256.54 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 256.54 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 256.54 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5db92e34-ad6d-4a6f-bbef-752a806ab19b")
+		)
+		(pin "2"
+			(uuid "9130062c-f19d-4c94-8f2d-2f4b264eaff2")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:L")
+		(at 223.52 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "64ea76d2-7b7e-4171-aacf-d42911e94e0c")
+		(property "Reference" "L3"
+			(at 222.25 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "27nH"
+			(at 225.425 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 223.52 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 223.52 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 223.52 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 226.06 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 226.06 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 226.06 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ac148aaf-3095-473b-b8a7-3d7973c535d2")
+		)
+		(pin "2"
+			(uuid "9dcaab34-5e9d-4391-aa0d-06a59bff8122")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "L3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 154.94 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6b4b1e47-ccb6-461e-8d16-69ce67e4ff9e")
+		(property "Reference" "C21"
+			(at 155.575 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "39pF"
+			(at 155.575 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 155.9052 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 154.94 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 154.94 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 157.48 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 157.48 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 157.48 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3145ef26-c622-4657-994d-2ebc30a90332")
+		)
+		(pin "2"
+			(uuid "3f843723-b52a-4d8a-b250-57ee5f15e4fd")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C21")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 78.74 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6fcbb0c8-6279-4c2e-a4e8-fd838f3b43dc")
+		(property "Reference" "C18"
+			(at 79.375 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "5.1pF"
+			(at 79.375 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 79.7052 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 78.74 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 78.74 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 81.28 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 81.28 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 81.28 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e0241ef7-e23e-4ef0-9d2c-e7996a53bb54")
+		)
+		(pin "2"
+			(uuid "14dafa05-1f66-42e1-acc7-5d151bd6fee5")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 30.48 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "75b6efd3-ad99-4aae-84f1-cc44c5ec595d")
+		(property "Reference" "C1"
+			(at 31.115 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "15pF"
+			(at 31.115 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 31.4452 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 30.48 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 30.48 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 33.02 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 33.02 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 33.02 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "55283615-0d00-45bd-9bbd-bc07cf4ede8e")
+		)
+		(pin "2"
+			(uuid "83ac67f2-0b20-43f8-aeee-9ea75bea7227")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 129.54 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "77dde3ca-8e38-40ea-8bbb-7d273dee4e69")
+		(property "Reference" "C5"
+			(at 130.175 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 130.175 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 130.5052 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 129.54 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 129.54 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 132.08 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 132.08 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 132.08 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5c652578-ee6b-4a97-b779-7981998411f5")
+		)
+		(pin "2"
+			(uuid "01d9282a-fe61-4c1f-a571-714e139cba8d")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:L")
+		(at 274.32 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "78393bc9-ebc5-4040-a623-2834ed61ce69")
+		(property "Reference" "L5"
+			(at 273.05 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "15nH"
+			(at 276.225 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 274.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 274.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 274.32 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 276.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 276.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 276.86 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7951f87d-d9aa-432c-b245-91a3146c0202")
+		)
+		(pin "2"
+			(uuid "1b83dcc5-fd75-4237-aec4-e2b6ea7d75f6")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "L5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 30.48 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8a3b7a26-a559-4dcc-b190-c7620437cfce")
+		(property "Reference" "C16"
+			(at 31.115 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "47nF"
+			(at 31.115 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 31.4452 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 30.48 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 30.48 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 33.02 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 33.02 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 33.02 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b1681746-9459-44b1-872b-44ed9bccce52")
+		)
+		(pin "2"
+			(uuid "d1ecebeb-44ed-42e7-acb9-8d33f2857ef9")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:Crystal_GND24")
+		(at 93.98 38.1 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8c367baa-3e80-407b-8d58-2e2a11ac6b5a")
+		(property "Reference" "Y1"
+			(at 97.155 43.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "40MHz"
+			(at 97.155 41.275 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
+			(at 93.98 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 93.98 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 93.98 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 96.52 43.1799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 96.52 43.1799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 96.52 43.1799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0a787385-5585-4d54-9961-b811f46f3f74")
+		)
+		(pin "2"
+			(uuid "281a84e8-a886-4b25-bd64-5e857d73551a")
+		)
+		(pin "4"
+			(uuid "2e0128aa-b768-4bed-a86a-1696ffecf318")
+		)
+		(pin "3"
+			(uuid "9ac38c05-9137-4198-bb3f-4f6c9ddc2e3f")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "Y1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 205.74 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "96f3336a-30fd-47e7-af4c-0ae4819ac9fd")
+		(property "Reference" "C23"
+			(at 206.375 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "6.2pF"
+			(at 206.375 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 206.7052 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 205.74 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 205.74 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 208.28 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 208.28 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 208.28 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ed395856-67ec-49dc-8a7c-0287893ee723")
+		)
+		(pin "2"
+			(uuid "7d83bd7e-a83e-4d4b-8945-f0d899900991")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 180.34 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a2ddc2b7-f9c7-4b5e-a0dd-bb89a4636195")
+		(property "Reference" "C7"
+			(at 180.975 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1.5nF"
+			(at 180.975 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 181.3052 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 180.34 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 180.34 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 182.88 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 182.88 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 182.88 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e84fdf05-de2b-4c01-bd0c-a86eb838eac0")
+		)
+		(pin "2"
+			(uuid "ca0427d4-ae0b-466d-a72b-94d178bc80ba")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 78.74 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a8b85b8a-ea66-499a-9ebc-df4b6984e398")
+		(property "Reference" "C3"
+			(at 79.375 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 79.375 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 79.7052 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 78.74 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 78.74 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 81.28 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 81.28 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 81.28 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "45aae788-abcc-49f3-a462-5b9e9d4ad395")
+		)
+		(pin "2"
+			(uuid "666f1474-8b9b-4988-bf47-2581395f9bc0")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 129.54 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ad6965c4-5ecb-463c-8b56-bc5cadae2cca")
+		(property "Reference" "C20"
+			(at 130.175 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100pF"
+			(at 130.175 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 130.5052 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 129.54 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 129.54 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 132.08 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 132.08 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 132.08 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e291aee1-edbd-401d-8b8b-73adaded142d")
+		)
+		(pin "2"
+			(uuid "082b78f2-bb79-4476-b379-6140934b3e09")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C20")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 330.2 177.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b32c02b0-92e1-4fc0-bb5a-b14ec6ae16f0")
+		(property "Reference" "TP3"
+			(at 330.2 184.658 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 330.2 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 335.28 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 330.2 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 330.2 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 332.74 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 332.74 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 332.74 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8944a0e3-16a5-4760-ac01-6b12eea6440b")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "TP3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 304.8 177.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b8b628f2-38ff-47c6-a57e-3aab2f3fd1c9")
+		(property "Reference" "TP2"
+			(at 304.8 184.658 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "~"
+			(at 304.8 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 309.88 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 304.8 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 304.8 177.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 307.34 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 307.34 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 307.34 182.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0a5ee989-4391-4594-8cb3-7d2a623ab26a")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "TP2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 55.88 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c004b51a-1665-4354-9842-03ea2455be08")
+		(property "Reference" "C17"
+			(at 56.515 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10nF"
+			(at 56.515 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 56.8452 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 55.88 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 55.88 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 58.42 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 58.42 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 58.42 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7b21efbd-c535-4d2b-93ee-4bffdb799115")
+		)
+		(pin "2"
+			(uuid "eff4622e-a1a0-4524-8b8f-fa7e53952fe9")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 104.14 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c90b4ed6-26fa-43b5-8194-1eb993ff51ed")
+		(property "Reference" "C19"
+			(at 104.775 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "56pF"
+			(at 104.775 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 105.1052 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 104.14 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 106.68 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 106.68 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 106.68 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "79259278-016c-4742-bb73-9daa12dc58d1")
+		)
+		(pin "2"
+			(uuid "5688543a-e766-4284-a22f-2a9a97de5dd5")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:L")
+		(at 172.72 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d5c485f4-f416-4cca-9042-351e81b2097c")
+		(property "Reference" "L1"
+			(at 171.45 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "56nH"
+			(at 174.625 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 172.72 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 172.72 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 172.72 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 175.26 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 175.26 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 175.26 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ac807ab7-e53a-44c0-ac21-5d15c59d93df")
+		)
+		(pin "2"
+			(uuid "b8eddd02-31e9-4b83-82a6-2cb3fa70c34a")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "L1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 55.88 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d813f914-f705-4657-8339-576b80da88d6")
+		(property "Reference" "C2"
+			(at 56.515 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "15pF"
+			(at 56.515 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 56.8452 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 55.88 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 55.88 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 58.42 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 58.42 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 58.42 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e41b4bfe-d106-447c-be5d-b6e9b7ac7d9a")
+		)
+		(pin "2"
+			(uuid "ceaf560c-ceab-441b-967b-8232bf1bbed1")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C2")
 					(unit 1)
 				)
 			)
@@ -7191,7 +6725,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e35d580d-ba0b-48a7-92be-9f00a1877ba5")
+		(uuid "dc60ce88-2f38-4fe9-890f-4dca7b07d0ea")
 		(property "Reference" "L2"
 			(at 196.85 35.56 90)
 			(effects
@@ -7235,7 +6769,7 @@
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 			(at 200.66 40.6399 0)
 			(effects
 				(font
@@ -7253,7 +6787,7 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
 			(at 200.66 40.6399 0)
 			(effects
 				(font
@@ -7263,14 +6797,14 @@
 			)
 		)
 		(pin "1"
-			(uuid "17349fcf-f705-4158-93ca-e91f690daaaf")
+			(uuid "68e42864-0b85-4738-98a9-6ece62ddbe1c")
 		)
 		(pin "2"
-			(uuid "64edf1c1-0b68-4ed1-a64c-8346f034a802")
+			(uuid "54c6947e-a362-470b-a69e-16e300ef31c2")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
 					(reference "L2")
 					(unit 1)
 				)
@@ -7278,16 +6812,16 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:C")
-		(at 55.88 182.88 0)
+		(lib_id "Device:L")
+		(at 347.98 35.56 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "fc17ebbf-078d-490d-bb3a-5bbdcff3299f")
-		(property "Reference" "C17"
-			(at 56.515 185.42 0)
+		(uuid "dd08ecc3-76aa-4502-a392-777c706099b9")
+		(property "Reference" "L8"
+			(at 346.71 35.56 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7295,8 +6829,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10nF"
-			(at 56.515 180.34 0)
+		(property "Value" "15nH"
+			(at 349.885 35.56 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7304,8 +6838,8 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 56.8452 179.07 0)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 347.98 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7314,7 +6848,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 55.88 182.88 0)
+			(at 347.98 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7322,15 +6856,15 @@
 			)
 		)
 		(property "Description" ""
-			(at 55.88 182.88 0)
+			(at 347.98 35.56 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "hierarchy_path" "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-			(at 58.42 187.9599 0)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 350.52 40.6399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7339,7 +6873,7 @@
 			)
 		)
 		(property "project_name" "RF_HAT"
-			(at 58.42 187.9599 0)
+			(at 350.52 40.6399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7347,8 +6881,8 @@
 				(hide yes)
 			)
 		)
-		(property "root_uuid" "03cc9bb1-75ec-4755-9977-259c49401791"
-			(at 58.42 187.9599 0)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 350.52 40.6399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7357,15 +6891,481 @@
 			)
 		)
 		(pin "1"
-			(uuid "dada82f1-b91d-422e-8e41-9d1543f1e6e9")
+			(uuid "01197569-f5bf-4adb-a781-d10b69c03f89")
 		)
 		(pin "2"
-			(uuid "3ede1ed2-9d5e-4825-a59c-aa3e0814aa4f")
+			(uuid "b184f621-c815-4de9-baad-274f871b27b3")
 		)
 		(instances
 			(project ""
-				(path "/03cc9bb1-75ec-4755-9977-259c49401791/0085fed7-e912-48fb-b46f-82fe5241de7d"
-					(reference "C17")
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "L8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 154.94 127 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e2c3e09d-d8fb-4dde-88cc-b14ffeefeca4")
+		(property "Reference" "C6"
+			(at 155.575 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100nF"
+			(at 155.575 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 155.9052 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 154.94 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 154.94 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 157.48 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 157.48 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 157.48 132.0799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "44c7ce03-0d6d-47d0-972a-2467c7ba6d74")
+		)
+		(pin "2"
+			(uuid "1ee0e74a-ca72-447a-9c40-52a4362b3bb3")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 124.46 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e45d3a0e-cf8b-4b80-a8db-8623d37fbab9")
+		(property "Reference" "R1"
+			(at 126.492 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "56k"
+			(at 124.46 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 122.682 35.56 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 124.46 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 124.46 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 127 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 127 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 127 40.6399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "efaaad97-308a-4834-a37c-c7163319df9e")
+		)
+		(pin "2"
+			(uuid "82191a0e-7cd1-4382-a6d2-90cd66e345fb")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "R1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 228.6 182.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e5af382f-394e-4ab4-adfc-0917082b6905")
+		(property "Reference" "C24"
+			(at 229.235 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2.2pF"
+			(at 229.235 180.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 229.5652 179.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 228.6 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 228.6 182.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 231.14 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 231.14 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 231.14 187.9599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "28297ae7-3a2e-4970-b332-73650f122fbe")
+		)
+		(pin "2"
+			(uuid "231ba024-1bf4-470f-b8b1-3cb892cc2adb")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "C24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "RF:CC1200")
+		(at 45.72 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f7b86bf0-0ca9-4582-90da-4706fa2af110")
+		(property "Reference" "U1"
+			(at 33.02 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "CC1200RHBR"
+			(at 35.56 21.59 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Package_DFN_QFN:QFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm"
+			(at 60.96 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 45.72 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 45.72 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "hierarchy_path" "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+			(at 48.26 55.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "project_name" "RF_HAT"
+			(at 48.26 55.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "root_uuid" "bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd"
+			(at 48.26 55.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "e99a300d-295b-434d-ad03-201d1ca0a1c8")
+		)
+		(pin "11"
+			(uuid "6206f374-8b2e-4c65-8954-1c91880f4943")
+		)
+		(pin "8"
+			(uuid "05096dad-e0c6-453f-b643-d2d7576f2749")
+		)
+		(pin "7"
+			(uuid "3237c102-d55b-443b-80d1-f1cec2728eb7")
+		)
+		(pin "9"
+			(uuid "2065f6d3-9cd2-42a1-807b-06174a6429d1")
+		)
+		(pin "10"
+			(uuid "0ddb3319-6a51-4fd5-9330-dd38a979a74f")
+		)
+		(pin "4"
+			(uuid "927dff1d-a8cb-480b-83b2-bf1198bed1cc")
+		)
+		(pin "3"
+			(uuid "2e18ba83-3029-41ec-b01a-cbb93c88cd24")
+		)
+		(pin "30"
+			(uuid "0f466500-53a1-4b1b-90c5-8c54f1985ae9")
+		)
+		(pin "31"
+			(uuid "495b3fe4-9665-40b1-9614-78c4cd4670bc")
+		)
+		(pin "32"
+			(uuid "4e877090-c96c-4813-8c2d-b67d9f56cb8e")
+		)
+		(pin "14"
+			(uuid "8b02e687-676b-480e-a212-389085a2f78d")
+		)
+		(pin "23"
+			(uuid "c6e25da0-de37-4aef-b7a1-7dc743e478b3")
+		)
+		(pin "24"
+			(uuid "94c974ef-e4c2-43d3-bdff-327e9c77c153")
+		)
+		(pin "33"
+			(uuid "64123732-7ccb-4867-874d-4e4fb485c34e")
+		)
+		(pin "5"
+			(uuid "9d0a9b15-cbb0-4527-9c6b-164bfe3ffa02")
+		)
+		(pin "12"
+			(uuid "cedd1920-4389-46da-8834-6484a19a29b3")
+		)
+		(pin "1"
+			(uuid "962877f8-d8c9-4925-bc60-08f43bdb08d1")
+		)
+		(pin "13"
+			(uuid "9fa1b515-4159-4138-8dfc-b0f3aae45488")
+		)
+		(pin "15"
+			(uuid "2614abb0-518e-4934-93b0-ea059457bdd7")
+		)
+		(pin "25"
+			(uuid "86ce8aa6-5166-4b46-b458-5c06500a9716")
+		)
+		(pin "28"
+			(uuid "c3df1011-f8ee-4c75-a400-1c8e758422c6")
+		)
+		(pin "22"
+			(uuid "d065aa91-fb3d-4a11-9230-d31ac0725423")
+		)
+		(pin "27"
+			(uuid "18726db6-b6f7-40c0-96f3-54e5a7826df0")
+		)
+		(pin "6"
+			(uuid "16c4fb04-2927-4ab8-8d28-74b0c0ffa152")
+		)
+		(pin "21"
+			(uuid "fdd59082-57b2-40ec-b852-cc58233ee031")
+		)
+		(pin "26"
+			(uuid "e3ad9d4f-93a0-440c-b05c-1a16297d991c")
+		)
+		(pin "29"
+			(uuid "f31b9762-8490-47ee-a755-0c11dc13c158")
+		)
+		(pin "19"
+			(uuid "cb0de6fb-2d94-4ff5-b32c-cbf15e604c4c")
+		)
+		(pin "20"
+			(uuid "f754d105-12c8-4eba-8a4e-84de7c612b2b")
+		)
+		(pin "18"
+			(uuid "13d8ea4e-b9c0-473d-b69f-b17149e48552")
+		)
+		(pin "17"
+			(uuid "fb204f08-23b6-4bb5-a3f6-6f546b765b96")
+		)
+		(instances
+			(project ""
+				(path "/bd07fb41-9ea7-4d0f-b403-cbcdc979b1cd/31dca4aa-880f-4bf5-8bcb-179d1598ff8d"
+					(reference "U1")
 					(unit 1)
 				)
 			)

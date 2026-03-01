@@ -91,13 +91,13 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
     # Crystal load caps
     for net in [xosc_q1, xosc_q2]:
         c = Component(symbol="Device:C", ref="C", value=c_xosc_val,
-                       footprint="Capacitor_SMD:C_0805_2012Metric")
+                       footprint="Capacitor_SMD:C_0603_1608Metric")
         c[1] += net
         c[2] += gnd
 
     # --- RBIAS: 56k per CC120X standard (TIDR222 BOM R14) ---
     r_bias = Component(symbol="Device:R", ref="R", value=r_bias_val,
-                        footprint="Resistor_SMD:R_0402_1005Metric")
+                        footprint="Resistor_SMD:R_0603_1608Metric")
     rbias_net = Net(f"{prefix}_RBIAS")
     cc["RBIAS"] += rbias_net
     r_bias[1] += rbias_net
@@ -107,7 +107,7 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
     for pin, name in [(6, "DCPL"), (21, "DCPL_VCO"),
                        (26, "DCPL_PFD"), (29, "DCPL_XOSC")]:
         cap = Component(symbol="Device:C", ref="C", value="100nF",
-                         footprint="Capacitor_SMD:C_0402_1005Metric")
+                         footprint="Capacitor_SMD:C_0603_1608Metric")
         net = Net(f"{prefix}_{name}")
         cc[pin] += net
         cap[1] += net
@@ -115,7 +115,7 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
 
     # --- PLL loop filter ---
     c_pll = Component(symbol="Device:C", ref="C", value=c_pll_val,
-                       footprint="Capacitor_SMD:C_0402_1005Metric")
+                       footprint="Capacitor_SMD:C_0603_1608Metric")
     lpf0 = Net(f"{prefix}_LPF0")
     lpf1 = Net(f"{prefix}_LPF1")
     cc["LPF0"] += lpf0
@@ -127,18 +127,18 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
     for val in ["220nF", "10nF", "47nF", "47nF",
                 "47nF", "47nF", "47nF", "47nF", "47nF"]:
         c = Component(symbol="Device:C", ref="C", value=val,
-                       footprint="Capacitor_SMD:C_0402_1005Metric")
+                       footprint="Capacitor_SMD:C_0603_1608Metric")
         c[1] += vcc_3v3
         c[2] += gnd
 
     # --- Ferrite bead: BLM15HG102SN1D per TIDR222 BOM L1 ---
     fb = Component(symbol="Device:FerriteBead", ref="FB", value="1k@100MHz",
-                    footprint="Inductor_SMD:L_0402_1005Metric")
+                    footprint="Inductor_SMD:L_0603_1608Metric")
     avdd_filt = Net(f"{prefix}_AVDD_FILT")
     fb[1] += vcc_3v3
     fb[2] += avdd_filt
     c_f = Component(symbol="Device:C", ref="C", value="10nF",
-                     footprint="Capacitor_SMD:C_0402_1005Metric")
+                     footprint="Capacitor_SMD:C_0603_1608Metric")
     c_f[1] += avdd_filt
     c_f[2] += gnd
 
@@ -147,7 +147,7 @@ def _cc1200_passives(cc, prefix, vcc_3v3, gnd,
     cc["PA"] += pa_net
 
     r_pa = Component(symbol="Device:R", ref="R", value=r_pa_val,
-                      footprint="Resistor_SMD:R_0805_2012Metric")
+                      footprint="Resistor_SMD:R_0603_1608Metric")
     mn1 = Net(f"{prefix}_MN1")
     r_pa[1] += pa_net
     r_pa[2] += mn1
@@ -323,7 +323,7 @@ def rf_hat():
         # Bypass caps
         for rail in [vcc_3v3, vcc_5v]:
             c = Component(symbol="Device:C", ref="C", value="100nF",
-                           footprint="Capacitor_SMD:C_0402_1005Metric")
+                           footprint="Capacitor_SMD:C_0603_1608Metric")
             c[1] += rail
             c[2] += gnd
 
