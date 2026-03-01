@@ -10,6 +10,11 @@
 fp-info-cache
 **/fp-info-cache
 
+# KiCad auto-backups, ERC reports, local settings
+**/*-backups/
+**/*-erc.rpt
+**/*.kicad_prl
+
 # Claude Code
 .claude/
 CLAUDE.md

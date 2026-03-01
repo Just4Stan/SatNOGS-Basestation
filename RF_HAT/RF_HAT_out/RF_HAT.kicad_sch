@@ -1,0 +1,1150 @@
+(kicad_sch
+	(version 20250114)
+	(generator "circuit_synth")
+	(generator_version "0.8.36")
+	(uuid "03cc9bb1-75ec-4755-9977-259c49401791")
+	(paper "A3")
+	(title_block
+		(title "RF_HAT")
+	)
+	(lib_symbols)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 77.31 15.24 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8e063e16-e304-49fc-9ef6-a4f46e814575")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 77.31 17.78 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "697e50e0-1d62-405c-8e49-ec59b1cd980d")
+	)
+	(hierarchical_label "UHF_CSN"
+		(shape input)
+		(at 77.31 20.32 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8d79bc82-ce87-411e-bc14-c42bb768741e")
+	)
+	(hierarchical_label "UHF_GPIO0"
+		(shape input)
+		(at 77.31 22.86 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "af740e55-2b84-4b8d-a2d4-cef17fc9e62e")
+	)
+	(hierarchical_label "UHF_GPIO2"
+		(shape input)
+		(at 77.31 25.4 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "660f8e1a-d40e-4404-b5dd-b88cd22eccc8")
+	)
+	(hierarchical_label "UHF_GPIO3"
+		(shape input)
+		(at 77.31 27.94 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8e6cb812-0cc2-4f3f-b0b8-6d999aba551e")
+	)
+	(hierarchical_label "UHF_MISO"
+		(shape input)
+		(at 77.31 30.48 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ced29fc3-8c8a-48c3-8ca6-37ca108e9a66")
+	)
+	(hierarchical_label "UHF_MOSI"
+		(shape input)
+		(at 77.31 33.02 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7bfc2fa9-d54a-45ef-a562-45afa4f7dbb1")
+	)
+	(hierarchical_label "UHF_RESET"
+		(shape input)
+		(at 77.31 35.56 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f89f3833-08e1-4b10-affb-73e84c7e8fd2")
+	)
+	(hierarchical_label "UHF_SCLK"
+		(shape input)
+		(at 77.31 38.1 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "299c7b85-76cf-4183-9f40-fd6bebe4b4c2")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 144.62 15.24 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4fb6103f-55b4-4668-9e79-a46b13eaa969")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 144.62 17.78 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4251b162-8666-4137-b8b8-771abf1f6d24")
+	)
+	(hierarchical_label "VHF_CSN"
+		(shape input)
+		(at 144.62 20.32 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ec31b6dd-fd48-42d5-aa63-345abc43875c")
+	)
+	(hierarchical_label "VHF_GPIO0"
+		(shape input)
+		(at 144.62 22.86 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b72920e8-b112-4fd8-b552-886c89475e0e")
+	)
+	(hierarchical_label "VHF_GPIO2"
+		(shape input)
+		(at 144.62 25.4 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "24152b3f-e614-4460-8d7e-6aaa70c1a32a")
+	)
+	(hierarchical_label "VHF_GPIO3"
+		(shape input)
+		(at 144.62 27.94 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "10239da8-7291-440c-b099-e67b1b052f92")
+	)
+	(hierarchical_label "VHF_MISO"
+		(shape input)
+		(at 144.62 30.48 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "be91888c-40c4-451a-aee7-068758689e28")
+	)
+	(hierarchical_label "VHF_MOSI"
+		(shape input)
+		(at 144.62 33.02 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2e331181-5838-4f7d-af4c-abf0a6ae1dc7")
+	)
+	(hierarchical_label "VHF_RESET"
+		(shape input)
+		(at 144.62 35.56 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "13d4c0c1-2e0a-46d7-b61d-45fe1d85da4c")
+	)
+	(hierarchical_label "VHF_SCLK"
+		(shape input)
+		(at 144.62 38.1 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "db3fbb72-bcbb-4a56-96a7-01c3cfa6d7b8")
+	)
+	(hierarchical_label "+3.3V"
+		(shape input)
+		(at 206.85 15.24 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d2ae27a0-8bf5-48e5-9806-b565c08e9ff1")
+	)
+	(hierarchical_label "+5V"
+		(shape input)
+		(at 206.85 17.78 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "00d2a1fb-8384-4fef-a850-6985edcb566c")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 206.85 20.32 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "121d3849-a364-45cd-8e14-01b0b64cd717")
+	)
+	(hierarchical_label "UART_RX"
+		(shape input)
+		(at 206.85 22.86 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "51603121-3420-4808-88c8-36af65d2aee6")
+	)
+	(hierarchical_label "UART_TX"
+		(shape input)
+		(at 206.85 25.4 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e6fdfc0f-6a1a-472d-9ce1-b190342cf86d")
+	)
+	(hierarchical_label "UHF_CSN"
+		(shape input)
+		(at 206.85 27.94 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2422d2ac-139e-45f0-b617-17114c5172d4")
+	)
+	(hierarchical_label "UHF_GPIO0"
+		(shape input)
+		(at 206.85 30.48 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dc4d4f3f-04f3-4111-b625-611368cdb32b")
+	)
+	(hierarchical_label "UHF_GPIO2"
+		(shape input)
+		(at 206.85 33.02 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f2745b45-8aa2-41c3-902b-bb9c0589d029")
+	)
+	(hierarchical_label "UHF_GPIO3"
+		(shape input)
+		(at 206.85 35.56 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ac65cb42-17f4-4d94-8b3c-1ca2f83f1fd6")
+	)
+	(hierarchical_label "UHF_MISO"
+		(shape input)
+		(at 206.85 38.1 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "461988df-9737-4e8b-b233-f059e2145471")
+	)
+	(hierarchical_label "UHF_MOSI"
+		(shape input)
+		(at 206.85 40.64 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "da6d6017-e047-49f7-8544-a98cb4d6ffd9")
+	)
+	(hierarchical_label "UHF_RESET"
+		(shape input)
+		(at 206.85 43.18 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "88af251e-34eb-4cb6-b8ed-a16dc749c735")
+	)
+	(hierarchical_label "UHF_SCLK"
+		(shape input)
+		(at 206.85 45.72 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5e6e5531-ca97-434c-9e82-4203edb92ede")
+	)
+	(hierarchical_label "VHF_CSN"
+		(shape input)
+		(at 206.85 48.26 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "efcfeb03-d9f8-4e2a-834e-a86895633c77")
+	)
+	(hierarchical_label "VHF_GPIO0"
+		(shape input)
+		(at 206.85 50.8 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7b2af3a6-9393-40fd-a729-f9fd1a92f713")
+	)
+	(hierarchical_label "VHF_GPIO2"
+		(shape input)
+		(at 206.85 53.34 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cb5b3f0c-0ca4-4bf2-8204-682f0ffe14ce")
+	)
+	(hierarchical_label "VHF_GPIO3"
+		(shape input)
+		(at 206.85 55.88 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "59aca6b3-ece6-4f82-9135-4628a7eb5272")
+	)
+	(hierarchical_label "VHF_MISO"
+		(shape input)
+		(at 206.85 58.42 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1ebebb52-6f00-42b5-952f-3c7533d0f620")
+	)
+	(hierarchical_label "VHF_MOSI"
+		(shape input)
+		(at 206.85 60.96 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7216cf59-f1f8-444d-ba8b-0dd48c477b63")
+	)
+	(hierarchical_label "VHF_RESET"
+		(shape input)
+		(at 206.85 63.5 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "baa0d93a-ceca-4be9-aea4-3c1cc4c2141b")
+	)
+	(hierarchical_label "VHF_SCLK"
+		(shape input)
+		(at 206.85 66.04 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9904b6e1-48c5-4fe6-ba5f-ecff365ed0fa")
+	)
+	(hierarchical_label "+5V"
+		(shape input)
+		(at 269.08 15.24 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e9f6ca23-2d77-4cf9-8157-811c10e0c210")
+	)
+	(hierarchical_label "GND"
+		(shape input)
+		(at 269.08 17.78 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "434b3dd8-302c-4744-8ca5-0e9432628bfe")
+	)
+	(hierarchical_label "UART_RX"
+		(shape input)
+		(at 269.08 20.32 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d4be7666-2997-4e72-9987-a77a8cf8ad42")
+	)
+	(hierarchical_label "UART_TX"
+		(shape input)
+		(at 269.08 22.86 0.0000)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e2bd8f7c-a2b3-413a-be04-167a35269a16")
+	)
+	(text_box "Dual CC1200 Transceiver HAT for Raspberry Pi 3A+"
+		(exclude_from_sim no)
+		(at 184 110 0)
+		(size 80 30)
+		(margins 1 1 1 1)
+		(stroke
+			(width 0)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(effects
+			(font
+				(size 1.2 1.2)
+			)
+			(justify left top)
+		)
+		(uuid "28de30a4-b5dd-4d82-8273-1df8ed9598c9")
+	)
+	(sheet
+		(at 25.4 12.7)
+		(size 51.91 86.36)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "0085fed7-e912-48fb-b46f-82fe5241de7d")
+		(property "Sheetname" "CC1200_UHF_432MHz"
+			(at 25.4 11.9884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "CC1200_UHF_432MHz.kicad_sch"
+			(at 25.4 99.6446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "+3.3V" bidirectional
+			(at 76.04 15.24 0)
+			(uuid "901d224e-3cfb-4d11-b800-91ceb45d1065")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" bidirectional
+			(at 76.04 17.78 0)
+			(uuid "b7080c1f-d2bf-4651-a5d9-69049c3e9811")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_CSN" bidirectional
+			(at 76.04 20.32 0)
+			(uuid "3617eb66-9b9e-4bbe-844c-77adb0ca2aad")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_GPIO0" bidirectional
+			(at 76.04 22.86 0)
+			(uuid "f23b6032-e406-48fa-a4d3-48d888dbbbd9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_GPIO2" bidirectional
+			(at 76.04 25.4 0)
+			(uuid "11e773b4-2e87-4a8a-ae31-d1e06cbacf80")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_GPIO3" bidirectional
+			(at 76.04 27.94 0)
+			(uuid "c04a563a-2b13-4764-a2a0-6b73a6568c0b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_MISO" bidirectional
+			(at 76.04 30.48 0)
+			(uuid "5a890da1-1e59-41cb-9605-6f8ccad8e0e2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_MOSI" bidirectional
+			(at 76.04 33.02 0)
+			(uuid "5464da73-2a08-4a48-806a-b5a8b2f410ff")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_RESET" bidirectional
+			(at 76.04 35.56 0)
+			(uuid "fe502ed5-b04b-4ea8-83a9-10ff2cd15fa8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_SCLK" bidirectional
+			(at 76.04 38.1 0)
+			(uuid "51c79e44-3e3f-40d9-a7b2-df0b41a633d7")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/03cc9bb1-75ec-4755-9977-259c49401791"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 92.71 12.7)
+		(size 51.91 83.82)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "b9885f1a-c8d9-48d7-b8c1-e0884f742ed4")
+		(property "Sheetname" "CC1200_VHF_144MHz"
+			(at 92.71 11.9884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "CC1200_VHF_144MHz.kicad_sch"
+			(at 92.71 97.1046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "+3.3V" bidirectional
+			(at 143.35 15.24 0)
+			(uuid "678544e0-7d2e-4134-94ba-0fe0f8628101")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" bidirectional
+			(at 143.35 17.78 0)
+			(uuid "f3d4c666-e315-43c3-ad18-648cac156fff")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_CSN" bidirectional
+			(at 143.35 20.32 0)
+			(uuid "c327c5c3-05af-4a32-85c0-5dfda93a00ae")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_GPIO0" bidirectional
+			(at 143.35 22.86 0)
+			(uuid "06946d7d-999c-4846-943b-146c30fcbb24")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_GPIO2" bidirectional
+			(at 143.35 25.4 0)
+			(uuid "9892d811-915c-4676-ba90-116565e60ab8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_GPIO3" bidirectional
+			(at 143.35 27.94 0)
+			(uuid "b6b0fd7c-ab5f-4d07-afae-a47336ed091a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_MISO" bidirectional
+			(at 143.35 30.48 0)
+			(uuid "bbb50375-d77b-4f9d-aaae-b7463cc3c339")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_MOSI" bidirectional
+			(at 143.35 33.02 0)
+			(uuid "8940d3ce-8c89-41e8-bd39-7e79b1abeb05")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_RESET" bidirectional
+			(at 143.35 35.56 0)
+			(uuid "f7e2c2b7-d917-49e1-89c1-7e33ee6a4430")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_SCLK" bidirectional
+			(at 143.35 38.1 0)
+			(uuid "ba1bd5b3-3b4b-419a-a533-318798b9f8ec")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/03cc9bb1-75ec-4755-9977-259c49401791"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 160.02 12.7)
+		(size 46.83 63.5)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "9ee7e274-140e-48fc-a71a-d6e497a55bd8")
+		(property "Sheetname" "Pico_SPI_Host"
+			(at 160.02 11.9884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Pico_SPI_Host.kicad_sch"
+			(at 160.02 76.7846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "+3.3V" bidirectional
+			(at 205.58 15.24 0)
+			(uuid "1b9605d0-3da6-4836-b4b8-2cfb5f2b9fa1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "+5V" bidirectional
+			(at 205.58 17.78 0)
+			(uuid "345251ad-5e48-4293-8804-3d192f7f752e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" bidirectional
+			(at 205.58 20.32 0)
+			(uuid "77caa47c-80d9-483b-820e-83924f089d5d")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UART_RX" bidirectional
+			(at 205.58 22.86 0)
+			(uuid "9b19864b-913b-4503-b943-3475503a55cc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UART_TX" bidirectional
+			(at 205.58 25.4 0)
+			(uuid "a6c93096-aa95-42e8-8133-e46b7dd5000f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_CSN" bidirectional
+			(at 205.58 27.94 0)
+			(uuid "38979387-8f5c-4b58-8059-5e3dc7463317")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_GPIO0" bidirectional
+			(at 205.58 30.48 0)
+			(uuid "08663f6f-6a6f-4fd3-8770-d50f5f85f382")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_GPIO2" bidirectional
+			(at 205.58 33.02 0)
+			(uuid "6686450f-62a1-4a9b-bc9b-67c810255150")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_GPIO3" bidirectional
+			(at 205.58 35.56 0)
+			(uuid "3922f894-c0ea-4ff5-9db2-c90f87b66bcd")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_MISO" bidirectional
+			(at 205.58 38.1 0)
+			(uuid "0b0a9f80-f9be-4004-a072-dbda4010be93")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_MOSI" bidirectional
+			(at 205.58 40.64 0)
+			(uuid "a577142f-6d94-42c3-a57d-9b5214343500")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_RESET" bidirectional
+			(at 205.58 43.18 0)
+			(uuid "a2d8fbce-3ec1-415d-9d4e-8cba5c0a8012")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UHF_SCLK" bidirectional
+			(at 205.58 45.72 0)
+			(uuid "55ceaf3b-aa99-43b5-a63b-7c7f4a15addc")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_CSN" bidirectional
+			(at 205.58 48.26 0)
+			(uuid "29e5a2cc-2e73-47d1-bc28-3ec17262ea13")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_GPIO0" bidirectional
+			(at 205.58 50.8 0)
+			(uuid "6d591302-2dbd-484d-bdeb-894fb734965b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_GPIO2" bidirectional
+			(at 205.58 53.34 0)
+			(uuid "0f70a5a2-c83f-4e0a-9cad-8a789aae042e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_GPIO3" bidirectional
+			(at 205.58 55.88 0)
+			(uuid "19e2b57f-394e-4188-a037-ed2871284b7e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_MISO" bidirectional
+			(at 205.58 58.42 0)
+			(uuid "9cf20797-8ec5-4c9c-b33d-6587e9837d24")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_MOSI" bidirectional
+			(at 205.58 60.96 0)
+			(uuid "784a160b-b569-45b6-89da-fa6fa9b16a0f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_RESET" bidirectional
+			(at 205.58 63.5 0)
+			(uuid "e93df528-bed9-44a7-856a-95fa9e0ebec9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "VHF_SCLK" bidirectional
+			(at 205.58 66.04 0)
+			(uuid "104e7469-3dcc-4e09-9f44-c42b76b88428")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/03cc9bb1-75ec-4755-9977-259c49401791"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 220.98 12.7)
+		(size 48.1 22.86)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "96fd858e-f400-4385-b5e2-13759435a1c9")
+		(property "Sheetname" "Pi_Header"
+			(at 220.98 11.9884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Pi_Header.kicad_sch"
+			(at 220.98 36.1446 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "+5V" bidirectional
+			(at 267.81 15.24 0)
+			(uuid "dca6e730-255c-4ae1-8e82-b576250c3cfb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "GND" bidirectional
+			(at 267.81 17.78 0)
+			(uuid "365baa1b-1e3f-42e9-8d01-24eab0fce25f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UART_RX" bidirectional
+			(at 267.81 20.32 0)
+			(uuid "651f09cc-0987-4e5e-8e6f-40d33c8255de")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "UART_TX" bidirectional
+			(at 267.81 22.86 0)
+			(uuid "f5fa54a9-a892-4cc3-bf74-1ba5b74a99f3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "RF_HAT"
+				(path "/03cc9bb1-75ec-4755-9977-259c49401791"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
