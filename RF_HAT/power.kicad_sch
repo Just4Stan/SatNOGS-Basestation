@@ -1,0 +1,22 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "a0000005-0001-0000-0000-000000000001")
+	(paper "A4")
+	(lib_symbols)
+	(text "Power supply\nLDO regulators + decoupling from Pi 5V/3.3V"
+		(exclude_from_sim no)
+		(at 148.59 78.74 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "5")
+		)
+	)
+)
