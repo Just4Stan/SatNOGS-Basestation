@@ -2940,7 +2940,7 @@
 		)
 		(uuid "ff5531b8-6f4a-41ac-829d-81df91b36eb2")
 	)
-	(hierarchical_label "UHF_RESET"
+	(hierarchical_label "VHF_RESET"
 		(shape input)
 		(at 71.12 48.26 180)
 		(effects
@@ -2951,18 +2951,7 @@
 		)
 		(uuid "04d0e57e-cdf4-4e05-999f-9f79e3f70f5d")
 	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 80.01 68.58 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "24964eb2-d70e-49f1-8230-aaa6fb2a8bad")
-	)
-	(hierarchical_label "UHF_MOSI"
+	(hierarchical_label "VHF_MOSI"
 		(shape input)
 		(at 48.26 58.42 180)
 		(effects
@@ -2973,18 +2962,7 @@
 		)
 		(uuid "2ed8c696-9bcd-484a-b636-b5eba79e64bf")
 	)
-	(hierarchical_label "UHF_GPIO0"
-		(shape input)
-		(at 80.01 66.04 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "455dbb56-564d-4dba-bbe0-54c00151b304")
-	)
-	(hierarchical_label "UHF_SCLK"
+	(hierarchical_label "VHF_SCLK"
 		(shape input)
 		(at 48.26 55.88 180)
 		(effects
@@ -2995,7 +2973,7 @@
 		)
 		(uuid "4bf8cced-7c02-4f93-a10a-ec192befc3ef")
 	)
-	(hierarchical_label "UHF_CSN"
+	(hierarchical_label "VHF_CSN"
 		(shape input)
 		(at 48.26 53.34 180)
 		(effects
@@ -3006,7 +2984,7 @@
 		)
 		(uuid "571a6f7f-14e7-4811-ae4c-86f266a26b14")
 	)
-	(hierarchical_label "UHF_GPIO0"
+	(hierarchical_label "VHF_GPIO0"
 		(shape input)
 		(at 80.01 66.04 180)
 		(effects
@@ -3017,7 +2995,7 @@
 		)
 		(uuid "5a0e10c9-4a57-4593-91b3-66ea8dc6cb25")
 	)
-	(hierarchical_label "UHF_GPIO3"
+	(hierarchical_label "VHF_GPIO3"
 		(shape input)
 		(at 80.01 71.12 180)
 		(effects
@@ -3028,18 +3006,7 @@
 		)
 		(uuid "5e4e0856-d633-4a07-92ab-425615b3e550")
 	)
-	(hierarchical_label "UHF_GPIO3"
-		(shape input)
-		(at 80.01 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "ad35879c-05ee-48bb-b9cd-e3d2c3ff3213")
-	)
-	(hierarchical_label "UHF_GPIO2"
+	(hierarchical_label "VHF_GPIO2"
 		(shape input)
 		(at 80.01 68.58 180)
 		(effects
@@ -3050,7 +3017,7 @@
 		)
 		(uuid "e0e7d0c5-89c9-4829-adbf-33f7a15155a0")
 	)
-	(hierarchical_label "UHF_MISO"
+	(hierarchical_label "VHF_MISO"
 		(shape input)
 		(at 48.26 60.96 180)
 		(effects

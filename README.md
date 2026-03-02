@@ -1,6 +1,6 @@
 # SatNOGS Basestation
 
-RP2040-based AZ/EL rotator controller for a SatNOGS-compatible ground station. Custom KiCad motor control PCB, PID closed-loop control, and EasyComm/hamlib protocol over USB CDC.
+SatNOGS-compatible ground station for tracking the AetherSpace CubeSat at 433 MHz. Includes an RP2040-based AZ/EL rotator controller (custom KiCad PCB, PID closed-loop, EasyComm/hamlib protocol) and a dual CC1200 RF transceiver HAT.
 
 <p align="center">
   <img src="Images/rotatorimg1.jpg" width="400" alt="Rotator assembly"/>
@@ -24,9 +24,11 @@ RP2040-based AZ/EL rotator controller for a SatNOGS-compatible ground station. C
 ## Repository structure
 
 ```
-Firmware/                RP2040 firmware (PlatformIO, Arduino-Pico core)
-MotorPCB/                KiCad 9 schematic + PCB (13 hierarchical sub-sheets)
-Hardware/                Datasheets: TB6642FG motor driver, FAPG36-555-EN motor
+Firmware/                RP2040 rotator firmware (PlatformIO, Arduino-Pico core)
+MotorPCB/                KiCad 9 motor control PCB (13 hierarchical sub-sheets)
+RF_HAT/                  Dual CC1200 transceiver HAT — UHF 432 MHz + VHF 144 MHz
+Hardware/                Datasheets: TB6642FG driver, FAPG36-555-EN motor, encoder
+Images/                  Rotator photos, PID tuning plots
 demo_tracking.py         Simulated satellite pass demo (direct serial)
 track_satellite.py       Live satellite tracker via rotctld (requires ephem)
 ```

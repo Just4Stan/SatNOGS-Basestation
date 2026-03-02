@@ -13,6 +13,14 @@ _autosave-*
 fp-info-cache
 **/fp-info-cache
 
+# KiCad backup files
+*.kicad_sch-bak
+**/*.kicad_sch-bak
+*.bak
+**/*.bak
+#auto_saved_files#
+**/#auto_saved_files#
+
 # KiCad auto-backups, ERC reports, local settings
 **/*-backups/
 **/*-erc.rpt

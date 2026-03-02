@@ -11,7 +11,7 @@ Pi 3A+ (40-pin header)
                  └─ SPI1 ─── CC1200 #1 (UHF 432 MHz) ─── SMA
 ```
 
-**Power**: 5V USB into Pico VSYS. Pico's onboard RT6150 regulator provides 3.3V for both CC1200s.
+**Power**: External buck converter provides 5V through a Schottky diode to the Pico's VSYS pin (USB can power simultaneously via internal Schottky OR-ing). Pico's onboard RT6150 regulator provides 3.3V for both CC1200s.
 
 ## Circuit Design (circuit-synth)
 
@@ -180,7 +180,9 @@ Inductors scaled up ~17% for 144 MHz (lower frequency requires larger inductance
 
 ## Modifying the Design
 
-Edit `rf_hat_circuit.py` and re-run. Key functions:
+The KiCad project in `RF_HAT_out/` was initially generated from `rf_hat_circuit.py` (circuit-synth) but is now edited directly in KiCad. The Python source remains as reference for the original netlist and component values.
+
+Key circuit-synth functions (for reference):
 
 - `_cc1200_passives()` — Full CC1200 subcircuit (3-path RF matching, power, crystal, decoupling)
 - `cc1200_uhf_sheet()` — UHF 432 MHz CC1200 with SPI resistors + GPIO
@@ -188,5 +190,3 @@ Edit `rf_hat_circuit.py` and re-run. Key functions:
 - `pico_sheet()` — Pico with all GPIO assignments
 - `pi_header_sheet()` — Pi 40-pin header with UART passthrough
 - `rf_hat()` — Top-level circuit that wires everything together
-
-After regeneration, open in KiCad for layout and visual review.

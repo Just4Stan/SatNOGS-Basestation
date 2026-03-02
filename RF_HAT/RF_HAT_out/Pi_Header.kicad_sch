@@ -1178,7 +1178,7 @@
 	)
 	(hierarchical_label "UART_RX"
 		(shape input)
-		(at 30.48 45.72 180)
+		(at 30.48 43.18 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1189,7 +1189,7 @@
 	)
 	(hierarchical_label "UART_TX"
 		(shape input)
-		(at 30.48 43.18 180)
+		(at 30.48 45.72 180)
 		(effects
 			(font
 				(size 1.27 1.27)
