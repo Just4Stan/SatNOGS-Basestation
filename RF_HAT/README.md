@@ -1,6 +1,6 @@
 # RF_HAT — Dual CC1200 Transceiver HAT for Raspberry Pi
 
-KiCad 9.0 project for a Raspberry Pi 3A+ HAT with two TI CC1200 transceivers (UHF 432 MHz + VHF 144 MHz), controlled by a Raspberry Pi Pico over SPI.
+KiCad 9.0 project for a Raspberry Pi 3A+ HAT with two TI CC1200 transceivers (UHF 432 MHz + VHF 144 MHz), controlled by a Raspberry Pi Pico over SPI. Part of the [SatNOGS Basestation](../README.md) project.
 
 ## Architecture
 
@@ -13,38 +13,21 @@ Pi 3A+ (40-pin header)
 
 **Power**: External buck converter provides 5V through a Schottky diode to the Pico's VSYS pin (USB can power simultaneously via internal Schottky OR-ing). Pico's onboard RT6150 regulator provides 3.3V for both CC1200s.
 
-## Circuit Design (circuit-synth)
+## File Structure
 
-The schematic is defined as Python code using [circuit-synth](https://github.com/circuit-synth/circuit-synth), which generates valid KiCad project files with proper netlist connectivity.
-
-```bash
-pip install circuit-synth
-python3 rf_hat_circuit.py
-# Open RF_HAT_out/RF_HAT.kicad_pro in KiCad
-```
-
-**Why circuit-synth?** The CC1200 matching network has ~100 components across UHF and VHF variants. Defining them in Python gives:
-- Clean, version-controlled netlist (no dangling labels)
-- Reusable `_cc1200_passives()` function for both frequency variants
-- Automatic reference numbering matching M17 schematic layout order
-- One-command regeneration after any change
-
-### File Structure
-
-| File | Description |
+| Path | Description |
 |------|-------------|
-| `rf_hat_circuit.py` | Circuit definition (source of truth) |
-| `RF_HAT_out/` | Generated KiCad project (.kicad_pro, .kicad_sch, .net) |
-| `reference_designs/M17_CC1200_HAT/` | M17 Project CC1200 HAT (verified 433 MHz, our primary UHF reference) |
-| `reference_designs/upsat-comms-hardware-master/` | UPSat CubeSat CC1120 comms (145/435 MHz reference) |
+| `RF_HAT_out/` | KiCad project (open `RF_HAT.kicad_pro` in KiCad 9) |
+| `rf_hat_circuit.py` | Original circuit-synth source (reference only — board is now edited directly in KiCad) |
+| `add_farnell_fields.py` | Script to add Farnell order codes to schematic symbols |
+| `BOM_Farnell.md` | Bill of materials with Farnell part numbers |
 | `datasheets/` | CC1200 datasheet, CC120x user guide, TI reference designs |
-| `old_schematics/` | Previous hand-placed KiCad schematics + Altium import (reference only) |
+| `reference_designs/` | M17 CC1200_HAT (verified 433 MHz) + UPSat CC1120 (145/435 MHz) |
+| `old_schematics/` | Previous hand-placed schematics + Altium import (reference only) |
 
 ## RF Matching Network — 3-Path Topology
 
-Each CC1200 shares a single SMA antenna through three RF paths: TX matching, RX differential balun, and TRX coupling switch. The CC1200's internal TRX_SW pin handles TX/RX switching (shorted to GND in TX to protect LNA, high-Z in RX to pass signal).
-
-### Topology Diagram (UHF designators shown)
+Each CC1200 shares a single SMA antenna through three RF paths: TX matching, RX differential balun, and TRX coupling switch. The CC1200's internal TRX_SW pin handles TX/RX switching.
 
 ```
 PA BIAS PATH (DC feed to PA pin):
@@ -72,111 +55,68 @@ LNA DIFFERENTIAL BALUN (RX input):
                    └── C9(5.1pF) ── GND               (shunt)
 ```
 
-### Component Designator Mapping (M17 → Our Design)
+## Component Values
 
-RF matching components are created first in the code to get low reference numbers, matching the M17 CC1200_HAT schematic for easy visual layout in KiCad.
+### Inductors (per CC1200)
 
-**Inductors (per CC1200):**
+| Ref | Function | UHF 432 MHz | VHF 144 MHz |
+|-----|----------|-------------|-------------|
+| L1 | TX match #1 | 15nH | 22nH |
+| L2 | TX match #2 | 43nH | 120nH |
+| L3 | TX match #3 | 22nH | 82nH |
+| L4 | PA RF choke | 56nH | 270nH |
+| L5 | TRX coupling | 15nH | 47nH |
+| L6 | LNA_P bias to GND | 27nH | 100nH |
+| L7 | LNA bridge (P-N) | 56nH | 180nH |
+| L8 | LNA_N to balun | 27nH | 100nH |
 
-| Our Ref | M17 Ref | Function | UHF Value | VHF Value |
-|---------|---------|----------|-----------|-----------|
-| L1 | L1 | TX match #1 | 15nH | 22nH |
-| L2 | L2 | TX match #2 | 43nH | 120nH |
-| L3 | L3 | TX match #3 | 22nH | 82nH |
-| L4 | L4 | PA RF choke | 56nH | 270nH |
-| L5 | L9 | TRX coupling | 15nH | 47nH |
-| L6 | L6 | LNA_P bias to GND | 27nH | 100nH |
-| L7 | L7 | LNA bridge (P↔N) | 56nH | 180nH |
-| L8 | L8 | LNA_N to balun | 27nH | 100nH |
+### Capacitors (per CC1200)
 
-**Capacitors (per CC1200):**
+| Ref | Function | UHF 432 MHz | VHF 144 MHz |
+|-----|----------|-------------|-------------|
+| C1 | TX feedback | 2.2pF | 1.5pF |
+| C2 | TX series (PA-mn1) | 39pF | 100pF |
+| C3 | TRX coupling | 5.1pF | 15pF |
+| C4 | TX shunt | 6.2pF | 15pF |
+| C5 | PA bias bypass | 56pF | 100pF |
+| C6 | PA AVDD decoupling | 10nF | 10nF |
+| C7 | PA AVDD decoupling | 100pF | 100pF |
+| C8 | LNA_P balun coupling | 5.1pF | 15pF |
+| C9 | LNA_N shunt | 5.1pF | 15pF |
+| C10 | DC block before SMA | 1nF | 100pF |
 
-| Our Ref | M17 Ref | Function | UHF Value | VHF Value |
-|---------|---------|----------|-----------|-----------|
-| C1 | C1 | TX feedback (mn1↔mn2) | 2.2pF | 1.5pF |
-| C2 | C2 | TX series (PA→mn1) | 39pF | 100pF |
-| C3 | C3 | TRX coupling (TRX_SW→mn2) | 5.1pF | 15pF |
-| C4 | C4 | TX shunt (mn3→GND) | 6.2pF | 15pF |
-| C5 | C5 | PA bias bypass | 56pF | 100pF |
-| C6 | C6 | PA AVDD decoupling | 10nF | 10nF |
-| C7 | C7 | PA AVDD decoupling | 100pF | 100pF |
-| C8 | C8 | LNA_P balun coupling | 5.1pF | 15pF |
-| C9 | C9 | LNA_N shunt to GND | 5.1pF | 15pF |
-| C10 | C27 | DC block before SMA | 1nF | 100pF |
-
-**Resistors (per CC1200):**
-
-| Function | UHF Value | VHF Value | Notes |
-|----------|-----------|-----------|-------|
-| SPI SCLK series | 100R | 100R | EMI reduction (M17 R4) |
-| SPI MOSI series | 100R | 100R | EMI reduction (M17 R5) |
-| SPI MISO series | 100R | 100R | EMI reduction (M17 R6) |
-| CS pull-up | 10k | 10k | Prevents floating during boot (M17 R7) |
-| RESET pull-up | 10k | 10k | Prevents floating during boot (M17 R9) |
-| PA bias | 18R | 22R | DC bias feed (M17 R3) |
-| RBIAS | 56k | 56k | CC120X standard (TIDR222 R14) |
-
-## UHF 432 MHz Values
-
-**Source**: M17 CC1200_HAT Rev B (SP5WWP/DB9MAT, verified +14dBm at 433.475 MHz). Cross-referenced with TI SWRR122 (CC1200EM 420-470 MHz Reference Design) and TIDU921 Figure 13.
-
-All values are exact copies from the M17 verified working design.
-
-## VHF 144 MHz Values
-
-**Source**: Adapted from TI CC1120EM 169 MHz design (TIDR220 schematic, TIDR222 BOM). No official TI reference exists for 136-160 MHz with CC1200.
-
-Inductors scaled up ~17% for 144 MHz (lower frequency requires larger inductance). **WARNING**: These are starting values only — VNA tuning is required during board bring-up.
-
-## Common Elements (both bands)
+### Common elements (both bands)
 
 | Component | Value | Source |
 |-----------|-------|--------|
 | Crystal | 40 MHz, NDK NX3225SA | SWRS123D Section 4.14 |
-| Crystal load caps | 15 pF | SWRS123D (min 10 pF) |
-| RBIAS | 56k | CC120X standard (TIDR222 R14) |
-| DCPL caps | 100 nF x4 (pins 6, 21, 26, 29) | SWRS123D Figure 6-1 |
-| Bypass caps | 47 nF x7 + 220 nF + 10 nF | TIDU921 BOM |
-| Ferrite bead | 1k@100MHz | TIDR222 L1 (BLM15HG102SN1D) |
-| SPI series resistors | 100R x3 | M17 CC1200_HAT (EMI reduction) |
-| CS/RESET pull-ups | 10k x2 | M17 CC1200_HAT (float prevention) |
-| PLL loop filter | 1.5nF (UHF) / 1.8nF (VHF) | M17 C16 / scaled for VHF |
+| Crystal load caps | 15 pF | SWRS123D |
+| RBIAS | 56k | CC120X standard |
+| DCPL caps | 100 nF x4 | SWRS123D Figure 6-1 |
+| Ferrite bead | 1k@100MHz | BLM15HG102SN1D |
+| SPI series resistors | 100R x3 | EMI reduction |
+| CS/RESET pull-ups | 10k x2 | Float prevention |
+
+## Value Sources
+
+**UHF 432 MHz**: M17 CC1200_HAT Rev B (SP5WWP/DB9MAT, verified +14dBm at 433.475 MHz). Cross-referenced with TI SWRR122 (CC1200EM 420-470 MHz reference design).
+
+**VHF 144 MHz**: Adapted from TI CC1120EM 169 MHz design (TIDR220/TIDR222). No official TI reference exists for 136-160 MHz. Inductors scaled ~17% for 144 MHz. **VNA tuning required during board bring-up.**
 
 ## GPIO Assignments (Pico)
 
-| Function | GPIO | Pin | Net |
-|----------|------|-----|-----|
-| UART TX | GP0 | 1 | UART_TX |
-| UART RX | GP1 | 2 | UART_RX |
-| UHF GPIO3 | GP6 | 9 | UHF_GPIO3 |
-| UHF GPIO0 | GP7 | 10 | UHF_GPIO0 |
-| UHF RESET | GP8 | 11 | UHF_RESET |
-| UHF GPIO2 | GP9 | 12 | UHF_GPIO2 |
-| UHF SCLK | GP10 | 14 | UHF_SCLK |
-| UHF MOSI | GP11 | 15 | UHF_MOSI |
-| UHF MISO | GP12 | 16 | UHF_MISO |
-| UHF CSN | GP13 | 17 | UHF_CSN |
-| VHF MISO | GP16 | 21 | VHF_MISO |
-| VHF CSN | GP17 | 22 | VHF_CSN |
-| VHF SCLK | GP18 | 24 | VHF_SCLK |
-| VHF MOSI | GP19 | 25 | VHF_MOSI |
-| VHF RESET | GP20 | 26 | VHF_RESET |
-| VHF GPIO2 | GP21 | 27 | VHF_GPIO2 |
-| VHF GPIO0 | GP22 | 29 | VHF_GPIO0 |
-| VHF GPIO3 | GP26 | 31 | VHF_GPIO3 |
-
-## Reference Documents
-
-| Document | Title | Used For |
-|----------|-------|----------|
-| M17 CC1200_HAT | M17-Project/CC1200_HAT-hw (GitHub) | Primary UHF topology + values |
-| SWRS123D | CC1200 Datasheet | Pin functions, crystal, DCPL caps |
-| SWRR122 | CC1200EM 420-470 MHz Reference Design | UHF matching values cross-check |
-| SWRU346 | CC120X User Guide (114 pages) | Register config, RF design guidance |
-| TIDR220 | CC1120EM 169 MHz Schematic | VHF matching topology |
-| TIDR222 | CC1120EM 169 MHz BOM | VHF component part numbers |
-| TIDU921 | Multiband wM-Bus RF Subsystem | Bypass cap values, multi-band ref |
-| TIDU512 | CC1120 169 MHz wM-Bus Design | Additional VHF reference |
+| Function | GPIO | Function | GPIO |
+|----------|------|----------|------|
+| UART TX | GP0 | VHF MISO | GP16 |
+| UART RX | GP1 | VHF CSN | GP17 |
+| UHF GPIO3 | GP6 | VHF SCLK | GP18 |
+| UHF GPIO0 | GP7 | VHF MOSI | GP19 |
+| UHF RESET | GP8 | VHF RESET | GP20 |
+| UHF GPIO2 | GP9 | VHF GPIO2 | GP21 |
+| UHF SCLK | GP10 | VHF GPIO0 | GP22 |
+| UHF MOSI | GP11 | VHF GPIO3 | GP26 |
+| UHF MISO | GP12 | | |
+| UHF CSN | GP13 | | |
 
 ## PCB Fabrication (JLCPCB 6-Layer)
 
@@ -198,24 +138,23 @@ The board is configured for JLCPCB's **JLC06121H-3313** 6-layer stackup (1.2mm n
 
 ### Impedance Control
 
-RF traces to the SMA connectors use a `50Ohm` net class (0.15mm / 6 mil width). This is calculated for F.Cu microstrip over In1.Cu ground plane (h=0.0994mm, Er=4.1, 1oz copper). Verify with [JLCPCB's impedance calculator](https://jlcpcb.com/pcb-impedance-calculator) before ordering.
+RF traces to the SMA connectors use a `50Ohm` net class (0.15mm / 6 mil width), calculated for F.Cu microstrip over In1.Cu ground plane (h=0.0994mm, Er=4.1, 1oz copper). Verify with [JLCPCB's impedance calculator](https://jlcpcb.com/pcb-impedance-calculator) before ordering.
 
 ### Ordering Notes
 
-- Select **6-layer**, **1.2mm** board thickness, **ENIG** surface finish (free for 6-layer)
+- Select **6-layer**, **1.2mm** thickness, **ENIG** surface finish (free for 6-layer)
 - Enable **impedance control** and specify stackup **JLC06121H-3313**
 - Dielectric constraints are enabled in the KiCad project (`dielectric_constraints yes`)
-- Minimum via: 0.45mm pad / 0.3mm drill (0.075mm annular ring)
 
-## Modifying the Design
+## Reference Documents
 
-The KiCad project in `RF_HAT_out/` was initially generated from `rf_hat_circuit.py` (circuit-synth) but is now edited directly in KiCad. The Python source remains as reference for the original netlist and component values.
-
-Key circuit-synth functions (for reference):
-
-- `_cc1200_passives()` — Full CC1200 subcircuit (3-path RF matching, power, crystal, decoupling)
-- `cc1200_uhf_sheet()` — UHF 432 MHz CC1200 with SPI resistors + GPIO
-- `cc1200_vhf_sheet()` — VHF 144 MHz CC1200 with SPI resistors + GPIO
-- `pico_sheet()` — Pico with all GPIO assignments
-- `pi_header_sheet()` — Pi 40-pin header with UART passthrough
-- `rf_hat()` — Top-level circuit that wires everything together
+| Document | Title | Used For |
+|----------|-------|----------|
+| M17 CC1200_HAT | M17-Project/CC1200_HAT-hw (GitHub) | Primary UHF topology + values |
+| SWRS123D | CC1200 Datasheet | Pin functions, crystal, DCPL caps |
+| SWRR122 | CC1200EM 420-470 MHz Reference Design | UHF matching cross-check |
+| SWRU346 | CC120X User Guide (114 pages) | Register config, RF design |
+| TIDR220 | CC1120EM 169 MHz Schematic | VHF matching topology |
+| TIDR222 | CC1120EM 169 MHz BOM | VHF component part numbers |
+| TIDU921 | Multiband wM-Bus RF Subsystem | Bypass cap values |
+| TIDU512 | CC1120 169 MHz wM-Bus Design | Additional VHF reference |

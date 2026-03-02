@@ -1,6 +1,6 @@
 # Hardware
 
-Datasheets and reference material for the rotator components.
+Datasheets and reference material for the rotator components. Part of the [SatNOGS Basestation](../README.md) project.
 
 ## Files
 

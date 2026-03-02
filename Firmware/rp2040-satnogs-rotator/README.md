@@ -1,6 +1,6 @@
 # rp2040-satnogs-rotator
 
-RP2040 Pico firmware for the SatNOGS rotator controller. See the [main README](../../README.md) for the full project overview.
+RP2040 Pico firmware for the SatNOGS rotator controller. Part of the [SatNOGS Basestation](../../README.md) project — see also [`MotorPCB/`](../../MotorPCB/) for the KiCad PCB this firmware runs on.
 
 ## Source files
 
