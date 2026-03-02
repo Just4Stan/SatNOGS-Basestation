@@ -1709,6 +1709,15 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "3643332"
+			(at 106.68 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "30"
 			(uuid "2a25e14e-9c22-4a4c-8ae2-c4bdb73b6e83")
 		)

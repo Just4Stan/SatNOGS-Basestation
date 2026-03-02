@@ -3140,11 +3140,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1759022"
+			(at 157.48 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C57112"
+			(at 157.48 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "7d727b89-cb77-42a2-91c2-70a09a0fd095")
+			(uuid "adb2dfb1-d05e-4f47-a8f3-f8e1216651d7")
 		)
 		(pin "2"
-			(uuid "43000626-e941-4ffc-ba0e-6746355f5621")
+			(uuid "8fe1f40f-f768-47be-b77b-3cc33dbf223f")
 		)
 		(instances
 			(project ""
@@ -3234,11 +3252,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1759022"
+			(at 194.31 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C57112"
+			(at 194.31 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "02dda6ee-afde-4765-89ab-a0b834073ec2")
+			(uuid "81a10c88-8e83-4f5d-8063-244749b4a405")
 		)
 		(pin "2"
-			(uuid "c19370d9-7a71-45f7-914a-bc1a88d88a17")
+			(uuid "11f311df-e3c4-48b8-a8d3-baac697513dd")
 		)
 		(instances
 			(project ""
@@ -3328,11 +3364,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2470386"
+			(at 212.09 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C29683"
+			(at 212.09 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "c06fdddf-aee4-4553-bc23-eac3a7a31ad4")
+			(uuid "4229b430-13f6-42fc-90c8-9c48750670b8")
 		)
 		(pin "2"
-			(uuid "2769adc7-aed8-49d7-bbed-721a5c8a3177")
+			(uuid "8f9a4ed1-f550-433d-8447-9f26b9b3ac5f")
 		)
 		(instances
 			(project ""
@@ -3399,7 +3453,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "0433c1d8-6453-4b02-97f3-2d5a2abc1ac2")
+			(uuid "33d10abf-928f-4925-8b89-73bdc02cbd44")
 		)
 		(instances
 			(project "RF_HAT"
@@ -3489,11 +3543,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2672137"
+			(at 93.98 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C76600"
+			(at 93.98 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "0706f55d-5d16-4f1c-b011-8fa1220cc4dd")
+			(uuid "2efe5ca5-85ae-4b77-be61-709557df4440")
 		)
 		(pin "2"
-			(uuid "5bd4a7a3-7539-406b-828e-b2ea3ce10f30")
+			(uuid "e77df6ba-6105-4069-973f-307b4542e66b")
 		)
 		(instances
 			(project ""
@@ -3583,11 +3655,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2280868"
+			(at 191.77 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C445758"
+			(at 191.77 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "fb5769ba-80c7-4750-899e-dd3f629a378f")
+			(uuid "306685cf-4191-4369-a53e-adfe33d97656")
 		)
 		(pin "2"
-			(uuid "e3cc6d89-fc36-4468-8e82-ff2491917c82")
+			(uuid "3920ba60-3691-4573-a9cf-8d2d108f2d1a")
 		)
 		(instances
 			(project ""
@@ -3677,11 +3767,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721980"
+			(at 58.42 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 58.42 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "65fc85e5-46e5-457e-a673-e0d7f62c534b")
+			(uuid "633549ee-d40d-455f-ade3-4291d1decf10")
 		)
 		(pin "2"
-			(uuid "d39059ef-ab47-4088-80b1-57891065ffe9")
+			(uuid "2d39a900-3b67-4c5d-b2a6-a77c6cc21f97")
 		)
 		(instances
 			(project ""
@@ -3747,7 +3855,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "7716712d-db9a-46dc-a04f-6f6dd4ef860b")
+			(uuid "37cf8548-b7aa-4b01-ad1c-b1dac5fbfe71")
 		)
 		(instances
 			(project "RF_HAT"
@@ -3837,11 +3945,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "3759543"
+			(at 215.9 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C48579262"
+			(at 215.9 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "339f3a1c-b417-4d04-b08b-e6814e95267d")
+			(uuid "1c765bbe-53a5-4915-945f-d676b7595f0d")
 		)
 		(pin "2"
-			(uuid "4af85ec0-4aa3-488d-869b-95490dc50c9d")
+			(uuid "bd1f5432-3e2a-4601-bc32-073d20375250")
 		)
 		(instances
 			(project ""
@@ -3931,101 +4057,119 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2345430"
+			(at 116.84 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C122881"
+			(at 116.84 77.47 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
-			(uuid "867c2e4d-f97c-46b7-8eec-d8cc0426c576")
+			(uuid "81ca9713-e7ff-4e70-9b3b-5aaac8b83c8c")
 		)
 		(pin "11"
-			(uuid "d92cd20b-8fcc-497a-bd7a-acd5d7f64891")
+			(uuid "21e749ba-559b-41e3-ad76-b7aff9cd1dd3")
 		)
 		(pin "8"
-			(uuid "2fd38ad6-23d7-4b68-842a-386234d9b6fb")
+			(uuid "25417b61-8238-466f-a899-cb760adcb3e0")
 		)
 		(pin "7"
-			(uuid "029f6392-0d9b-4935-a286-f259deb76075")
+			(uuid "865c8c33-34f5-469a-a976-21412033c56a")
 		)
 		(pin "9"
-			(uuid "9bf1b385-0df8-420d-a511-1d965e375a9a")
+			(uuid "aa0da210-f471-407c-8298-416fac59e9e7")
 		)
 		(pin "10"
-			(uuid "197d1662-db7a-4a18-8b2b-76a0ceda568c")
+			(uuid "baafdee7-0df0-48da-aa8d-e53a3b44cf46")
 		)
 		(pin "4"
-			(uuid "78cb24c6-5d5f-4b1f-8e6f-cd731bff9ef2")
+			(uuid "8ea37bec-cc26-484a-b62d-77ad5559739c")
 		)
 		(pin "3"
-			(uuid "ef263525-5b4d-43fc-b10d-76353ca9f847")
+			(uuid "aada783f-b7c8-475e-974e-2acb90e89566")
 		)
 		(pin "30"
-			(uuid "9d583c2e-37c4-43da-b3b5-b7051ddd92d9")
+			(uuid "2cb55fef-cc4e-4cd4-afa4-8643acfda867")
 		)
 		(pin "31"
-			(uuid "128a85c8-a819-42d7-88b3-bb1e82129ef3")
+			(uuid "e1b9a055-bd17-41e0-873b-bd768697825e")
 		)
 		(pin "32"
-			(uuid "84d6dfcd-1a8d-4526-ae81-2aa533951ce3")
+			(uuid "5ae2f803-9e65-48a7-92b5-a7bfcc3023b2")
 		)
 		(pin "14"
-			(uuid "355a962f-8b50-4440-a487-37d01da7cbf9")
+			(uuid "653b8c73-054f-46b2-9d55-6777e944f348")
 		)
 		(pin "23"
-			(uuid "047847ea-6f6d-43d1-857b-a87a7753d5c6")
+			(uuid "1d3c2c45-dc0a-494d-ac58-bf38053b948b")
 		)
 		(pin "24"
-			(uuid "eea17fb3-bf6a-4754-bdc0-2268463e54d3")
+			(uuid "993488c0-1002-4817-a715-e66363dd8faa")
 		)
 		(pin "33"
-			(uuid "9194ae8a-6a4b-4bd6-a225-83b7116dac72")
+			(uuid "b3a95333-75fa-4b73-89ea-e56811c69c41")
 		)
 		(pin "5"
-			(uuid "c927474b-1395-46b1-986c-1139f61efcdb")
+			(uuid "fc0e41f1-75e7-483f-931b-c054014a69de")
 		)
 		(pin "12"
-			(uuid "1b8ff862-2b2d-4e1d-8035-d3c930dce9ab")
+			(uuid "3e523221-bf11-4f26-9530-98c2a41c6cd8")
 		)
 		(pin "1"
-			(uuid "1630dd9c-e036-4d2d-b389-4e9c9780c9d3")
+			(uuid "465b8f86-897f-4e88-a890-1639718d607c")
 		)
 		(pin "13"
-			(uuid "839f805d-3874-4b7c-9bd4-8e955a9b4570")
+			(uuid "5055e0a7-b6c6-403f-aeb9-7b6f859e3daa")
 		)
 		(pin "15"
-			(uuid "d8788850-d5f5-408a-b341-2dea8845df89")
+			(uuid "6edeaa25-210a-4ec9-a5e6-bcb5e75f9d2c")
 		)
 		(pin "25"
-			(uuid "fc344ea5-deaf-443b-bd01-19c201bf1750")
+			(uuid "9dc67d13-af18-4f03-a5ee-786a3c24f7a8")
 		)
 		(pin "28"
-			(uuid "7936d9eb-1c08-4ad5-a8ea-e719c462384a")
+			(uuid "a591f532-5a5c-44fd-ae71-17f762f65eb1")
 		)
 		(pin "22"
-			(uuid "68f6ee10-93c8-49fa-8e78-123a04dbfca2")
+			(uuid "1abc5871-c1eb-4271-8c10-d7779ed6eabd")
 		)
 		(pin "27"
-			(uuid "6572761f-8f8f-4cb1-924e-da82d3cf8ddc")
+			(uuid "a0a8e35b-dd02-47bd-8093-d9b49c2c02ba")
 		)
 		(pin "6"
-			(uuid "cde40aaf-0aec-4ccf-8ff4-73c44c7b62fb")
+			(uuid "1a13d806-2975-45aa-b7d6-0ef80507be9d")
 		)
 		(pin "21"
-			(uuid "f04ee307-f440-4978-b48f-97ee094cf8f5")
+			(uuid "c611137f-feb8-4833-9ba1-143969a98daa")
 		)
 		(pin "26"
-			(uuid "a38e68c6-97de-40f3-abda-8b6377cd1c56")
+			(uuid "b5d8bff7-f327-469a-b967-e79e7ddd0307")
 		)
 		(pin "29"
-			(uuid "b59c26d7-00e1-4ea0-ab2f-89a97c9079bb")
+			(uuid "19264f80-8c71-4719-a3b3-ff08cb23202d")
 		)
 		(pin "19"
-			(uuid "d027907c-b716-4b36-a342-ed99f0e6bcc1")
+			(uuid "6101771c-26d0-4edb-bf12-8c890871e462")
 		)
 		(pin "20"
-			(uuid "ca082c7b-030d-4736-b13e-57206e1276f2")
+			(uuid "5d2ddaec-ff25-4cd5-8d85-eb8ea5858e21")
 		)
 		(pin "18"
-			(uuid "9650665f-a501-4b01-99ce-2d29579b5c85")
+			(uuid "93f80b01-57e6-4f68-983a-a372e2bd76f4")
 		)
 		(pin "17"
-			(uuid "dd933b7f-d293-4fce-bf18-0cfb711ad4bd")
+			(uuid "2cde7224-17c6-4243-967f-d9d1044168fd")
 		)
 		(instances
 			(project ""
@@ -4090,7 +4234,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "774f9b42-bfe4-4f2e-86b4-e2c9627235e2")
+			(uuid "51aea0ea-ae4e-460e-b910-8567f82e251e")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4156,7 +4300,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "df3f9bcf-eb29-4ba5-aca5-96ae3f2ad130")
+			(uuid "609bdf07-74a2-4e46-8252-7c9e56d24961")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4246,11 +4390,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1813415"
+			(at 204.47 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1651"
+			(at 204.47 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "c0502133-363c-47bf-a686-0a204af5133f")
+			(uuid "6260446a-2892-4ddc-a785-dede3d850135")
 		)
 		(pin "2"
-			(uuid "cc8dbed2-32a5-4e60-96f9-bcb1a4f3be76")
+			(uuid "4ca9c04c-7eae-4c23-a395-de495067f3bf")
 		)
 		(instances
 			(project ""
@@ -4316,7 +4478,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "9621402f-64d9-4498-8cc0-7efa32dd9a83")
+			(uuid "9c6f537a-da4d-4e94-9860-f135c0f47793")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4406,11 +4568,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 201.93 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 201.93 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "2ff9901a-db3b-4ec5-ab60-0ff99ab77eaf")
+			(uuid "cd5faa71-3494-4430-b4ae-d8e843757286")
 		)
 		(pin "2"
-			(uuid "f7d006d3-14c5-41d6-8d57-1cdf9663fd16")
+			(uuid "ed45606d-d198-48df-a497-2b566405f6d8")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4500,11 +4680,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 163.83 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 163.83 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "bb29f81a-18ae-4da6-ae0c-11622af447b1")
+			(uuid "1b5aea93-29ea-4bf7-b2ed-e6704e3ade3f")
 		)
 		(pin "2"
-			(uuid "8f463b4f-6baf-45e8-b94c-b8c1800ddf45")
+			(uuid "4fb5f5df-86cf-44fb-8f25-c02b653924b8")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4594,11 +4792,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2904766"
+			(at 208.28 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C61816"
+			(at 208.28 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "7fe30228-558e-4a33-b4e1-289b098c89f5")
+			(uuid "cfb2ed97-02ea-4a39-abac-431eff39f27d")
 		)
 		(pin "2"
-			(uuid "40149de1-07b6-4f43-91a7-eeb4088a73e9")
+			(uuid "ffec0712-c531-4c37-a471-cacaabe7dc27")
 		)
 		(instances
 			(project ""
@@ -4664,7 +4880,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "d67dc458-ad31-46c7-ac1b-8db36fae9f43")
+			(uuid "77706ef7-c585-40c7-915d-cf65eef20667")
 		)
 		(instances
 			(project ""
@@ -4754,11 +4970,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 156.21 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 156.21 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "be0753ef-5e65-483c-86e2-39d02a4ea63c")
+			(uuid "4d991cb2-6da5-4fbe-8be4-bcf40bfa075a")
 		)
 		(pin "2"
-			(uuid "04e43556-8544-46f3-a640-dcb78d018466")
+			(uuid "ebd7efe6-a7a4-419a-9e37-2d763cddc4e5")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4848,11 +5082,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 179.07 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 179.07 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "b5bdce05-8c29-4e91-bac5-05454d248e30")
+			(uuid "699f219f-9b35-4955-9f1d-3859fb64dcb3")
 		)
 		(pin "2"
-			(uuid "0d273808-70ee-4ae7-adbc-f83b797c8a55")
+			(uuid "0c3c52e6-9daf-4d97-b2b1-a6fb58af8d16")
 		)
 		(instances
 			(project "RF_HAT"
@@ -4942,11 +5194,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2496882"
+			(at 227.33 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C342910"
+			(at 227.33 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "f51224cb-9ec5-4b8b-b6d2-9f801373f865")
+			(uuid "b88677e0-2105-428e-8500-93cd443a4ac7")
 		)
 		(pin "2"
-			(uuid "3453ebcc-8472-443a-aea0-72dcc4c65e51")
+			(uuid "9f949368-c9b4-4c7b-a3f0-b39256b20ca9")
 		)
 		(instances
 			(project ""
@@ -5036,11 +5306,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "722080"
+			(at 201.93 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14858"
+			(at 201.93 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "46c0b562-7b19-4580-9b63-60c1ef86ceba")
+			(uuid "6f024058-be57-4f06-ac90-7f38c630d9d2")
 		)
 		(pin "2"
-			(uuid "615d26e6-9007-41f1-85f7-0b5cad0c20bc")
+			(uuid "e005c1f6-1aaf-4835-895a-65f20e1d2a2e")
 		)
 		(instances
 			(project ""
@@ -5130,11 +5418,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1515375"
+			(at 204.47 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C23651"
+			(at 204.47 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "3cb258d0-220c-4520-8b33-0d7f3621df28")
+			(uuid "75508c8e-3fc6-4b53-8ba0-76521d50aeb2")
 		)
 		(pin "2"
-			(uuid "8a1512a9-f593-4b58-a6cf-72f0b6ffb839")
+			(uuid "2082f71b-3471-424c-8d9f-d1a6e0a84af0")
 		)
 		(instances
 			(project ""
@@ -5200,7 +5506,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "db641c26-0f38-4b76-b52a-620f9d96115f")
+			(uuid "e05df826-74e9-41ce-8fe3-f93484e0285f")
 		)
 		(instances
 			(project "RF_HAT"
@@ -5290,11 +5596,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 186.69 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 186.69 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "f33eaa91-d215-4e7b-a0a8-66b8defc27c4")
+			(uuid "7ad64078-cf4f-48e4-a822-3ec62a2bd666")
 		)
 		(pin "2"
-			(uuid "6b70d8dd-c02f-448c-a44d-eb4fe9c0415e")
+			(uuid "d1ff5719-67a5-4116-bc25-f9ce648f9f22")
 		)
 		(instances
 			(project "RF_HAT"
@@ -5384,11 +5708,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 137.16 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 137.16 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "2d3fd886-b976-498b-a509-e5e21ab99b4a")
+			(uuid "bb976a27-d56d-4aec-93a0-a49450984394")
 		)
 		(pin "2"
-			(uuid "e0823cc5-ef68-4296-9b6d-907978a828ac")
+			(uuid "a42229f3-610f-4381-9e9f-56a60b1a1e49")
 		)
 		(instances
 			(project ""
@@ -5478,11 +5820,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238603"
+			(at 92.71 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 92.71 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "e3d800c3-92b9-4b93-adb4-0e9d1e9c681c")
+			(uuid "b5dfa1ff-05aa-4899-8f58-633e155bcb54")
 		)
 		(pin "2"
-			(uuid "62a9de3d-39e2-4ea1-95b3-fc2c84011efe")
+			(uuid "8af6d14a-eb78-47d4-bc80-e26c931a3ad5")
 		)
 		(instances
 			(project ""
@@ -5548,7 +5908,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "3dad715c-3411-405a-a2f0-1775b6afc3a3")
+			(uuid "21799c6c-62df-48ea-ae76-43aa41b2c388")
 		)
 		(instances
 			(project "RF_HAT"
@@ -5638,11 +5998,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 171.45 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 171.45 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "0780d0e0-acbf-442c-a334-f444641b33d4")
+			(uuid "59b1b944-3dca-4ef3-926b-c283037ceff0")
 		)
 		(pin "2"
-			(uuid "97e933ef-0a3f-4aa5-a939-e005272d58cb")
+			(uuid "fd45b76d-da69-4a9a-85be-119372efff21")
 		)
 		(instances
 			(project "RF_HAT"
@@ -5732,11 +6110,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1515382"
+			(at 219.71 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98071"
+			(at 219.71 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "c76e045e-30f0-446d-a2bb-782fec2fad6a")
+			(uuid "972fdea0-5ad0-4f56-9cb9-4e65ca12e3dd")
 		)
 		(pin "2"
-			(uuid "f3bec61d-6a1d-4d0e-a4a3-5a744b951444")
+			(uuid "8f2da1a6-ae20-469e-99e0-1c109b7397c2")
 		)
 		(instances
 			(project ""
@@ -5802,7 +6198,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "17c5fbf9-0706-45d6-847c-0830f71f14e9")
+			(uuid "61ebeea7-4e25-472b-b10f-ded36506c383")
 		)
 		(instances
 			(project "RF_HAT"
@@ -5867,7 +6263,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "da2c57c0-167c-4c21-8149-eaf772f2d852")
+			(uuid "ec41105d-75e0-4088-b6eb-44ced2ec6457")
 		)
 		(instances
 			(project "RF_HAT"
@@ -5957,11 +6353,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1515375"
+			(at 149.86 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C23651"
+			(at 149.86 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "8aee21d3-455d-4b26-af1c-0bf8b374ec60")
+			(uuid "e3ffd245-d1aa-4a37-80d1-050a40cf8a4b")
 		)
 		(pin "2"
-			(uuid "fcf6c16e-6bbd-4d34-b595-6def711af85c")
+			(uuid "c3510053-c87a-400e-ab41-7905bce351b9")
 		)
 		(instances
 			(project ""
@@ -6027,7 +6441,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "9022be59-6db3-4a0b-9280-b9e781bb719b")
+			(uuid "2e8c5d1a-96e8-4723-b5a9-59fa20baca2a")
 		)
 		(instances
 			(project "RF_HAT"
@@ -6117,17 +6531,35 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1712847"
+			(at 71.12 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380316"
+			(at 71.12 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "ce01af7e-6fbf-4f16-9b6c-49abdbb95ba4")
+			(uuid "480db91f-972b-425f-b9c7-f8a05e205190")
 		)
 		(pin "2"
-			(uuid "98157d91-5b14-47f9-8d1a-4ab93719a757")
+			(uuid "61dc5512-2772-4afb-850a-e5b73a4c1b7c")
 		)
 		(pin "4"
-			(uuid "e8442376-d652-42a1-9bf7-42231606fc65")
+			(uuid "45ba63c5-2e4f-4275-a1bc-04a90ecb1923")
 		)
 		(pin "3"
-			(uuid "1956e27a-f036-4421-80ea-b516227b8edb")
+			(uuid "a6f333fa-69de-4ec8-a4d9-2b3f2df9523c")
 		)
 		(instances
 			(project ""
@@ -6194,7 +6626,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "d2f6a804-4880-4f9a-9f3f-f3584cbbc7f9")
+			(uuid "cc0ca73f-3f2f-42b0-b4dc-151c7955f73b")
 		)
 		(instances
 			(project "RF_HAT"
@@ -6284,11 +6716,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 140.97 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 140.97 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "1b689ea5-e98b-4c99-9017-d35d40d3a0b0")
+			(uuid "67915d41-f589-45b8-a602-e6fcdc8bb52c")
 		)
 		(pin "2"
-			(uuid "b788952a-0bd5-4094-b7d8-931ac09df1a7")
+			(uuid "4cc68286-977d-4463-9e23-91f2463f9c37")
 		)
 		(instances
 			(project ""
@@ -6353,7 +6803,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "400e3ff0-eee1-4335-9bb6-a20aa2b7ad33")
+			(uuid "964eeb1c-642d-43ce-978f-2eecf8811ba1")
 		)
 		(instances
 			(project "RF_HAT"
@@ -6419,7 +6869,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "b186bf71-11f8-4536-91e8-d30d79e04b95")
+			(uuid "c42deb79-d008-4eb5-8d9b-4a71cf03ab44")
 		)
 		(instances
 			(project "RF_HAT"
@@ -6509,11 +6959,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "3354667"
+			(at 180.34 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C12831"
+			(at 180.34 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "19daef40-bc9a-4194-ae04-3f2efb678be1")
+			(uuid "9f4c61ce-a047-422f-bd4e-50ba06b15bca")
 		)
 		(pin "2"
-			(uuid "a921cf3d-6b8c-4605-9c71-9c956b8400d1")
+			(uuid "37d08b29-820b-4fef-bf2a-690cc374a2f1")
 		)
 		(instances
 			(project ""
@@ -6603,11 +7071,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1828900"
+			(at 167.64 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C21120"
+			(at 167.64 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "4d74e6d6-d6a2-4cc5-8a7f-4d61af5ae744")
+			(uuid "af1a73d9-ab82-4272-a5ab-2a038d3ea46a")
 		)
 		(pin "2"
-			(uuid "b1f9e9b1-5bcf-417a-8536-93e8eaa8410f")
+			(uuid "69053062-51f9-485d-8dbb-d5f5a413f8e0")
 		)
 		(instances
 			(project ""
@@ -6697,11 +7183,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2904766"
+			(at 140.97 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C61816"
+			(at 140.97 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "8c853af5-6cc3-482f-b48d-f1de574fb230")
+			(uuid "0f1e77f5-8dcc-4098-b0f4-7c4915656239")
 		)
 		(pin "2"
-			(uuid "f68e4693-9246-4845-a586-d6eb662972a6")
+			(uuid "b38c5e8b-3aeb-449e-86b3-0e39d07400b7")
 		)
 		(instances
 			(project ""
@@ -6791,11 +7295,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721980"
+			(at 83.82 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 83.82 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "ca4937eb-f98a-4c3d-844d-471ad344f668")
+			(uuid "478b9c11-40c9-4c74-94bd-b8524c52580a")
 		)
 		(pin "2"
-			(uuid "518dae74-600a-4dd7-84c7-19913349df83")
+			(uuid "84adc10c-4fda-46aa-bbeb-4c78f4ed8b94")
 		)
 		(instances
 			(project ""
@@ -6885,11 +7407,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 194.31 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 194.31 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "2cc9337d-6d1c-464f-b817-a623aae0becd")
+			(uuid "1184be5e-2322-40e0-9ef5-c9e45c6b6739")
 		)
 		(pin "2"
-			(uuid "ddc34b54-7daa-4588-9696-c6cc495c2423")
+			(uuid "7ce1cc41-3746-47f3-a6d0-1feded0a0df5")
 		)
 		(instances
 			(project "RF_HAT"
@@ -6979,11 +7519,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1515383"
+			(at 151.13 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C162550"
+			(at 151.13 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "10295d6e-4042-4fa0-b0b3-dd4a75fd05ae")
+			(uuid "64879beb-479c-4898-9d61-2223f2b343da")
 		)
 		(pin "2"
-			(uuid "34fcd3fd-5460-45af-bc59-9752dc2a6ae7")
+			(uuid "5dd52f1c-9710-4e13-aed4-559608e29a14")
 		)
 		(instances
 			(project ""
@@ -7073,11 +7631,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "3354667"
+			(at 146.05 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C12831"
+			(at 146.05 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "14673339-7d7c-4ffc-957c-80147e9ff920")
+			(uuid "dd813b10-0b34-489b-b6a8-9c52ddd29002")
 		)
 		(pin "2"
-			(uuid "eabd0d77-1288-440c-9b57-2c9212dbd201")
+			(uuid "28f5271a-8498-427f-8d90-ad258fc319d4")
 		)
 		(instances
 			(project ""
@@ -7167,11 +7743,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 148.59 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 148.59 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "a1a4b297-f407-4f4d-86b1-d32d43c141bc")
+			(uuid "9a770ffe-d39f-49f6-a365-3b12c39063e4")
 		)
 		(pin "2"
-			(uuid "64a7b12b-729b-4c98-8c0a-551e0871f25c")
+			(uuid "7db15387-da28-423b-9548-48995bfdb89c")
 		)
 		(instances
 			(project "RF_HAT"
@@ -7261,11 +7855,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1572627"
+			(at 186.69 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C338104"
+			(at 186.69 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "a1b8e656-3d47-4c4c-817c-746d9ddd2a34")
+			(uuid "5901eea9-0694-42e0-8a9e-016d667fb64b")
 		)
 		(pin "2"
-			(uuid "e6e679ad-21d7-443b-862b-f44e3145e696")
+			(uuid "e60d3df7-2fd7-4105-9c2a-c3f9a3389baa")
 		)
 		(instances
 			(project ""
@@ -7355,11 +7967,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 147.32 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 147.32 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "bd12c244-b9d7-48f4-a43c-5b6ebc1bc176")
+			(uuid "24b29b4a-781f-42a0-ae97-9ac476fd0a54")
 		)
 		(pin "2"
-			(uuid "0cee6f25-2795-46e2-b71b-cf5668e45a92")
+			(uuid "6bcf494e-3dad-42b8-8d03-cdc6b30971dd")
 		)
 		(instances
 			(project ""
@@ -7449,11 +8079,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238271"
+			(at 180.34 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C245924"
+			(at 180.34 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "ad88ae3f-d87a-4c20-bd74-c7a681643871")
+			(uuid "0e3d6cad-3be4-47e5-bb7e-cb7501f08f07")
 		)
 		(pin "2"
-			(uuid "d3436075-0144-442a-b705-faec32ff2bfd")
+			(uuid "e2cafc83-e8dd-4d37-b443-1d597b2a2d67")
 		)
 		(instances
 			(project ""
@@ -7543,11 +8191,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238697"
+			(at 95.25 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C23206"
+			(at 95.25 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "ad4ed365-51f2-4352-8368-165fa7a115d4")
+			(uuid "a4cdb747-9912-484c-ab6a-afedadf0a1c9")
 		)
 		(pin "2"
-			(uuid "eb002e06-2840-4b2e-af0d-8f27c32375d3")
+			(uuid "d3b22daa-fb86-4e48-a894-9bf62a0b5d02")
 		)
 		(instances
 			(project ""
@@ -7613,7 +8279,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "f31dfdd6-b5ff-45c9-92e5-fdf07615de3e")
+			(uuid "61b51baf-51f6-4c55-9ab0-b8eea3fe9cbe")
 		)
 		(instances
 			(project "RF_HAT"
@@ -7680,7 +8346,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "4855fea5-4d8a-42f9-a00a-b14c2fd53eff")
+			(uuid "ccce2a10-8d6f-42dd-87fc-62b4e048a4c4")
 		)
 		(instances
 			(project "RF_HAT"
@@ -7770,11 +8436,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1515383"
+			(at 132.08 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C162550"
+			(at 132.08 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "9d23594c-372c-4ab4-ad2a-fa5b4a2e5851")
+			(uuid "9e9b753f-c686-441d-98e8-3a0d8ac8b6db")
 		)
 		(pin "2"
-			(uuid "93396004-b3ac-44b8-8cad-09ed568657c5")
+			(uuid "7cc6b98f-f59a-41e3-a2c8-f5869969e1d4")
 		)
 		(instances
 			(project ""
@@ -7864,11 +8548,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238603"
+			(at 71.12 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 71.12 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "2384be4e-7500-4e52-a8fd-4208804e3a14")
+			(uuid "827c6e25-4641-40a7-96b1-34a0817ba247")
 		)
 		(pin "2"
-			(uuid "08a931cf-56e6-484d-a045-d97f25f7afcb")
+			(uuid "b109f42f-be25-4ef0-b7aa-9be10f256a1c")
 		)
 		(instances
 			(project ""
@@ -7958,11 +8660,20 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2112467"
+			(at 236.22 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "88e832aa-b128-4c86-9f38-4da6917b919e")
+			(uuid "7781531f-3962-488a-8740-fa855e62a2b0")
 		)
 		(pin "2"
-			(uuid "019ab364-c75b-441d-bf88-fd01f4285d47")
+			(uuid "a870a493-c15d-4705-9dc1-5f1aeeca9a15")
 		)
 		(instances
 			(project ""
@@ -8052,11 +8763,29 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2904766"
+			(at 160.02 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C61816"
+			(at 160.02 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
-			(uuid "690400b4-5f75-43e8-aa3b-51eecb94fc0d")
+			(uuid "636dc2d7-68d9-43c4-9056-9b450958875f")
 		)
 		(pin "2"
-			(uuid "40fa221f-6a8b-457c-aad2-2a04182e7876")
+			(uuid "d2e26061-73c4-48a5-9b01-42363af9654a")
 		)
 		(instances
 			(project ""

@@ -26,7 +26,7 @@ SatNOGS-compatible ground station for tracking the AetherSpace CubeSat at 433 MH
 ```
 Firmware/                RP2040 rotator firmware (PlatformIO, Arduino-Pico core)
 MotorPCB/                KiCad 9 motor control PCB (13 hierarchical sub-sheets)
-RF_HAT/                  Dual CC1200 transceiver HAT — UHF 432 MHz + VHF 144 MHz
+RF_HAT/                  Dual CC1200 transceiver HAT — UHF 432 MHz + VHF 144 MHz (JLCPCB 6-layer)
 Hardware/                Datasheets: TB6642FG driver, FAPG36-555-EN motor, encoder
 Images/                  Rotator photos, PID tuning plots
 demo_tracking.py         Simulated satellite pass demo (direct serial)

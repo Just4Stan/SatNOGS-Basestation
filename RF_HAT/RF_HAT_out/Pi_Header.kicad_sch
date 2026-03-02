@@ -1409,6 +1409,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9838309"
+			(at 50.8 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C50980"
+			(at 50.8 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "8"
 			(uuid "ed71e530-8db8-43cb-bad9-400e92e19764")
 		)

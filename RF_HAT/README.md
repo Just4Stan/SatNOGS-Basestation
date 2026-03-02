@@ -178,6 +178,35 @@ Inductors scaled up ~17% for 144 MHz (lower frequency requires larger inductance
 | TIDU921 | Multiband wM-Bus RF Subsystem | Bypass cap values, multi-band ref |
 | TIDU512 | CC1120 169 MHz wM-Bus Design | Additional VHF reference |
 
+## PCB Fabrication (JLCPCB 6-Layer)
+
+The board is configured for JLCPCB's **JLC06121H-3313** 6-layer stackup (1.2mm nominal):
+
+| Layer | Type | Thickness | Material | Er |
+|-------|------|-----------|----------|-----|
+| F.Cu | Copper | 0.035mm (1oz) | — | — |
+| Dielectric 1 | Prepreg 3313 | 0.0994mm | NP-155F | 4.1 |
+| In1.Cu | Copper | 0.0152mm (0.5oz) | — | — |
+| Dielectric 2 | Core | 0.35mm | NP-155F | 4.36 |
+| In2.Cu | Copper | 0.0152mm (0.5oz) | — | — |
+| Dielectric 3 | Prepreg 2116 | 0.1164mm | NP-155F | 4.16 |
+| In3.Cu | Copper | 0.0152mm (0.5oz) | — | — |
+| Dielectric 4 | Core | 0.35mm | NP-155F | 4.36 |
+| In4.Cu | Copper | 0.0152mm (0.5oz) | — | — |
+| Dielectric 5 | Prepreg 3313 | 0.0994mm | NP-155F | 4.1 |
+| B.Cu | Copper | 0.035mm (1oz) | — | — |
+
+### Impedance Control
+
+RF traces to the SMA connectors use a `50Ohm` net class (0.15mm / 6 mil width). This is calculated for F.Cu microstrip over In1.Cu ground plane (h=0.0994mm, Er=4.1, 1oz copper). Verify with [JLCPCB's impedance calculator](https://jlcpcb.com/pcb-impedance-calculator) before ordering.
+
+### Ordering Notes
+
+- Select **6-layer**, **1.2mm** board thickness, **ENIG** surface finish (free for 6-layer)
+- Enable **impedance control** and specify stackup **JLC06121H-3313**
+- Dielectric constraints are enabled in the KiCad project (`dielectric_constraints yes`)
+- Minimum via: 0.45mm pad / 0.3mm drill (0.075mm annular ring)
+
 ## Modifying the Design
 
 The KiCad project in `RF_HAT_out/` was initially generated from `rf_hat_circuit.py` (circuit-synth) but is now edited directly in KiCad. The Python source remains as reference for the original netlist and component values.

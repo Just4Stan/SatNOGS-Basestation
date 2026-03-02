@@ -3107,6 +3107,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 121.92 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 121.92 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "573528f7-dca2-41c5-a06c-e47c465f4a49")
 		)
@@ -3194,6 +3212,15 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 219.71 118.1099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2112467"
+			(at 217.17 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3360,6 +3387,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721980"
+			(at 64.77 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 64.77 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "91cad981-d7c3-412b-b224-56fe9c0bde12")
 		)
@@ -3454,6 +3499,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 167.64 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 167.64 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "6ea66d7d-a05a-48e1-9c3a-9314603e3c41")
 		)
@@ -3541,6 +3604,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 54.61 90.1699 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "1712847"
+			(at 52.07 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C5380316"
+			(at 52.07 85.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3714,6 +3795,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238280"
+			(at 161.29 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C23345"
+			(at 161.29 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "fcbf0ac6-f78f-4905-a7e9-917fb2d60012")
 		)
@@ -3801,6 +3900,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 177.8 62.2299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2495363"
+			(at 175.26 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 175.26 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3902,6 +4019,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 128.27 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 128.27 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "98dc8071-b906-403c-88db-517dc989fcdf")
 		)
@@ -3989,6 +4124,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 191.77 135.8899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "721980"
+			(at 189.23 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 189.23 130.81 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4223,6 +4376,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 182.88 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 182.88 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5a72a473-41eb-4ffc-89b7-c3570a9aeb9a")
 		)
@@ -4310,6 +4481,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 81.2799 97.79 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "9238697"
+			(at 76.2 100.33 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C23206"
+			(at 76.2 100.33 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4411,6 +4600,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "722080"
+			(at 182.88 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14858"
+			(at 182.88 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c57282bb-e6b5-4027-9f6f-cfe7b1ff40ae")
 		)
@@ -4505,6 +4712,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 118.11 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 118.11 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "5438334c-38a8-4e82-b92c-6a21811d72b4")
 		)
@@ -4592,6 +4817,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 147.32 62.2299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2495363"
+			(at 144.78 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 144.78 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4825,6 +5068,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9528032"
+			(at 127 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98089"
+			(at 127 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "185cbfca-62c2-4713-a27e-27e9a3bdbd0b")
 		)
@@ -4919,6 +5180,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238603"
+			(at 52.07 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 52.07 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "439d848d-bb12-454d-a1cc-8f7ac280e6da")
 		)
@@ -5006,6 +5285,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 213.3599 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "722080"
+			(at 208.28 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14858"
+			(at 208.28 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5173,6 +5470,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721980"
+			(at 39.37 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 39.37 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "2579101d-36c7-447d-a766-646c9613ac2f")
 		)
@@ -5325,6 +5640,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 190.4999 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "1515382"
+			(at 185.42 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98071"
+			(at 185.42 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5493,6 +5826,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 129.54 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 129.54 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "1b56ec94-3330-41dd-bb4b-99381396531d")
 		)
@@ -5587,6 +5938,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1828900"
+			(at 148.59 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C21120"
+			(at 148.59 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "524b4fdc-cc1c-41f8-b60a-4f3c52f08d6e")
 		)
@@ -5674,6 +6043,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 154.94 62.2299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2495363"
+			(at 152.4 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 152.4 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5907,6 +6294,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "1813422"
+			(at 74.93 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C343008"
+			(at 74.93 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f690a9be-7c90-43be-ab7e-cfbfde3c6594")
 		)
@@ -5994,6 +6399,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 162.56 62.2299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2495363"
+			(at 160.02 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 160.02 57.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6162,6 +6585,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "722080"
+			(at 172.72 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14858"
+			(at 172.72 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "02e6eaed-f432-47bb-a769-531f734d8864")
 		)
@@ -6249,6 +6690,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 170.18 106.6799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "722080"
+			(at 167.64 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C14858"
+			(at 167.64 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6416,6 +6875,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "2495363"
+			(at 137.16 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1622"
+			(at 137.16 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "95da8a12-31c5-40f1-8a6b-b8d7a0a6f30d")
 		)
@@ -6503,6 +6980,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 143.51 130.8099 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "721980"
+			(at 140.97 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 140.97 125.73 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6604,6 +7099,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "3471564"
+			(at 161.29 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C668477"
+			(at 161.29 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "c1ac0b1f-0478-415c-835d-478c2461433f")
 		)
@@ -6698,6 +7211,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9528032"
+			(at 113.03 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98089"
+			(at 113.03 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "d62fd738-a516-4bad-9f80-c5de1043feb4")
 		)
@@ -6785,6 +7316,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 100.33 78.7399 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "2345430"
+			(at 97.79 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C122881"
+			(at 97.79 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6976,6 +7525,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721864"
+			(at 185.42 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C695130"
+			(at 185.42 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "0c48032e-c068-448c-80db-f2ad05ff2574")
 		)
@@ -7135,6 +7702,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9238603"
+			(at 73.66 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C25804"
+			(at 73.66 44.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "4c329c42-3ca8-46f1-a3f2-04c245007ed1")
 		)
@@ -7222,6 +7807,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 135.8899 137.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "1515390"
+			(at 130.81 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C29683"
+			(at 130.81 139.7 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7323,6 +7926,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "3678407"
+			(at 193.04 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C307612"
+			(at 193.04 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "18c59d47-b3ac-42b6-9baa-ed57f5ca5368")
 		)
@@ -7410,6 +8031,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 177.8 106.6799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "1759022"
+			(at 175.26 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C57112"
+			(at 175.26 101.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7643,6 +8282,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721980"
+			(at 196.85 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 196.85 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "693de9fb-9cc1-4350-b8a5-801c235d62ce")
 		)
@@ -7730,6 +8387,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 140.97 93.9799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "1759022"
+			(at 138.43 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C57112"
+			(at 138.43 88.9 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7831,6 +8506,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "9528032"
+			(at 132.08 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98089"
+			(at 132.08 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "f5101ea9-ad31-4502-b81f-561a8b1c4587")
 		)
@@ -7925,6 +8618,24 @@
 				(hide yes)
 			)
 		)
+		(property "Farnell" "721980"
+			(at 121.92 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C1644"
+			(at 121.92 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "bbaf102e-fdb1-43f6-9dda-88c40c8fcb1e")
 		)
@@ -8012,6 +8723,24 @@
 		)
 		(property "root_uuid" "300cf3d4-e317-44c8-acd8-5f9989779c7c"
 			(at 205.7399 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Farnell" "1515396"
+			(at 200.66 113.03 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC" "C98085"
+			(at 200.66 113.03 0)
 			(effects
 				(font
 					(size 1.27 1.27)
