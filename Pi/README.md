@@ -3,16 +3,19 @@
 Complete setup guide for the Pi 3 Model A+ that runs the ground station.
 The Pi talks to two RP2040 Picos simultaneously:
 
+It should be compatible with any Raspberry Pi from the Pi3+ and beyond so Pi4, Pi5 and Pi Zero as of writing. This is untested
+
+
 ```
                   ┌───────────────────────────────────────────────────┐
-                  │  Raspberry Pi 3 Model A+                         │
-                  │  Bookworm arm64, IP 10.72.3.105                  │
+                  │  Raspberry Pi 3 Model A+                          │
+                  │  Bookworm arm64, IP 10.72.3.105                   │
                   │                                                   │
-                  │  ┌────────────┐  ┌────────────┐  ┌────────────┐  │
-                  │  │ rotctld    │  │ station.py  │  │ satnogs-   │  │
-                  │  │ (hamlib)   │  │ capture.py  │  │ client     │  │
-                  │  │ port 4533  │  │ transmit.py │  │ (optional) │  │
-                  │  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘  │
+                  │  ┌────────────┐  ┌────────────┐  ┌────────────┐   │
+                  │  │ rotctld    │  │ station.py │  │ satnogs-   │   │
+                  │  │ (hamlib)   │  │ capture.py │  │ client     │   │
+                  │  │ port 4533  │  │ transmit.py│  │ (optional) │   │
+                  │  └─────┬──────┘  └─────┬──────┘  └─────┬──────┘   │
                   │        │               │               │          │
                   │   USB serial      Pi UART          TCP 4533       │
                   │  /dev/ttyACM0    /dev/serial0    → rotctld        │
@@ -22,9 +25,9 @@ The Pi talks to two RP2040 Picos simultaneously:
                   │  Rotator Pico   │ │  RF HAT Pico          │       │
                   │  EasyComm proto │ │  COBS binary proto    │       │
                   │  (USB CDC)      │ │  (UART 115200)        │       │
-                  │                 │ │                        │       │
+                  │                 │ │                       │       │
                   │  AZ/EL motors   │ │  CC1200 UHF + VHF     │       │
-                  └─────────────────┘ └────────────────────────┘       │
+                  └─────────────────┘ └───────────────────────┘       │
 ```
 
 ## Current Pi State

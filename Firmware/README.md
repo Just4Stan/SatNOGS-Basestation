@@ -4,13 +4,13 @@ Two RP2040 Pico microcontrollers, controlled by a single Raspberry Pi 3 Model A+
 form the ground station electronics:
 
 ```
-                          ┌──────────────────────────────────────────────────────┐
+                          ┌─────────────────────────────────────────────────────┐
                           │  Raspberry Pi 3 Model A+                            │
                           │  (Bookworm arm64, 10.72.3.105)                      │
                           │                                                     │
                           │  ┌──────────────┐   ┌────────────────────────────┐  │
-                          │  │ rotctld      │   │ Python packet capture     │  │
-                          │  │ model 204    │   │ (COBS/UART protocol)      │  │
+                          │  │ rotctld      │   │ Python packet capture      │  │
+                          │  │ model 204    │   │ (COBS/UART protocol)       │  │
                           │  │ port 4533    │   │                            │  │
                           │  └──────┬───────┘   └────────────┬───────────────┘  │
                           │         │                        │                  │
@@ -18,30 +18,30 @@ form the ground station electronics:
                           │    /dev/ttyACM0            115200 baud              │
                           └─────────┼────────────────────────┼──────────────────┘
                                     │                        │
-                          ┌─────────┴─────────┐   ┌─────────┴─────────────────┐
-                          │  Rotator Pico      │   │  RF HAT Pico              │
-                          │  (Motor Control)   │   │  (CC1200 Controller)      │
-                          │                    │   │                            │
-                          │  USB CDC serial    │   │  UART0 (GP0/GP1)          │
-                          │  EasyComm protocol │   │  COBS binary protocol     │
-                          │                    │   │                            │
-                          │  ┌──────┐ ┌──────┐│   │  ┌───────┐  ┌───────┐     │
-                          │  │AZ mot│ │EL mot││   │  │CC1200 │  │CC1200 │     │
-                          │  │TB6642│ │TB6642││   │  │UHF    │  │VHF    │     │
-                          │  │IN1/2 │ │IN1/2 ││   │  │432 MHz│  │144 MHz│     │
-                          │  │+PWM  │ │+PWM  ││   │  │SPI1   │  │SPI0   │     │
-                          │  └──────┘ └──────┘│   │  └───────┘  └───────┘     │
-                          │  ┌──────┐ ┌──────┐│   │                            │
-                          │  │AZ enc│ │EL enc││   │  ┌───────┐  ┌───────┐     │
-                          │  │quad  │ │quad  ││   │  │UHF    │  │VHF    │     │
-                          │  │IRQ   │ │IRQ   ││   │  │SMA    │  │SMA    │     │
-                          │  └──────┘ └──────┘│   │  │antenna│  │antenna│     │
-                          │  ┌──────┐ ┌──────┐│   │  └───────┘  └───────┘     │
-                          │  │ADXL  │ │end-  ││   │                            │
-                          │  │345   │ │stops ││   │                            │
-                          │  │SPI0  │ │GPIO  ││   │                            │
-                          │  └──────┘ └──────┘│   │                            │
-                          └────────────────────┘   └────────────────────────────┘
+                          ┌─────────┴─────────┐    ┌─────────┴─────────────────┐
+                          │  Rotator Pico     │    │  RF HAT Pico              │
+                          │  (Motor Control)  │    │  (CC1200 Controller)      │
+                          │                   │    │                           │
+                          │  USB CDC serial   │    │  UART0 (GP0/GP1)          │
+                          │  EasyComm protocol│    │  COBS binary protocol     │
+                          │                   │    │                           │
+                          │  ┌──────┐ ┌──────┐│    │  ┌───────┐  ┌───────┐     │
+                          │  │AZ mot│ │EL mot││    │  │CC1200 │  │CC1200 │     │
+                          │  │TB6642│ │TB6642││    │  │UHF    │  │VHF    │     │
+                          │  │IN1/2 │ │IN1/2 ││    │  │432 MHz│  │144 MHz│     │
+                          │  │+PWM  │ │+PWM  ││    │  │SPI1   │  │SPI0   │     │
+                          │  └──────┘ └──────┘│    │  └───────┘  └───────┘     │
+                          │  ┌──────┐ ┌──────┐│    │                           │
+                          │  │AZ enc│ │EL enc││    │  ┌───────┐  ┌───────┐     │
+                          │  │quad  │ │quad  ││    │  │UHF    │  │VHF    │     │
+                          │  │IRQ   │ │IRQ   ││    │  │SMA    │  │SMA    │     │
+                          │  └──────┘ └──────┘│    │  │antenna│  │antenna│     │
+                          │  ┌──────┐ ┌──────┐│    │  └───────┘  └───────┘     │
+                          │  │ADXL  │ │end-  ││    │                           │
+                          │  │345   │ │stops ││    │                           │
+                          │  │SPI0  │ │GPIO  ││    │                           │
+                          │  └──────┘ └──────┘│    │                           │
+                          └───────────────────┘    └───────────────────────────┘
 ```
 
 ## How the System Works
