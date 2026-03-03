@@ -1,0 +1,19 @@
+[Unit]
+Description=SatNOGS Ground Station Auto-Tracker (daemon mode)
+After=network-online.target rotctld.service dashboard.service
+Wants=network-online.target rotctld.service
+Requires=rotctld.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/SatNOGS-Basestation/Pi
+ExecStart=/usr/bin/python3 /home/pi/SatNOGS-Basestation/Pi/station.py --daemon --no-rf --doppler --log /home/pi/station.log
+Restart=always
+RestartSec=10
+User=pi
+
+# Give station.py time to park the antenna on shutdown
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

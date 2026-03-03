@@ -75,6 +75,7 @@ private:
                        uint32_t* phase_start_ms);
 
   float compute_pid(float error_deg, float* integral, float* prev_error, float* d_filtered);
+  void recenter_az();
 
   bool endstop_pressed_az() const;
   bool endstop_pressed_el() const;

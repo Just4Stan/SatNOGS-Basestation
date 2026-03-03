@@ -43,9 +43,10 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 
 | Folder | Description | Details |
 |--------|-------------|---------|
-| [`Firmware/`](Firmware/) | RP2040 rotator firmware (PlatformIO, Arduino-Pico core) | [Firmware README](Firmware/rp2040-satnogs-rotator/README.md) |
+| [`Firmware/`](Firmware/) | RP2040 firmware for both Picos (rotator + RF HAT) | [Firmware README](Firmware/README.md) |
 | [`MotorPCB/`](MotorPCB/) | KiCad 9 motor control PCB (RP2040 + TB6642FG drivers, 13 sub-sheets) | Open `motorPCB.kicad_pro` in KiCad |
 | [`RF_HAT/`](RF_HAT/) | Dual CC1200 transceiver HAT — UHF 432 MHz + VHF 144 MHz | [RF_HAT README](RF_HAT/README.md) |
+| [`Pi/`](Pi/) | Pi setup, RF data flow scripts, user guide | [Pi README](Pi/README.md) · [User Guide](Pi/user_guide.md) |
 | [`Hardware/`](Hardware/) | Datasheets for motor, driver, encoder, antenna | [Hardware README](Hardware/README.md) |
 | [`Images/`](Images/) | Rotator photos and PID tuning plots | — |
 | [`Papers/`](Papers/) | Baseline thesis draft (Serge Hanssens, 2022-2023) | — |
@@ -53,9 +54,10 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 
 | File | Description |
 |------|-------------|
-| `firmware.uf2` | Pre-built firmware binary (auto-copied on each build) |
-| `demo_tracking.py` | Simulated satellite pass demo (direct serial to Pico) |
-| `track_satellite.py` | Live satellite tracker via rotctld (requires `ephem`) |
+| `firmware.uf2` | Pre-built rotator firmware (auto-copied on each build) |
+| `rf_hat_firmware.uf2` | Pre-built RF HAT firmware (auto-copied on each build) |
+| `demo_tracking.py` | Thesis demo (axis showcase + simulated passes). Use `--passes-only` to skip axis demo |
+| `track_satellite.py` | Live satellite tracker — direct USB serial or via rotctld (requires `ephem`, `pyserial`) |
 
 ## Hardware
 
@@ -65,7 +67,7 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 | **Motor driver** | 2x TB6642FG full-bridge (24V, PWM) |
 | **Motors** | FAPG36-555-EN, 24V, 16 RPM, 516:1 gearbox |
 | **Encoders** | 2-channel Hall (64 edges/rev quadrature) |
-| **IMU** | ADXL345 accelerometer (EL calibration at boot) |
+| **IMU** | ADXL345 accelerometer (EL homing to horizontal at boot) |
 | **RF** | 2x TI CC1200 (432 MHz + 144 MHz) on separate HAT |
 | **Antenna** | LPRS YAGI-434A, 434 MHz, 10 dBi |
 | **Station computer** | Raspberry Pi 3 Model A+ (Bookworm arm64) |
@@ -148,11 +150,43 @@ echo "P 90.0 30.0" | nc <pi-ip> 4533  # move to AZ 90, EL 30
 
 ### Satellite tracking
 
+The tracker computes real-time AZ/EL from TLE orbital data (CelesTrak) using PyEphem and
+sends position commands to the Pico at 10 Hz. It displays target, actual (encoder readback),
+and pointing error in real-time.
+
 ```sh
-# Direct tracking via rotctld (requires: pip install ephem pyserial)
-python3 track_satellite.py --list              # upcoming passes
-python3 track_satellite.py --sat "ISS"         # track specific satellite
-python3 track_satellite.py                     # auto-pick next pass
+pip install ephem pyserial
+
+# Direct USB serial (laptop → Pico, no Pi needed):
+python3 track_satellite.py --serial auto --list        # upcoming passes
+python3 track_satellite.py --serial auto --sat "ISS"   # track ISS
+python3 track_satellite.py --serial auto               # auto-pick next pass
+
+# Via rotctld on the Pi:
+python3 track_satellite.py --host 10.72.3.105 --sat "ISS"
+
+# Thesis demo (axis showcase, then simulated passes):
+python3 demo_tracking.py
+
+# Simulated passes only (no axis demo):
+python3 demo_tracking.py --passes-only
+```
+
+**How it works:**
+
+```
+CelesTrak TLE data ──→ PyEphem orbit model ──→ AZ/EL at 10 Hz
+                                                     │
+                                               USB serial
+                                           (EasyComm: "AZ180.0 EL45.0")
+                                                     │
+                                                     ▼
+                                              Rotator Pico
+                                           PID controller (100 Hz)
+                                           encoder feedback
+                                                     │
+                                                     ▼
+                                             TB6642FG → motors
 ```
 
 ### SatNOGS client (optional)
@@ -165,6 +199,18 @@ sudo satnogs-setup                                # configure station
 Set `SATNOGS_ROT_MODEL=ROT_MODEL_NETROTCTL` and `SATNOGS_ROT_PORT=localhost:4533`.
 
 > **Note**: The SatNOGS Docker stack needs ~1 GB RAM. A Pi 3 A+ (512 MB) can run it but is tight — Pi 3B+ or Pi 4 recommended.
+
+## Safety features
+
+The firmware includes multiple safety layers to prevent hardware damage:
+
+- **Runaway detection**: emergency stop if position exceeds soft limits by 50° (catches PID positive-feedback failures)
+- **Soft limits**: AZ clamped to ±360°, EL clamped to 0-180°
+- **Endstop gates**: motor stops if driving into a pressed endstop switch
+- **Driver fault monitoring**: TB6642FG ALERT pins checked every tick (configurable)
+- **Duty capping**: maximum 95% PWM to avoid overcurrent on motor stall
+- **EL homing**: IMU-based auto-leveling at boot prevents EL drift from incorrect starting position
+- **Cable-wrap management**: AZ shortest-path selection + automatic encoder recentering after settling near ±360°
 
 ## Design philosophy
 

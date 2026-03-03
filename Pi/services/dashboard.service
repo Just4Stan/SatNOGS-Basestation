@@ -1,0 +1,15 @@
+[Unit]
+Description=SatNOGS Ground Station Web Dashboard
+After=network.target rotctld.service
+Wants=rotctld.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/SatNOGS-Basestation/Pi
+ExecStart=/usr/bin/python3 /home/pi/SatNOGS-Basestation/Pi/dashboard.py
+Restart=always
+RestartSec=5
+User=pi
+
+[Install]
+WantedBy=multi-user.target

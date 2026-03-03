@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 """
 Real satellite tracker — computes live AZ/EL from TLE data and commands
-the rotator via rotctld (hamlib) over the network.
+the rotator via direct USB serial or rotctld (hamlib) over the network.
 
-Usage:
+Usage (USB serial — laptop directly to Pico, no Pi needed):
+    python3 track_satellite.py --serial auto                # auto-detect port
+    python3 track_satellite.py --serial /dev/cu.usbmodem1401 --sat "ISS"
+    python3 track_satellite.py --serial auto --list         # show upcoming passes
+
+Usage (rotctld — via Pi):
     python3 track_satellite.py                    # auto-pick next visible pass
     python3 track_satellite.py --sat "ISS"        # track ISS specifically
-    python3 track_satellite.py --list             # show upcoming passes
     python3 track_satellite.py --host 10.72.3.105 # rotctld on remote Pi
 
-Requires: pip install ephem
+Requires: pip install ephem pyserial
 """
 
 import ephem
@@ -17,10 +21,16 @@ import socket
 import time
 import math
 import sys
+import os
 import argparse
 import urllib.request
 import json
 from datetime import datetime, timezone
+
+try:
+    import serial as pyserial
+except ImportError:
+    pyserial = None
 
 # --- Station location (KU Leuven Campus Geel area) ---
 STATION_LAT  = "51.1"      # degrees N
@@ -37,48 +47,74 @@ MIN_ELEV     = 5.0          # minimum elevation to consider a pass (degrees)
 PREDICT_HOURS = 12          # how far ahead to search for passes
 
 # --- TLE sources ---
-TLE_URLS = [
-    ("https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=TLE", "Space Stations"),
-    ("https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE", "Weather"),
-    ("https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=TLE", "Amateur"),
-    ("https://celestrak.org/NORAD/elements/gp.php?GROUP=noaa&FORMAT=TLE", "NOAA"),
-]
+TLE_GROUPS = {
+    "stations":  "Space Stations",
+    "weather":   "Weather",
+    "amateur":   "Amateur",
+    "noaa":      "NOAA",
+    "active":    "Active (all)",
+    "visual":    "Visual",
+    "science":   "Science",
+    "starlink":  "Starlink",
+    "oneweb":    "OneWeb",
+    "resource":  "Earth Resources",
+    "sarsat":    "Search & Rescue",
+    "geo":       "Geostationary",
+    "gpz":       "GPS Operational",
+    "galileo":   "Galileo",
+    "cubesat":   "CubeSats",
+    "military":  "Military",
+    "radar":     "Radar Calibration",
+    "education": "Education",
+}
+DEFAULT_GROUPS = ["stations", "weather", "amateur", "noaa"]
+CELESTRAK_URL = "https://celestrak.org/NORAD/elements/gp.php?GROUP={}&FORMAT=TLE"
 
 
-def fetch_tles():
+def fetch_tles(groups=None):
     """Fetch TLE data from CelesTrak. Returns list of (name, line1, line2)."""
+    if groups is None:
+        groups = DEFAULT_GROUPS
     tles = []
-    for url, group in TLE_URLS:
+    seen = set()  # deduplicate by NORAD catalog number (line1[2:7])
+    for group in groups:
+        label = TLE_GROUPS.get(group, group)
+        url = CELESTRAK_URL.format(group)
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Tracker/1.0"})
-            resp = urllib.request.urlopen(req, timeout=10)
+            resp = urllib.request.urlopen(req, timeout=15)
             lines = resp.read().decode().strip().split("\n")
             lines = [l.strip() for l in lines if l.strip()]
+            count = 0
             for i in range(0, len(lines) - 2, 3):
                 name = lines[i].strip()
                 l1 = lines[i+1].strip()
                 l2 = lines[i+2].strip()
                 if l1.startswith("1 ") and l2.startswith("2 "):
-                    tles.append((name, l1, l2))
-            print(f"  Fetched {len(lines)//3} sats from {group}")
+                    norad_id = l1[2:7].strip()
+                    if norad_id not in seen:
+                        seen.add(norad_id)
+                        tles.append((name, l1, l2))
+                        count += 1
+            print(f"  Fetched {count} sats from {label}")
         except Exception as e:
-            print(f"  Warning: failed to fetch {group}: {e}")
+            print(f"  Warning: failed to fetch {label}: {e}")
     return tles
 
 
-def make_observer():
+def make_observer(lat=None, lon=None, elev=None):
     """Create a PyEphem observer for our station."""
     obs = ephem.Observer()
-    obs.lat = STATION_LAT
-    obs.lon = STATION_LON
-    obs.elevation = STATION_ELEV
+    obs.lat = str(lat if lat is not None else STATION_LAT)
+    obs.lon = str(lon if lon is not None else STATION_LON)
+    obs.elevation = elev if elev is not None else STATION_ELEV
     obs.horizon = str(MIN_ELEV)
     return obs
 
 
-def find_passes(tles, hours=12, max_results=20):
+def find_passes(tles, hours=12, max_results=20, lat=None, lon=None, elev=None):
     """Find upcoming satellite passes sorted by start time."""
-    obs = make_observer()
+    obs = make_observer(lat, lon, elev)
     now = ephem.now()
     passes = []
 
@@ -125,49 +161,98 @@ def find_passes(tles, hours=12, max_results=20):
     return passes[:max_results]
 
 
-def connect_rotctld(host, port):
-    """Connect to rotctld and return socket."""
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(5)
-    s.connect((host, port))
-    return s
+class RotctlBackend:
+    """Rotator control via rotctld TCP."""
+    def __init__(self, host, port):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(5)
+        self.sock.connect((host, port))
 
-
-def rotctld_cmd(sock, cmd):
-    """Send command to rotctld and return response."""
-    sock.sendall((cmd + "\n").encode())
-    time.sleep(0.05)
-    try:
-        return sock.recv(1024).decode().strip()
-    except socket.timeout:
-        return ""
-
-
-def set_position(sock, az, el):
-    """Command rotator to move to AZ/EL."""
-    # hamlib expects 0-360 for AZ
-    az = az % 360
-    el = max(0, min(90, el))
-    rotctld_cmd(sock, f"P {az:.1f} {el:.1f}")
-
-
-def get_position(sock):
-    """Query current position from rotctld."""
-    resp = rotctld_cmd(sock, "p")
-    lines = resp.split("\n")
-    if len(lines) >= 2:
+    def _cmd(self, cmd):
+        self.sock.sendall((cmd + "\n").encode())
+        time.sleep(0.05)
         try:
-            return float(lines[0]), float(lines[1])
-        except ValueError:
+            return self.sock.recv(1024).decode().strip()
+        except socket.timeout:
+            return ""
+
+    def set_position(self, az, el):
+        az = az % 360
+        el = max(0, min(90, el))
+        self._cmd(f"P {az:.1f} {el:.1f}")
+
+    def park(self):
+        self._cmd("P 0.0 0.0")
+
+    def get_position(self):
+        resp = self._cmd("p")
+        lines = resp.split("\n")
+        if len(lines) >= 2:
+            try:
+                return float(lines[0]), float(lines[1])
+            except ValueError:
+                pass
+        return None, None
+
+    def close(self):
+        try:
+            self.sock.close()
+        except Exception:
             pass
-    return None, None
 
 
-def track_pass(sock, tle, pass_info):
+class SerialBackend:
+    """Rotator control via direct USB serial (EasyComm)."""
+    def __init__(self, port):
+        if pyserial is None:
+            print("  ERROR: pyserial required for --serial mode")
+            print("  Install with: pip install pyserial")
+            sys.exit(1)
+        self.ser = pyserial.Serial(port, 115200, timeout=0.05)
+        time.sleep(2)  # wait for Pico to reset
+        while self.ser.in_waiting:
+            self.ser.readline()
+
+    def set_position(self, az, el):
+        az = az % 360
+        el = max(0, min(90, el))
+        self.ser.reset_input_buffer()
+        self.ser.write(f"AZ{az:.1f} EL{el:.1f}\n".encode())
+
+    def park(self):
+        self.ser.reset_input_buffer()
+        self.ser.write(b"PARK\n")
+
+    def get_position(self):
+        self.ser.reset_input_buffer()
+        self.ser.write(b"AZ\n")
+        deadline = time.time() + 0.05
+        while time.time() < deadline:
+            if self.ser.in_waiting:
+                line = self.ser.readline().decode("utf-8", errors="replace").strip()
+                if line.startswith("AZ") and "EL" in line:
+                    parts = line.replace("AZ", "").replace("EL", " ").split()
+                    if len(parts) >= 2:
+                        try:
+                            return float(parts[0]), float(parts[1])
+                        except ValueError:
+                            pass
+        return None, None
+
+    def close(self):
+        try:
+            self.ser.write(b"PARK\n")
+            time.sleep(0.5)
+            self.ser.close()
+        except Exception:
+            pass
+
+
+def track_pass(rotator, tle, pass_info, lat=None, lon=None, elev=None):
     """Track a satellite pass in real-time."""
     name, l1, l2 = tle
     sat = ephem.readtle(name, l1, l2)
-    obs = make_observer()
+    obs = make_observer(lat, lon, elev)
     obs.horizon = "0"  # Track down to 0 degrees during a pass
 
     print()
@@ -183,7 +268,7 @@ def track_pass(sock, tle, pass_info):
     # Pre-position: slew to rise azimuth
     rise_az = pass_info["rise_az"]
     print(f"  [{time.strftime('%H:%M:%S')}] Slewing to AOS position: AZ {rise_az:.1f}")
-    set_position(sock, rise_az, 0)
+    rotator.set_position(rise_az, 0)
 
     # Wait for pass to start (or start immediately if already in progress)
     now_utc = datetime.now(timezone.utc)
@@ -198,9 +283,13 @@ def track_pass(sock, tle, pass_info):
             wait = (rise_utc - now_utc).total_seconds()
 
     print(f"  [{time.strftime('%H:%M:%S')}] ** AOS — tracking started **")
+    print()
+    print(f"  {'':>8s}  {'--- Target ---':^16s}  {'--- Actual ---':^16s}  {'Error':^10s}")
+    print(f"  {'':>8s}  {'AZ':>7s}  {'EL':>6s}  {'AZ':>7s}  {'EL':>6s}  {'AZ':>5s} {'EL':>4s}")
+    print(f"  {'':>8s}  {'-------':>7s}  {'------':>6s}  {'-------':>7s}  {'------':>6s}  {'-----':>5s} {'----':>4s}")
     dt = 1.0 / UPDATE_HZ
     tick = 0
-    last_pos_str = ""
+    act_az, act_el = None, None
 
     set_utc = pass_info["set_time"].replace(tzinfo=timezone.utc)
 
@@ -218,21 +307,32 @@ def track_pass(sock, tle, pass_info):
 
             # Send to rotator
             if el >= 0:
-                set_position(sock, az, el)
+                rotator.set_position(az, el)
 
-            # Read position every 5th tick
-            if tick % 5 == 0:
-                cur_az, cur_el = get_position(sock)
-                if cur_az is not None:
-                    last_pos_str = f"AZ{cur_az:>7.1f} EL{cur_el:>5.1f}"
+            # Read actual position every 3rd tick (~3 Hz)
+            if tick % 3 == 0:
+                rz, re = rotator.get_position()
+                if rz is not None:
+                    act_az, act_el = rz, re
+
+            # Compute error
+            err_az_s, err_el_s = "  -  ", " -  "
+            if act_az is not None:
+                err_az = az - act_az
+                # Handle wrap-around
+                if err_az > 180:
+                    err_az -= 360
+                elif err_az < -180:
+                    err_az += 360
+                err_el = el - act_el
+                err_az_s = f"{err_az:+5.1f}"
+                err_el_s = f"{err_el:+4.1f}"
 
             # Display
-            bar_el = int(max(0, el) / 90 * 20)
-            bar = "|" + "#" * bar_el + " " * (20 - bar_el) + "|"
             remaining = (set_utc - now_utc).total_seconds()
-            phase = "AOS" if remaining > pass_info["duration"] * 0.85 else \
-                    ("LOS" if remaining < pass_info["duration"] * 0.15 else "TRK")
-            print(f"\r  {phase}  AZ{az:>7.1f}  EL{el:>5.1f}  {bar}  {last_pos_str:<22s}  T-{remaining:>5.0f}s", end="", flush=True)
+            act_az_s = f"{act_az:7.1f}" if act_az is not None else "    ---"
+            act_el_s = f"{act_el:6.1f}" if act_el is not None else "   ---"
+            print(f"\r  T-{remaining:>4.0f}s  {az:7.1f}  {el:6.1f}  {act_az_s}  {act_el_s}  {err_az_s} {err_el_s}", end="", flush=True)
 
             tick += 1
             next_tick = time.time() + dt
@@ -250,62 +350,114 @@ def track_pass(sock, tle, pass_info):
     return True
 
 
-def immediate_track(sock, tle):
-    """Track a satellite that's currently above the horizon (or do a demo pass)."""
-    name, l1, l2 = tle
-    sat = ephem.readtle(name, l1, l2)
-    obs = make_observer()
-    obs.horizon = "0"
+def load_station_conf():
+    """Load station location from ~/station.conf if it exists."""
+    conf = os.path.expanduser("~/station.conf")
+    try:
+        if os.path.exists(conf):
+            with open(conf, "r") as f:
+                cfg = json.load(f)
+            return cfg.get("lat"), cfg.get("lon"), cfg.get("elev")
+    except Exception:
+        pass
+    return None, None, None
 
-    obs.date = ephem.now()
-    sat.compute(obs)
-    az = math.degrees(float(sat.az))
-    el = math.degrees(float(sat.alt))
 
-    if el > 0:
-        print(f"  {name} is above horizon! AZ={az:.1f} EL={el:.1f}")
-        print(f"  Tracking live...")
-        # Find when it sets
-        obs.horizon = str(MIN_ELEV)
-        try:
-            info = obs.next_pass(sat)
-            if info[4]:
-                pass_info = {
-                    "rise_time": datetime.now(timezone.utc),
-                    "set_time": ephem.Date(info[4]).datetime(),
-                    "max_el": el,
-                    "duration": (info[4] - ephem.now()) * 24 * 3600,
-                    "rise_az": az,
-                    "set_az": math.degrees(float(info[5])) if info[5] else az,
-                }
-                return track_pass(sock, tle, pass_info)
-        except Exception:
-            pass
-    return False
+def auto_detect_serial():
+    """Try to find the Pico serial port."""
+    import glob
+    # macOS: Pico shows up as /dev/cu.usbmodem*
+    for p in sorted(glob.glob("/dev/cu.usbmodem*")):
+        return p
+    # Linux: Pico shows up as /dev/ttyACM*
+    for p in sorted(glob.glob("/dev/ttyACM*")):
+        return p
+    return None
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Real satellite tracker via rotctld")
-    parser.add_argument("--host", default=ROTCTLD_HOST, help="rotctld host")
-    parser.add_argument("--port", type=int, default=ROTCTLD_PORT, help="rotctld port")
+    parser = argparse.ArgumentParser(
+        description="Real satellite tracker — direct USB serial or via rotctld")
+    parser.add_argument("--serial", default=None, metavar="PORT",
+                        help="Direct USB serial port to Pico (e.g. /dev/cu.usbmodem1401). "
+                             "Auto-detects if set to 'auto'.")
+    parser.add_argument("--host", default=ROTCTLD_HOST, help="rotctld host (default: localhost)")
+    parser.add_argument("--port", type=int, default=ROTCTLD_PORT, help="rotctld port (default: 4533)")
     parser.add_argument("--sat", default=None, help="Satellite name to track (partial match)")
     parser.add_argument("--list", action="store_true", help="List upcoming passes and exit")
     parser.add_argument("--continuous", action="store_true", help="Track passes continuously")
+    parser.add_argument("--groups", default=None, metavar="G1,G2,...",
+                        help="Comma-separated TLE groups to fetch (default: stations,weather,amateur,noaa). "
+                             "Use --groups all for everything, or --groups-list to see options.")
+    parser.add_argument("--groups-list", action="store_true", help="List available TLE groups and exit")
+    parser.add_argument("--lat", type=float, default=float(STATION_LAT),
+                        help="Station latitude in degrees N (default: 51.1)")
+    parser.add_argument("--lon", type=float, default=float(STATION_LON),
+                        help="Station longitude in degrees E (default: 4.97)")
+    parser.add_argument("--elev", type=float, default=STATION_ELEV,
+                        help="Station elevation in meters ASL (default: 25)")
     args = parser.parse_args()
+
+    if args.groups_list:
+        print()
+        print(f"  Available TLE groups (use with --groups):")
+        print(f"  {'Key':<12s}  Description")
+        print(f"  {'---':<12s}  -----------")
+        for key, desc in TLE_GROUPS.items():
+            default = " (default)" if key in DEFAULT_GROUPS else ""
+            print(f"  {key:<12s}  {desc}{default}")
+        print()
+        print(f"  Examples:")
+        print(f"    --groups stations,cubesat,science")
+        print(f"    --groups active              # ~8000 sats, slow but complete")
+        print(f"    --groups all                  # every group listed above")
+        print()
+        sys.exit(0)
+
+    # Determine connection mode
+    serial_port = args.serial
+    if serial_port == "auto":
+        serial_port = auto_detect_serial()
+        if serial_port is None:
+            print("  ERROR: No Pico serial port found. Specify with --serial /dev/...")
+            sys.exit(1)
+
+    # Resolve station location: CLI > ~/station.conf > hardcoded defaults
+    conf_lat, conf_lon, conf_elev = load_station_conf()
+    if args.lat == float(STATION_LAT) and conf_lat is not None:
+        args.lat = conf_lat
+    if args.lon == float(STATION_LON) and conf_lon is not None:
+        args.lon = conf_lon
+    if args.elev == STATION_ELEV and conf_elev is not None:
+        args.elev = conf_elev
 
     print()
     print("  ========================================")
     print("   SatNOGS Ground Station — Sat Tracker")
     print("  ========================================")
     print()
-    print(f"  Station:   {STATION_LAT}N, {STATION_LON}E, {STATION_ELEV}m")
-    print(f"  rotctld:   {args.host}:{args.port}")
+    print(f"  Station:   {args.lat}N, {args.lon}E, {args.elev:.0f}m")
+    if serial_port:
+        print(f"  Rotator:   USB serial → {serial_port}")
+    else:
+        print(f"  Rotator:   rotctld → {args.host}:{args.port}")
     print(f"  Min elev:  {MIN_ELEV} deg")
     print()
 
+    # Parse TLE groups
+    groups = None
+    if args.groups:
+        if args.groups.lower() == "all":
+            groups = list(TLE_GROUPS.keys())
+        else:
+            groups = [g.strip() for g in args.groups.split(",")]
+            for g in groups:
+                if g not in TLE_GROUPS:
+                    print(f"  Warning: unknown group '{g}' (use --groups-list to see options)")
+
     # Fetch TLEs
     print("  Fetching TLE data...")
-    tles = fetch_tles()
+    tles = fetch_tles(groups)
     if not tles:
         print("  ERROR: No TLE data available!")
         sys.exit(1)
@@ -330,7 +482,8 @@ def main():
 
     # Find upcoming passes
     print(f"  Computing passes for next {PREDICT_HOURS}h...")
-    passes = find_passes(tles_to_search, hours=PREDICT_HOURS)
+    passes = find_passes(tles_to_search, hours=PREDICT_HOURS,
+                         lat=args.lat, lon=args.lon, elev=args.elev)
 
     if not passes:
         print("  No passes found in the prediction window.")
@@ -350,15 +503,28 @@ def main():
         print()
         sys.exit(0)
 
-    # Connect to rotctld
-    print(f"  Connecting to rotctld at {args.host}:{args.port}...")
-    try:
-        sock = connect_rotctld(args.host, args.port)
-        cur_az, cur_el = get_position(sock)
-        print(f"  Connected! Current position: AZ={cur_az} EL={cur_el}")
-    except Exception as e:
-        print(f"  ERROR: Cannot connect to rotctld: {e}")
-        sys.exit(1)
+    # Connect to rotator
+    if serial_port:
+        print(f"  Opening serial port {serial_port}...")
+        try:
+            rotator = SerialBackend(serial_port)
+            cur_az, cur_el = rotator.get_position()
+            if cur_az is not None:
+                print(f"  Connected! Current position: AZ={cur_az} EL={cur_el}")
+            else:
+                print(f"  Connected! (position readback pending)")
+        except Exception as e:
+            print(f"  ERROR: Cannot open serial port: {e}")
+            sys.exit(1)
+    else:
+        print(f"  Connecting to rotctld at {args.host}:{args.port}...")
+        try:
+            rotator = RotctlBackend(args.host, args.port)
+            cur_az, cur_el = rotator.get_position()
+            print(f"  Connected! Current position: AZ={cur_az} EL={cur_el}")
+        except Exception as e:
+            print(f"  ERROR: Cannot connect to rotctld: {e}")
+            sys.exit(1)
 
     # Track passes
     try:
@@ -374,13 +540,14 @@ def main():
             if wait > 60:
                 print(f"  Pass starts in {wait/60:.1f} min ({p['rise_time'].strftime('%H:%M:%S')} UTC)")
 
-            track_pass(sock, p["tle"], p)
+            track_pass(rotator, p["tle"], p,
+                       lat=args.lat, lon=args.lon, elev=args.elev)
 
             pass_idx += 1
             if pass_idx < len(passes) and not args.continuous:
                 print()
                 print(f"  Park and wait for next pass? (Ctrl+C to quit)")
-                set_position(sock, 0, 0)
+                rotator.park()
                 time.sleep(3)
 
         print()
@@ -390,15 +557,12 @@ def main():
         print()
         print(f"  [{time.strftime('%H:%M:%S')}] Stopped — parking rotator")
         try:
-            set_position(sock, 0, 0)
+            rotator.park()
         except Exception:
             pass
 
     finally:
-        try:
-            sock.close()
-        except Exception:
-            pass
+        rotator.close()
         print("  Done.")
 
 

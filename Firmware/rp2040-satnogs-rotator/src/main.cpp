@@ -11,6 +11,7 @@
 #include "quadrature.h"
 #include "rotator.h"
 #include "satnogs_protocol.h"
+#include "status_led.h"
 
 namespace {
 
@@ -43,6 +44,8 @@ void setup() {
   gpio_set_dir(pins::kLed, GPIO_OUT);
   gpio_put(pins::kLed, 1);
 
+  status_led_init();  // NeoPixel on GP16
+
   sleep_ms(1500); // give USB CDC time to enumerate
 
   static MotorPwm az_motor(pins::kAzIn1, pins::kAzIn2, pins::kAzPwm);
@@ -66,18 +69,53 @@ void setup() {
   static ADXL345 imu(pins::kSpiCs, pins::kSpiSck, pins::kSpiMosi, pins::kSpiMiso);
   const bool imu_ok = imu.init();
 
-  // Calibration: AZ assumed north, EL from IMU gravity reading.
+  // Calibration: AZ assumed north (point antenna north before power-on).
   rotator.calibrate_az_zero();
+
+  // EL homing: drive motor until IMU reads 0° (horizontal), then zero encoder.
   if (imu_ok) {
-    const float imu_el = imu.elevation_deg_averaged(20);
-    rotator.calibrate_el(imu_el);
-    std::printf("EL calibrated from IMU: %.1f deg\n", imu_el);
+    const float initial_el = imu.elevation_deg_averaged(10);
+    std::printf("EL homing: IMU reads %.1f deg, driving to horizontal...\n", initial_el);
+
+    status_led_set(LedState::kTracking);  // visual feedback during homing
+
+    constexpr float kElHomingDeadband = 1.5f;  // degrees — close enough to horizontal
+    constexpr float kElHomingDuty = 0.25f;     // slow and gentle
+    constexpr uint32_t kElHomingTimeout = 15000; // 15 seconds max
+    const uint32_t homing_start = to_ms_since_boot(get_absolute_time());
+    bool homed = false;
+
+    while (to_ms_since_boot(get_absolute_time()) - homing_start < kElHomingTimeout) {
+      const float el = imu.elevation_deg_averaged(3);
+
+      if (std::abs(el) <= kElHomingDeadband) {
+        el_motor.stop();
+        rotator.calibrate_el(0.0f);
+        std::printf("EL homed to horizontal (IMU: %.1f deg)\n", el);
+        homed = true;
+        break;
+      }
+
+      // Drive toward 0°.  Negative duty decreases physical EL.
+      const float duty = (el > 0) ? -kElHomingDuty : kElHomingDuty;
+      el_motor.set(duty);
+      sleep_ms(50);
+    }
+
+    if (!homed) {
+      el_motor.stop();
+      const float fallback = imu.elevation_deg_averaged(20);
+      rotator.calibrate_el(fallback);
+      std::printf("EL homing timeout — calibrated from IMU at %.1f deg\n", fallback);
+    }
   } else {
     rotator.calibrate_el(0.0f);
     std::printf("IMU not found — EL assumed 0 (place antenna horizontal)\n");
   }
 
   static SatnogsProtocol protocol(rotator, imu_ok ? &imu : nullptr);
+
+  status_led_set(LedState::kIdle);  // init done
 
   std::printf("\n== SatNOGS-RP2040-v0.2 ready ==\n");
   std::printf("IMU: %s (ID=0x%02X)\n", imu_ok ? "OK" : "NOT FOUND", imu.device_id());
@@ -104,7 +142,23 @@ void setup() {
       led_state = !led_state;
       gpio_put(pins::kLed, led_state ? 1 : 0);
       last_blink = get_absolute_time();
+
+      // Update NeoPixel state based on rotator status (1 Hz is enough)
+      auto st = rotator.status();
+      if (st.error_reg != 1) {
+        status_led_set(LedState::kFault);
+      } else if (st.moving) {
+        status_led_set(LedState::kTracking);
+      } else if (st.status_reg == 1) {
+        status_led_set(LedState::kIdle);
+      } else {
+        status_led_set(LedState::kOnTarget);
+      }
     }
+
+    // NeoPixel update (~20 Hz is fine, but we run it every loop iteration;
+    // internally it only changes on blink toggles or state changes)
+    status_led_update();
 
     // Live monitor stream ~10 Hz.
     if (protocol.monitoring() && absolute_time_diff_us(last_monitor, get_absolute_time()) >= 100000) {

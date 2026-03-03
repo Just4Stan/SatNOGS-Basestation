@@ -38,4 +38,9 @@ constexpr uint kSpiMosi = 7;  // GP7 - TP7
 // Pico on-board LED (active high)
 constexpr uint kLed = 25;
 
+// WS2812B NeoPixel status LED (optional — requires bodge wire on v1 PCB)
+// Not populated on the current motor PCB. Firmware supports it if a
+// WS2812B is wired to GP16 + 3V3 + GND.  Harmless if unconnected.
+constexpr uint kNeoPixel = 16;  // GP16
+
 } // namespace pins

@@ -1,0 +1,6 @@
+# SatNOGS Ground Station — Pi-side Python dependencies
+#
+# Install: pip install -r requirements.txt
+
+pyserial>=3.5      # UART/USB serial communication with both Picos
+ephem>=4.1         # Satellite orbit prediction (PyEphem)

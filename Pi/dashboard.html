@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<!--
+  AetherSpace SatNOGS Ground Station Dashboard
+  KU Leuven Master's Thesis — Stan
+  Single-file, phone-first, offline-capable.
+  Served by Pi/dashboard.py at GET /
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0a0e1a">
+  <!-- Apple PWA meta tags for fullscreen on home screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AETHER">
+  <title>AETHER Ground Station</title>
+
+  <!-- Google Fonts — fail silently when offline (Pi hotspot has no internet) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" onerror="this.remove()">
+
+  <style>
+    /* =====================================================================
+       CSS CUSTOM PROPERTIES — AetherSpace brand tokens
+       ===================================================================== */
+    :root {
+      --bg:           #0a0e1a;
+      --card-bg:      rgba(33, 36, 68, 0.60);
+      --card-border:  rgba(255, 255, 255, 0.08);
+      --text:         #F7F7F2;
+      --muted:        #94a3b8;
+      --accent:       #38bdf8;
+      --accent-dim:   rgba(56, 189, 248, 0.15);
+      --green:        #4ade80;
+      --green-dim:    rgba(74, 222, 128, 0.15);
+      --amber:        #f59e0b;
+      --amber-dim:    rgba(245, 158, 11, 0.15);
+      --red:          #ef4444;
+      --red-dim:      rgba(239, 68, 68, 0.15);
+      --font-head:    'Space Grotesk', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Menlo', 'Courier New', monospace;
+      --radius:       14px;
+      --gap:          14px;
+    }
+
+    /* =====================================================================
+       RESET & BASE
+       ===================================================================== */
+    *, *::before, *::after {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      height: 100%;
+      /* svh for mobile address-bar-aware height, vh as fallback */
+      height: 100svh;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100svh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-head);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-x: hidden;
+      /* padding-bottom for iPhone home-bar safe area */
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* =====================================================================
+       STAR BACKGROUND — always-on CSS fallback; Vanta replaces #vanta-bg
+       ===================================================================== */
+    #bg-stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      /* Multiple radial-gradient "stars" at scattered positions */
+      background:
+        radial-gradient(1px 1px at 12% 8%,  rgba(255,255,255,0.85) 0%, transparent 100%),
+        radial-gradient(1px 1px at 76% 14%, rgba(255,255,255,0.70) 0%, transparent 100%),
+        radial-gradient(1px 1px at 34% 22%, rgba(255,255,255,0.60) 0%, transparent 100%),
+        radial-gradient(1px 1px at 58% 5%,  rgba(255,255,255,0.80) 0%, transparent 100%),
+        radial-gradient(1px 1px at 91% 31%, rgba(255,255,255,0.55) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  45%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1px 1px at 48% 38%, rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at 83% 52%, rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 61%, rgba(255,255,255,0.70) 0%, transparent 100%),
+        radial-gradient(1px 1px at 67% 70%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px 1px at 39% 78%, rgba(255,255,255,0.80) 0%, transparent 100%),
+        radial-gradient(1px 1px at 8%  83%, rgba(255,255,255,0.55) 0%, transparent 100%),
+        radial-gradient(1px 1px at 94% 88%, rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 93%, rgba(255,255,255,0.50) 0%, transparent 100%),
+        radial-gradient(1px 1px at 18% 97%, rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 71% 42%, rgba(255,255,255,0.90) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 29% 55%, rgba(255,255,255,0.85) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 87% 18%, rgba(255,255,255,0.80) 0%, transparent 100%),
+        /* accent-tinted "sparkle" stars */
+        radial-gradient(2px 2px at 45% 12%, rgba(56,189,248,0.60) 0%, transparent 100%),
+        radial-gradient(2px 2px at 82% 68%, rgba(56,189,248,0.50) 0%, transparent 100%),
+        radial-gradient(2px 2px at 15% 75%, rgba(56,189,248,0.55) 0%, transparent 100%),
+        var(--bg);
+    }
+
+    /* Twinkle animation on a few pseudo-stars via overlay divs */
+    .star-twinkle {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      pointer-events: none;
+      z-index: 0;
+      animation: twinkle 3s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      0%   { opacity: 0.2; transform: scale(0.7); }
+      100% { opacity: 1.0; transform: scale(1.4); }
+    }
+
+    /* Vanta.js mount point — sits over the star layer */
+    #vanta-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    #vanta-bg.ready { opacity: 1; }
+
+    /* =====================================================================
+       LAYOUT WRAPPER
+       ===================================================================== */
+    #app {
+      position: relative;
+      z-index: 10;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--gap);
+      padding-top: calc(var(--gap) + env(safe-area-inset-top, 0px));
+    }
+
+    /* =====================================================================
+       LOADING OVERLAY
+       ===================================================================== */
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loading-wordmark {
+      font-family: var(--font-head);
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 2px solid var(--card-border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* =====================================================================
+       GLASS CARD BASE
+       ===================================================================== */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 18px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: border-color 0.2s ease;
+      /* entrance animation start state */
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.2s ease;
+    }
+    .card:hover, .card:focus-within {
+      border-color: rgba(255,255,255,0.16);
+    }
+    .card-title {
+      font-family: var(--font-head);
+      font-size: 0.70rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* =====================================================================
+       HEADER
+       ===================================================================== */
+    #site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--gap);
+      opacity: 0;
+      transform: translateY(-12px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    #site-header.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .wordmark {
+      font-family: var(--font-head);
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .wordmark span { color: var(--accent); }
+    .wordmark-sub {
+      font-family: var(--font-head);
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    #sim-badge {
+      display: none;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--amber);
+      background: var(--amber-dim);
+      border: 1px solid var(--amber);
+      border-radius: 4px;
+      padding: 2px 7px;
+    }
+    #sim-badge.visible { display: inline-block; }
+    #header-time {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+    /* Connection status dot */
+    .conn-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 0 var(--red);
+      transition: background 0.4s ease;
+      flex-shrink: 0;
+    }
+    .conn-dot.connected {
+      background: var(--green);
+      box-shadow: 0 0 0 0 var(--green);
+      animation: pulse-green 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 0 0 0   rgba(74,222,128,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.0); }
+    }
+
+    /* =====================================================================
+       ACTIVE PASS BANNER
+       ===================================================================== */
+    #pass-banner {
+      display: none;
+      margin-bottom: var(--gap);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    #pass-banner.active { display: block; }
+    .pass-banner-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    #pass-sat-name {
+      font-family: var(--font-head);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #pass-countdown {
+      font-family: var(--font-mono);
+      font-size: 0.80rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    #pass-max-el {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 3px 8px;
+      flex-shrink: 0;
+    }
+    .pass-progress-track {
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      height: 6px;
+      overflow: hidden;
+    }
+    #pass-progress-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(56,189,248,0.3);
+      transition: width 0.8s ease;
+      animation: glow-pulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow-pulse {
+      0%   { box-shadow: 0 0  6px var(--accent), 0 0 12px rgba(56,189,248,0.2); }
+      100% { box-shadow: 0 0 14px var(--accent), 0 0 28px rgba(56,189,248,0.5); }
+    }
+
+    /* =====================================================================
+       MAIN GRID
+       ===================================================================== */
+    .main-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--gap);
+    }
+    .col-full { grid-column: 1 / -1; }
+
+    /* =====================================================================
+       CARD 1: ROTATOR (COMPASS + EL GAUGE)
+       ===================================================================== */
+    #card-rotator .rotator-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    /* Compass */
+    .compass-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    #compass-svg {
+      width: 160px;
+      height: 160px;
+      display: block;
+    }
+    .compass-az-value {
+      position: absolute;
+      bottom: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    /* EL arc gauge */
+    .el-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    #el-canvas {
+      width: 72px;
+      height: 144px;
+    }
+    .el-value {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .rotator-status {
+      margin-top: 28px;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .rotator-status.tracking  { color: var(--accent); }
+    .rotator-status.parked    { color: var(--green); }
+    .rotator-status.idle      { color: var(--muted); }
+    .rotator-status.fault     { color: var(--red); }
+    .rotator-status.disconnected { color: var(--red); }
+
+    /* =====================================================================
+       CARD 2: SKY PLOT (POLAR PLOT)
+       ===================================================================== */
+    #card-skyplot {
+      /* takes up full width on narrow screens, half on wider */
+    }
+    #sky-canvas-wrap {
+      position: relative;
+      width: 100%;
+    }
+    #sky-canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    /* =====================================================================
+       CARD 3: RF TRANSCEIVER
+       ===================================================================== */
+    .rf-rssi-label {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+    .rf-rssi-unit {
+      font-family: var(--font-mono);
+      font-size: 0.80rem;
+      color: var(--muted);
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .rssi-track {
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      height: 8px;
+      margin: 10px 0 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    /* Segment ticks under the bar */
+    .rssi-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding: 0 2px;
+    }
+    .rssi-ticks span {
+      font-family: var(--font-mono);
+      font-size: 0.60rem;
+      color: var(--muted);
+    }
+    #rssi-bar {
+      height: 100%;
+      width: 50%;
+      border-radius: 99px;
+      background: var(--green);
+      transition: width 0.5s ease, background 0.5s ease;
+    }
+    .rf-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .rf-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .rf-val {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    #packet-count {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text);
+      transition: color 0.1s;
+    }
+    #packet-count.flash {
+      color: var(--accent);
+    }
+    /* Streaming pulsing dot */
+    .stream-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .stream-dot.active {
+      background: var(--accent);
+      animation: pulse-accent 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse-accent {
+      0%, 100% { box-shadow: 0 0 0 0   rgba(56,189,248,0.5); }
+      50%       { box-shadow: 0 0 0 6px rgba(56,189,248,0.0); }
+    }
+
+    /* =====================================================================
+       CARD 4: UPCOMING PASSES
+       ===================================================================== */
+    .pass-list {
+      max-height: 300px;
+      overflow-y: auto;
+      /* Custom scrollbar */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.15) transparent;
+    }
+    .pass-list::-webkit-scrollbar { width: 4px; }
+    .pass-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+    .pass-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      min-height: 44px; /* touch target */
+      border: 1px solid transparent;
+    }
+    .pass-item:hover { background: rgba(255,255,255,0.05); }
+    .pass-item.selected {
+      background: var(--accent-dim);
+      border-color: rgba(56,189,248,0.25);
+    }
+    .pass-item.next {
+      background: rgba(56, 189, 248, 0.06);
+      border-color: rgba(56,189,248,0.15);
+    }
+    .pass-item-name {
+      flex: 1;
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .pass-item-name.next-label::after {
+      content: " NEXT";
+      font-size: 0.60rem;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      font-family: var(--font-mono);
+    }
+    .pass-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .pass-meta-top {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text);
+    }
+    .pass-meta-bot {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+    }
+    .max-el-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-radius: 4px;
+      padding: 1px 5px;
+      flex-shrink: 0;
+    }
+    #passes-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.80rem;
+      padding: 24px 0;
+    }
+
+    /* =====================================================================
+       CARD 5: LOCATION
+       ===================================================================== */
+    #loc-warning {
+      display: none;
+      background: var(--amber-dim);
+      border: 1px solid var(--amber);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      color: var(--amber);
+      margin-bottom: 12px;
+    }
+    #loc-warning.visible { display: block; }
+    .loc-coords {
+      font-family: var(--font-mono);
+      font-size: 0.90rem;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+    .loc-coords .coord-label {
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+    .loc-note {
+      font-size: 0.70rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+    #gps-feedback {
+      font-size: 0.75rem;
+      margin-top: 8px;
+      min-height: 18px;
+      transition: color 0.3s;
+    }
+    #gps-feedback.ok    { color: var(--green); }
+    #gps-feedback.error { color: var(--red); }
+
+    /* =====================================================================
+       CARD 6: SYSTEM
+       ===================================================================== */
+    .sys-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      min-height: 28px;
+    }
+    .sys-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .sys-val {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .sys-val.hot    { color: var(--red); }
+    .sys-val.warm   { color: var(--amber); }
+    .sys-val.cool   { color: var(--green); }
+    .ram-track {
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      height: 5px;
+      flex: 1;
+      margin: 0 10px;
+      overflow: hidden;
+    }
+    #ram-bar {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--accent);
+      transition: width 0.8s ease;
+    }
+    .last-update {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 6px;
+    }
+
+    /* =====================================================================
+       CARD 7: CONTROLS (full width)
+       ===================================================================== */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      align-items: end;
+    }
+    @media (max-width: 480px) {
+      .controls-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .ctrl-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ctrl-group label {
+      font-size: 0.70rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .ctrl-inputs {
+      display: flex;
+      gap: 6px;
+    }
+    .ctrl-input {
+      flex: 1;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 10px 8px;
+      min-height: 44px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .ctrl-input:focus { border-color: var(--accent); }
+    .ctrl-input::placeholder { color: var(--muted); }
+    /* Buttons */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 10px;
+      border: 1px solid;
+      background: transparent;
+      font-family: var(--font-head);
+      font-size: 0.83rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, opacity 0.15s ease;
+      width: 100%;
+      white-space: nowrap;
+    }
+    .btn:active, .btn:hover { opacity: 0.80; }
+    .btn-accent {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    .btn-accent:hover { background: var(--accent-dim); }
+    .btn-amber {
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+    .btn-amber:hover { background: var(--amber-dim); }
+    .btn-red {
+      color: var(--red);
+      border-color: var(--red);
+    }
+    .btn-red:hover { background: var(--red-dim); }
+    .btn-green {
+      color: var(--green);
+      border-color: var(--green);
+    }
+    .btn-green:hover { background: var(--green-dim); }
+
+    /* =====================================================================
+       FOOTER
+       ===================================================================== */
+    #site-footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      margin-top: 28px;
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+
+    /* =====================================================================
+       RESPONSIVE ADJUSTMENTS
+       ===================================================================== */
+    @media (max-width: 340px) {
+      :root { --gap: 10px; }
+      .wordmark { font-size: 1.2rem; letter-spacing: 0.2em; }
+    }
+    @media (min-width: 600px) {
+      #compass-svg { width: 180px; height: 180px; }
+      .rf-rssi-label { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =====================================================================
+       STATIC STAR BACKGROUND (always visible, no JS needed)
+       ===================================================================== -->
+  <div id="bg-stars" aria-hidden="true"></div>
+  <!-- A handful of independently-animated star dots -->
+  <div class="star-twinkle" style="top:7%; left:23%; animation-delay:0s;    animation-duration:2.8s;" aria-hidden="true"></div>
+  <div class="star-twinkle" style="top:31%;left:67%; animation-delay:0.9s;  animation-duration:3.4s;" aria-hidden="true"></div>
+  <div class="star-twinkle" style="top:54%;left:11%; animation-delay:1.7s;  animation-duration:2.4s;" aria-hidden="true"></div>
+  <div class="star-twinkle" style="top:79%;left:84%; animation-delay:0.4s;  animation-duration:3.1s;" aria-hidden="true"></div>
+  <div class="star-twinkle" style="top:88%;left:43%; animation-delay:2.1s;  animation-duration:2.7s;" aria-hidden="true"></div>
+
+  <!-- Vanta.js GLOBE mount point -->
+  <div id="vanta-bg" aria-hidden="true"></div>
+
+  <!-- =====================================================================
+       LOADING OVERLAY
+       ===================================================================== -->
+  <div id="loading-overlay" role="status" aria-label="Loading dashboard">
+    <div class="loading-wordmark">AETHER</div>
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- =====================================================================
+       MAIN APP
+       ===================================================================== -->
+  <div id="app">
+
+    <!-- HEADER -->
+    <header id="site-header" role="banner">
+      <div>
+        <div class="wordmark">AETHER<span>.</span></div>
+        <div class="wordmark-sub">Ground Station</div>
+      </div>
+      <div class="header-right">
+        <span id="sim-badge" title="Simulation mode active">SIM</span>
+        <span id="header-time" aria-live="polite">--:--:--</span>
+        <div id="conn-dot" class="conn-dot" title="Rotator connection status" role="img" aria-label="Disconnected"></div>
+      </div>
+    </header>
+
+    <!-- ACTIVE PASS BANNER -->
+    <section id="pass-banner" aria-label="Active satellite pass" aria-live="polite">
+      <div class="pass-banner-top">
+        <div id="pass-sat-name">---</div>
+        <div id="pass-max-el">MAX --°</div>
+        <div id="pass-countdown">T- ---s</div>
+      </div>
+      <div class="pass-progress-track">
+        <div id="pass-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    </section>
+
+    <!-- MAIN GRID -->
+    <main class="main-grid" id="main-grid">
+
+      <!-- ─── CARD 1: ROTATOR ───────────────────────────────────────────── -->
+      <article class="card" id="card-rotator" aria-label="Rotator status">
+        <div class="card-title">Rotator</div>
+        <div class="rotator-body">
+          <!-- Compass rose (SVG inline) -->
+          <div class="compass-wrap">
+            <svg id="compass-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg"
+                 aria-label="Azimuth compass" role="img">
+              <!-- Outer ring -->
+              <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <!-- Inner ring -->
+              <circle cx="80" cy="80" r="60" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+              <!-- Tick marks — every 45° (8 ticks) -->
+              <g stroke="rgba(255,255,255,0.25)" stroke-width="1.5">
+                <!-- N  0°  -->  <line x1="80" y1="10" x2="80" y2="22"/>
+                <!-- NE 45° --> <line x1="130.4" y1="29.6" x2="121.9" y2="38.1"/>
+                <!-- E  90° --> <line x1="150" y1="80" x2="138" y2="80"/>
+                <!-- SE 135°--> <line x1="130.4" y1="130.4" x2="121.9" y2="121.9"/>
+                <!-- S  180°--> <line x1="80" y1="150" x2="80" y2="138"/>
+                <!-- SW 225°--> <line x1="29.6" y1="130.4" x2="38.1" y2="121.9"/>
+                <!-- W  270°--> <line x1="10" y1="80" x2="22" y2="80"/>
+                <!-- NW 315°--> <line x1="29.6" y1="29.6" x2="38.1" y2="38.1"/>
+              </g>
+              <!-- Cardinal labels -->
+              <g font-family="var(--font-head)" font-size="11" font-weight="700" fill="rgba(255,255,255,0.55)" text-anchor="middle">
+                <!-- N — accent colored -->
+                <text x="80" y="9" fill="#38bdf8" font-size="12">N</text>
+                <text x="151" y="84">E</text>
+                <text x="80" y="158">S</text>
+                <text x="9"  y="84">W</text>
+              </g>
+              <!-- Compass face background circle (subtle) -->
+              <circle cx="80" cy="80" r="58" fill="rgba(56,189,248,0.03)"/>
+              <!-- Center hub -->
+              <circle cx="80" cy="80" r="5" fill="rgba(56,189,248,0.25)" stroke="var(--accent)" stroke-width="1"/>
+              <!-- Arrow group — rotated via JS transform-origin="80 80" -->
+              <g id="compass-arrow" transform="rotate(0, 80, 80)">
+                <!-- North arrow (cyan) -->
+                <polygon points="80,18 73,80 80,70 87,80" fill="var(--accent)" opacity="0.9"/>
+                <!-- South tail (dimmed) -->
+                <polygon points="80,142 73,80 80,90 87,80" fill="rgba(255,255,255,0.20)"/>
+              </g>
+            </svg>
+            <div class="compass-az-value">
+              <span id="az-val">---.-</span><span style="color:var(--muted);font-size:0.75em">°</span>
+            </div>
+          </div>
+
+          <!-- EL arc gauge (Canvas) -->
+          <div class="el-wrap">
+            <canvas id="el-canvas" width="72" height="144"
+                    aria-label="Elevation gauge"></canvas>
+            <div class="el-value">
+              <span id="el-val">--.-</span><span style="color:var(--muted);font-size:0.75em">°</span>
+            </div>
+          </div>
+        </div>
+        <div id="rotator-status" class="rotator-status disconnected">Disconnected</div>
+      </article>
+
+      <!-- ─── CARD 2: SKY PLOT ──────────────────────────────────────────── -->
+      <article class="card" id="card-skyplot" aria-label="Sky plot">
+        <div class="card-title">Sky Plot</div>
+        <div id="sky-canvas-wrap">
+          <canvas id="sky-canvas" aria-label="Polar sky plot showing satellite trajectories"></canvas>
+        </div>
+      </article>
+
+      <!-- ─── CARD 3: RF TRANSCEIVER ────────────────────────────────────── -->
+      <article class="card" id="card-rf" aria-label="RF transceiver status">
+        <div class="card-title">RF Transceiver</div>
+
+        <div>
+          <span class="rf-rssi-label" id="rssi-val">---</span>
+          <span class="rf-rssi-unit">dBm</span>
+        </div>
+
+        <div class="rssi-track" title="RSSI: -120 (weak) to -40 (strong) dBm">
+          <div id="rssi-bar"></div>
+        </div>
+        <div class="rssi-ticks">
+          <span>-120</span>
+          <span>-100</span>
+          <span>-80</span>
+          <span>-60</span>
+          <span>-40</span>
+        </div>
+
+        <div class="rf-row">
+          <span class="rf-label">Frequency</span>
+          <span class="rf-val" id="rf-freq">---.--- MHz</span>
+        </div>
+        <div class="rf-row">
+          <span class="rf-label">Packets</span>
+          <span id="packet-count" class="rf-val">0</span>
+        </div>
+        <div class="rf-row">
+          <span class="rf-label">Status</span>
+          <span class="rf-val">
+            <span class="stream-dot" id="stream-dot"></span>
+            <span id="stream-label">Idle</span>
+          </span>
+        </div>
+      </article>
+
+      <!-- ─── CARD 4: UPCOMING PASSES ───────────────────────────────────── -->
+      <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
+        <div class="card-title">Upcoming Passes</div>
+        <div class="pass-list" id="pass-list" role="list">
+          <div id="passes-empty">No pass data — waiting for API...</div>
+        </div>
+      </article>
+
+      <!-- ─── CARD 5: LOCATION ──────────────────────────────────────────── -->
+      <article class="card" id="card-location" aria-label="Station location">
+        <div class="card-title">Location</div>
+
+        <div id="loc-warning" class="visible" role="alert">
+          Station location not set — tracking will not start until GPS is provided.
+        </div>
+
+        <div class="loc-coords">
+          <div><span class="coord-label">LAT  </span><span id="loc-lat">---</span></div>
+          <div><span class="coord-label">LON  </span><span id="loc-lon">---</span></div>
+          <div><span class="coord-label">ELEV </span><span id="loc-elev">--- m</span></div>
+        </div>
+
+        <button class="btn btn-accent" id="gps-btn" onclick="setGPS()" style="max-width:200px">
+          Use My GPS
+        </button>
+        <div id="gps-feedback" aria-live="polite"></div>
+
+        <p class="loc-note">Point antenna <strong>North</strong> before powering on.<br>
+           AZ=0° is assumed at boot.</p>
+      </article>
+
+      <!-- ─── CARD 6: SYSTEM ────────────────────────────────────────────── -->
+      <article class="card" id="card-system" aria-label="System status">
+        <div class="card-title">System</div>
+
+        <div class="sys-row">
+          <span class="sys-label">CPU Temp</span>
+          <span class="sys-val" id="sys-temp">-- °C</span>
+        </div>
+        <div class="sys-row">
+          <span class="sys-label">RAM</span>
+          <div class="ram-track" title="RAM usage">
+            <div id="ram-bar" style="width:0%"></div>
+          </div>
+          <span class="sys-val" id="sys-ram">-- / -- MB</span>
+        </div>
+        <div class="sys-row">
+          <span class="sys-label">Uptime</span>
+          <span class="sys-val" id="sys-uptime">---</span>
+        </div>
+        <div class="last-update">
+          Updated <span id="sys-last-update">--:--:--</span>
+        </div>
+      </article>
+
+      <!-- ─── CARD 7: CONTROLS (full width) ────────────────────────────── -->
+      <article class="card col-full" id="card-controls" aria-label="Antenna controls">
+        <div class="card-title">Controls</div>
+        <div class="controls-grid">
+
+          <!-- Park -->
+          <div class="ctrl-group">
+            <label>Antenna</label>
+            <button class="btn btn-amber" onclick="doPark()" id="park-btn">
+              Park
+            </button>
+          </div>
+
+          <!-- Set Position -->
+          <div class="ctrl-group">
+            <label>Set Position</label>
+            <div class="ctrl-inputs">
+              <input class="ctrl-input" type="number" id="goto-az"
+                     placeholder="AZ°" min="0" max="360" step="0.1"
+                     aria-label="Target azimuth">
+              <input class="ctrl-input" type="number" id="goto-el"
+                     placeholder="EL°" min="0" max="90" step="0.1"
+                     aria-label="Target elevation">
+              <button class="btn btn-accent" onclick="doGoto()" style="max-width:56px">Go</button>
+            </div>
+          </div>
+
+          <!-- Shutdown -->
+          <div class="ctrl-group">
+            <label>Power</label>
+            <button class="btn btn-red" onclick="doShutdown()">
+              Shutdown Pi
+            </button>
+          </div>
+
+        </div>
+      </article>
+
+    </main><!-- /main-grid -->
+
+    <!-- FOOTER -->
+    <footer id="site-footer">
+      SatNOGS Basestation v1.0 &mdash; KU Leuven &middot; Stan
+    </footer>
+
+  </div><!-- /#app -->
+
+
+  <!-- =====================================================================
+       SCRIPTS — Three.js + Vanta.js (CDN, graceful degradation)
+       ===================================================================== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
+          crossorigin="anonymous"
+          onerror="window._threeLoaded=false"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.globe.min.js"
+          crossorigin="anonymous"
+          onerror="window._vantaLoaded=false"></script>
+
+  <!-- GSAP (CDN, graceful degradation) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+          crossorigin="anonymous"
+          onerror="window._gsapLoaded=false"></script>
+
+  <!-- =====================================================================
+       MAIN DASHBOARD SCRIPT
+       ===================================================================== -->
+  <script>
+  /* =========================================================================
+     GLOBALS
+     ========================================================================= */
+  "use strict";
+
+  // Last known state
+  let _lastPackets    = 0;       // detect new packets
+  let _passes         = [];      // cached pass list from /api/passes
+  let _selectedPass   = null;    // index into _passes, tapped by user
+  let _activePassIdx  = null;    // index of pass that is currently in progress
+  let _rafHandle      = null;    // requestAnimationFrame handle for polar plot
+  let _skyNeedsRedraw = true;    // dirty flag for polar canvas
+  let _currentAz      = null;    // latest azimuth (degrees)
+  let _currentEl      = null;    // latest elevation (degrees)
+  let _rotConnected   = false;   // rotator connected?
+  let _passProgress   = 0;       // 0–100
+  let _passCountdown  = 0;       // seconds remaining
+  let _vantaEffect    = null;    // Vanta instance (null if CDN offline)
+
+  /* =========================================================================
+     UTILITY HELPERS
+     ========================================================================= */
+
+  /** Format a Date as "HH:MM UTC" for pass times. */
+  function fmtTime(dateStr) {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + ' UTC';
+    } catch { return '--:--'; }
+  }
+
+  /** Format seconds as "Mm Ss" */
+  function fmtDuration(s) {
+    const m = Math.floor(s / 60);
+    const sec = Math.round(s % 60);
+    return m ? `${m}m ${sec}s` : `${sec}s`;
+  }
+
+  /** Seconds until a UTC ISO date string */
+  function secsUntil(dateStr) {
+    return (new Date(dateStr) - Date.now()) / 1000;
+  }
+
+  /** Clamp a value between min and max */
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* =========================================================================
+     VANTA.JS GLOBE BACKGROUND
+     ========================================================================= */
+  function initVanta() {
+    try {
+      if (typeof VANTA === 'undefined' || typeof THREE === 'undefined') return;
+      _vantaEffect = VANTA.GLOBE({
+        el:           "#vanta-bg",
+        THREE:        THREE,
+        mouseControls:   false,
+        touchControls:   false,
+        gyroControls:    false,
+        backgroundColor: 0x0a0e1a,
+        color:           0x38bdf8,
+        color2:          0x1e3a5f,
+        size:            1.0,
+        points:          8.0,
+        maxDistance:     22.0,
+        spacing:         17.0,
+      });
+      // Fade the vanta layer in once it's rendered
+      setTimeout(() => {
+        document.getElementById('vanta-bg').classList.add('ready');
+      }, 600);
+    } catch (e) {
+      // Offline or library issue — star CSS background stays visible
+      console.warn('Vanta.js init failed (offline?):', e.message);
+    }
+  }
+
+  /* =========================================================================
+     GSAP / ENTRANCE ANIMATIONS
+     ========================================================================= */
+  function runEntranceAnimation() {
+    const header = document.getElementById('site-header');
+    const cards  = document.querySelectorAll('.card');
+
+    // GSAP path
+    if (typeof gsap !== 'undefined') {
+      gsap.fromTo(header,
+        { opacity: 0, y: -12 },
+        { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+      );
+      header.classList.add('visible');
+      gsap.fromTo(Array.from(cards),
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out', stagger: 0.06, delay: 0.15 }
+      );
+      cards.forEach(c => c.classList.add('visible'));
+    } else {
+      // CSS fallback — just flip the class and let CSS transitions do the work
+      header.classList.add('visible');
+      cards.forEach((c, i) => {
+        setTimeout(() => c.classList.add('visible'), 80 + i * 55);
+      });
+    }
+  }
+
+  /* =========================================================================
+     LOADING OVERLAY
+     ========================================================================= */
+  function hideLoading() {
+    document.getElementById('loading-overlay').classList.add('hidden');
+  }
+
+  /* =========================================================================
+     ELEVATION GAUGE (Canvas)
+     ========================================================================= */
+  function drawElGauge(el) {
+    const canvas = document.getElementById('el-canvas');
+    const dpr    = window.devicePixelRatio || 1;
+    const W      = 72, H = 144;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const cx = W / 2;       // 36
+    const cy = H - 30;      // arc centre with room for labels
+    const r  = 30;           // fits within 72px canvas width
+    const startAngle = Math.PI;   // left (EL = 0°)
+    // Clockwise from PI through 3PI/2 (top) to 2PI/0 (right = EL 90°)
+    const elClamped = clamp(el || 0, 0, 90);
+    // Fill: from startAngle clockwise by (el/90)*PI radians
+    const fillAngle = startAngle + (elClamped / 90) * Math.PI;
+
+    // Track arc (full semicircle, PI → 2PI clockwise through top)
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, startAngle, startAngle + Math.PI, false);
+    ctx.strokeStyle = 'rgba(255,255,255,0.10)';
+    ctx.lineWidth   = 8;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    // Filled arc (proportional to elevation)
+    if (elClamped > 0.5) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, startAngle, fillAngle, false);
+      const grad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
+      grad.addColorStop(0, '#38bdf8');
+      grad.addColorStop(1, '#4ade80');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth   = 8;
+      ctx.lineCap     = 'round';
+      ctx.stroke();
+    }
+
+    // Tick marks at 0°, 30°, 60°, 90° elevation
+    [0, 30, 60, 90].forEach(deg => {
+      const angle = startAngle + (deg / 90) * Math.PI;
+      const ix = cx + r * Math.cos(angle);
+      const iy = cy + r * Math.sin(angle);
+      const ox = cx + (r - 8) * Math.cos(angle);
+      const oy = cy + (r - 8) * Math.sin(angle);
+      ctx.beginPath();
+      ctx.moveTo(ix, iy);
+      ctx.lineTo(ox, oy);
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth   = 1.5;
+      ctx.stroke();
+    });
+
+    // Labels at endpoints
+    ctx.font = '8px var(--font-mono, monospace)';
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.textAlign = 'center';
+    ctx.fillText('0°',  cx - r, cy + 14);
+    ctx.fillText('90°', cx + r, cy + 14);
+  }
+
+  /* =========================================================================
+     POLAR PLOT (Sky Plot)
+     ========================================================================= */
+  const SKY_COLORS = [
+    '#38bdf8', '#4ade80', '#f59e0b', '#ef4444',
+    '#c084fc', '#fb923c', '#2dd4bf', '#f472b6',
+  ];
+
+  /** Convert AZ/EL to canvas XY.
+   *  Centre = zenith (el=90°), edge = horizon (el=0°)
+   *  r = radius * (1 - el/90)
+   *  angle = (az - 90) * PI/180   (north=up, east=right)
+   */
+  function polarToXY(az, el, cx, cy, maxR) {
+    const r     = maxR * (1 - clamp(el, 0, 90) / 90);
+    const angle = (az - 90) * Math.PI / 180;
+    return {
+      x: cx + r * Math.cos(angle),
+      y: cy + r * Math.sin(angle),
+    };
+  }
+
+  function drawSkyPlot() {
+    const canvas = document.getElementById('sky-canvas');
+    const wrap   = document.getElementById('sky-canvas-wrap');
+    const size   = wrap.getBoundingClientRect().width || 280;
+    const dpr    = window.devicePixelRatio || 1;
+
+    canvas.width  = size * dpr;
+    canvas.height = size * dpr;
+    canvas.style.width  = size + 'px';
+    canvas.style.height = size + 'px';
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const W  = size, H = size;
+    const cx = W / 2, cy = H / 2;
+    const maxR = cx * 0.88;
+
+    // ── Background ──
+    ctx.fillStyle = 'rgba(10, 14, 26, 0.80)';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── Concentric elevation rings ──
+    [90, 60, 30, 0].forEach(el => {
+      const r = maxR * (1 - el / 90);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+      ctx.strokeStyle = el === 0
+        ? 'rgba(255,255,255,0.18)'
+        : 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      // Label
+      if (el > 0) {
+        ctx.font = `${clamp(size * 0.028, 8, 12)}px var(--font-mono, monospace)`;
+        ctx.fillStyle = 'rgba(148,163,184,0.65)';
+        ctx.textAlign = 'left';
+        ctx.fillText(el + '°', cx + r + 2, cy - 2);
+      }
+    });
+
+    // ── Azimuth spokes every 45° with labels ──
+    const dirLabels = ['N','NE','E','SE','S','SW','W','NW'];
+    for (let i = 0; i < 8; i++) {
+      const az    = i * 45;
+      const angle = (az - 90) * Math.PI / 180;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + maxR * Math.cos(angle), cy + maxR * Math.sin(angle));
+      ctx.strokeStyle = i % 2 === 0
+        ? 'rgba(255,255,255,0.12)'
+        : 'rgba(255,255,255,0.05)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Direction label just outside the horizon ring
+      const lx = cx + (maxR + 14) * Math.cos(angle);
+      const ly = cy + (maxR + 14) * Math.sin(angle);
+      ctx.font = `bold ${clamp(size * 0.032, 9, 13)}px var(--font-head, sans-serif)`;
+      ctx.fillStyle = i === 0 ? '#38bdf8' : 'rgba(148,163,184,0.75)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(dirLabels[i], lx, ly);
+    }
+    ctx.textBaseline = 'alphabetic';
+
+    // ── Draw pass trajectories ──
+    _passes.forEach((pass, idx) => {
+      if (!pass.trajectory || pass.trajectory.length < 2) return;
+      const isActive   = (idx === _activePassIdx);
+      const isSelected = (idx === _selectedPass);
+      const color      = SKY_COLORS[idx % SKY_COLORS.length];
+
+      ctx.beginPath();
+      pass.trajectory.forEach((pt, ti) => {
+        const pos = polarToXY(pt.az, pt.el, cx, cy, maxR);
+        if (ti === 0) ctx.moveTo(pos.x, pos.y);
+        else          ctx.lineTo(pos.x, pos.y);
+      });
+      ctx.strokeStyle = isActive
+        ? '#38bdf8'
+        : isSelected
+          ? color
+          : color + '55'; // dimmed for upcoming passes
+      ctx.lineWidth = isActive ? 2.0 : isSelected ? 1.8 : 1.2;
+      ctx.stroke();
+
+      // AOS dot (green) and LOS dot (red)
+      const firstPt = pass.trajectory[0];
+      const lastPt  = pass.trajectory[pass.trajectory.length - 1];
+      const aosPos  = polarToXY(firstPt.az, firstPt.el, cx, cy, maxR);
+      const losPos  = polarToXY(lastPt.az,  lastPt.el,  cx, cy, maxR);
+      const dotR    = isActive || isSelected ? 4 : 3;
+
+      ctx.beginPath();
+      ctx.arc(aosPos.x, aosPos.y, dotR, 0, 2 * Math.PI);
+      ctx.fillStyle = '#4ade80';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(losPos.x, losPos.y, dotR, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ef4444';
+      ctx.fill();
+    });
+
+    // ── Current satellite position (pulsing) ──
+    if (_currentAz !== null && _currentEl !== null && _rotConnected) {
+      const pos  = polarToXY(_currentAz, _currentEl, cx, cy, maxR);
+      const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400); // 0–1
+
+      // Outer glow ring
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 8 + beat * 4, 0, 2 * Math.PI);
+      ctx.fillStyle = `rgba(56,189,248,${0.08 + beat * 0.12})`;
+      ctx.fill();
+
+      // Core dot
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#38bdf8';
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur  = 8 + beat * 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    _skyNeedsRedraw = false;
+  }
+
+  /** Animation loop — only redraws when data changes or pulsing dot needs update */
+  function skyRenderLoop() {
+    // Always redraw for the pulsing dot if rotator is active
+    if (_rotConnected || _skyNeedsRedraw) {
+      drawSkyPlot();
+    }
+    _rafHandle = requestAnimationFrame(skyRenderLoop);
+  }
+
+  /* =========================================================================
+     COMPASS UPDATE
+     ========================================================================= */
+  function updateCompass(az) {
+    const arrow = document.getElementById('compass-arrow');
+    if (arrow) {
+      arrow.setAttribute('transform', `rotate(${az || 0}, 80, 80)`);
+    }
+    document.getElementById('az-val').textContent =
+      az !== null ? az.toFixed(1) : '---.-';
+  }
+
+  /* =========================================================================
+     STATUS API POLLING (/api/status — every 1s)
+     ========================================================================= */
+  function applyStatus(d) {
+    // ── Rotator ──
+    const rot = d.rotator || {};
+    _rotConnected = !!rot.connected;
+    _currentAz    = rot.az != null ? rot.az : null;
+    _currentEl    = rot.el != null ? rot.el : null;
+    _skyNeedsRedraw = true;
+
+    updateCompass(_currentAz);
+    document.getElementById('el-val').textContent =
+      _currentEl !== null ? _currentEl.toFixed(1) : '--.-';
+    drawElGauge(_currentEl || 0);
+
+    const connDot = document.getElementById('conn-dot');
+    if (_rotConnected) {
+      connDot.classList.add('connected');
+      connDot.setAttribute('aria-label', 'Connected');
+    } else {
+      connDot.classList.remove('connected');
+      connDot.setAttribute('aria-label', 'Disconnected');
+    }
+
+    const stateEl = document.getElementById('rotator-status');
+    const state   = (rot.state || (_rotConnected ? 'idle' : 'disconnected')).toLowerCase();
+    stateEl.className = 'rotator-status ' + state;
+    stateEl.textContent = state.charAt(0).toUpperCase() + state.slice(1);
+
+    // ── RF ──
+    const rf = d.rf || {};
+    const rssi = rf.rssi;
+    if (rssi !== null && rssi !== undefined) {
+      document.getElementById('rssi-val').textContent = rssi.toFixed(1);
+      // Map -120 → 0%, -40 → 100%
+      const pct = clamp(((rssi + 120) / 80) * 100, 0, 100);
+      document.getElementById('rssi-bar').style.width = pct + '%';
+      // Colour: green > -60, yellow > -80, red otherwise
+      const barEl = document.getElementById('rssi-bar');
+      if      (rssi > -60) barEl.style.background = '#4ade80';
+      else if (rssi > -80) barEl.style.background = '#f59e0b';
+      else                 barEl.style.background = '#ef4444';
+    } else {
+      document.getElementById('rssi-val').textContent = '---';
+      document.getElementById('rssi-bar').style.width = '0%';
+    }
+
+    const freqMhz = rf.freq_mhz;
+    document.getElementById('rf-freq').textContent =
+      freqMhz ? freqMhz.toFixed(3) + ' MHz' : '---.--- MHz';
+
+    // Packet counter flash
+    const newPkts = rf.packets || 0;
+    const pktEl   = document.getElementById('packet-count');
+    pktEl.textContent = newPkts;
+    if (newPkts !== _lastPackets) {
+      pktEl.classList.add('flash');
+      setTimeout(() => pktEl.classList.remove('flash'), 300);
+      _lastPackets = newPkts;
+    }
+
+    // Streaming dot
+    const streaming = !!rf.streaming;
+    const dot  = document.getElementById('stream-dot');
+    const lbl  = document.getElementById('stream-label');
+    dot.classList.toggle('active', streaming);
+    lbl.textContent = streaming ? 'RX Active' : 'Idle';
+
+    // ── Active pass banner ──
+    // Determine from rf.satellite and rf.pass_progress
+    const banner = document.getElementById('pass-banner');
+    if (rf.satellite && rf.pass_progress > 0 && rf.pass_progress < 100) {
+      banner.classList.add('active');
+      document.getElementById('pass-sat-name').textContent = rf.satellite;
+      document.getElementById('pass-progress-bar').style.width = rf.pass_progress + '%';
+      document.getElementById('pass-progress-bar').setAttribute('aria-valuenow', Math.round(rf.pass_progress));
+      _passProgress = rf.pass_progress;
+
+      // Try to find matching pass for countdown + max el
+      const matchPass = _passes.find(p => p.name === rf.satellite);
+      if (matchPass) {
+        const remaining = secsUntil(matchPass.set_time);
+        const t = remaining > 0 ? Math.round(remaining) : 0;
+        document.getElementById('pass-countdown').textContent = `T- ${t}s`;
+        document.getElementById('pass-max-el').textContent = `MAX ${matchPass.max_el.toFixed(0)}°`;
+      }
+    } else {
+      banner.classList.remove('active');
+    }
+
+    // ── System ──
+    const sys = d.system || {};
+    const temp  = sys.cpu_temp;
+    const tempEl = document.getElementById('sys-temp');
+    if (temp !== null && temp !== undefined) {
+      tempEl.textContent = temp.toFixed(1) + ' °C';
+      tempEl.className   = 'sys-val ' + (temp > 75 ? 'hot' : temp > 60 ? 'warm' : 'cool');
+    } else {
+      tempEl.textContent = '-- °C';
+      tempEl.className   = 'sys-val';
+    }
+
+    const used  = sys.ram_used_mb  || 0;
+    const total = sys.ram_total_mb || 512;
+    const ramPct = clamp((used / total) * 100, 0, 100);
+    document.getElementById('sys-ram').textContent = `${used} / ${total} MB`;
+    document.getElementById('ram-bar').style.width = ramPct + '%';
+    document.getElementById('sys-uptime').textContent = sys.uptime || '---';
+
+    const ts = d.last_update || '';
+    document.getElementById('header-time').textContent = ts || '--:--:--';
+    document.getElementById('sys-last-update').textContent = ts || '--:--:--';
+
+    // ── Location ──
+    const loc = d.location || {};
+    const locWarning = document.getElementById('loc-warning');
+    if (loc.set && loc.lat !== null) {
+      locWarning.classList.remove('visible');
+      document.getElementById('loc-lat').textContent =
+        loc.lat.toFixed(5) + '°';
+      document.getElementById('loc-lon').textContent =
+        loc.lon.toFixed(5) + '°';
+      document.getElementById('loc-elev').textContent =
+        (loc.elev !== null ? loc.elev.toFixed(0) : '--') + ' m';
+    } else {
+      locWarning.classList.add('visible');
+      document.getElementById('loc-lat').textContent  = '---';
+      document.getElementById('loc-lon').textContent  = '---';
+      document.getElementById('loc-elev').textContent = '--- m';
+    }
+
+    // ── Simulation badge ──
+    const simBadge = document.getElementById('sim-badge');
+    if (d.simulation) simBadge.classList.add('visible');
+    else              simBadge.classList.remove('visible');
+  }
+
+  let _statusFirstLoad = true;
+
+  function pollStatus() {
+    fetch('/api/status')
+      .then(r => r.json())
+      .then(d => {
+        applyStatus(d);
+        if (_statusFirstLoad) {
+          _statusFirstLoad = false;
+          hideLoading();
+          runEntranceAnimation();
+        }
+      })
+      .catch(() => {
+        // Connection lost — show disconnected state
+        const connDot = document.getElementById('conn-dot');
+        connDot.classList.remove('connected');
+        connDot.setAttribute('aria-label', 'Disconnected');
+        if (_statusFirstLoad) {
+          // Still hide loading after 4s even if API unreachable
+          setTimeout(() => {
+            hideLoading();
+            runEntranceAnimation();
+          }, 4000);
+        }
+      });
+  }
+
+  /* =========================================================================
+     PASSES API POLLING (/api/passes — every 60s)
+     ========================================================================= */
+  function applyPasses(data) {
+    _passes = (data.passes || []).sort((a, b) =>
+      new Date(a.rise_time) - new Date(b.rise_time)
+    );
+    _skyNeedsRedraw = true;
+
+    const listEl = document.getElementById('pass-list');
+
+    if (_passes.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:0.80rem;padding:24px 0">No upcoming passes</div>';
+      return;
+    }
+
+    // Find currently active and next upcoming passes
+    const now = Date.now();
+    _activePassIdx = null;
+    let nextIdx    = null;
+
+    _passes.forEach((p, i) => {
+      const rise = new Date(p.rise_time).getTime();
+      const set  = new Date(p.set_time).getTime();
+      if (now >= rise && now < set) _activePassIdx = i;
+      else if (now < rise && nextIdx === null) nextIdx = i;
+    });
+
+    listEl.innerHTML = '';
+
+    _passes.forEach((pass, idx) => {
+      const isNext   = (idx === nextIdx);
+      const isActive = (idx === _activePassIdx);
+      const item     = document.createElement('div');
+      item.className = 'pass-item' + (isNext ? ' next' : '') +
+                       (idx === _selectedPass ? ' selected' : '');
+      item.setAttribute('role', 'listitem');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-label',
+        `${pass.name}, max elevation ${pass.max_el.toFixed(0)} degrees`);
+
+      let timeStr, subStr;
+      const secsUntilRise = secsUntil(pass.rise_time);
+      if (isActive) {
+        timeStr = 'IN PROGRESS';
+        subStr  = 'Dur: ' + fmtDuration(pass.duration);
+      } else if (secsUntilRise > 0) {
+        const m = Math.floor(secsUntilRise / 60);
+        const h = Math.floor(m / 60);
+        timeStr = h > 0
+          ? `in ${h}h ${m % 60}m`
+          : `in ${m}m`;
+        subStr = fmtTime(pass.rise_time) + ' · ' + fmtDuration(pass.duration);
+      } else {
+        timeStr = fmtTime(pass.rise_time);
+        subStr  = 'Dur: ' + fmtDuration(pass.duration);
+      }
+
+      item.innerHTML = `
+        <div class="pass-item-name${isNext ? ' next-label' : ''}">${pass.name}</div>
+        <div class="max-el-badge">${pass.max_el.toFixed(0)}°</div>
+        <div class="pass-meta">
+          <div class="pass-meta-top">${timeStr}</div>
+          <div class="pass-meta-bot">${subStr}</div>
+        </div>
+      `;
+
+      // Tap to select and highlight trajectory
+      const selectFn = () => {
+        _selectedPass   = (_selectedPass === idx) ? null : idx;
+        _skyNeedsRedraw = true;
+        applyPasses({ passes: _passes }); // re-render list
+      };
+      item.addEventListener('click', selectFn);
+      item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectFn(); }
+      });
+
+      listEl.appendChild(item);
+    });
+  }
+
+  function pollPasses() {
+    fetch('/api/passes')
+      .then(r => r.json())
+      .then(d => applyPasses(d))
+      .catch(() => {});
+  }
+
+  /* =========================================================================
+     GPS — POST /api/location
+     ========================================================================= */
+  function setGPS() {
+    const feedback = document.getElementById('gps-feedback');
+    const btn      = document.getElementById('gps-btn');
+
+    if (!navigator.geolocation) {
+      feedback.textContent = 'Geolocation not supported by this browser.';
+      feedback.className   = 'error';
+      return;
+    }
+
+    btn.textContent  = 'Locating...';
+    btn.disabled     = true;
+    feedback.textContent = '';
+    feedback.className   = '';
+
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat  = pos.coords.latitude;
+        const lon  = pos.coords.longitude;
+        const elev = pos.coords.altitude || 0;
+
+        fetch('/api/location', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ lat, lon, elev }),
+        })
+        .then(r => r.json())
+        .then(resp => {
+          btn.textContent = 'Use My GPS';
+          btn.disabled    = false;
+          if (resp.ok) {
+            feedback.textContent = `Set: ${lat.toFixed(5)}° N, ${lon.toFixed(5)}° E, ${elev.toFixed(0)} m`;
+            feedback.className   = 'ok';
+            document.getElementById('loc-warning').classList.remove('visible');
+          } else {
+            feedback.textContent = 'Server error saving location.';
+            feedback.className   = 'error';
+          }
+        })
+        .catch(() => {
+          btn.textContent  = 'Use My GPS';
+          btn.disabled     = false;
+          feedback.textContent = 'Failed to reach dashboard server.';
+          feedback.className   = 'error';
+        });
+      },
+      err => {
+        btn.textContent  = 'Use My GPS';
+        btn.disabled     = false;
+        let msg = 'Location error';
+        if (err.code === 1) msg = 'Permission denied — enable location in browser settings.';
+        else if (err.code === 2) msg = 'Position unavailable — check GPS signal.';
+        else if (err.code === 3) msg = 'Timeout — try again.';
+        feedback.textContent = msg;
+        feedback.className   = 'error';
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 30000 }
+    );
+  }
+
+  /* =========================================================================
+     CONTROLS
+     ========================================================================= */
+  function doPark() {
+    const btn = document.getElementById('park-btn');
+    btn.textContent = 'Parking...';
+    btn.disabled    = true;
+    fetch('/api/park', { method: 'POST' })
+      .then(r => r.json())
+      .then(d => {
+        btn.textContent = d.ok ? 'Park' : 'Failed';
+        setTimeout(() => {
+          btn.textContent = 'Park';
+          btn.disabled    = false;
+        }, 2000);
+      })
+      .catch(() => {
+        btn.textContent = 'Error';
+        setTimeout(() => {
+          btn.textContent = 'Park';
+          btn.disabled    = false;
+        }, 2000);
+      });
+  }
+
+  function doGoto() {
+    const az = parseFloat(document.getElementById('goto-az').value);
+    const el = parseFloat(document.getElementById('goto-el').value);
+    if (isNaN(az) || isNaN(el)) {
+      alert('Enter valid AZ and EL values.');
+      return;
+    }
+    if (az < 0 || az > 360) { alert('AZ must be 0–360°.'); return; }
+    if (el < 0 || el > 90)  { alert('EL must be 0–90°.');  return; }
+    fetch('/api/position', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ az, el }),
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (!d.ok) alert('Position command failed.');
+    })
+    .catch(() => alert('Could not reach server.'));
+  }
+
+  function doShutdown() {
+    if (!confirm('Shut down the Pi?\n\nThe antenna will park first. This takes ~5 seconds.')) return;
+    fetch('/api/shutdown', { method: 'POST' }).catch(() => {});
+    document.body.innerHTML = `
+      <div style="
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        height:100svh; height:100vh;
+        background:#0a0e1a; color:#ef4444;
+        font-family:'Space Grotesk',sans-serif; gap:20px;
+      ">
+        <div style="font-size:2rem; font-weight:700; letter-spacing:.3em;">AETHER</div>
+        <div style="font-size:1rem; color:#94a3b8;">Shutting down Pi — safe to disconnect power.</div>
+      </div>`;
+  }
+
+  /* =========================================================================
+     INIT
+     ========================================================================= */
+  window.addEventListener('DOMContentLoaded', () => {
+
+    // 1. Init Vanta globe (try CDN — fails silently when offline)
+    initVanta();
+
+    // 2. Start sky plot render loop
+    skyRenderLoop();
+
+    // 3. Kick off API polling
+    pollStatus();
+    pollPasses();
+
+    // 4. Repeat polls
+    setInterval(pollStatus,  1000);
+    setInterval(pollPasses, 60000);
+
+    // 5. Fallback: if first status hasn't arrived in 5s, show dashboard anyway
+    setTimeout(() => {
+      if (_statusFirstLoad) {
+        _statusFirstLoad = false;
+        hideLoading();
+        runEntranceAnimation();
+      }
+    }, 5000);
+
+    // 6. Resize observer — redraw sky plot when card width changes
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => { _skyNeedsRedraw = true; });
+      ro.observe(document.getElementById('sky-canvas-wrap'));
+    }
+  });
+
+  // Expose action functions to global scope for inline onclick handlers
+  window.setGPS     = setGPS;
+  window.doPark     = doPark;
+  window.doGoto     = doGoto;
+  window.doShutdown = doShutdown;
+
+  </script>
+
+</body>
+</html>

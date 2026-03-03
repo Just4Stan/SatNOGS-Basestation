@@ -30,8 +30,10 @@ fp-info-cache
 .claude/
 CLAUDE.md
 
-# Thesis and reference papers (not for public distribution)
+# Reference papers (not for public distribution)
 Papers/
+
+# Thesis paper (private, not for public repo)
 ThesisPaper/
 
 # Python cache
@@ -47,16 +49,22 @@ __pycache__/
 **/*.elf
 **/*.map
 
-# LaTeX build artifacts
+# LaTeX build artifacts (also handled by ThesisPaper/.gitignore)
 ThesisPaper/**/*.aux
-ThesisPaper/**/*.log
-ThesisPaper/**/*.out
-ThesisPaper/**/*.toc
 ThesisPaper/**/*.bbl
+ThesisPaper/**/*.bcf
 ThesisPaper/**/*.blg
-ThesisPaper/**/*.synctex.gz
 ThesisPaper/**/*.fdb_latexmk
 ThesisPaper/**/*.fls
+ThesisPaper/**/*.lof
+ThesisPaper/**/*.log
+ThesisPaper/**/*.lot
+ThesisPaper/**/*.out
+ThesisPaper/**/*.run.xml
+ThesisPaper/**/*.synctex.gz
+ThesisPaper/**/*.toc
+ThesisPaper/**/*.xdv
+ThesisPaper/thesis.pdf
 
 # Keep only the latest compiled firmware at root
 firmware-*.uf2

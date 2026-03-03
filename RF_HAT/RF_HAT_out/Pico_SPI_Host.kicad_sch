@@ -1383,6 +1383,10 @@
 		(uuid "0876cea5-5b22-45e8-84da-d6aafe7f2104")
 	)
 	(no_connect
+		(at 83.82 77.47)
+		(uuid "099bfc4c-7cd7-403b-9ce9-a567f8fadc89")
+	)
+	(no_connect
 		(at 83.82 110.49)
 		(uuid "26f2bcd3-5aec-411c-b255-45a01801b489")
 	)
@@ -1391,24 +1395,8 @@
 		(uuid "3fb4958f-247f-4b6a-97c3-ec2a57f32969")
 	)
 	(no_connect
-		(at 83.82 82.55)
-		(uuid "448a6f3d-ad1e-4aca-89b0-3c7169a1e832")
-	)
-	(no_connect
-		(at 83.82 80.01)
-		(uuid "6c994886-3c99-42d7-8476-2810281d880e")
-	)
-	(no_connect
 		(at 83.82 64.77)
 		(uuid "883cf303-8c7e-45c1-9eb3-1ce6fcb2b64b")
-	)
-	(no_connect
-		(at 83.82 85.09)
-		(uuid "92615595-1498-4286-96f7-69238635acbf")
-	)
-	(no_connect
-		(at 83.82 77.47)
-		(uuid "92c58a1a-6dc5-4a63-bfa4-9a3d84b75894")
 	)
 	(no_connect
 		(at 129.54 105.41)
@@ -1421,6 +1409,10 @@
 	(no_connect
 		(at 83.82 67.31)
 		(uuid "f0f7bf9e-71bc-45eb-a412-481433e385b0")
+	)
+	(no_connect
+		(at 83.82 80.01)
+		(uuid "fc5a145a-30bc-4981-9b98-8422a7528e1a")
 	)
 	(wire
 		(pts
@@ -1629,6 +1621,28 @@
 			(justify left)
 		)
 		(uuid "f20d6351-b754-4d16-ba97-e98d61e7e44c")
+	)
+	(hierarchical_label "WS2812"
+		(shape input)
+		(at 83.82 82.55 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f5b74454-b4ad-4150-998a-f2fd8523da55")
+	)
+	(hierarchical_label "BUZZER"
+		(shape input)
+		(at 83.82 85.09 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "f72b1213-f2b7-468a-b3a0-5625e147775c")
 	)
 	(symbol
 		(lib_id "MCU_Module:RaspberryPi_Pico")

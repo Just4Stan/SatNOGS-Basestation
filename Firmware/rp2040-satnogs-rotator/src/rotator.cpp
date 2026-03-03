@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 
 #include "config.h"
 #include "hardware/gpio.h"
@@ -107,6 +108,7 @@ void Rotator::tick() {
     return;
   }
   update_control();
+  recenter_az();
 }
 
 void Rotator::set_target(float az_deg, float el_deg) {
@@ -116,7 +118,7 @@ void Rotator::set_target(float az_deg, float el_deg) {
 
 void Rotator::set_target_az(float az_deg) {
   manual_mode_ = false;
-  target_az_deg_ = clamp_deg(az_deg, config::kAzMinDeg, config::kAzMaxDeg);
+  target_az_deg_ = choose_wrapped_target(az_deg, az_deg_, config::kAzMinDeg, config::kAzMaxDeg);
 }
 
 void Rotator::set_target_el(float el_deg) {
@@ -162,7 +164,13 @@ void Rotator::stop_all() {
   stop_el();
 }
 
-void Rotator::park() { set_target(config::kParkAzDeg, config::kParkElDeg); }
+void Rotator::park() {
+  // Park bypasses choose_wrapped_target so the rotator physically unwinds
+  // back to true 0° instead of taking the shortest path to a ±360° equivalent.
+  manual_mode_ = false;
+  target_az_deg_ = config::kParkAzDeg;
+  target_el_deg_ = config::kParkElDeg;
+}
 
 void Rotator::reset_home() { begin_homing(); }
 
@@ -222,11 +230,33 @@ void Rotator::update_faults() {
 }
 
 void Rotator::update_control() {
+  // Runaway detection: if actual position is far outside soft limits, emergency stop.
+  // This catches positive-feedback bugs, encoder failures, or mechanical issues.
+  constexpr float kRunawayMarginDeg = 50.0f;
+  if (az_deg_ < config::kAzMinDeg - kRunawayMarginDeg ||
+      az_deg_ > config::kAzMaxDeg + kRunawayMarginDeg) {
+    stop_all();
+    std::printf("SAFETY: AZ runaway detected (%.1f deg) — motors stopped\n", az_deg_);
+    return;
+  }
+  if (el_deg_ < config::kElMinDeg - kRunawayMarginDeg ||
+      el_deg_ > config::kElMaxDeg + kRunawayMarginDeg) {
+    stop_all();
+    std::printf("SAFETY: EL runaway detected (%.1f deg) — motors stopped\n", el_deg_);
+    return;
+  }
+
   const float az_error = target_az_deg_ - az_deg_;
   const float el_error = target_el_deg_ - el_deg_;
 
-  const float az_raw = compute_pid(az_error, &az_integral_, &az_prev_error_, &az_d_filtered_);
-  const float el_raw = compute_pid(el_error, &el_integral_, &el_prev_error_, &el_d_filtered_);
+  float az_raw = compute_pid(az_error, &az_integral_, &az_prev_error_, &az_d_filtered_);
+  float el_raw = compute_pid(el_error, &el_integral_, &el_prev_error_, &el_d_filtered_);
+
+  // The kInvert flags flip the position reading in ticks_to_deg() so that
+  // increasing degrees matches the intended physical direction.  The motor
+  // output must be flipped too, otherwise the PID loop has positive feedback.
+  if (config::kAzInvert) az_raw = -az_raw;
+  if (config::kElInvert) el_raw = -el_raw;
 
   // Smooth the duty output to prevent start-stop twitching during continuous tracking.
   // At 100 Hz with alpha=0.05, time constant ~0.2s → smooth ramp-up/down.
@@ -236,9 +266,10 @@ void Rotator::update_control() {
   az_motor_.set(az_duty_smooth_);
   el_motor_.set(el_duty_smooth_);
 
-  // Endstop safety: prevent driving further into a pressed endstop during normal operation.
-  if (endstop_pressed_az() && (az_error < 0.0f)) az_motor_.stop();
-  if (endstop_pressed_el() && (el_error < 0.0f)) el_motor_.stop();
+  // Endstop safety: prevent driving further into a pressed endstop.
+  // Check the actual motor drive direction (after inversion), not the PID error sign.
+  if (endstop_pressed_az() && (az_duty_smooth_ < 0.0f)) az_motor_.stop();
+  if (endstop_pressed_el() && (el_duty_smooth_ < 0.0f)) el_motor_.stop();
 }
 
 float Rotator::compute_pid(float error_deg, float* integral, float* prev_error, float* d_filtered) {
@@ -267,6 +298,26 @@ float Rotator::compute_pid(float error_deg, float* integral, float* prev_error, 
   // Clamp to max duty. No minimum floor — the I-term handles stiction naturally.
   duty = std::clamp(duty, -config::kMaxDuty, config::kMaxDuty);
   return duty;
+}
+
+void Rotator::recenter_az() {
+  // After settling near ±360° (physically the same as 0°), shift the encoder
+  // so the position reads near 0° again.  This recenters the cable wrap range
+  // and prevents the next pass from being forced to take the long path.
+  const float az_error = std::abs(target_az_deg_ - az_deg_);
+  if (az_error > config::kDeadbandDeg) return;  // still moving
+
+  const float abs_az = std::abs(az_deg_);
+  if (abs_az < 350.0f) return;  // not near the edge
+
+  const int32_t full_turn = static_cast<int32_t>(360.0f * config::kAzTicksPerDegree);
+  if (az_deg_ > 0) {
+    az_enc_.set_ticks(az_enc_.ticks() - full_turn);
+  } else {
+    az_enc_.set_ticks(az_enc_.ticks() + full_turn);
+  }
+  update_measurements();
+  target_az_deg_ = az_deg_;  // retarget to the new (recentered) reading
 }
 
 void Rotator::set_gains(float kp, float ki, float kd) {
