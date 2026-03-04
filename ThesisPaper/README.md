@@ -103,18 +103,6 @@ covers/                 KU Leuven cover pages (don't modify)
 
 ---
 
-## Who writes what
-
-| Owner | Chapters | Topic |
-|-------|----------|-------|
-| **Stan** | ch01–ch07, ch09–ch12, app A–C/E | Rotator, electronics, firmware, Pi, results |
-| **Robbe** | ch08, appendix D | RF front-end, CC1200 HAT, SmartRF config |
-| **Both** | ch09 (BOM), ch11 (discussion) | Cost analysis covers both subsystems |
-
-Chapters are separate files — no merge conflicts if you stick to your own files.
-
----
-
 ## Quick LaTeX reference
 
 ### Structure
