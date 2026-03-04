@@ -1,0 +1,133 @@
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Background and Literature Review}
+\label{ch:background}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section{LEO Orbital Mechanics}
+
+\subsection{Orbital Velocity and Period}
+
+A satellite in circular orbit at altitude $h$ orbits at radius $r = R_E + h$ ($R_E = 6371$~km). Equating gravitational and centripetal force:
+
+\begin{equation}
+    v = \sqrt{\frac{\mu}{r}}, \qquad T = 2\pi\sqrt{\frac{r^3}{\mu}}
+\end{equation}
+
+where $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$. At $h = 400$~km: $v = 7.67$~km/s, $T = 92.6$~min. The range 400--600~km covers the vast majority of CubeSat orbits, giving periods of 90--97 minutes.
+
+\subsection{Contact Time Geometry}
+
+% TODO: Add orbital geometry diagram (Earth, satellite orbit, ground station, slant range, visible arc, elevation angle)
+
+The maximum slant range at the horizon ($\epsilon = 0\degree$) is:
+
+\begin{equation}
+    d_{max} = \sqrt{h^2 + 2R_E h}
+\end{equation}
+
+At 400~km: $d_{max} = 2294$~km. The visible arc subtends $\alpha = \arccos\!\left(\frac{R_E}{R_E + h}\right) = 19.6\degree$ at Earth's center, giving a maximum overhead pass duration of:
+
+\begin{equation}
+    t_{max} = \frac{2 R_E \alpha}{v} \approx 568~\text{s} \approx 9.5~\text{min}
+\end{equation}
+
+In practice, useful passes with elevation above 10\degree\ last 5--8 minutes. A single station contacts the satellite for roughly 5--10\% of its orbital period.
+
+\subsection{Angular Velocity Across the Sky}
+
+The satellite's angular rate as seen from the ground is slowest near the horizon and fastest near zenith. At closest approach during a zenith pass:
+
+\begin{equation}
+    \dot{\theta}_{max} = \frac{v}{h} = \frac{7672}{400 \times 10^3} = 1.1~\text{deg/s}
+\end{equation}
+
+For high-elevation passes, rates up to 2~deg/s are possible. With a 10-element Yagi ($\sim$30\degree\ 3~dB beamwidth at 434~MHz), the tracking error must stay below $\pm$15\degree\ to remain within the 3~dB beamwidth. Tracking within $\pm$5\degree\ is desirable (less than 0.3~dB loss).
+
+% TODO: Add angular velocity plot (deg/s vs time) for a typical overhead pass
+
+\section{The AetherSpace CubeSat}
+
+% TODO: Add AetherSpace CubeSat render (if available from AetherSpace team)
+
+The AetherSpace project is a KU Leuven initiative developing a 1U CubeSat (10$\times$10$\times$10~cm, $<$1.33~kg) for a heat-resistant sample return demonstration from LEO. The CubeSat standard, proposed by Puig-Suari and Twiggs in 1999, defines this form factor and has enabled over 2000 launches as of 2024.
+
+AetherSpace communicates on 433~MHz UHF (amateur satellite service allocation). Previous KU Leuven work includes Surkijn and Van Elst's 2022 thesis on the earth-satellite communication chain and Hanssens' 2023 investigation of SatNOGS ground station implementation. The present work delivers the functional ground station prototype that these studies scoped.
+
+% NOTE: AetherSpace team contacted for up-to-date specs (TX power, antenna, modulation, launch date).
+% Update this section when confirmed.
+
+\section{Link Budget}
+
+The Friis transmission equation gives the received power:
+
+\begin{equation}
+    P_r = P_t + G_t + G_r - L_{fs} \quad \text{[all in dB]}
+\end{equation}
+
+where the free-space path loss is:
+
+\begin{equation}
+    L_{fs} = 20\log_{10}\!\left(\frac{4\pi d}{\lambda}\right)
+\end{equation}
+
+At 433~MHz ($\lambda = 0.693$~m), the path loss depends on the slant range $d$ between station and satellite. A \textit{zenith pass} (satellite passes directly overhead, elevation = 90\degree) has the shortest slant range, equal to the orbital altitude. A \textit{mid-elevation pass} (peak elevation $\sim$30--50\degree) is the most common useful geometry. At the \textit{horizon} (elevation = 0\degree), the slant range is at its maximum.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        Scenario & Peak elevation & Slant range & $L_{fs}$ \\
+        \midrule
+        Zenith pass & 90\degree & 400~km & 137.2~dB \\
+        Mid-elevation & $\sim$40\degree & 600~km & 140.7~dB \\
+        Horizon & 0\degree & 2294~km & 152.4~dB \\
+        \bottomrule
+    \end{tabular}
+    \caption{Free-space path loss at 433~MHz for different pass geometries.}
+    \label{tab:path-loss}
+\end{table}
+
+Table~\ref{tab:link-budget} shows the full link budget for a mid-elevation pass at 600~km slant range.
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{lr>{\raggedright\arraybackslash}X}
+        \toprule
+        Parameter & Value & Notes \\
+        \midrule
+        TX power (CubeSat) & +30~dBm & 1~W \\
+        TX antenna gain & 0~dBi & Monopole \\
+        Free-space path loss & $-$140.7~dB & 600~km, 433~MHz \\
+        Atmospheric loss & $-$1~dB & Ionospheric + tropospheric attenuation; negligible at zenith, up to 1~dB at low elevations \\
+        Polarization mismatch & $-$3~dB & CubeSat tumbles in orbit, randomizing polarization relative to the Yagi; 3~dB is the average loss \\
+        RX antenna gain (Yagi) & +10~dBi & 10-element at 434~MHz \\
+        \midrule
+        \textbf{Received power} & \textbf{$-$104.7~dBm} & \\
+        CC1200 sensitivity & $-$120~dBm & At 2.4~kbps \\
+        \textbf{Link margin} & \textbf{15.3~dB} & \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Link budget for AetherSpace UHF downlink at 433~MHz.}
+    \label{tab:link-budget}
+\end{table}
+
+At the horizon ($d = 2294$~km), the margin drops to 3.6~dB---marginal but positive. This confirms that a 10~dBi Yagi is the minimum viable antenna for reliable communication, and that passes below $\sim$10\degree\ elevation are unreliable.
+
+\section{Doppler Shift}
+
+A satellite moving with radial velocity $v_r$ relative to the ground station shifts the received frequency by:
+
+\begin{equation}
+    \Delta f = \frac{v_r}{c} \cdot f_0
+\end{equation}
+
+The maximum radial velocity occurs at the horizon, where the orbital velocity projects fully onto the line of sight: $v_{r,max} \approx 7229$~m/s. This gives:
+
+\begin{itemize}
+    \item At 433~MHz (UHF): $\Delta f_{max} = \pm 10.4$~kHz
+    \item At 145.9~MHz (VHF): $\Delta f_{max} = \pm 3.5$~kHz
+\end{itemize}
+
+These shifts are significant relative to the CC1200's receive bandwidth of $\sim$30~kHz at 2.4~kbps. Without compensation, the signal drifts out of the passband within seconds. Our station software updates the CC1200 frequency registers at 2~Hz, limiting the uncompensated drift between updates to $\sim$106~Hz---well within the receiver bandwidth.
+
+% TODO: Add Doppler shift vs time plot for a typical pass

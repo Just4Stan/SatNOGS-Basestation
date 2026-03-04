@@ -86,6 +86,30 @@ EXT_FS_CFG      = None  # FS_CFG is a normal register at addr 0x21
 # Crystal frequency (RF HAT uses 40 MHz)
 F_XOSC_HZ = 40_000_000
 
+# CC1200 modulation-critical register addresses (normal space)
+REG_SYNC3         = 0x04
+REG_SYNC2         = 0x05
+REG_SYNC1         = 0x06
+REG_SYNC0         = 0x07
+REG_SYNC_CFG1     = 0x08
+REG_DEVIATION_M   = 0x0A
+REG_MODCFG_DEV_E  = 0x0B
+REG_CHAN_BW        = 0x10
+REG_SYMBOL_RATE2   = 0x13
+REG_SYMBOL_RATE1   = 0x14
+REG_SYMBOL_RATE0   = 0x15
+REG_FS_CFG        = 0x21
+
+# Modulation format encoding (CC1200 datasheet, MODCFG_DEV_E[5:3])
+MOD_FORMAT_MAP = {
+    "2-FSK":  0b001,
+    "2-GFSK": 0b000,
+    "ASK":    0b011,
+    "OOK":    0b011,
+    "4-FSK":  0b101,
+    "4-GFSK": 0b100,
+}
+
 # Band select → LO divider mapping (CC1200 datasheet Table 12)
 BAND_SELECT = {
     0x02: {"lo_div": 4,  "f_min": 820e6, "f_max": 960e6,  "label": "820-960 MHz"},
@@ -220,6 +244,104 @@ def regs_to_freq(fs_cfg: int, freq2: int, freq1: int, freq0: int) -> float:
     lo_div = info["lo_div"]
     freq_word = (freq2 << 16) | (freq1 << 8) | freq0
     return freq_word * F_XOSC_HZ / (lo_div * 65536)
+
+
+def symbol_rate_to_regs(bps: float) -> Tuple[int, int, int]:
+    """
+    Compute CC1200 SYMBOL_RATE2/1/0 register values from symbol rate in bps.
+
+    Formula (CC1200 datasheet section 8.7.1):
+        rate = (2^20 + SRATE_M) * 2^SRATE_E / 2^39 * f_xosc
+
+    Where SRATE_E is bits [7:4] of SYMBOL_RATE2,
+          SRATE_M is {SYMBOL_RATE2[3:0], SYMBOL_RATE1, SYMBOL_RATE0} (20 bits).
+
+    Returns (SYMBOL_RATE2, SYMBOL_RATE1, SYMBOL_RATE0).
+    """
+    # Find the best exponent
+    best_e = 0
+    best_m = 0
+    best_err = float("inf")
+
+    for e in range(16):
+        # SRATE_M = rate * 2^39 / (2^SRATE_E * f_xosc) - 2^20
+        m_float = bps * (2 ** 39) / ((2 ** e) * F_XOSC_HZ) - (2 ** 20)
+        m = int(round(m_float))
+        m = max(0, min(0xFFFFF, m))  # clamp to 20 bits
+
+        # Compute actual rate for error check
+        actual = ((2 ** 20) + m) * (2 ** e) * F_XOSC_HZ / (2 ** 39)
+        err = abs(actual - bps)
+        if err < best_err:
+            best_err = err
+            best_e = e
+            best_m = m
+
+    sr2 = ((best_e & 0xF) << 4) | ((best_m >> 16) & 0xF)
+    sr1 = (best_m >> 8) & 0xFF
+    sr0 = best_m & 0xFF
+    return sr2, sr1, sr0
+
+
+def deviation_to_regs(hz: float) -> Tuple[int, int]:
+    """
+    Compute CC1200 DEVIATION_M and DEV_E from deviation frequency in Hz.
+
+    Formula (CC1200 datasheet section 8.7.2):
+        f_dev = f_xosc / 2^24 * (256 + DEV_M) * 2^DEV_E
+
+    Where DEVIATION_M register = DEV_M (8 bits, addr 0x0A),
+          DEV_E = MODCFG_DEV_E[2:0] (3 bits in reg 0x0B).
+
+    Returns (DEVIATION_M, DEV_E).
+    """
+    best_e = 0
+    best_m = 0
+    best_err = float("inf")
+
+    for e in range(8):
+        # DEV_M = f_dev * 2^24 / (f_xosc * 2^DEV_E) - 256
+        m_float = hz * (2 ** 24) / (F_XOSC_HZ * (2 ** e)) - 256
+        m = int(round(m_float))
+        m = max(0, min(255, m))
+
+        actual = F_XOSC_HZ / (2 ** 24) * (256 + m) * (2 ** e)
+        err = abs(actual - hz)
+        if err < best_err:
+            best_err = err
+            best_e = e
+            best_m = m
+
+    return best_m, best_e
+
+
+def chan_bw_to_reg(bw_khz: float) -> int:
+    """
+    Compute CC1200 CHAN_BW register value from RX filter bandwidth in kHz.
+
+    Formula (CC1200 datasheet section 8.7.3):
+        BW = f_xosc / (CHFILT_BYPASS * 8 * (BB_CHP_SET + 1) * 2^ADC_DEC_FACTOR)
+
+    CHAN_BW register format: {ADC_CIC_DECFACT[1:0], 00, BB_CHP_SET[3:0]}
+        ADC_CIC_DECFACT = bits 7:6
+        BB_CHP_SET = bits 3:0
+
+    We use the simplified SmartRF-style lookup table approach.
+    """
+    bw_hz = bw_khz * 1000
+    best_reg = 0x8E  # default ~29.8 kHz
+    best_err = float("inf")
+
+    for adc_dec in range(4):
+        for bb_chp in range(16):
+            # BW = f_xosc / (8 * (bb_chp + 1) * 2^(adc_dec + 1))
+            calc_bw = F_XOSC_HZ / (8.0 * (bb_chp + 1) * (2 ** (adc_dec + 1)))
+            err = abs(calc_bw - bw_hz)
+            if err < best_err:
+                best_err = err
+                best_reg = ((adc_dec & 0x3) << 6) | (bb_chp & 0xF)
+
+    return best_reg
 
 
 def doppler_shift(freq_hz: float, range_rate_m_s: float) -> float:
@@ -565,6 +687,93 @@ class CC1200Link:
         if None in (fs_cfg, freq2, freq1, freq0):
             return None
         return regs_to_freq(fs_cfg, freq2, freq1, freq0)
+
+    # ----- Modulation reconfiguration -----
+
+    def configure_modulation(self, mod_format: str = "2-GFSK",
+                              symbol_rate_bps: int = 2400,
+                              deviation_hz: int = 5000,
+                              rx_bw_khz: float = 25.0,
+                              sync_word: Optional[str] = None,
+                              freq_hz: Optional[float] = None) -> bool:
+        """
+        Reconfigure modulation-critical CC1200 registers without full profile reload.
+
+        Puts radio in IDLE, writes ~15 registers, optionally sets frequency.
+        Much faster than apply_smartrf_config() (~100ms vs ~500ms).
+
+        Args:
+            mod_format: "2-GFSK", "2-FSK", "4-GFSK", "4-FSK", "ASK", "OOK"
+            symbol_rate_bps: Symbol rate in bits per second
+            deviation_hz: Frequency deviation in Hz
+            rx_bw_khz: RX channel filter bandwidth in kHz
+            sync_word: Hex string sync word (e.g. "7A0E" or "7E7E"), or None to keep current
+            freq_hz: Carrier frequency in Hz, or None to keep current
+
+        Returns True if all writes succeeded.
+        """
+        # Validate modulation format
+        fmt_bits = MOD_FORMAT_MAP.get(mod_format)
+        if fmt_bits is None:
+            return False
+
+        # Put radio in IDLE
+        self.set_state(STATE_IDLE)
+        time.sleep(0.02)
+
+        ok = True
+
+        # Symbol rate registers
+        sr2, sr1, sr0 = symbol_rate_to_regs(symbol_rate_bps)
+        ok = ok and self.write_reg(REG_SYMBOL_RATE2, sr2)
+        ok = ok and self.write_reg(REG_SYMBOL_RATE1, sr1)
+        ok = ok and self.write_reg(REG_SYMBOL_RATE0, sr0)
+
+        # Deviation
+        dev_m, dev_e = deviation_to_regs(deviation_hz)
+        ok = ok and self.write_reg(REG_DEVIATION_M, dev_m)
+
+        # MODCFG_DEV_E: [7] MODEM_MODE=0, [6] MOD_FORMAT_MSB, [5:3] MOD_FORMAT, [2:0] DEV_E
+        # For 2-GFSK: fmt_bits=0b000, for 2-FSK: fmt_bits=0b001, etc.
+        modcfg = ((fmt_bits & 0x7) << 3) | (dev_e & 0x7)
+        ok = ok and self.write_reg(REG_MODCFG_DEV_E, modcfg)
+
+        # RX channel bandwidth
+        chan_bw = chan_bw_to_reg(rx_bw_khz)
+        ok = ok and self.write_reg(REG_CHAN_BW, chan_bw)
+
+        # Sync word (up to 32 bits)
+        if sync_word is not None:
+            sw_bytes = bytes.fromhex(sync_word)
+            if len(sw_bytes) == 2:
+                # 16-bit sync word → write to SYNC1/SYNC0, clear SYNC3/SYNC2
+                ok = ok and self.write_reg(REG_SYNC3, 0x00)
+                ok = ok and self.write_reg(REG_SYNC2, 0x00)
+                ok = ok and self.write_reg(REG_SYNC1, sw_bytes[0])
+                ok = ok and self.write_reg(REG_SYNC0, sw_bytes[1])
+                # SYNC_CFG1: 16-bit sync word mode
+                sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
+                if sync_cfg1 is not None:
+                    # bits [4:2] = sync word length: 0b100 = 16 bits
+                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x04 << 2)
+                    ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
+            elif len(sw_bytes) == 4:
+                # 32-bit sync word
+                ok = ok and self.write_reg(REG_SYNC3, sw_bytes[0])
+                ok = ok and self.write_reg(REG_SYNC2, sw_bytes[1])
+                ok = ok and self.write_reg(REG_SYNC1, sw_bytes[2])
+                ok = ok and self.write_reg(REG_SYNC0, sw_bytes[3])
+                # SYNC_CFG1: 32-bit sync word mode
+                sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
+                if sync_cfg1 is not None:
+                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x06 << 2)
+                    ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
+
+        # Frequency (if specified)
+        if freq_hz is not None:
+            ok = ok and self.set_frequency(freq_hz)
+
+        return ok
 
     # ----- SmartRF profile loading -----
 

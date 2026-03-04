@@ -189,6 +189,12 @@ class Simulator:
                 "freq_mhz": 433.0,
                 "satellite": sat_name,
                 "pass_progress": round(progress * 100, 1) if self.in_pass else 0,
+                "radio_config": {
+                    "freq_mhz": 433.0,
+                    "modulation": "2-GFSK",
+                    "symbol_rate_bps": 9600 if self.in_pass else 2400,
+                    "profile": f"{sat_name} — 9600 GFSK" if self.in_pass else "default",
+                } if self.in_pass and not self._parked else None,
             },
             "system": {
                 "cpu_temp": round(48 + 5 * math.sin(elapsed / 30), 1),

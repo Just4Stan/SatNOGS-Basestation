@@ -33,8 +33,9 @@ CLAUDE.md
 # Reference papers (not for public distribution)
 Papers/
 
-# Thesis paper (private, not for public repo)
-ThesisPaper/
+# Thesis - hide build artifacts, draft, and PDF
+ThesisPaper/draft.md
+ThesisPaper/thesis.pdf
 
 # Python cache
 __pycache__/
@@ -64,7 +65,10 @@ ThesisPaper/**/*.run.xml
 ThesisPaper/**/*.synctex.gz
 ThesisPaper/**/*.toc
 ThesisPaper/**/*.xdv
-ThesisPaper/thesis.pdf
+
+# Station credentials (API tokens, location)
+station.conf
+**/station.conf
 
 # Keep only the latest compiled firmware at root
 firmware-*.uf2

@@ -1,0 +1,131 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                      %
+% LaTeX, FIIW thesis template                                          %
+% Based on GillesC/KU-Leuven-master-thesis-template-FET                %
+%                                                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper]{report}
+\usepackage[a4paper,left=3.5cm, right=2.5cm, top=3.5cm, bottom=3.5cm]{geometry}
+\usepackage{graphicx}
+\graphicspath{{./images/}}
+\usepackage[utf8]{inputenc}
+\usepackage[backend=biber, style=ieee,
+citestyle=numeric-comp, maxnames=99]{biblatex}
+\addbibresource{bibliography.bib}
+\AtBeginBibliography{\footnotesize}
+
+\usepackage{cmbright}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage[small,bf,hang]{caption}
+\usepackage[final]{pdfpages}
+
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\sisetup{detect-all}
+\usepackage[acronym,xindy]{glossaries}
+\makenoidxglossaries
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{gensymb}
+\usepackage{eurosym}
+\usepackage{mathtools}
+\usepackage{xurl}
+
+%%%% Tikz %%%%
+\usepackage{pgfplots}
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows,arrows.meta,positioning,calc,decorations.pathreplacing,shapes.geometric}
+\pgfplotsset{compat=newest}
+
+%%%% Custom commands %%%%
+\newcommand{\degC}{\ensuremath{{}^{\circ}\text{C}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\texttt{#1}}
+
+%%%%%%%%%%%% choose your campus and language %%%%%%%%%%%%
+\usepackage{fiiw}
+
+\acknowledgementspagetrue
+\acknowledgements{preface}
+\abstractpagetrue
+\abstracts{abstract}
+\listoffigurespagetrue
+\listoftablespagetrue
+
+% Information about your discipline
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\opleiding{ELO - ICT}
+\afdeling{, afstudeerrichting elektronica}
+\campus{geel}
+\title{Design and Implementation of an Economical SatNOGS-Compatible Ground Station for the AetherSpace CubeSat}
+\subtitle{}
+\forenameA{Stan}
+\surnameA{Coene}
+\forenameB{Robbe}
+\surnameB{Lehaen}
+\academicyear{2025 - 2026}
+
+\promotorA[Promotor]{Prof.\ dr.\ ir.\ J.\ Vanhamel}
+\promotorB[Co-promotor]{Prof.\ dr.\ ir.\ V.\ De Smedt}
+
+\loadLanguage% keep this untouched
+
+\input{chapters/abbreviations.tex}
+
+\begin{document}
+\preface%
+
+\printnoidxglossary[type=\acronymtype]%
+\clearpage
+
+% ─── LANGUAGE GUIDE ───────────────────────────────────────────────────────────
+% Title page:      Handled by fiiw.sty — Dutch formatting (Academiejaar, etc.)
+% Samenvatting:    DUTCH (verplicht, max 3500 tekens)
+% Abstract:        ENGLISH (required, max 3500 characters)
+% Preface:         Dutch or English (your choice)
+% Chapters 1–12:  ENGLISH (main body, approved by promotor)
+% Bibliography:    Automatic (IEEE style)
+% Appendices:      ENGLISH (same as main body)
+% Code of Conduct: As provided by faculty
+% ──────────────────────────────────────────────────────────────────────────────
+
+\input{chapters/ch01_introduction}
+\input{chapters/ch02_background}
+\input{chapters/ch03_system_architecture}
+\input{chapters/ch04_mechanical_design}
+\input{chapters/ch05_electronics_design}
+\input{chapters/ch06_firmware_design}
+\input{chapters/ch07_station_integration}
+\input{chapters/ch08_rf_frontend}
+\input{chapters/ch09_cost_analysis}
+\input{chapters/ch10_results}
+\input{chapters/ch11_discussion}
+\input{chapters/ch12_conclusion}
+
+% Bibliography
+\printbibliography
+
+% Appendices
+\appendix
+\input{chapters/appendix_a_pinout}
+\input{chapters/appendix_b_protocol}
+\input{chapters/appendix_c_pid}
+\input{chapters/appendix_d_smartrf}
+\input{chapters/appendix_e_speed_test}
+
+% Code of Conduct (GenAI) — mandatory
+\input{code-of-conduct}
+
+\end{document}

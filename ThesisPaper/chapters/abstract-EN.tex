@@ -1,0 +1,12 @@
+% Abstract — max 3500 characters, English.
+This thesis presents the design and implementation of an economical SatNOGS-compatible ground station for the AetherSpace CubeSat.
+
+We take a fresh perspective on ground station design, using modern production techniques and easy to source, cost-effective components. The resulting design is modular, scalable, and accessible to a wide range of users. Unlike most this is not a permanent ground station. So an extra challenge is to make it portable and easy to set up. We detail the mechanical, electronic, and firmware design of the ground station, and demonstrate its function and capabilities.
+
+The work can be cleanly split in two main parts: the rotator system, and the RF frontend.
+
+The rotator system is responsible for pointing the directional antenna towards the sattelite. For this 2 dimensions of freedom are required: azimuth and elevation.
+Instead of traditional stepper motors which lack torque and require complex control we use geared DC motors with ABZ encoders on the motor shaft which still allows for sub 0.1 degree pointing accuracy.
+DC motors are driven by half bridge-drivers using PWM in a closed loop PID control system. Calibration for elevation is done automatically using the gravity vector of an IMU mounted on the elevation axis. For azimuth, a manual calibration procedure is used where the user points the station north on boot up.
+
+(robbe)

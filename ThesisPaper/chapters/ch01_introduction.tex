@@ -1,0 +1,65 @@
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Introduction}
+\label{ch:introduction}
+% ══════════════════════════════════════════════════════════════════════════════
+
+For a detailed introduction to the SatNOGS system and history, we refer to the paper written by Serge Hanssens. We will look at this as an engineering problem and then propose our solution.
+
+% TODO: Add photo of assembled ground station in the field
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{station_overview.png}
+%     \caption{The assembled ground station during field testing.}
+%     \label{fig:station-overview}
+% \end{figure}
+
+\section{Problem Statement}
+
+A standard CubeSat orbits in LEO at typical altitude of 400~km. From earth, it is visible for 5 to 10 minutes per 92 minute orbit. During this time the ground station must continuously point the Yagi antenna. Such antenna typically has a gain of 10~dBi with a 3~dB beamwidth of approximately 30\degree. This is needed to close the link budget against the typical 145~dB free-space path loss. To stay within the 3~dB beamwidth, tracking within $\pm$15\degree\ of the satellite is required; tracking within $\pm$5\degree\ loses less than 0.3~dB and is desirable. This is a challenging task, especially for a portable ground station.
+
+Commercial COTS (Commercial Off The Shelf) rotators capable of this tracking cost in the range of EUR 700 to EUR 1200 for the rotator alone. The SatNOGS open-source rotator (v3) costs EUR 150 to EUR 300 in parts alone. This complexity and cost prohibits small teams and individuals from building their own ground station, which is a barrier to entry for satellite communication and education.
+
+Our aim is to achieve COTS-level performance, at a fraction of the cost. A BOM (Bill of Materials) of 50 euro for the rotator is achieved.
+
+The AetherSpace CubeSat is under development at KU Leuven for a heat-shield sample-return demonstration from LEO. Before this telemetry can be received and thus a ground station will be needed.
+
+Together we with the AetherSpace team we have converged on using the CC1200 transceiver. This deviates from SatNOGS norms which use a SDR transmitting raw IQ samples and demodulation, frequency selection, baud rate etc is done afterwards. This could be a EUR 50 upgrade, and can be connected to the main controller over USB. We will still be able to inject demodulated packets into the SatNOGS database but limits the flexibility of the station. Using the same transceiver as AetherSpace allows for better sensitivity and guaranteed compatibility.
+
+\section{Research Questions}
+
+\begin{enumerate}
+    \item \textbf{Can a satellite-tracking rotator be built for under EUR~50 in materials?} This covers mechanism, motors, encoders, driver PCB, and microcontroller---excluding antenna, RF front-end, and station computer.
+
+    \item \textbf{What pointing accuracy is achievable with geared DC motors, 3D-printed structure, and encoder-based PID control?} The target is sub-1\degree, sufficient for UHF Yagi antennas with 20--40\degree\ beamwidths. We investigate whether the 516:1 internal gearbox plus external gear stages can push resolution below 0.01\degree.
+
+    \item \textbf{Can the system integrate with the SatNOGS network using only the standard EasyComm/hamlib interface?} The station computer should run unmodified \code{rotctld} and \code{satnogs-client}, with the custom hardware appearing as a standard rotator (hamlib model 204).
+
+    \item \textbf{What are the empirical trade-offs of DC motors versus stepper motors for satellite tracking?} Both approaches exist in the amateur community; this work provides measured data on speed, accuracy, idle power, and battery life for the DC motor approach.
+
+    \item \textbf{Is battery-powered portable operation feasible?} Using a 6S LiPo (22.2~V, 6~Ah), can the station operate through a full day of satellite passes without external power?
+\end{enumerate}
+
+\section{Scope and Division of Work}
+
+This is a joint thesis by two authors, following the natural SatNOGS architecture where rotator and radio are independent subsystems connected to a shared station computer:
+
+\begin{itemize}
+    \item \textbf{Stan Coene}: Mechanical rotator design, motor controller PCB (RP2040 + dual TB6642FG), rotator firmware (EasyComm, PID control, homing), Raspberry Pi software stack (\code{station.py}, \code{dashboard.py}, \code{rf\_hat.py}, \code{buzzer.py}), systemd services, web dashboard, field deployment workflow, system integration.
+    \item \textbf{Robbe Lehaen}: RF front-end hardware (dual CC1200 transceiver HAT, UHF 433~MHz + VHF 145~MHz), matching network design, RF HAT firmware (COBS protocol, SPI driver), CC1200 register configuration.
+\end{itemize}
+
+The integration layer---the Python COBS protocol library, satellite profile database, per-pass radio reconfiguration, and Doppler correction---was developed collaboratively. Chapter~\ref{ch:rf-frontend} covers the RF front-end in detail.
+
+\section{Thesis Outline}
+
+\begin{description}[style=unboxed, leftmargin=0pt]
+    \item[Chapter~\ref{ch:background}] derives the physics of LEO satellite communication from first principles: orbital mechanics, link budgets, Doppler shift, and antenna gain.
+    \item[Chapter~\ref{ch:architecture}] presents the system architecture, design philosophy, power distribution, and communication interfaces.
+    \item[Chapters~\ref{ch:mechanical}--\ref{ch:firmware}] detail the mechanical, electronic, and firmware design of the rotator.
+    \item[Chapter~\ref{ch:station-integration}] covers the Raspberry Pi software stack and field deployment.
+    \item[Chapter~\ref{ch:rf-frontend}] describes the RF front-end hardware.
+    \item[Chapter~\ref{ch:cost-analysis}] presents the bill of materials and cost analysis.
+    \item[Chapter~\ref{ch:results}] gives results and validation.
+    \item[Chapters~\ref{ch:discussion} and~\ref{ch:conclusion}] provide discussion and conclusions.
+\end{description}
+

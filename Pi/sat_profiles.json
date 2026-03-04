@@ -1,0 +1,104 @@
+{
+    "default_profile": "configs/smartrf_uhf_435.txt",
+    "satellites": [
+        {
+            "name_match": "AETHERSPACE",
+            "norad_id": null,
+            "freq_mhz": 433.0,
+            "description": "AetherSpace CubeSat \u2014 2-GFSK 2.4 kbps (default profile)"
+        },
+        {
+            "name_match": "ISS",
+            "norad_id": 25544,
+            "freq_mhz": 437.525,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50,
+                "sync_word": "7E7E"
+            },
+            "description": "ISS packet digipeater \u2014 9600 GFSK"
+        },
+        {
+            "name_match": "CAS-5A",
+            "norad_id": 54684,
+            "freq_mhz": 435.650,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 4800,
+                "deviation_hz": 2400,
+                "rx_bw_khz": 25
+            },
+            "description": "CAS-5A \u2014 GMSK 4800 bps"
+        },
+        {
+            "name_match": "JY1SAT",
+            "norad_id": 43803,
+            "freq_mhz": 436.250,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 1200,
+                "deviation_hz": 600,
+                "rx_bw_khz": 12.5
+            },
+            "description": "JY1SAT \u2014 1200 bps 2-FSK"
+        },
+        {
+            "name_match": "FOX-1",
+            "norad_id": 43017,
+            "freq_mhz": 435.050,
+            "description": "Fox-1Cliff \u2014 200 bps DUV (freq-only override)"
+        },
+        {
+            "name_match": "FUNCUBE",
+            "norad_id": 39444,
+            "freq_mhz": 435.150,
+            "description": "FUNcube-1 \u2014 1200 bps BPSK (freq-only, BPSK not CC1200-native)",
+            "cc1200_compatible": false
+        },
+        {
+            "name_match": "TEVEL",
+            "norad_id": null,
+            "freq_mhz": 436.400,
+            "description": "TEVEL series \u2014 9600 bps BPSK (not CC1200-compatible)",
+            "cc1200_compatible": false
+        },
+        {
+            "name_match": "UVSQ-SAT",
+            "norad_id": 47438,
+            "freq_mhz": 437.020,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50
+            },
+            "description": "UVSQ-SAT \u2014 9600 GFSK"
+        },
+        {
+            "name_match": "LUCKY-7",
+            "norad_id": 44406,
+            "freq_mhz": 437.525,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 4800,
+                "deviation_hz": 2400,
+                "rx_bw_khz": 25
+            },
+            "description": "Lucky-7 \u2014 4800 GFSK"
+        },
+        {
+            "name_match": "MEZNSAT",
+            "norad_id": 46489,
+            "freq_mhz": 436.600,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50
+            },
+            "description": "MeznSat \u2014 9600 GFSK"
+        }
+    ]
+}

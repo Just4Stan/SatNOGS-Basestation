@@ -68,6 +68,7 @@ from rf_hat import (
 )
 from buzzer import Buzzer
 from satnogs import SatNOGSClient
+from sat_library import SatLibrary, SatProfile
 
 # ---------------------------------------------------------------------------
 # Station config (defaults — override with --lat/--lon/--elev or ~/station.conf)
@@ -298,6 +299,12 @@ class RfHatManager:
         self.pkt_count = 0
         self.total_bytes = 0
         self.packets = []  # list of (timestamp, data_bytes)
+        self.radio_config = {
+            "freq_mhz": 0.0,
+            "modulation": "2-GFSK",
+            "symbol_rate_bps": 2400,
+            "profile": "default",
+        }
 
     def open(self) -> bool:
         try:
@@ -351,6 +358,74 @@ class RfHatManager:
             log(f"RF HAT: UHF freq = {actual/1e6:.6f} MHz")
 
         return True
+
+    def configure_for_satellite(self, profile: SatProfile, default_profile: str = "") -> bool:
+        """Reconfigure the CC1200 for a specific satellite's radio parameters.
+
+        Three tiers:
+          1. Custom SmartRF profile → full apply_smartrf_config() + set_frequency()
+          2. Modulation override → configure_modulation() + set_frequency()
+          3. Frequency-only → just set_frequency()
+        """
+        self.link.select_radio(RADIO_UHF)
+
+        if profile.smartrf_profile:
+            # Tier C: full SmartRF profile
+            profile_path = str(Path(__file__).parent / profile.smartrf_profile)
+            log(f"RF HAT: Loading custom profile: {profile.smartrf_profile}")
+            ok, msg = self.link.apply_smartrf_config(profile_path)
+            if not ok:
+                log(f"RF HAT: Custom profile failed: {msg}")
+                return False
+            log(f"RF HAT: {msg}")
+            ok = self.link.set_frequency(profile.freq_mhz * 1e6)
+            self.radio_config = {
+                "freq_mhz": profile.freq_mhz,
+                "modulation": "custom",
+                "symbol_rate_bps": 0,
+                "profile": profile.description,
+            }
+
+        elif profile.modulation:
+            # Tier B: modulation register override
+            m = profile.modulation
+            log(f"RF HAT: Configuring {m.format} {m.symbol_rate_bps} bps, "
+                f"dev={m.deviation_hz} Hz, BW={m.rx_bw_khz} kHz")
+            ok = self.link.configure_modulation(
+                mod_format=m.format,
+                symbol_rate_bps=m.symbol_rate_bps,
+                deviation_hz=m.deviation_hz,
+                rx_bw_khz=m.rx_bw_khz,
+                sync_word=m.sync_word,
+                freq_hz=profile.freq_mhz * 1e6,
+            )
+            if not ok:
+                log("RF HAT: Modulation reconfiguration failed")
+                return False
+            self.radio_config = {
+                "freq_mhz": profile.freq_mhz,
+                "modulation": m.format,
+                "symbol_rate_bps": m.symbol_rate_bps,
+                "profile": profile.description,
+            }
+
+        else:
+            # Tier A: frequency-only override
+            log(f"RF HAT: Frequency-only retune to {profile.freq_mhz:.3f} MHz")
+            ok = self.link.set_frequency(profile.freq_mhz * 1e6)
+            self.radio_config = {
+                "freq_mhz": profile.freq_mhz,
+                "modulation": "2-GFSK",
+                "symbol_rate_bps": 2400,
+                "profile": profile.description,
+            }
+
+        if ok:
+            self.uhf_freq_hz = profile.freq_mhz * 1e6
+            actual = self.link.get_frequency()
+            if actual:
+                log(f"RF HAT: UHF freq = {actual/1e6:.6f} MHz")
+        return ok
 
     def start_rx(self) -> bool:
         """Enter RX mode and enable streaming on the currently selected radio."""
@@ -575,6 +650,7 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
                     "freq_mhz": args.uhf_freq,
                     "satellite": name,
                     "pass_progress": round(progress, 1),
+                    "radio_config": rf.radio_config if rf else None,
                 }
                 if satnogs:
                     status_data["satnogs"] = satnogs.get_stats()
@@ -643,6 +719,10 @@ def _run_daemon(args, logfile):
     log(f"Location set: {sta_lat}N, {sta_lon}E, {sta_elev:.0f}m", logfile)
 
     buzzer = Buzzer()  # no link yet — beeps are no-ops until RF opens
+
+    # Satellite profile library for per-pass radio reconfiguration
+    sat_library = SatLibrary()
+    log(f"Satellite library: {len(sat_library.satellites)} profiles loaded", logfile)
 
     # SatNOGS DB client — optional; station works fine without tokens configured
     satnogs: Optional[SatNOGSClient] = None
@@ -717,6 +797,25 @@ def _run_daemon(args, logfile):
                     log(f"Queued: {p['name']} max EL {p['max_el']:.1f}° in "
                         f"{(p['rise_time'].replace(tzinfo=datetime.timezone.utc) - datetime.datetime.now(datetime.timezone.utc)).total_seconds()/60:.0f} min",
                         logfile)
+
+                    # Per-pass radio reconfiguration
+                    if rf:
+                        pass_name = p["name"]
+                        pass_norad = norad_id_from_tle(p["tle"][1])
+                        profile = sat_library.lookup(norad_id=pass_norad, name=pass_name)
+                        if profile:
+                            log(f"Radio config: {profile.freq_mhz:.3f} MHz — {profile.description}", logfile)
+                            rf.configure_for_satellite(profile, sat_library.default_profile or "")
+                        else:
+                            log(f"No profile for {pass_name} — using default {args.uhf_freq:.3f} MHz", logfile)
+                            rf.update_uhf_doppler(args.uhf_freq * 1e6)
+                            rf.radio_config = {
+                                "freq_mhz": args.uhf_freq,
+                                "modulation": "2-GFSK",
+                                "symbol_rate_bps": 2400,
+                                "profile": "default",
+                            }
+
                     track_pass(rotctl, rf, p["tle"], p, args, logfile,
                                buzzer=buzzer,
                                lat=sta_lat, lon=sta_lon, elev=sta_elev,
@@ -728,6 +827,13 @@ def _run_daemon(args, logfile):
                             flushed = satnogs.flush_queue()
                             if flushed:
                                 log(f"SatNOGS DB: flushed {flushed} queued frames", logfile)
+                        # Try to update satellite library from SatNOGS DB between passes
+                        try:
+                            added = sat_library.update_from_satnogs()
+                            if added:
+                                log(f"Satellite library: added {added} new profiles from SatNOGS DB", logfile)
+                        except Exception:
+                            pass
             else:
                 log("No passes found in prediction window", logfile)
 
@@ -838,6 +944,10 @@ def main():
         log(f"UHF RX:  {args.uhf_freq:.3f} MHz", logfile)
         log(f"Doppler: {'ON' if args.doppler else 'OFF'}", logfile)
 
+    # Satellite profile library
+    sat_library = SatLibrary()
+    log(f"Satellite library: {len(sat_library.satellites)} profiles loaded", logfile)
+
     # SatNOGS DB client
     satnogs: Optional[SatNOGSClient] = None
     if not args.no_satnogs:
@@ -940,6 +1050,23 @@ def main():
 
             log(f"Next: {p['name']} — max EL {p['max_el']:.1f}°, "
                 f"{p['duration']:.0f}s, in {max(0,wait)/60:.1f} min", logfile)
+
+            # Per-pass radio reconfiguration
+            if rf:
+                pass_name = p['name']
+                pass_norad = norad_id_from_tle(p['tle'][1])
+                profile = sat_library.lookup(norad_id=pass_norad, name=pass_name)
+                if profile:
+                    log(f"Radio config: {profile.freq_mhz:.3f} MHz — {profile.description}", logfile)
+                    rf.configure_for_satellite(profile, sat_library.default_profile or "")
+                else:
+                    log(f"No profile for {pass_name} — using default {args.uhf_freq:.3f} MHz", logfile)
+                    rf.radio_config = {
+                        "freq_mhz": args.uhf_freq,
+                        "modulation": "2-GFSK",
+                        "symbol_rate_bps": 2400,
+                        "profile": "default",
+                    }
 
             pkt_count = track_pass(rotctl, rf, p["tle"], p, args, logfile,
                                    buzzer=buzzer,

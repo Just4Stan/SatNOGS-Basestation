@@ -56,9 +56,9 @@ Copy this table into the order form at [be.farnell.com](https://be.farnell.com).
 | Ref | Value | Source | Notes |
 |-----|-------|--------|-------|
 | U5 | LMR51420YFDDCR | Mouser / LCSC (C7296200) | Buck converter, already have |
-| U4 | XT30PW-M | TME / AliExpress | XT30 power connector, already have |
+| U4 | XT30PW-M | TME / AliExpress | XT30 power connector, ahttps://claude.ai/referral/w5YuHm_zBlready have |
 | L18 | XRTC303020D4R7MBCA | LCSC (C39846837) | 4.7uH power inductor 3030, already have |
-| H1-H4 | MountingHole_Pad | — | PCB feature, no component |
+| H1-H4 | MountingHole_Pad | — | PCB feature, no component |https://claude.ai/referral/w5YuHm_zBg
 
 ## Schematic Fix Required
 

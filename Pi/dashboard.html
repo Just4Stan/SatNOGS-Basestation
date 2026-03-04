@@ -1036,6 +1036,10 @@
           <span class="rf-val" id="rf-freq">---.--- MHz</span>
         </div>
         <div class="rf-row">
+          <span class="rf-label">Modulation</span>
+          <span class="rf-val" id="rf-modulation" style="font-size:0.85em">---</span>
+        </div>
+        <div class="rf-row">
           <span class="rf-label">Packets</span>
           <span id="packet-count" class="rf-val">0</span>
         </div>
@@ -1613,6 +1617,22 @@
     const freqMhz = rf.freq_mhz;
     document.getElementById('rf-freq').textContent =
       freqMhz ? freqMhz.toFixed(3) + ' MHz' : '---.--- MHz';
+
+    // Modulation info from radio_config
+    const rc = rf.radio_config;
+    const modEl = document.getElementById('rf-modulation');
+    if (rc && rc.modulation) {
+      let modStr = rc.modulation;
+      if (rc.symbol_rate_bps && rc.symbol_rate_bps > 0) {
+        const rate = rc.symbol_rate_bps >= 1000
+          ? (rc.symbol_rate_bps / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
+          : rc.symbol_rate_bps;
+        modStr += ' ' + rate + ' bps';
+      }
+      modEl.textContent = modStr;
+    } else {
+      modEl.textContent = '---';
+    }
 
     // Packet counter flash
     const newPkts = rf.packets || 0;

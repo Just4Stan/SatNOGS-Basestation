@@ -2,6 +2,8 @@
 
 KiCad 9.0 project for a Raspberry Pi 3A+ HAT with two TI CC1200 transceivers (UHF 432 MHz + VHF 144 MHz), controlled by a Raspberry Pi Pico over SPI. Part of the [SatNOGS Basestation](../README.md) project.
 
+A rough estimate for 1 board, assembled by JLCPCB, for 10 units, is 20USD per board. This converges to 10USD in larger quantities.
+
 ## Architecture
 
 ```
