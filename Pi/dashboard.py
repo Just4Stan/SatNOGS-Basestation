@@ -97,6 +97,8 @@ status = {
            "satellite": "", "pass_progress": 0},
     "system": {"cpu_temp": None, "ram_used_mb": 0, "ram_total_mb": 0, "uptime": ""},
     "location": {"lat": None, "lon": None, "elev": None, "set": False},
+    "satnogs": {"enabled": False, "station_id": None, "submitted": 0,
+                "queued": 0, "failed": 0, "last_submit": None},
     "last_update": "",
     "simulation": False,
 }
@@ -120,6 +122,10 @@ class Simulator:
         self.current_sat_idx = 0
         # Simulated position (can be overridden by /api/position)
         self._parked = False
+        # Simulated SatNOGS counters
+        self._satnogs_submitted = 7
+        self._satnogs_queued    = 0
+        self._satnogs_last_sub  = None
 
     def get_status(self):
         elapsed = time.time() - self.start_time
@@ -146,6 +152,12 @@ class Simulator:
             # Random packets near peak elevation
             if random.random() < 0.1 * math.sin(math.pi * progress):
                 self.pkt_count += 1
+                # Occasionally a simulated frame gets submitted to SatNOGS
+                if random.random() < 0.5:
+                    self._satnogs_submitted += 1
+                    self._satnogs_last_sub = datetime.datetime.now().strftime("%H:%M:%S")
+                else:
+                    self._satnogs_queued = max(0, self._satnogs_queued + 1)
 
             sat_name = self.sat_names[self.current_sat_idx % len(self.sat_names)]
             state = "tracking"
@@ -155,8 +167,12 @@ class Simulator:
             rssi = None
             sat_name = ""
             state = "idle"
-            if cycle < 5:  # just finished a pass
+            if cycle < 5:  # just finished a pass — flush simulated queue
                 self.current_sat_idx += 1
+                if self._satnogs_queued > 0:
+                    self._satnogs_submitted += self._satnogs_queued
+                    self._satnogs_queued = 0
+                    self._satnogs_last_sub = datetime.datetime.now().strftime("%H:%M:%S")
             progress = 0.0
 
         return {
@@ -179,6 +195,14 @@ class Simulator:
                 "ram_used_mb": 180 + int(20 * math.sin(elapsed / 60)),
                 "ram_total_mb": 512,
                 "uptime": f"{int(elapsed // 3600)}h{int((elapsed % 3600) // 60):02d}m",
+            },
+            "satnogs": {
+                "enabled":     True,
+                "station_id":  9999,
+                "submitted":   self._satnogs_submitted,
+                "queued":      self._satnogs_queued,
+                "failed":      0,
+                "last_submit": self._satnogs_last_sub,
             },
             "simulation": True,
         }
@@ -362,6 +386,13 @@ def polling_loop():
                 sys_stats = get_system_stats()
                 lat, lon, elev = read_station_conf()
 
+                # SatNOGS data is written into the station_status.json by station.py
+                satnogs_status = {"enabled": False, "station_id": None,
+                                  "submitted": 0, "queued": 0, "failed": 0,
+                                  "last_submit": None}
+                if rf_data and "satnogs" in rf_data:
+                    satnogs_status = rf_data["satnogs"]
+
                 with status_lock:
                     status["rotator"] = {
                         "az": az, "el": el, "connected": connected,
@@ -373,6 +404,7 @@ def polling_loop():
                         "lat": lat, "lon": lon, "elev": elev,
                         "set": lat is not None,
                     }
+                    status["satnogs"] = satnogs_status
                     status["last_update"] = datetime.datetime.now().strftime("%H:%M:%S")
                     status["simulation"] = False
         except Exception:
@@ -528,9 +560,20 @@ def compute_passes(lat, lon, elev, hours=12, max_passes=10):
 # Actions
 # ---------------------------------------------------------------------------
 def save_location(lat, lon, elev):
+    """Save GPS coordinates to ~/station.conf, preserving existing fields."""
+    # Read any existing conf so we don't overwrite tokens/callsign/etc.
+    existing = {}
+    try:
+        if os.path.exists(STATION_CONF):
+            with open(STATION_CONF, "r") as f:
+                existing = json.load(f)
+    except Exception:
+        pass
+    existing["lat"]  = round(lat, 6)
+    existing["lon"]  = round(lon, 6)
+    existing["elev"] = round(elev, 1)
     with open(STATION_CONF, "w") as f:
-        json.dump({"lat": round(lat, 6), "lon": round(lon, 6),
-                   "elev": round(elev, 1)}, f)
+        json.dump(existing, f, indent=4)
 
 
 def send_park():

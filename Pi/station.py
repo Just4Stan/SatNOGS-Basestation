@@ -37,6 +37,7 @@ Usage:
     python3 station.py --sat "ISS" --no-rf          # rotator only, no RF HAT
     python3 station.py --sat "ISS" --tx cmd.bin     # also TX a command packet
     python3 station.py --doppler                    # enable Doppler correction
+    python3 station.py --no-satnogs                 # disable SatNOGS DB submission
 """
 
 import os
@@ -66,6 +67,7 @@ from rf_hat import (
     doppler_shift, freq_to_regs,
 )
 from buzzer import Buzzer
+from satnogs import SatNOGSClient
 
 # ---------------------------------------------------------------------------
 # Station config (defaults — override with --lat/--lon/--elev or ~/station.conf)
@@ -114,6 +116,15 @@ def load_station_conf():
     except Exception:
         pass
     return None, None, None
+
+
+def norad_id_from_tle(l1: str) -> int:
+    """Extract the NORAD catalogue number from TLE line 1.
+    Returns 0 if parsing fails."""
+    try:
+        return int(l1[2:7].strip())
+    except Exception:
+        return 0
 
 
 def write_dashboard_status(data: dict):
@@ -436,9 +447,11 @@ class RfHatManager:
 # ---------------------------------------------------------------------------
 def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
                tle, pass_info, args, logfile=None, buzzer: Optional[Buzzer] = None,
-               lat=None, lon=None, elev=None):
+               lat=None, lon=None, elev=None,
+               satnogs: Optional[SatNOGSClient] = None):
     """Execute a full satellite pass with tracking + RF."""
     name, l1, l2 = tle
+    norad_id = norad_id_from_tle(l1)
     sat = ephem.readtle(name, l1, l2)
     obs = make_observer(lat, lon, elev)
     obs.horizon = "0"
@@ -517,8 +530,18 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
             # Poll RF packets
             if rf:
                 new_pkts = rf.poll_packets(logfile)
-                if new_pkts > 0 and buzzer:
-                    buzzer.beep_packet()
+                if new_pkts > 0:
+                    if buzzer:
+                        buzzer.beep_packet()
+                    # Submit newly-received packets to SatNOGS DB
+                    if satnogs:
+                        # rf.packets grows; submit the new tail entries
+                        new_entries = rf.packets[-new_pkts:]
+                        for _ts, _data in new_entries:
+                            frame_hex = _data.hex()
+                            ok = satnogs.submit_frame(norad_id, frame_hex)
+                            log(f"SatNOGS: {'submitted' if ok else 'queued'} "
+                                f"{len(_data)}B frame (NORAD {norad_id})", logfile)
 
             # Periodic metrics
             if rf and (now_mono - last_metrics) >= METRICS_INTERVAL_S:
@@ -545,14 +568,17 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
                     m = rf.link.get_metrics()
                     if m:
                         rssi = m.rssi_dbm
-                write_dashboard_status({
+                status_data = {
                     "streaming": rf is not None,
                     "rssi": rssi,
                     "packets": rf.pkt_count if rf else 0,
                     "freq_mhz": args.uhf_freq,
                     "satellite": name,
                     "pass_progress": round(progress, 1),
-                })
+                }
+                if satnogs:
+                    status_data["satnogs"] = satnogs.get_stats()
+                write_dashboard_status(status_data)
 
             tick += 1
             next_tick = time.time() + dt
@@ -617,6 +643,15 @@ def _run_daemon(args, logfile):
     log(f"Location set: {sta_lat}N, {sta_lon}E, {sta_elev:.0f}m", logfile)
 
     buzzer = Buzzer()  # no link yet — beeps are no-ops until RF opens
+
+    # SatNOGS DB client — optional; station works fine without tokens configured
+    satnogs: Optional[SatNOGSClient] = None
+    if not args.no_satnogs:
+        satnogs = SatNOGSClient()
+        if satnogs.is_configured():
+            log("SatNOGS DB: enabled — frames will be submitted automatically", logfile)
+        else:
+            log("SatNOGS DB: no token in station.conf — running without submission", logfile)
 
     try:
         while running:
@@ -684,9 +719,15 @@ def _run_daemon(args, logfile):
                         logfile)
                     track_pass(rotctl, rf, p["tle"], p, args, logfile,
                                buzzer=buzzer,
-                               lat=sta_lat, lon=sta_lon, elev=sta_elev)
+                               lat=sta_lat, lon=sta_lon, elev=sta_elev,
+                               satnogs=satnogs)
                     if i < len(passes) - 1 and running:
                         rotctl.park()
+                        # Flush queued frames between passes (internet may be up now)
+                        if satnogs:
+                            flushed = satnogs.flush_queue()
+                            if flushed:
+                                log(f"SatNOGS DB: flushed {flushed} queued frames", logfile)
             else:
                 log("No passes found in prediction window", logfile)
 
@@ -762,6 +803,10 @@ def main():
     parser.add_argument("--loop-delay", type=int, default=300,
                         help="Seconds between TLE refresh cycles in daemon mode (default: 300)")
 
+    # SatNOGS DB
+    parser.add_argument("--no-satnogs", action="store_true",
+                        help="Disable SatNOGS DB frame submission")
+
     # Output
     parser.add_argument("--log", default=None,
                         help="Log file path (appended)")
@@ -792,6 +837,15 @@ def main():
         log(f"RF HAT:  {args.rf_port}", logfile)
         log(f"UHF RX:  {args.uhf_freq:.3f} MHz", logfile)
         log(f"Doppler: {'ON' if args.doppler else 'OFF'}", logfile)
+
+    # SatNOGS DB client
+    satnogs: Optional[SatNOGSClient] = None
+    if not args.no_satnogs:
+        satnogs = SatNOGSClient()
+        if satnogs.is_configured():
+            log("SatNOGS DB: enabled — frames will be submitted automatically", logfile)
+        else:
+            log("SatNOGS DB: no token in station.conf — running without submission", logfile)
 
     # Fetch TLEs
     log("Fetching TLE data...", logfile)
@@ -889,17 +943,22 @@ def main():
 
             pkt_count = track_pass(rotctl, rf, p["tle"], p, args, logfile,
                                    buzzer=buzzer,
-                                   lat=sta_lat, lon=sta_lon, elev=sta_elev)
+                                   lat=sta_lat, lon=sta_lon, elev=sta_elev,
+                                   satnogs=satnogs)
 
             # TX on VHF after pass if requested
             if tx_data and rf and running:
                 log("Transmitting VHF uplink packet...", logfile)
                 rf.tx_vhf_packet(tx_data, args.vhf_freq, args.vhf_profile)
 
-            # Park between passes
+            # Park between passes + flush offline queue
             if i < len(passes) - 1 and running:
                 log("Parking rotator...", logfile)
                 rotctl.park()
+                if satnogs:
+                    flushed = satnogs.flush_queue()
+                    if flushed:
+                        log(f"SatNOGS DB: flushed {flushed} queued frames", logfile)
 
     finally:
         log("Shutting down...", logfile)

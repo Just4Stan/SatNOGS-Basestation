@@ -18,9 +18,9 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 ```
                     ┌──────────────────────────────────┐
                     │       Raspberry Pi 3A+           │
-                    │  satnogs-client + rotctld         │
-                    │                                   │
-                    │  USB serial ──────── UART ──────  │
+                    │  satnogs-client + rotctld        │
+                    │                                  │
+                    │  USB serial ──────── UART ────── │
                     └──────┬───────────────────┬───────┘
                            │                   │
                     ┌──────┴──────┐     ┌──────┴──────┐
@@ -36,8 +36,6 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
                     └─────────────┘     └─────────────┘
 ```
 
-**Stan** handles the rotator (mechanics, motor control, firmware, Pi integration).
-**Robbe** handles the RF front-end (CC1200 transceiver HAT, matching networks).
 
 ## Repository structure
 
@@ -68,7 +66,7 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 | **Motors** | FAPG36-555-EN, 24V, 16 RPM, 516:1 gearbox |
 | **Encoders** | 2-channel Hall (64 edges/rev quadrature) |
 | **IMU** | ADXL345 accelerometer (EL homing to horizontal at boot) |
-| **RF** | 2x TI CC1200 (432 MHz + 144 MHz) on separate HAT |
+| **RF** | 2x TI CC1200 (432 MHz + 144 MHz) on PI HAT |
 | **Antenna** | LPRS YAGI-434A, 434 MHz, 10 dBi |
 | **Station computer** | Raspberry Pi 3 Model A+ (Bookworm arm64) |
 
@@ -84,6 +82,8 @@ No slip ring — azimuth rewinds between passes via `PARK`.
 ### Mechanical design
 
 The rotator is designed in Onshape and fully 3D-printable. Mounts to any standard **1/4"-20 camera tripod**.
+
+Some highlights are 3D printed bearing for both Elevation and Azimuth, cheap DC motors over steppers, 3d printed gears, hood for easy access with 3d printed hinge, place for large battery or 24V PSU.
 
 [View CAD on Onshape](https://cad.onshape.com/documents/a73149deb7dec0be4e4b4c14/w/e82e548d7d93085f89291bd5/e/c3e50364326e22d368cc64e2?renderMode=0&uiState=699de3ddf7c036f801c48281)
 
@@ -206,7 +206,6 @@ The firmware includes multiple safety layers to prevent hardware damage:
 
 - **Runaway detection**: emergency stop if position exceeds soft limits by 50° (catches PID positive-feedback failures)
 - **Soft limits**: AZ clamped to ±360°, EL clamped to 0-180°
-- **Endstop gates**: motor stops if driving into a pressed endstop switch
 - **Driver fault monitoring**: TB6642FG ALERT pins checked every tick (configurable)
 - **Duty capping**: maximum 95% PWM to avoid overcurrent on motor stall
 - **EL homing**: IMU-based auto-leveling at boot prevents EL drift from incorrect starting position

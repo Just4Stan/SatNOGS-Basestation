@@ -539,6 +539,74 @@
     }
 
     /* =====================================================================
+       CARD 3b: SATNOGS NETWORK
+       ===================================================================== */
+    .satnogs-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .satnogs-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .satnogs-val {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    #satnogs-submitted {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text);
+      transition: color 0.1s;
+    }
+    #satnogs-submitted.flash {
+      color: var(--green);
+    }
+    #satnogs-queued-val {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: var(--text);
+      transition: color 0.3s;
+    }
+    #satnogs-queued-val.nonzero {
+      color: var(--amber);
+    }
+    .satnogs-status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-right: 6px;
+      vertical-align: middle;
+      transition: background 0.3s;
+    }
+    .satnogs-status-dot.connected {
+      background: var(--green);
+    }
+    .satnogs-status-dot.queued {
+      background: var(--amber);
+    }
+    .satnogs-not-configured {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+    .satnogs-not-configured code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-radius: 3px;
+      padding: 1px 4px;
+    }
+
+    /* =====================================================================
        CARD 4: UPCOMING PASSES
        ===================================================================== */
     .pass-list {
@@ -980,6 +1048,47 @@
         </div>
       </article>
 
+      <!-- ─── CARD 3b: SATNOGS NETWORK ─────────────────────────────────── -->
+      <article class="card" id="card-satnogs" aria-label="SatNOGS network status">
+        <div class="card-title">SatNOGS Network</div>
+
+        <!-- Not-configured state — hidden when token is present -->
+        <div id="satnogs-not-configured" class="satnogs-not-configured">
+          Not configured. Add <code>satnogs_db_token</code> to
+          <code>~/station.conf</code> to enable automatic frame submission.
+        </div>
+
+        <!-- Configured state — hidden when no token -->
+        <div id="satnogs-configured" style="display:none">
+          <div class="satnogs-row">
+            <span class="satnogs-label">Station ID</span>
+            <span class="satnogs-val"><a id="satnogs-station-link"
+              href="https://network.satnogs.org/stations/0/"
+              target="_blank" rel="noopener"
+              style="color:var(--accent);text-decoration:none">#---</a></span>
+          </div>
+          <div class="satnogs-row">
+            <span class="satnogs-label">Frames Submitted</span>
+            <span id="satnogs-submitted">0</span>
+          </div>
+          <div class="satnogs-row">
+            <span class="satnogs-label">Frames Queued</span>
+            <span id="satnogs-queued-val">0</span>
+          </div>
+          <div class="satnogs-row">
+            <span class="satnogs-label">Last Submit</span>
+            <span class="satnogs-val" id="satnogs-last-sub">---</span>
+          </div>
+          <div class="satnogs-row" style="margin-bottom:0">
+            <span class="satnogs-label">Status</span>
+            <span class="satnogs-val">
+              <span class="satnogs-status-dot" id="satnogs-status-dot"></span>
+              <span id="satnogs-status-label">Not configured</span>
+            </span>
+          </div>
+        </div>
+      </article>
+
       <!-- ─── CARD 4: UPCOMING PASSES ───────────────────────────────────── -->
       <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
         <div class="card-title">Upcoming Passes</div>
@@ -1108,7 +1217,8 @@
   "use strict";
 
   // Last known state
-  let _lastPackets    = 0;       // detect new packets
+  let _lastPackets           = 0;         // detect new packets for flash animation
+  let _lastSatnogsSubmitted  = undefined; // detect new SatNOGS submits for flash
   let _passes         = [];      // cached pass list from /api/passes
   let _selectedPass   = null;    // index into _passes, tapped by user
   let _activePassIdx  = null;    // index of pass that is currently in progress
@@ -1582,6 +1692,58 @@
       document.getElementById('loc-lat').textContent  = '---';
       document.getElementById('loc-lon').textContent  = '---';
       document.getElementById('loc-elev').textContent = '--- m';
+    }
+
+    // ── SatNOGS Network ──
+    const sn = d.satnogs || {};
+    const snConfigured   = document.getElementById('satnogs-not-configured');
+    const snActive       = document.getElementById('satnogs-configured');
+    if (sn.enabled) {
+      snConfigured.style.display = 'none';
+      snActive.style.display     = 'block';
+
+      // Station ID link
+      const stationId = sn.station_id || 0;
+      const idLink = document.getElementById('satnogs-station-link');
+      idLink.textContent = stationId ? '#' + stationId : '#---';
+      idLink.href = `https://network.satnogs.org/stations/${stationId}/`;
+
+      // Submitted counter with flash animation on increment
+      const newSub = sn.submitted || 0;
+      const subEl  = document.getElementById('satnogs-submitted');
+      subEl.textContent = newSub;
+      if (newSub !== (_lastSatnogsSubmitted || 0) && _lastSatnogsSubmitted !== undefined) {
+        subEl.classList.add('flash');
+        setTimeout(() => subEl.classList.remove('flash'), 400);
+      }
+      _lastSatnogsSubmitted = newSub;
+
+      // Queued frames
+      const queued    = sn.queued || 0;
+      const queuedEl  = document.getElementById('satnogs-queued-val');
+      queuedEl.textContent = queued;
+      queuedEl.classList.toggle('nonzero', queued > 0);
+
+      // Last submit timestamp
+      document.getElementById('satnogs-last-sub').textContent =
+        sn.last_submit || '---';
+
+      // Status dot + label
+      const dot = document.getElementById('satnogs-status-dot');
+      const lbl = document.getElementById('satnogs-status-label');
+      dot.classList.remove('connected', 'queued');
+      if (queued > 0) {
+        dot.classList.add('queued');
+        lbl.textContent = 'Queued (' + queued + ')';
+        lbl.style.color = 'var(--amber)';
+      } else {
+        dot.classList.add('connected');
+        lbl.textContent = 'Connected';
+        lbl.style.color = 'var(--green)';
+      }
+    } else {
+      snConfigured.style.display = 'block';
+      snActive.style.display     = 'none';
     }
 
     // ── Simulation badge ──

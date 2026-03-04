@@ -350,20 +350,132 @@ python3 station.py --sat "AETHERSPACE" --tx commands/beacon_request.bin
 
 ## Connecting to SatNOGS Network
 
-Once the station is verified working, you can register it on the global
-SatNOGS network:
+This station submits decoded CC1200 packets directly to the SatNOGS DB
+telemetry API. Frames are submitted automatically whenever a packet is
+received during a pass, with offline queuing if the Pi has no internet.
 
-1. Create an account at [network.satnogs.org](https://network.satnogs.org)
-2. Register your station (latitude, longitude, elevation, antenna type)
-3. Get your API token and station ID
-4. Configure `satnogs-client` on the Pi (see Pi/README.md step 5)
-5. Your station appears on the global map and can receive scheduled observations
+### Step 1: Register on network.satnogs.org
 
-The SatNOGS web dashboard shows:
-- Your station's success rate
-- Waterfall plots from each observation
-- Decoded telemetry data
-- Upcoming scheduled passes
+1. Go to [network.satnogs.org](https://network.satnogs.org) and create an account.
+2. Click **Add Station** and fill in:
+   - Latitude / Longitude / Elevation (use the same values as your station.conf)
+   - Antenna type: "Yagi" or "Other" (AetherSpace uses a custom antenna)
+   - Frequency range: 430–440 MHz (UHF) and 144–148 MHz (VHF)
+3. Submit — you get a **Station ID** (e.g. 1234).
+
+Your station appears on the global map at
+[network.satnogs.org/stations/1234/](https://network.satnogs.org/stations/1234/).
+
+> **Note:** This station is not running the full `satnogs-client` stack
+> (no GNU Radio, no Docker). Frame submission uses our own CC1200 pipeline
+> via the SatNOGS DB SiDS API. This is fully compatible with the network.
+
+### Step 2: Get your DB API token
+
+1. Go to [db.satnogs.org](https://db.satnogs.org) and log in with the
+   same account as network.satnogs.org.
+2. Click your username (top right) → **API Auth Token**.
+3. Copy the token string (looks like `abc123def456...`).
+
+### Step 3: Add tokens to station.conf
+
+SSH into the Pi and edit `~/station.conf`:
+
+```bash
+ssh pi@<pi-ip>
+nano ~/station.conf
+```
+
+Add the new fields alongside the existing GPS coordinates:
+
+```json
+{
+    "lat": 51.123456,
+    "lon": 4.987654,
+    "elev": 25.0,
+    "callsign": "ON4xxx",
+    "satnogs_station_id": 1234,
+    "satnogs_db_token": "your_db_api_token_here",
+    "satnogs_network_token": "your_network_token_here"
+}
+```
+
+- `callsign` — your amateur radio callsign (or team callsign). Used as the
+  `source` field in the SiDS submission.
+- `satnogs_station_id` — your station ID from network.satnogs.org.
+- `satnogs_db_token` — from db.satnogs.org (required for submission).
+- `satnogs_network_token` — from network.satnogs.org (for future scheduling).
+
+You do **not** need to restart the station service — it re-reads `station.conf`
+before each frame submission.
+
+### Step 4: Verify operation
+
+During the next pass, watch the station logs:
+
+```bash
+sudo journalctl -u station -f
+```
+
+You should see lines like:
+
+```
+[14:24:30.123] RX [1] 24 bytes: 55 55 7A 0E ...
+[14:24:30.124] SatNOGS: submitted 24B frame (NORAD 12345) → 201 OK
+```
+
+Or, if the Pi hotspot has no internet:
+
+```
+[14:24:30.124] SatNOGS DB: network error — ... — will retry
+[14:24:30.125] SatNOGS: queued 24B frame (NORAD 12345)
+[14:28:45.000] SatNOGS DB: flushed 3 queued frames
+```
+
+The **SatNOGS Network** card on the dashboard shows the live counters:
+- **Frames Submitted** — flashes green on each new submission
+- **Frames Queued** — shown in amber when offline frames are waiting
+- **Last Submit** — timestamp of the most recent successful upload
+- **Status** — "Connected" (green) / "Queued" (amber) / "Not configured" (muted)
+
+### Step 5: Check your submissions
+
+Go to [db.satnogs.org/api/telemetry/](https://db.satnogs.org/api/telemetry/)
+and filter by your station's NORAD ID or callsign to see submitted frames.
+
+You can also view them on the satellite's page on db.satnogs.org — search
+for the satellite name or NORAD ID and click **Telemetry**.
+
+### Offline field operation
+
+In normal field deployment the Pi creates a WiFi hotspot but has **no
+internet**. Frames captured during a pass are saved to
+`~/.satnogs_queue.json` and retried automatically:
+
+- Between passes (the station loops to the next pass and flushes the queue)
+- The next time the Pi connects to a network that has internet access
+
+Queue depth is shown on the dashboard. Frames are never lost unless the
+queue exceeds 500 entries (extremely unlikely in a field session).
+
+### SatNOGS DB API note
+
+The station uses the **SiDS** (SatNOGS In-band Decoding System) telemetry
+endpoint. Each submitted frame includes:
+
+| Field | Value |
+|-------|-------|
+| `noradID` | NORAD catalogue number from TLE |
+| `frame` | Raw packet bytes as hex string |
+| `timestamp` | UTC time of reception (ISO 8601) |
+| `source` | Your callsign |
+| `locator` | `longLat` |
+| `latitude` / `longitude` | Station GPS coordinates |
+| `version` | `satnogs-cc1200-1.0` |
+
+The NORAD ID for AetherSpace will be assigned by USSPACECOM after launch.
+Until then, use the placeholder `99999` — submissions will still be accepted
+by the DB (they appear under "unconfirmed objects").
 
 ## Shutting Down
 
