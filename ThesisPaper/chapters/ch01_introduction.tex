@@ -21,7 +21,7 @@ Commercial COTS (Commercial Off The Shelf) rotators capable of this tracking cos
 
 Our aim is to achieve COTS-level performance, at a fraction of the cost. A BOM (Bill of Materials) of 50 euro for the rotator is achieved.
 
-The AetherSpace CubeSat is under development at KU Leuven for a heat-shield sample-return demonstration from LEO. Before this telemetry can be received and thus a ground station will be needed.
+The AetherSpace CubeSat is a 3U spacecraft under development at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. It transmits telemetry on 433~MHz UHF at an estimated 14~dBm ($\sim$25~mW) through a turnstile or dipole antenna. A ground station is needed to receive this telemetry.
 
 Together we with the AetherSpace team we have converged on using the CC1200 transceiver. This deviates from SatNOGS norms which use a SDR transmitting raw IQ samples and demodulation, frequency selection, baud rate etc is done afterwards. This could be a EUR 50 upgrade, and can be connected to the main controller over USB. We will still be able to inject demodulated packets into the SatNOGS database but limits the flexibility of the station. Using the same transceiver as AetherSpace allows for better sensitivity and guaranteed compatibility.
 

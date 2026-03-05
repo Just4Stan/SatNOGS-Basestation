@@ -49,9 +49,9 @@ For high-elevation passes, rates up to 2~deg/s are possible. With a 10-element Y
 
 % TODO: Add AetherSpace CubeSat render (if available from AetherSpace team)
 
-The AetherSpace project is a KU Leuven initiative developing a 1U CubeSat (10$\times$10$\times$10~cm, $<$1.33~kg) for a heat-resistant sample return demonstration from LEO. The CubeSat standard, proposed by Puig-Suari and Twiggs in 1999, defines this form factor and has enabled over 2000 launches as of 2024.
+AetherSpace is a KU Leuven project building a 3U CubeSat for a heat-shield sample return demonstration from LEO, with a planned launch around 2030. It communicates on 433~MHz UHF within the amateur satellite service allocation. The TX power is estimated at $\sim$14~dBm ($\sim$25~mW), with either a turnstile or dipole antenna ($\sim$2~dBi). Modulation and datarate are not yet finalized but will use the CC1200's native packet format.
 
-AetherSpace communicates on 433~MHz UHF (amateur satellite service allocation). Previous KU Leuven work includes Surkijn and Van Elst's 2022 thesis on the earth-satellite communication chain and Hanssens' 2023 investigation of SatNOGS ground station implementation. The present work delivers the functional ground station prototype that these studies scoped.
+Previous KU Leuven work: Surkijn and Van Elst (2022) studied the earth-satellite communication chain, Hanssens (2023) investigated SatNOGS ground station implementation. This thesis delivers the working ground station that those studies scoped but did not build.
 
 % NOTE: AetherSpace team contacted for up-to-date specs (TX power, antenna, modulation, launch date).
 % Update this section when confirmed.
@@ -95,23 +95,23 @@ Table~\ref{tab:link-budget} shows the full link budget for a mid-elevation pass 
         \toprule
         Parameter & Value & Notes \\
         \midrule
-        TX power (CubeSat) & +30~dBm & 1~W \\
-        TX antenna gain & 0~dBi & Monopole \\
+        TX power (CubeSat) & +14~dBm & $\sim$25~mW (AetherSpace estimate) \\
+        TX antenna gain & +2~dBi & Turnstile or dipole \\
         Free-space path loss & $-$140.7~dB & 600~km, 433~MHz \\
         Atmospheric loss & $-$1~dB & Ionospheric + tropospheric attenuation; negligible at zenith, up to 1~dB at low elevations \\
-        Polarization mismatch & $-$3~dB & CubeSat tumbles in orbit, randomizing polarization relative to the Yagi; 3~dB is the average loss \\
+        Polarization mismatch & $-$3~dB & CubeSat tumbles in orbit, randomizing polarization relative to the linearly-polarized Yagi; 3~dB average loss \\
         RX antenna gain (Yagi) & +10~dBi & 10-element at 434~MHz \\
         \midrule
-        \textbf{Received power} & \textbf{$-$104.7~dBm} & \\
+        \textbf{Received power} & \textbf{$-$118.7~dBm} & \\
         CC1200 sensitivity & $-$120~dBm & At 2.4~kbps \\
-        \textbf{Link margin} & \textbf{15.3~dB} & \\
+        \textbf{Link margin} & \textbf{1.3~dB} & \\
         \bottomrule
     \end{tabularx}
     \caption{Link budget for AetherSpace UHF downlink at 433~MHz.}
     \label{tab:link-budget}
 \end{table}
 
-At the horizon ($d = 2294$~km), the margin drops to 3.6~dB---marginal but positive. This confirms that a 10~dBi Yagi is the minimum viable antenna for reliable communication, and that passes below $\sim$10\degree\ elevation are unreliable.
+With only 1.3~dB of margin at 600~km, the link is tight. At zenith ($d = 400$~km, $L_{fs} = 137.2$~dB), the margin improves to 4.8~dB. At the horizon ($d = 2294$~km, $L_{fs} = 152.4$~dB), the margin is $-$10.4~dB---the link does not close. Communication is only viable above $\sim$20\degree\ elevation with 14~dBm TX power. Reducing the datarate below 2.4~kbps would improve CC1200 sensitivity and widen the margin. Accurate antenna pointing becomes critical: even a few degrees of pointing error costs dB that cannot be spared.
 
 \section{Doppler Shift}
 
@@ -131,3 +131,108 @@ The maximum radial velocity occurs at the horizon, where the orbital velocity pr
 These shifts are significant relative to the CC1200's receive bandwidth of $\sim$30~kHz at 2.4~kbps. Without compensation, the signal drifts out of the passband within seconds. Our station software updates the CC1200 frequency registers at 2~Hz, limiting the uncompensated drift between updates to $\sim$106~Hz---well within the receiver bandwidth.
 
 % TODO: Add Doppler shift vs time plot for a typical pass
+
+\section{The SatNOGS Network}
+
+SatNOGS (Satellite Networked Open Ground Station) started at Hackerspace.gr in Athens during the 2014 NASA Space Apps Challenge, winning the Hackaday Prize which funded the Libre Space Foundation. As of 2025: over 400 active stations, 50+ countries, 1177+ tracked satellites, 165+ million data frames.
+
+The ecosystem has four parts:
+
+\begin{description}
+    \item[SatNOGS Network] (network.satnogs.org) --- schedules observations across stations based on pass predictions, collects results.
+    \item[SatNOGS DB] (db.satnogs.org) --- decoded telemetry database, supports the SiDS (Simple Downlink Sharing) protocol.
+    \item[SatNOGS Client] --- Python daemon on each station. Gets observation jobs, controls the rotator via hamlib/rotctld, controls the receiver (typically RTL-SDR via SoapySDR/GNU Radio), uploads results.
+    \item[SatNOGS Rotator] --- optional open-source rotator (3D-printed, NEMA17 steppers, Arduino controller).
+\end{description}
+
+Rotator communication goes through \textbf{hamlib}, an open-source library for amateur radio equipment. The \code{rotctld} daemon exposes a TCP interface (port 4533) accepting EasyComm commands. Any controller that speaks EasyComm over serial works with SatNOGS without modification.
+
+\subsection{The EasyComm Protocol}
+
+EasyComm is an ASCII protocol developed by Patrik Linder (SM0TQX) for antenna tracking. The SatNOGS variant (hamlib model 204) uses:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        Command & Function \\
+        \midrule
+        \code{AZxxx.x ELyyy.y} & Set target azimuth and elevation \\
+        \code{AZ} / \code{EL} & Query current position \\
+        \code{VE} & Query firmware version \\
+        \code{GS} & Get status (0 = idle, 1 = moving) \\
+        \code{GE} & Get error flags \\
+        \code{SA} / \code{SE} / \code{STOP} & Stop azimuth / elevation / both \\
+        \code{RESET} & Home the rotator \\
+        \code{PARK} & Move to park position (0\degree, 0\degree) \\
+        \bottomrule
+    \end{tabular}
+    \caption{EasyComm command set (SatNOGS variant).}
+    \label{tab:easycomm}
+\end{table}
+
+Each command is a newline-terminated ASCII string. No binary framing, no handshaking. The entire parser fits in $\sim$50 lines of C.
+
+\subsection{Why a Distributed Network}
+
+A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. For mission-critical telemetry this is not enough. SatNOGS solves this by distributing stations worldwide so nearly every orbit has coverage. Previous attempts (Mercury GSN, Japanese GSN, ESA's GENSO) failed because they required homogeneous hardware. SatNOGS accepts any hardware that speaks EasyComm and uses an SDR receiver.
+
+\section{Existing Ground Station Designs}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{llcl>{\raggedright\arraybackslash}X}
+        \toprule
+        System & Type & Cost (EUR) & Accuracy & Notes \\
+        \midrule
+        Yaesu G-5500 & Commercial & 900--1200 & $\sim$1\degree & Industry standard, heavy, needs separate controller \\
+        SPID RAS & Commercial & 400--800 & $\sim$1\degree & Lighter alternative \\
+        Alfa Radio RAS & Commercial & 500--700 & $\sim$1\degree & Similar to SPID \\
+        SatNOGS v3 & Open-source & 150--300 & $\sim$1\degree & 3D-printed, NEMA17 steppers, belt drive \\
+        SQ3SWF & Open-source & $\sim$100 & $\sim$2\degree & Compact 3D-printed stepper design \\
+        \textbf{This work} & \textbf{Open-source} & \textbf{$<$50} & \textbf{$<$0.1\degree} & \textbf{ASA 3D-printed, geared DC motors, EasyComm} \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Cost comparison of satellite tracking rotator systems.}
+    \label{tab:rotator-comparison}
+\end{table}
+
+\subsection{The SatNOGS v3 Rotator}
+
+The official SatNOGS rotator uses two NEMA17 bipolar steppers with GT2 belt reduction, controlled by an Arduino MEGA with CNC shield and A4988 drivers. BOM: EUR~150--300. Known limitations:
+
+\begin{itemize}
+    \item Steppers draw 0.5--1.0~A holding current even when stationary---bad for battery operation.
+    \item Low belt-drive gear ratio requires microstepping for smooth tracking, which reduces torque.
+    \item Assembly needs precise belt tensioning and shaft alignment.
+\end{itemize}
+
+\subsection{University Implementations}
+
+Most university ground stations (UPSat/Patras, TU Delft/Delfi-C3, AraMiS/Politecnico di Torino) buy commercial rotators and focus on RF or software. Few attempt custom mechanical design. DIY exceptions: EA4GPZ's servo-based portable rotator, the Open Rotator Project (DC motors with potentiometer feedback), and SuperAntennaz for heavy loads.
+
+\subsection{Comparison with Hanssens (2023)}
+
+This thesis builds on Hanssens' 2023 study, which surveyed SatNOGS, assessed antenna options, and tested a Stepperdrive MSD-50-5.6D stepper motor. His finding: the stepper could not deliver enough torque for reliable azimuth rotation under wind loading. This motivated our switch to high-torque geared DC motors.
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+        \toprule
+        Aspect & Hanssens (2023) & This work (2026) \\
+        \midrule
+        Rotator & Preliminary stepper test & Fully built ASA 3D-printed rotator \\
+        Motor control & Not implemented & Custom PCB: dual TB6642FG + RP2040 \\
+        Firmware & Not implemented & EasyComm firmware with PID control \\
+        Pi integration & Theoretical description & Python stack ($\sim$4000 LOC) + web dashboard \\
+        RF front-end & Not implemented & Dual CC1200 HAT (UHF + VHF) \\
+        Field deployment & Not addressed & Zero-SSH smartphone workflow \\
+        Cost analysis & Not performed & Full BOM, $<$EUR~50 rotator \\
+        Tracking & Not demonstrated & Live tracking validated ($<$0.3\degree\ error) \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Advancement over Hanssens (2023).}
+    \label{tab:hanssens-comparison}
+\end{table}
+
+Our design combines: (a) ASA 3D-printed journal bearings with no purchased bearing components, (b) 516:1 internally geared DC motors with zero idle current, and (c) full SatNOGS compatibility via EasyComm, verified with live satellite passes.
