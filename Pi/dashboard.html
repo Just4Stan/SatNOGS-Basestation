@@ -1735,7 +1735,7 @@
         <span class="val" id="header-az">---</span><span class="sep">/</span><span class="val" id="header-el">---</span>&deg;
       </div>
       <span id="header-temp" style="font-family:var(--font-mono);font-size:0.70rem;color:var(--muted)">--°C</span>
-      <span id="header-ram" style="font-family:var(--font-mono);font-size:0.70rem;color:var(--muted)">--%</span>
+      <span id="header-ram" style="font-family:var(--font-mono);font-size:0.70rem;color:var(--muted)">-- RAM</span>
       <span id="header-time" aria-live="polite">--:--:--</span>
     </div>
   </header>
@@ -2182,7 +2182,6 @@
     </div>
 
     <footer id="site-footer">
-      SatNOGS Basestation v1.0 &mdash; KU Leuven &middot; Stan &amp; Robbe
     </footer>
 
     <!-- BOTTOM TAB BAR -->
@@ -3029,7 +3028,7 @@
     const htEl = document.getElementById('header-temp');
     if (htEl) htEl.textContent = (temp !== null && temp !== undefined) ? temp.toFixed(0) + '°C' : '--°C';
     const hrEl = document.getElementById('header-ram');
-    if (hrEl && total > 0) hrEl.textContent = Math.round(used / total * 100) + '%';
+    if (hrEl && total > 0) hrEl.textContent = Math.round(used / total * 100) + '% RAM';
 
     const ts = d.last_update || '';
     document.getElementById('header-time').textContent = ts || '--:--:--';
@@ -3178,7 +3177,12 @@
     const listEl = document.getElementById('pass-list');
 
     if (_passes.length === 0) {
-      listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:0.80rem;padding:24px 0">No upcoming passes</div>';
+      const isComputing = data.computing;
+      if (isComputing) {
+        listEl.innerHTML = '<div style="text-align:center;padding:24px 0"><div class="mini-spinner" style="margin:0 auto 8px"></div><div style="color:var(--accent);font-size:0.80rem">Computing passes...</div><div style="color:var(--muted);font-size:0.68rem;margin-top:4px">~30s on first load</div></div>';
+      } else {
+        listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:0.80rem;padding:24px 0">No upcoming passes</div>';
+      }
       return;
     }
 
