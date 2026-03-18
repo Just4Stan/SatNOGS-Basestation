@@ -1577,26 +1577,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
         # Return cached passes (computed in background polling thread)
         passes = get_cached_passes()
 
-        # Include currently-tracked satellite even if not in computed passes
-        rf_data = read_station_status()
-        if rf_data and rf_data.get("satellite"):
-            tracked_name = rf_data["satellite"]
-            if not any(p["name"].lower() == tracked_name.lower() for p in passes):
-                # The tracked sat isn't in our pass list — it came from a different TLE source
-                # Add a stub entry so the frontend knows about it
-                passes.insert(0, {
-                    "name": tracked_name,
-                    "norad_id": 0,
-                    "rise_time": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "set_time": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=15)).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "max_el": 0,
-                    "duration": 900,
-                    "rise_az": 0,
-                    "set_az": 0,
-                    "trajectory": [],  # no trajectory data available
-                    "freq_mhz": rf_data.get("freq_mhz", 0),
-                    "_tracked": True,
-                })
+        # Note: tracked satellite may not be in computed passes if it came
+        # from a different TLE source. The frontend handles this gracefully
+        # via the status API (rf.satellite field).
 
         self._json_response(200, json.dumps({
             "passes": passes,

@@ -2486,7 +2486,7 @@
   function hideLoading() {
     // Minimum 2.5 seconds display time for the loading animation
     const elapsed = Date.now() - _loadStart;
-    const remaining = Math.max(0, 2500 - elapsed);
+    const remaining = Math.max(0, 1500 - elapsed);
     setTimeout(() => {
       const el = document.getElementById('loading-status');
       if (el) el.textContent = 'Ready';
@@ -2663,25 +2663,33 @@
 
       // Draw smooth spline through trajectory points
       ctx.beginPath();
-      const pts = pass.trajectory.map(pt => polarToXY(pt.az, pt.el, cx, cy, maxR));
-      if (pts.length > 0) {
-        ctx.moveTo(pts[0].x, pts[0].y);
-        if (pts.length === 2) {
-          ctx.lineTo(pts[1].x, pts[1].y);
-        } else {
-          // Catmull-Rom to cubic bezier conversion for smooth curves
-          for (let ti = 0; ti < pts.length - 1; ti++) {
-            const p0 = pts[Math.max(ti - 1, 0)];
-            const p1 = pts[ti];
-            const p2 = pts[ti + 1];
-            const p3 = pts[Math.min(ti + 2, pts.length - 1)];
-            const cp1x = p1.x + (p2.x - p0.x) / 6;
-            const cp1y = p1.y + (p2.y - p0.y) / 6;
-            const cp2x = p2.x - (p3.x - p1.x) / 6;
-            const cp2y = p2.y - (p3.y - p1.y) / 6;
-            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      try {
+        const pts = pass.trajectory.map(pt => polarToXY(pt.az, pt.el, cx, cy, maxR));
+        if (pts.length >= 2) {
+          ctx.moveTo(pts[0].x, pts[0].y);
+          if (pts.length === 2) {
+            ctx.lineTo(pts[1].x, pts[1].y);
+          } else {
+            for (let ti = 0; ti < pts.length - 1; ti++) {
+              const p0 = pts[Math.max(ti - 1, 0)];
+              const p1 = pts[ti];
+              const p2 = pts[ti + 1];
+              const p3 = pts[Math.min(ti + 2, pts.length - 1)];
+              const cp1x = p1.x + (p2.x - p0.x) / 6;
+              const cp1y = p1.y + (p2.y - p0.y) / 6;
+              const cp2x = p2.x - (p3.x - p1.x) / 6;
+              const cp2y = p2.y - (p3.y - p1.y) / 6;
+              ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+            }
           }
         }
+      } catch(e) {
+        // Fallback: simple lines if spline fails
+        pass.trajectory.forEach((pt, ti) => {
+          const pos = polarToXY(pt.az, pt.el, cx, cy, maxR);
+          if (ti === 0) ctx.moveTo(pos.x, pos.y);
+          else ctx.lineTo(pos.x, pos.y);
+        });
       }
       const isHovered = (idx === _hoveredPass);
       const anyHovered = _hoveredPass !== null;
