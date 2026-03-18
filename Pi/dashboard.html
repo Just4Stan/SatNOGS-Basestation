@@ -3424,8 +3424,10 @@
       const isNext   = (globalIdx === nextIdx);
       const isActive = (globalIdx === _activePassIdx);
       const item     = document.createElement('div');
-      item.className = 'pass-item' + (isNext ? ' next' : '') +
-                       (globalIdx === _selectedPass ? ' selected' : '');
+      const isPendingItem = _pendingTrack && pass.name.toLowerCase().includes(_pendingTrack.toLowerCase());
+      item.className = 'pass-item' + (isNext && !_pendingTrack ? ' next' : '') +
+                       (globalIdx === _selectedPass ? ' selected' : '') +
+                       (isPendingItem ? ' selected' : '');
       item.setAttribute('role', 'listitem');
       item.setAttribute('tabindex', '0');
       item.setAttribute('aria-label',
@@ -3462,8 +3464,12 @@
       const compatClass = pass.cc1200_ok ? 'compat-cc1200' : pass.rtlsdr_ok ? 'compat-rtlsdr' : 'compat-none';
       const compatLabel = pass.cc1200_ok ? 'CC' : 'SDR';
 
+      const isPending = _pendingTrack && pass.name.toLowerCase().includes(_pendingTrack.toLowerCase());
+      const pendingBadge = isPending ? ' <span style="font-size:0.55rem;color:#f59e0b;font-family:var(--font-mono);letter-spacing:0.08em">TRACKING</span>' : '';
+      const nextBadge = isNext && !_pendingTrack && !_isTracking ? ' next-label' : '';
+
       item.innerHTML = `
-        <div class="pass-item-name${isNext ? ' next-label' : ''}">${pass.name}</div>
+        <div class="pass-item-name${nextBadge}">${pass.name}${pendingBadge}</div>
         <div class="max-el-badge">${pass.max_el.toFixed(0)}&deg;</div>
         <button class="btn btn-accent pass-track-btn" onclick="event.stopPropagation();doTrackSat('${pass.name.replace(/'/g, "\\'")}')">&#9654;</button>
         <div class="pass-meta-bot" style="grid-column:1/4">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}</div>
