@@ -472,6 +472,13 @@ def polling_loop():
         except Exception:
             pass
 
+        # Recompute passes in the background (every 2 min, non-blocking)
+        try:
+            if not SIMULATE:
+                _recompute_passes_if_stale()
+        except Exception:
+            pass
+
         time.sleep(1)
 
 
@@ -528,6 +535,39 @@ def fetch_tles():
         _tle_cache = combined
         _tle_cache_time = now
     return _tle_cache
+
+
+# ---------------------------------------------------------------------------
+# Pass computation cache — runs in background thread, never blocks HTTP
+# ---------------------------------------------------------------------------
+_pass_cache = []           # cached computed passes
+_pass_cache_time = 0.0     # unix timestamp of last computation
+_pass_cache_lock = threading.Lock()
+PASS_CACHE_SECONDS = 120   # recompute every 2 minutes
+
+
+def _recompute_passes_if_stale():
+    """Background recompute of passes — called from polling thread."""
+    global _pass_cache, _pass_cache_time
+
+    now = time.time()
+    if (now - _pass_cache_time) < PASS_CACHE_SECONDS:
+        return
+
+    lat, lon, elev = read_station_conf()
+    if lat is None:
+        lat, lon, elev = DEFAULT_LAT, DEFAULT_LON, DEFAULT_ELEV
+
+    passes = compute_passes(lat, lon, elev)
+    with _pass_cache_lock:
+        _pass_cache = passes
+        _pass_cache_time = now
+
+
+def get_cached_passes():
+    """Get the most recent pass computation (never blocks)."""
+    with _pass_cache_lock:
+        return list(_pass_cache)
 
 
 def compute_passes(lat, lon, elev, hours=12, max_passes=10):
@@ -856,12 +896,8 @@ class DashboardHandler(BaseHTTPRequestHandler):
             }))
             return
 
-        # Get station location
-        lat, lon, elev = read_station_conf()
-        if lat is None:
-            lat, lon, elev = DEFAULT_LAT, DEFAULT_LON, DEFAULT_ELEV
-
-        passes = compute_passes(lat, lon, elev)
+        # Return cached passes (computed in background polling thread)
+        passes = get_cached_passes()
         self._json_response(200, json.dumps({"passes": passes}))
 
     def _serve_observation(self, path):
