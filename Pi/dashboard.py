@@ -791,6 +791,16 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 ok = send_park()
                 self._json_response(200, json.dumps({"ok": ok}))
 
+        elif path == "/api/stop":
+            # Write a stop flag that station.py checks in its tracking loop
+            stop_file = os.path.expanduser("~/.station_stop")
+            try:
+                with open(stop_file, "w") as f:
+                    f.write("stop")
+                self._json_response(200, json.dumps({"ok": True}))
+            except Exception as e:
+                self._json_response(500, json.dumps({"ok": False, "error": str(e)}))
+
         elif path == "/api/track":
             try:
                 length = int(self.headers.get("Content-Length", 0))

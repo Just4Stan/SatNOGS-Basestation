@@ -1366,6 +1366,7 @@
       <div class="state-dot"></div>
       <span class="state-label" id="state-label">Connecting...</span>
       <span class="state-detail" id="state-detail"></span>
+      <button class="btn btn-red" id="stop-btn" onclick="doStop()" style="display:none;min-height:28px;padding:0 10px;font-size:0.68rem;margin-left:8px">Stop</button>
     </div>
 
     <!-- ACTIVE PASS BANNER -->
@@ -1374,6 +1375,7 @@
         <div id="pass-sat-name">---</div>
         <div id="pass-max-el">MAX --°</div>
         <div id="pass-countdown">T- ---s</div>
+        <button class="btn btn-red" onclick="doStop()" style="min-height:30px;padding:0 12px;font-size:0.72rem">Stop</button>
       </div>
       <div class="pass-progress-track">
         <div id="pass-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
@@ -2146,10 +2148,59 @@
       }
     });
 
-    // ── Current satellite position (pulsing) ──
+    // ── Satellite position on trajectory (interpolated from pass progress) ──
+    if (_activePassIdx !== null && _passes[_activePassIdx]) {
+      const activePass = _passes[_activePassIdx];
+      const traj = activePass.trajectory;
+      if (traj && traj.length >= 2 && _passProgress > 0) {
+        // Interpolate position along trajectory based on progress
+        const frac = _passProgress / 100;
+        const idx = frac * (traj.length - 1);
+        const lo = Math.floor(idx);
+        const hi = Math.min(lo + 1, traj.length - 1);
+        const t = idx - lo;
+        const satAz = traj[lo].az + (traj[hi].az - traj[lo].az) * t;
+        const satEl = traj[lo].el + (traj[hi].el - traj[lo].el) * t;
+        const satPos = polarToXY(satAz, satEl, cx, cy, maxR);
+
+        // Draw satellite marker (diamond shape, green)
+        const ds = 6;
+        ctx.beginPath();
+        ctx.moveTo(satPos.x, satPos.y - ds);
+        ctx.lineTo(satPos.x + ds, satPos.y);
+        ctx.lineTo(satPos.x, satPos.y + ds);
+        ctx.lineTo(satPos.x - ds, satPos.y);
+        ctx.closePath();
+        ctx.fillStyle = '#4ade80';
+        ctx.shadowColor = '#4ade80';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Label "SAT" near the diamond
+        ctx.font = `bold ${clamp(size * 0.022, 7, 10)}px var(--font-mono, monospace)`;
+        ctx.fillStyle = '#4ade80';
+        ctx.textAlign = 'left';
+        ctx.fillText('SAT', satPos.x + 8, satPos.y + 3);
+
+        // Draw completed portion of trajectory in brighter color
+        ctx.beginPath();
+        const endIdx = Math.ceil(frac * (traj.length - 1));
+        for (let ti = 0; ti <= endIdx && ti < traj.length; ti++) {
+          const p = polarToXY(traj[ti].az, traj[ti].el, cx, cy, maxR);
+          if (ti === 0) ctx.moveTo(p.x, p.y);
+          else ctx.lineTo(p.x, p.y);
+        }
+        ctx.strokeStyle = '#4ade80';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+      }
+    }
+
+    // ── Antenna pointing position (pulsing cyan dot) ──
     if (_currentAz !== null && _currentEl !== null && _rotConnected) {
       const pos  = polarToXY(_currentAz, _currentEl, cx, cy, maxR);
-      const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400); // 0–1
+      const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400);
 
       // Outer glow ring
       ctx.beginPath();
@@ -2165,6 +2216,13 @@
       ctx.shadowBlur  = 8 + beat * 8;
       ctx.fill();
       ctx.shadowBlur = 0;
+
+      // Label "ANT"
+      ctx.font = `bold ${clamp(size * 0.022, 7, 10)}px var(--font-mono, monospace)`;
+      ctx.fillStyle = '#38bdf8';
+      ctx.textAlign = 'left';
+      ctx.shadowBlur = 0;
+      ctx.fillText('ANT', pos.x + 8, pos.y + 3);
     }
 
     _skyNeedsRedraw = false;
@@ -2369,6 +2427,9 @@
     const isTracking = !!(rf.satellite && rf.pass_progress > 0 && rf.pass_progress < 100);
 
     stateBar.className = ''; // reset
+    const stopBtn = document.getElementById('stop-btn');
+    if (stopBtn) stopBtn.style.display = isTracking ? 'flex' : 'none';
+
     if (!_rotConnected) {
       stateBar.classList.add('disconnected');
       stateLabel.textContent = 'Rotator Disconnected';
@@ -3042,6 +3103,18 @@
     });
   }
 
+  /** Stop current tracking */
+  function doStop() {
+    fetch('/api/stop', { method: 'POST' })
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok) {
+          const sl = document.getElementById('state-label');
+          if (sl) { sl.textContent = 'Stopping...'; }
+        }
+      });
+  }
+
   /** Track a specific satellite — called from pass list */
   function doTrackSat(satName) {
     fetch('/api/track', {
@@ -3071,6 +3144,7 @@
   window.doSetNorth       = doSetNorth;
   window.doPhoneCompassCal = doPhoneCompassCal;
   window.doTrackSat       = doTrackSat;
+  window.doStop           = doStop;
 
   </script>
 

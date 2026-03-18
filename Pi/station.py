@@ -674,10 +674,18 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     tick = 0
     c = 299_792_458.0  # speed of light
 
+    stop_file = os.path.expanduser("~/.station_stop")
+
     try:
         while running:
             now_utc = datetime.datetime.now(datetime.timezone.utc)
             if now_utc >= set_utc:
+                break
+
+            # Check for dashboard stop command
+            if os.path.exists(stop_file):
+                os.remove(stop_file)
+                log("** STOP — user cancelled tracking **", logfile)
                 break
 
             # Compute satellite position
