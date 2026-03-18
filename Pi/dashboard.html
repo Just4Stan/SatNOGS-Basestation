@@ -2627,9 +2627,9 @@
         ctx.lineWidth = 3.5;
         ctx.stroke();
       } else if (_pendingTrack && !isPendingTarget) {
-        // Dim others but still show them faintly
-        ctx.strokeStyle = color + '18';
-        ctx.lineWidth = 0.6;
+        // Dim others but keep visible
+        ctx.strokeStyle = color + '40';
+        ctx.lineWidth = 1.0;
         ctx.stroke();
       } else if (_isTracking && !isActive) {
         // Tracking: hide non-active
