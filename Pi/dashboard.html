@@ -3030,7 +3030,8 @@
       stateBar.classList.add('tracking');
       stateLabel.textContent = 'TRACKING — ' + rf.satellite;
       const pct = Math.round(rf.pass_progress);
-      const matchPass = _passes.find(p => p.name === rf.satellite);
+      const satLower = rf.satellite.toLowerCase();
+      const matchPass = _passes.find(p => p.name.toLowerCase() === satLower || p.name.toLowerCase().includes(satLower) || satLower.includes(p.name.toLowerCase()));
       const countdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.set_time))) : 0;
       stateDetail.textContent = pct + '% complete \u00B7 LOS in ' + fmtDuration(countdown);
     } else if (state === 'parked') {
@@ -3074,7 +3075,8 @@
       document.getElementById('pass-progress-bar').setAttribute('aria-valuenow', Math.round(rf.pass_progress));
       _passProgress = rf.pass_progress;
 
-      const matchPass2 = _passes.find(p => p.name === rf.satellite);
+      const bannerSatLower = rf.satellite.toLowerCase();
+      const matchPass2 = _passes.find(p => p.name.toLowerCase() === bannerSatLower || p.name.toLowerCase().includes(bannerSatLower) || bannerSatLower.includes(p.name.toLowerCase()));
       if (matchPass2) {
         const remaining = secsUntil(matchPass2.set_time);
         const t = remaining > 0 ? Math.round(remaining) : 0;
@@ -3889,7 +3891,13 @@
 
     // 4. Repeat polls
     setInterval(pollStatus,  1000);
-    setInterval(pollPasses, 30000); // refresh pass list every 30s
+    setInterval(pollPasses, 30000);
+    // Client-side countdown updater — re-renders pass list times every 5s
+    setInterval(() => {
+      if (_passes.length > 0 && !_passPolling) {
+        applyPasses({ passes: _passes, computing: false });
+      }
+    }, 5000);
 
     // 5. Fallback: if first status hasn't arrived in 5s, show dashboard anyway
     setTimeout(() => {
