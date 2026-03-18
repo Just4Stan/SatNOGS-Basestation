@@ -2861,13 +2861,28 @@
         ctx.textAlign = 'left';
         ctx.fillText('SAT', satPos.x + 8, satPos.y + 3);
 
-        // Draw completed portion of trajectory in brighter color
+        // Draw completed portion of trajectory as spline
         ctx.beginPath();
         const endIdx = Math.ceil(frac * (traj.length - 1));
+        const cPts = [];
         for (let ti = 0; ti <= endIdx && ti < traj.length; ti++) {
-          const p = polarToXY(traj[ti].az, traj[ti].el, cx, cy, maxR);
-          if (ti === 0) ctx.moveTo(p.x, p.y);
-          else ctx.lineTo(p.x, p.y);
+          cPts.push(polarToXY(traj[ti].az, traj[ti].el, cx, cy, maxR));
+        }
+        if (cPts.length >= 2) {
+          ctx.moveTo(cPts[0].x, cPts[0].y);
+          for (let ti = 0; ti < cPts.length - 1; ti++) {
+            const p0 = cPts[Math.max(ti - 1, 0)];
+            const p1 = cPts[ti];
+            const p2 = cPts[ti + 1];
+            const p3 = cPts[Math.min(ti + 2, cPts.length - 1)];
+            ctx.bezierCurveTo(
+              p1.x + (p2.x - p0.x) / 6, p1.y + (p2.y - p0.y) / 6,
+              p2.x - (p3.x - p1.x) / 6, p2.y - (p3.y - p1.y) / 6,
+              p2.x, p2.y
+            );
+          }
+        } else if (cPts.length === 1) {
+          ctx.moveTo(cPts[0].x, cPts[0].y);
         }
         ctx.strokeStyle = '#4ade80';
         ctx.lineWidth = 2.5;
@@ -4068,6 +4083,48 @@
     if (typeof ResizeObserver !== 'undefined') {
       const ro = new ResizeObserver(() => { _skyNeedsRedraw = true; });
       ro.observe(document.getElementById('sky-canvas-wrap'));
+    }
+
+    // 6b. Sky plot canvas hover — detect nearest trajectory on mousemove
+    const skyCanvas = document.getElementById('sky-canvas');
+    if (skyCanvas) {
+      skyCanvas.addEventListener('mousemove', function(e) {
+        if (!_passes.length || _isTracking || _pendingTrack) return;
+        const rect = skyCanvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const scaleX = skyCanvas.width / rect.width;
+        const scaleY = skyCanvas.height / rect.height;
+        const cx = mx * scaleX, cy = my * scaleY;
+
+        // Find nearest trajectory point
+        let bestIdx = null, bestDist = 30 * (window.devicePixelRatio || 1); // 30px threshold
+        _passes.forEach((pass, idx) => {
+          if (!pass.trajectory) return;
+          pass.trajectory.forEach(pt => {
+            const wrap = document.getElementById('sky-canvas-wrap');
+            const size = wrap ? wrap.getBoundingClientRect().width : 400;
+            const dpr = window.devicePixelRatio || 1;
+            const pcx = size * dpr / 2, pcy = size * dpr / 2;
+            const maxR = pcx * 0.88;
+            const pos = polarToXY(pt.az, pt.el, pcx, pcy, maxR);
+            const d = Math.sqrt((pos.x - cx) ** 2 + (pos.y - cy) ** 2);
+            if (d < bestDist) { bestDist = d; bestIdx = idx; }
+          });
+        });
+        if (bestIdx !== _hoveredPass) {
+          _hoveredPass = bestIdx;
+          _skyNeedsRedraw = true;
+          drawSkyPlot();
+        }
+      });
+      skyCanvas.addEventListener('mouseleave', function() {
+        if (_hoveredPass !== null) {
+          _hoveredPass = null;
+          _skyNeedsRedraw = true;
+          drawSkyPlot();
+        }
+      });
     }
 
     // 7. Auto-request GPS on page load — prompt user, fallback to Campus Geel
