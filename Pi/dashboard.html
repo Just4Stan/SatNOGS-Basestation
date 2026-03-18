@@ -791,7 +791,7 @@
 
     /* Left column: passes */
     .track-col-left {
-      width: 220px;
+      width: 260px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -820,7 +820,7 @@
 
     /* Right column: RF status */
     .track-col-right {
-      width: 200px;
+      width: 230px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -896,6 +896,14 @@
     .pass-item.selected {
       background: var(--accent-dim);
       border-color: rgba(56,189,248,0.22);
+    }
+    /* When any pass is selected, dim the rest */
+    .pass-list.has-selection .pass-item {
+      opacity: 0.35;
+      transition: opacity 0.2s;
+    }
+    .pass-list.has-selection .pass-item.selected {
+      opacity: 1;
     }
     .pass-item.next {
       background: rgba(56,189,248,0.04);
@@ -1316,7 +1324,7 @@
     }
 
     #compass-svg-ctrl {
-      width: 220px;
+      width: 260px;
       height: 220px;
       display: block;
     }
@@ -1595,7 +1603,7 @@
 
     @media (min-width: 769px) and (max-width: 1100px) {
       .track-col-left { width: 200px; }
-      .track-col-right { width: 180px; }
+      .track-col-right { width: 210px; }
     }
 
     @media (min-width: 1100px) {
@@ -1771,9 +1779,9 @@
           <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
             <div class="passes-header">
               <div class="card-title">Passes</div>
-              <label class="auto-track-label" title="Automatically track upcoming passes">
+              <label class="auto-track-label" title="Auto mode: automatically tracks the next best satellite pass. Turn off to manually select which satellite to track.">
                 Auto
-                <input type="checkbox" id="auto-track-toggle" checked onchange="toggleAutoTrack(this.checked)">
+                <input type="checkbox" id="auto-track-toggle" onchange="toggleAutoTrack(this.checked)">
               </label>
             </div>
             <div class="pass-list" id="pass-list" role="list">
@@ -2490,6 +2498,7 @@
     ctx.textBaseline = 'alphabetic';
 
     // ── Draw pass trajectories ──
+    const _labelQueue = []; // collect labels for non-overlapping placement
     _passes.forEach((pass, idx) => {
       if (!pass.trajectory || pass.trajectory.length < 2) return;
       const isActive   = (idx === _activePassIdx);
@@ -2502,12 +2511,26 @@
         if (ti === 0) ctx.moveTo(pos.x, pos.y);
         else          ctx.lineTo(pos.x, pos.y);
       });
-      ctx.strokeStyle = isActive
-        ? '#38bdf8'
-        : isSelected
-          ? color
-          : color + '55'; // dimmed for upcoming passes
-      ctx.lineWidth = isActive ? 2.0 : isSelected ? 1.8 : 1.2;
+      // During tracking: only show the active trajectory
+      // When a pass is selected: highlight it, dim rest
+      const isTrackingAny = _activePassIdx !== null;
+      if (isTrackingAny && !isActive) {
+        // Skip non-active trajectories during tracking
+        ctx.strokeStyle = color + '15';
+        ctx.lineWidth = 0.5;
+      } else if (_selectedPass !== null && !isSelected) {
+        ctx.strokeStyle = color + '20';
+        ctx.lineWidth = 0.8;
+      } else if (isActive) {
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3.0;
+      } else if (isSelected) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+      } else {
+        ctx.strokeStyle = color + '55';
+        ctx.lineWidth = 1.2;
+      }
       ctx.stroke();
 
       // AOS dot (green) and LOS dot (red)
@@ -2527,19 +2550,62 @@
       ctx.fillStyle = '#ef4444';
       ctx.fill();
 
-      // Satellite name label at AOS — always show for first 5, selected, or active
-      if (idx < 5 || isActive || isSelected || isNext) {
-        const labelSize = clamp(size * 0.025, 7, 11);
-        ctx.font = `500 ${labelSize}px var(--font-head, sans-serif)`;
-        ctx.fillStyle = isActive ? '#38bdf8' : isSelected ? color : color + 'aa';
-        // Position label — offset from AOS, avoid overlapping center
-        const angle = Math.atan2(aosPos.y - cy, aosPos.x - cx);
-        const lx = aosPos.x + Math.cos(angle) * 10;
-        const ly = aosPos.y + Math.sin(angle) * 10 - 4;
-        ctx.textAlign = aosPos.x > cx ? 'left' : 'right';
-        const shortName = pass.name.length > 14 ? pass.name.substring(0, 14) + '\u2026' : pass.name;
-        ctx.fillText(shortName, lx, ly);
+      // Collect label info for non-overlapping placement (drawn after all arcs)
+      if (idx < 8 || isActive || isSelected || isNext) {
+        // Pick label position at the trajectory midpoint (most visible spot)
+        const midIdx = Math.floor(pass.trajectory.length / 2);
+        const midPt = pass.trajectory[midIdx];
+        const midPos = polarToXY(midPt.az, midPt.el, cx, cy, maxR);
+        const shortName = pass.name.length > 16 ? pass.name.substring(0, 16) + '\u2026' : pass.name;
+        _labelQueue.push({
+          x: midPos.x, y: midPos.y, name: shortName, color: color,
+          isActive: isActive, isSelected: isSelected,
+        });
       }
+    });
+
+    // ── Draw labels with collision avoidance ──
+    const labelSize = clamp(size * 0.038, 12, 18);
+    ctx.font = `600 ${labelSize}px var(--font-head, sans-serif)`;
+    const placedLabels = []; // {x, y, w, h} of already placed labels
+
+    _labelQueue.forEach(lbl => {
+      const textW = ctx.measureText(lbl.name).width;
+      const textH = labelSize;
+      let lx = lbl.x + 8;
+      let ly = lbl.y - 6;
+
+      // Try 4 positions: right, left, above, below
+      const offsets = [
+        { x: lbl.x + 10, y: lbl.y + textH * 0.3, align: 'left' },
+        { x: lbl.x - 10, y: lbl.y + textH * 0.3, align: 'right' },
+        { x: lbl.x, y: lbl.y - 10, align: 'center' },
+        { x: lbl.x, y: lbl.y + textH + 6, align: 'center' },
+      ];
+
+      let bestPos = offsets[0];
+      for (const off of offsets) {
+        const ox = off.align === 'right' ? off.x - textW : off.align === 'center' ? off.x - textW / 2 : off.x;
+        const rect = { x: ox, y: off.y - textH, w: textW, h: textH + 4 };
+        const overlaps = placedLabels.some(p =>
+          rect.x < p.x + p.w && rect.x + rect.w > p.x &&
+          rect.y < p.y + p.h && rect.y + rect.h > p.y
+        );
+        if (!overlaps) { bestPos = off; break; }
+      }
+
+      ctx.textAlign = bestPos.align;
+      ctx.fillStyle = lbl.isActive ? '#38bdf8' : lbl.isSelected ? lbl.color : lbl.color + 'cc';
+      // Draw text background for readability
+      const bgX = bestPos.align === 'right' ? bestPos.x - textW - 4 : bestPos.align === 'center' ? bestPos.x - textW / 2 - 4 : bestPos.x - 4;
+      ctx.fillStyle = 'rgba(10,14,26,0.7)';
+      ctx.fillRect(bgX, bestPos.y - textH + 2, textW + 8, textH + 4);
+      ctx.fillStyle = lbl.isActive ? '#38bdf8' : lbl.isSelected ? lbl.color : lbl.color + 'cc';
+      ctx.fillText(lbl.name, bestPos.x, bestPos.y);
+
+      // Record placement
+      const rx = bestPos.align === 'right' ? bestPos.x - textW : bestPos.align === 'center' ? bestPos.x - textW / 2 : bestPos.x;
+      placedLabels.push({ x: rx, y: bestPos.y - textH, w: textW, h: textH + 4 });
     });
 
     // ── Satellite position on trajectory (interpolated from pass progress) ──
@@ -2846,15 +2912,25 @@
       stateLabel.textContent = 'Parked';
       stateDetail.textContent = 'AZ 0\u00B0 EL 0\u00B0';
     } else {
-      // Idle — check if a pass is coming soon
+      // Check auto-track state for messaging
+      const autoOn = document.getElementById('auto-track-toggle');
+      const isAutoEnabled = autoOn && autoOn.checked;
       const nextPass = _passes.find(p => secsUntil(p.rise_time) > 0);
-      if (nextPass) {
+
+      if (state === 'parked') {
+        stateBar.classList.add('parked');
+        stateLabel.textContent = 'Parked';
+        stateDetail.textContent = isAutoEnabled ? 'Auto-tracking enabled' : 'Select a satellite to track';
+      } else if (nextPass && isAutoEnabled) {
         const mins = Math.round(secsUntil(nextPass.rise_time) / 60);
         stateBar.classList.add('waiting');
-        stateLabel.textContent = 'Next: ' + nextPass.name;
+        stateLabel.textContent = 'Waiting: ' + nextPass.name;
         stateDetail.textContent = 'in ' + mins + ' min';
+      } else if (nextPass) {
+        stateLabel.textContent = 'Idle — select a satellite';
+        stateDetail.textContent = nextPass.name + ' in ' + Math.round(secsUntil(nextPass.rise_time) / 60) + ' min';
       } else {
-        stateLabel.textContent = 'Idle';
+        stateLabel.textContent = 'Idle — no upcoming passes';
         stateDetail.textContent = '';
       }
     }
@@ -3098,6 +3174,8 @@
     });
 
     listEl.innerHTML = '';
+    // Toggle dim class based on selection
+    listEl.classList.toggle('has-selection', _selectedPass !== null);
 
     _passes.forEach((pass, idx) => {
       const isNext   = (idx === nextIdx);
