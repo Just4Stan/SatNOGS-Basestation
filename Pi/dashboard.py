@@ -745,14 +745,14 @@ def _recompute_passes_if_stale():
         _pass_computing = False
         return
 
-    # Pre-filter: only compute passes for satellites with receivable transmitters
-    # (UHF 430-440 MHz or VHF 130-175 MHz — our antenna bands)
+    # Pre-filter: only compute passes for satellites with UHF 430-440 MHz downlinks
+    # (our antenna frequency — keeps computation under 200 satellites)
     if _transmitter_cache:
         receivable_norads = set()
         for norad, txs in _transmitter_cache.items():
             for tx in txs:
                 f = tx.get("freq_hz", 0)
-                if (430e6 <= f <= 440e6) or (130e6 <= f <= 175e6):
+                if 430e6 <= f <= 440e6:
                     receivable_norads.add(norad)
                     break
 
@@ -820,7 +820,13 @@ def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
             sat = ephem.readtle(name, l1, l2)
             observer.date = start_ephem
 
-            while observer.date < end_ephem:
+            # Only find first pass per satellite (saves RAM + CPU)
+            sat_passes = 0
+            t_start = time.time()
+            while observer.date < end_ephem and sat_passes < 1:
+                # Timeout: skip satellites that take too long (deep space, HEO)
+                if time.time() - t_start > 2.0:
+                    break
                 try:
                     rise_t, rise_az, max_t, max_el, set_t, set_az = observer.next_pass(sat)
                 except Exception:
@@ -870,6 +876,7 @@ def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
                     "set_az": round(math.degrees(float(set_az)), 1),
                     "trajectory": trajectory,
                 })
+                sat_passes += 1
                 observer.date = set_t + ephem.minute
         except Exception:
             continue
