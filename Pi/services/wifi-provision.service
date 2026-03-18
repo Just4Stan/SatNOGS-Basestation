@@ -1,0 +1,17 @@
+[Unit]
+Description=SatNOGS WiFi Provisioning (AP captive portal)
+After=NetworkManager.service
+Wants=NetworkManager.service
+Before=dashboard.service station.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/pi/SatNOGS-Basestation/Pi
+ExecStart=/usr/bin/python3 /home/pi/SatNOGS-Basestation/Pi/wifi_provision.py
+# Give up after 5 minutes if nobody provisions
+TimeoutStartSec=300
+RemainAfterExit=yes
+User=root
+
+[Install]
+WantedBy=multi-user.target

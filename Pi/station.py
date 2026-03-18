@@ -51,7 +51,7 @@ import argparse
 import datetime
 import urllib.request
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 
 try:
     import ephem
@@ -66,6 +66,7 @@ from rf_hat import (
     EVT_RX_DATA, EVT_ERROR,
     doppler_shift, freq_to_regs,
 )
+from rf_backend import RfBackend, RfMetrics
 from buzzer import Buzzer
 from satnogs import SatNOGSClient
 from sat_library import SatLibrary, SatProfile
@@ -288,7 +289,7 @@ class RotctlClient:
 # ---------------------------------------------------------------------------
 # RF HAT manager
 # ---------------------------------------------------------------------------
-class RfHatManager:
+class RfHatManager(RfBackend):
     """Manages CC1200 UHF RX and optional VHF TX via the RF HAT Pico."""
 
     def __init__(self, port: str = "/dev/serial0"):
@@ -298,13 +299,16 @@ class RfHatManager:
         self.vhf_freq_hz = 0.0
         self.pkt_count = 0
         self.total_bytes = 0
-        self.packets = []  # list of (timestamp, data_bytes)
+        self.packets: List[Tuple] = []  # list of (timestamp, data_bytes)
         self.radio_config = {
             "freq_mhz": 0.0,
             "modulation": "2-GFSK",
             "symbol_rate_bps": 2400,
             "profile": "default",
         }
+
+    def name(self) -> str:
+        return "CC1200"
 
     def open(self) -> bool:
         try:
@@ -333,6 +337,36 @@ class RfHatManager:
         except Exception:
             pass
         self.link.close()
+
+    def set_frequency(self, freq_hz: float) -> bool:
+        return self.update_uhf_doppler(freq_hz)
+
+    def get_metrics(self) -> RfMetrics:
+        self.link.select_radio(RADIO_UHF)
+        m = self.link.get_metrics()
+        rssi = m.rssi_dbm if m else None
+        return RfMetrics(
+            signal_dbm=rssi,
+            signal_label="RSSI",
+            signal_unit="dBm",
+            freq_hz=self.uhf_freq_hz,
+            streaming=True,  # only called while streaming
+            backend_name="CC1200",
+            packets=self.pkt_count,
+            total_bytes=self.total_bytes,
+        )
+
+    def get_status_dict(self) -> dict:
+        m = self.link.get_metrics()
+        rssi = m.rssi_dbm if m else None
+        return {
+            "streaming": True,
+            "rssi": rssi,
+            "packets": self.pkt_count,
+            "freq_mhz": self.uhf_freq_hz / 1e6 if self.uhf_freq_hz else 0,
+            "radio_config": self.radio_config,
+            "rf_backend": "cc1200",
+        }
 
     def setup_uhf_rx(self, freq_mhz: float, profile_path: str) -> bool:
         """Configure UHF radio for RX at the given frequency."""
@@ -518,9 +552,70 @@ class RfHatManager:
 
 
 # ---------------------------------------------------------------------------
+# RF backend factory
+# ---------------------------------------------------------------------------
+def create_rf_backend(args, logfile=None) -> Optional[RfBackend]:
+    """Create and open an RF backend based on --rf-mode.
+
+    Priority for 'auto': CC1200 -> RTL-SDR -> None.
+    """
+    mode = getattr(args, 'rf_mode', 'auto')
+
+    if mode == "none":
+        log("RF mode: none (disabled)", logfile)
+        return None
+
+    if mode in ("cc1200", "auto"):
+        rf = RfHatManager(args.rf_port)
+        if rf.open():
+            if rf.setup_uhf_rx(args.uhf_freq, args.uhf_profile):
+                log(f"RF backend: CC1200 on {args.rf_port}", logfile)
+                return rf
+            else:
+                log("CC1200: UHF setup failed", logfile)
+                rf.close()
+        else:
+            if mode == "cc1200":
+                log("CC1200: failed to open (explicit mode)", logfile)
+            else:
+                log("CC1200: not available, trying RTL-SDR...", logfile)
+
+        if mode == "cc1200":
+            return None
+
+    if mode in ("rtlsdr", "auto"):
+        try:
+            from rtlsdr_backend import RtlSdrBackend
+            device_index = getattr(args, 'rtlsdr_device', 0)
+            gain = getattr(args, 'rtlsdr_gain', 'auto')
+            sample_rate = getattr(args, 'rtlsdr_rate', 240000)
+            rtl = RtlSdrBackend(
+                device_index=device_index,
+                gain=gain,
+                sample_rate=sample_rate,
+            )
+            if rtl.open():
+                rtl.set_frequency(args.uhf_freq * 1e6)
+                log(f"RF backend: RTL-SDR (device {device_index})", logfile)
+                return rtl
+            else:
+                log("RTL-SDR: failed to open", logfile)
+        except ImportError:
+            if mode == "rtlsdr":
+                log("RTL-SDR: pyrtlsdr not installed", logfile)
+            else:
+                log("RTL-SDR: not available (pyrtlsdr not installed)", logfile)
+        except Exception as e:
+            log(f"RTL-SDR: error: {e}", logfile)
+
+    log("RF backend: none available", logfile)
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Pass tracker
 # ---------------------------------------------------------------------------
-def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
+def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
                tle, pass_info, args, logfile=None, buzzer: Optional[Buzzer] = None,
                lat=None, lon=None, elev=None,
                satnogs: Optional[SatNOGSClient] = None):
@@ -536,6 +631,7 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
     log(f"  Duration: {pass_info['duration']:.0f}s", logfile)
     log(f"  Rise AZ: {pass_info['rise_az']:.1f} → Set AZ: {pass_info['set_az']:.1f}", logfile)
     if rf:
+        log(f"  RF backend: {rf.name()}", logfile)
         log(f"  UHF RX: {args.uhf_freq:.3f} MHz", logfile)
         if args.doppler:
             log(f"  Doppler correction: ENABLED", logfile)
@@ -565,7 +661,8 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
     # Start RX if RF is available
     if rf:
         rf.start_rx()
-        if rf:
+        # Reset packet counters (CC1200 only — RTL-SDR doesn't decode packets)
+        if isinstance(rf, RfHatManager):
             rf.pkt_count = 0
             rf.total_bytes = 0
 
@@ -597,10 +694,9 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
             now_mono = time.time()
             if rf and args.doppler and (now_mono - last_doppler) >= doppler_dt:
                 last_doppler = now_mono
-                # range_rate is velocity in m/s (positive = receding)
                 range_rate = float(sat.range_velocity)
                 uhf_doppler = doppler_shift(args.uhf_freq * 1e6, range_rate)
-                rf.update_uhf_doppler(uhf_doppler)
+                rf.set_frequency(uhf_doppler)
 
             # Poll RF packets
             if rf:
@@ -608,9 +704,8 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
                 if new_pkts > 0:
                     if buzzer:
                         buzzer.beep_packet()
-                    # Submit newly-received packets to SatNOGS DB
-                    if satnogs:
-                        # rf.packets grows; submit the new tail entries
+                    # Submit newly-received packets to SatNOGS DB (CC1200 only)
+                    if satnogs and isinstance(rf, RfHatManager):
                         new_entries = rf.packets[-new_pkts:]
                         for _ts, _data in new_entries:
                             frame_hex = _data.hex()
@@ -622,9 +717,10 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
             if rf and (now_mono - last_metrics) >= METRICS_INTERVAL_S:
                 last_metrics = now_mono
                 remaining = (set_utc - now_utc).total_seconds()
-                mstr = rf.get_metrics_str()
-                log(f"METRICS: {mstr} | pkts={rf.pkt_count} "
-                    f"bytes={rf.total_bytes} T-{remaining:.0f}s", logfile)
+                m = rf.get_metrics()
+                sig_str = f"{m.signal_dbm:.1f} {m.signal_unit}" if m.signal_dbm is not None else "N/A"
+                log(f"METRICS: {m.backend_name} {m.signal_label}={sig_str} "
+                    f"pkts={m.packets} bytes={m.total_bytes} T-{remaining:.0f}s", logfile)
 
             # Status line
             remaining = (set_utc - now_utc).total_seconds()
@@ -632,26 +728,24 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
             progress = max(0, min(100, (1 - remaining / total_dur) * 100)) if total_dur > 0 else 0
             bar_el = int(max(0, el) / 90 * 20)
             bar = "|" + "#" * bar_el + " " * (20 - bar_el) + "|"
-            rf_info = f"pkts={rf.pkt_count}" if rf else "no-rf"
+            if rf:
+                m = rf.get_metrics()
+                rf_info = f"pkts={m.packets}"
+            else:
+                rf_info = "no-rf"
             print(f"\r  AZ{az:>7.1f} EL{el:>5.1f} {bar} {rf_info:<12s} T-{remaining:>5.0f}s",
                   end="", flush=True)
 
             # Update dashboard status file (~1 Hz, not every tick)
             if tick % UPDATE_HZ == 0:
-                rssi = None
                 if rf:
-                    m = rf.link.get_metrics()
-                    if m:
-                        rssi = m.rssi_dbm
-                status_data = {
-                    "streaming": rf is not None,
-                    "rssi": rssi,
-                    "packets": rf.pkt_count if rf else 0,
-                    "freq_mhz": args.uhf_freq,
-                    "satellite": name,
-                    "pass_progress": round(progress, 1),
-                    "radio_config": rf.radio_config if rf else None,
-                }
+                    status_data = rf.get_status_dict()
+                else:
+                    status_data = {"streaming": False, "rssi": None, "packets": 0,
+                                   "freq_mhz": 0, "rf_backend": "none"}
+                status_data["satellite"] = name
+                status_data["pass_progress"] = round(progress, 1)
+                status_data["freq_mhz"] = args.uhf_freq
                 if satnogs:
                     status_data["satnogs"] = satnogs.get_stats()
                 write_dashboard_status(status_data)
@@ -669,10 +763,14 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfHatManager],
             buzzer.beep_los()
         if rf:
             rf.stop_rx()
-            log(f"Pass summary: {rf.pkt_count} packets, {rf.total_bytes} bytes", logfile)
+            m = rf.get_metrics()
+            log(f"Pass summary: {m.packets} packets, {m.total_bytes} bytes ({rf.name()})", logfile)
         clear_dashboard_status()
 
-    return rf.pkt_count if rf else 0
+    if rf:
+        m = rf.get_metrics()
+        return m.packets
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -751,20 +849,22 @@ def _run_daemon(args, logfile):
                 time.sleep(30)
                 continue
 
-            # Open RF HAT
-            rf = None
-            if not args.no_rf:
-                rf = RfHatManager(args.rf_port)
-                if not rf.open():
-                    log("RF HAT failed — continuing without RF", logfile)
-                    rf = None
-                elif not rf.setup_uhf_rx(args.uhf_freq, args.uhf_profile):
-                    log("UHF setup failed — continuing without RF", logfile)
-                    rf.close()
-                    rf = None
+            # Re-read rf_mode from station.conf (dashboard may have changed it)
+            try:
+                if os.path.exists(STATION_CONF):
+                    with open(STATION_CONF, "r") as f:
+                        _conf = json.load(f)
+                    _rf_mode = _conf.get("rf_mode")
+                    if _rf_mode in ("none", "cc1200", "rtlsdr", "auto"):
+                        args.rf_mode = _rf_mode
+            except Exception:
+                pass
+
+            # Open RF backend
+            rf = create_rf_backend(args, logfile)
 
             # Update buzzer link (buzzer lives on the RF HAT Pico)
-            buzzer.link = rf.link if rf else None
+            buzzer.link = rf.link if isinstance(rf, RfHatManager) else None
             buzzer.beep_ready()
 
             # Fetch TLEs
@@ -778,9 +878,27 @@ def _run_daemon(args, logfile):
                 time.sleep(60)
                 continue
 
+            # Read tracking preference from station.conf (set by dashboard)
+            track_sat = args.sat  # CLI arg takes priority
+            try:
+                if os.path.exists(STATION_CONF):
+                    with open(STATION_CONF, "r") as f:
+                        _conf = json.load(f)
+                    track_mode = _conf.get("track_mode", "auto")
+                    if track_mode == "manual" and _conf.get("track_satellite"):
+                        track_sat = _conf["track_satellite"]
+                        log(f"Dashboard selected: {track_sat}", logfile)
+                        # Clear after reading so it doesn't repeat forever
+                        _conf["track_mode"] = "auto"
+                        _conf["track_satellite"] = ""
+                        with open(STATION_CONF, "w") as f:
+                            json.dump(_conf, f, indent=4)
+            except Exception:
+                pass
+
             # Filter by satellite name if specified
-            if args.sat:
-                search = args.sat.upper()
+            if track_sat:
+                search = track_sat.upper()
                 tles_to_search = [(n, l1, l2) for n, l1, l2 in tles if search in n.upper()]
             else:
                 tles_to_search = tles
@@ -808,13 +926,14 @@ def _run_daemon(args, logfile):
                             rf.configure_for_satellite(profile, sat_library.default_profile or "")
                         else:
                             log(f"No profile for {pass_name} — using default {args.uhf_freq:.3f} MHz", logfile)
-                            rf.update_uhf_doppler(args.uhf_freq * 1e6)
-                            rf.radio_config = {
-                                "freq_mhz": args.uhf_freq,
-                                "modulation": "2-GFSK",
-                                "symbol_rate_bps": 2400,
-                                "profile": "default",
-                            }
+                            rf.set_frequency(args.uhf_freq * 1e6)
+                            if isinstance(rf, RfHatManager):
+                                rf.radio_config = {
+                                    "freq_mhz": args.uhf_freq,
+                                    "modulation": "2-GFSK",
+                                    "symbol_rate_bps": 2400,
+                                    "profile": "default",
+                                }
 
                     track_pass(rotctl, rf, p["tle"], p, args, logfile,
                                buzzer=buzzer,
@@ -875,17 +994,28 @@ def main():
     parser.add_argument("--rot-port", type=int, default=ROTCTLD_PORT,
                         help="rotctld port (default: 4533)")
 
-    # RF HAT
+    # RF backend
     parser.add_argument("--rf-port", default=RF_HAT_PORT,
                         help="RF HAT serial port (default: /dev/serial0)")
+    parser.add_argument("--rf-mode", default="auto",
+                        choices=["none", "cc1200", "rtlsdr", "auto"],
+                        help="RF backend: auto|cc1200|rtlsdr|none (default: auto)")
     parser.add_argument("--no-rf", action="store_true",
-                        help="Disable RF HAT (rotator tracking only)")
+                        help="(deprecated) Same as --rf-mode none")
     parser.add_argument("--uhf-freq", type=float, default=UHF_FREQ_MHZ,
                         help="UHF RX frequency in MHz (default: 433.0)")
     parser.add_argument("--uhf-profile", default=UHF_PROFILE,
                         help="UHF SmartRF profile path")
     parser.add_argument("--doppler", action="store_true",
                         help="Enable real-time Doppler correction")
+
+    # RTL-SDR options
+    parser.add_argument("--rtlsdr-device", type=int, default=0,
+                        help="RTL-SDR device index (default: 0)")
+    parser.add_argument("--rtlsdr-gain", default="auto",
+                        help="RTL-SDR gain: 'auto' or value in dB (default: auto)")
+    parser.add_argument("--rtlsdr-rate", type=int, default=240000,
+                        help="RTL-SDR sample rate in Hz (default: 240000)")
 
     # TX
     parser.add_argument("--tx", default=None,
@@ -919,6 +1049,10 @@ def main():
 
     args = parser.parse_args()
 
+    # Deprecated --no-rf alias
+    if args.no_rf:
+        args.rf_mode = "none"
+
     logfile = None
     if args.log:
         logfile = open(args.log, "a", encoding="utf-8")
@@ -939,8 +1073,8 @@ def main():
     log("==========================================", logfile)
     log(f"Station: {sta_lat}N, {sta_lon}E, {sta_elev:.0f}m", logfile)
     log(f"Rotator: {args.rot_host}:{args.rot_port}", logfile)
-    if not args.no_rf:
-        log(f"RF HAT:  {args.rf_port}", logfile)
+    log(f"RF mode: {args.rf_mode}", logfile)
+    if args.rf_mode != "none":
         log(f"UHF RX:  {args.uhf_freq:.3f} MHz", logfile)
         log(f"Doppler: {'ON' if args.doppler else 'OFF'}", logfile)
 
@@ -1010,19 +1144,8 @@ def main():
         log(f"FATAL: Cannot connect to rotctld: {e}", logfile)
         sys.exit(1)
 
-    # Open RF HAT
-    rf: Optional[RfHatManager] = None
-    if not args.no_rf:
-        log("Opening RF HAT...", logfile)
-        rf = RfHatManager(args.rf_port)
-        if not rf.open():
-            log("WARNING: RF HAT failed to open — continuing without RF", logfile)
-            rf = None
-        else:
-            if not rf.setup_uhf_rx(args.uhf_freq, args.uhf_profile):
-                log("WARNING: UHF setup failed — continuing without RF", logfile)
-                rf.close()
-                rf = None
+    # Open RF backend
+    rf: Optional[RfBackend] = create_rf_backend(args, logfile)
 
     # Load TX data if specified
     tx_data = None
@@ -1034,8 +1157,9 @@ def main():
         except Exception as e:
             log(f"WARNING: Failed to load TX file: {e}", logfile)
 
-    # Initialize buzzer (uses RF HAT UART; no-op if rf is None)
-    buzzer = Buzzer(rf.link if rf else None)
+    # Initialize buzzer (uses RF HAT UART; no-op if rf is not CC1200)
+    cc1200_link = rf.link if isinstance(rf, RfHatManager) else None
+    buzzer = Buzzer(cc1200_link)
     buzzer.beep_ready()
 
     # Track passes
@@ -1061,20 +1185,22 @@ def main():
                     rf.configure_for_satellite(profile, sat_library.default_profile or "")
                 else:
                     log(f"No profile for {pass_name} — using default {args.uhf_freq:.3f} MHz", logfile)
-                    rf.radio_config = {
-                        "freq_mhz": args.uhf_freq,
-                        "modulation": "2-GFSK",
-                        "symbol_rate_bps": 2400,
-                        "profile": "default",
-                    }
+                    rf.set_frequency(args.uhf_freq * 1e6)
+                    if isinstance(rf, RfHatManager):
+                        rf.radio_config = {
+                            "freq_mhz": args.uhf_freq,
+                            "modulation": "2-GFSK",
+                            "symbol_rate_bps": 2400,
+                            "profile": "default",
+                        }
 
             pkt_count = track_pass(rotctl, rf, p["tle"], p, args, logfile,
                                    buzzer=buzzer,
                                    lat=sta_lat, lon=sta_lon, elev=sta_elev,
                                    satnogs=satnogs)
 
-            # TX on VHF after pass if requested
-            if tx_data and rf and running:
+            # TX on VHF after pass if requested (CC1200 only)
+            if tx_data and isinstance(rf, RfHatManager) and running:
                 log("Transmitting VHF uplink packet...", logfile)
                 rf.tx_vhf_packet(tx_data, args.vhf_freq, args.vhf_profile)
 

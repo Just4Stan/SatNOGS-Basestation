@@ -189,6 +189,7 @@ class Simulator:
                 "freq_mhz": 433.0,
                 "satellite": sat_name,
                 "pass_progress": round(progress * 100, 1) if self.in_pass else 0,
+                "rf_backend": "cc1200",
                 "radio_config": {
                     "freq_mhz": 433.0,
                     "modulation": "2-GFSK",
@@ -278,23 +279,67 @@ def get_simulator():
 
 
 # ---------------------------------------------------------------------------
-# Polling functions (real hardware)
+# Persistent rotctld connection
 # ---------------------------------------------------------------------------
-def poll_rotctld():
-    """Query rotctld for current AZ/EL. Returns (connected, az, el)."""
+_rotctl_sock = None
+_rotctl_lock = threading.Lock()
+
+
+def _rotctl_connect():
+    """Get or create a persistent connection to rotctld."""
+    global _rotctl_sock
+    if _rotctl_sock is not None:
+        return _rotctl_sock
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(2)
         s.connect((ROTCTLD_HOST, ROTCTLD_PORT))
-        s.sendall(b"p\n")
-        time.sleep(0.1)
-        resp = s.recv(256).decode().strip()
-        s.close()
+        _rotctl_sock = s
+        return s
+    except Exception:
+        _rotctl_sock = None
+        return None
+
+
+def _rotctl_disconnect():
+    global _rotctl_sock
+    if _rotctl_sock:
+        try:
+            _rotctl_sock.close()
+        except Exception:
+            pass
+        _rotctl_sock = None
+
+
+def _rotctl_cmd(cmd: str) -> str:
+    """Send a command to rotctld over persistent connection. Returns response."""
+    global _rotctl_sock
+    with _rotctl_lock:
+        s = _rotctl_connect()
+        if not s:
+            return ""
+        try:
+            s.sendall((cmd + "\n").encode())
+            resp = s.recv(256).decode().strip()
+            return resp
+        except Exception:
+            _rotctl_disconnect()
+            return ""
+
+
+# ---------------------------------------------------------------------------
+# Polling functions (real hardware)
+# ---------------------------------------------------------------------------
+def poll_rotctld():
+    """Query rotctld for current AZ/EL. Returns (connected, az, el)."""
+    resp = _rotctl_cmd("p")
+    if resp:
         lines = resp.split("\n")
         if len(lines) >= 2:
-            return True, float(lines[0]), float(lines[1])
-    except Exception:
-        pass
+            try:
+                return True, float(lines[0]), float(lines[1])
+            except ValueError:
+                pass
     return False, 0.0, 0.0
 
 
@@ -399,12 +444,23 @@ def polling_loop():
                 if rf_data and "satnogs" in rf_data:
                     satnogs_status = rf_data["satnogs"]
 
+                # Read current rf_mode from station.conf
+                rf_mode = "auto"
+                try:
+                    if os.path.exists(STATION_CONF):
+                        with open(STATION_CONF, "r") as f:
+                            _conf = json.load(f)
+                        rf_mode = _conf.get("rf_mode", "auto")
+                except Exception:
+                    pass
+
                 with status_lock:
                     status["rotator"] = {
                         "az": az, "el": el, "connected": connected,
                         "state": _rotator_state(connected, rf_status),
                     }
                     status["rf"] = rf_status
+                    status["rf_mode"] = rf_mode
                     status["system"] = sys_stats
                     status["location"] = {
                         "lat": lat, "lon": lon, "elev": elev,
@@ -584,31 +640,14 @@ def save_location(lat, lon, elev):
 
 def send_park():
     """Send P 0.0 0.0 to rotctld. Returns True on success."""
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(3)
-        s.connect((ROTCTLD_HOST, ROTCTLD_PORT))
-        s.sendall(b"P 0.0 0.0\n")
-        time.sleep(0.1)
-        s.close()
-        return True
-    except Exception:
-        return False
+    resp = _rotctl_cmd("P 0.0 0.0")
+    return resp != ""
 
 
 def send_position(az, el):
     """Send P <az> <el> to rotctld. Returns True on success."""
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(3)
-        s.connect((ROTCTLD_HOST, ROTCTLD_PORT))
-        cmd = f"P {az:.1f} {el:.1f}\n".encode()
-        s.sendall(cmd)
-        time.sleep(0.1)
-        s.close()
-        return True
-    except Exception:
-        return False
+    resp = _rotctl_cmd(f"P {az:.1f} {el:.1f}")
+    return resp != ""
 
 
 def do_shutdown():
@@ -653,6 +692,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/passes":
             self._handle_passes()
+
+        elif path.startswith("/api/observations/"):
+            self._serve_observation(path)
 
         elif path == "/" or path == "/index.html":
             self._serve_dashboard()
@@ -708,6 +750,52 @@ class DashboardHandler(BaseHTTPRequestHandler):
             else:
                 ok = send_park()
                 self._json_response(200, json.dumps({"ok": ok}))
+
+        elif path == "/api/track":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(length))
+                sat_name = body.get("satellite", "")
+                mode = body.get("mode", "auto")  # auto, manual, or specific sat name
+                # Save tracking preference to station.conf
+                existing = {}
+                try:
+                    if os.path.exists(STATION_CONF):
+                        with open(STATION_CONF, "r") as f:
+                            existing = json.load(f)
+                except Exception:
+                    pass
+                existing["track_mode"] = mode
+                existing["track_satellite"] = sat_name
+                with open(STATION_CONF, "w") as f:
+                    json.dump(existing, f, indent=4)
+                self._json_response(200, json.dumps({"ok": True, "mode": mode, "satellite": sat_name}))
+            except Exception as e:
+                self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
+
+        elif path == "/api/rf-mode":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(length))
+                mode = body.get("mode", "auto")
+                if mode not in ("none", "cc1200", "rtlsdr", "auto"):
+                    self._json_response(400, json.dumps(
+                        {"ok": False, "error": f"Invalid rf_mode: {mode}"}))
+                    return
+                # Save to station.conf so station.py picks it up next cycle
+                existing = {}
+                try:
+                    if os.path.exists(STATION_CONF):
+                        with open(STATION_CONF, "r") as f:
+                            existing = json.load(f)
+                except Exception:
+                    pass
+                existing["rf_mode"] = mode
+                with open(STATION_CONF, "w") as f:
+                    json.dump(existing, f, indent=4)
+                self._json_response(200, json.dumps({"ok": True, "mode": mode}))
+            except Exception as e:
+                self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
         elif path == "/api/shutdown":
             if SIMULATE:
@@ -775,6 +863,35 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         passes = compute_passes(lat, lon, elev)
         self._json_response(200, json.dumps({"passes": passes}))
+
+    def _serve_observation(self, path):
+        """Serve files from ~/observations/ (waterfall PNGs, etc.)."""
+        # /api/observations/20260318_120000/waterfall.png → ~/observations/20260318_120000/waterfall.png
+        rel = path[len("/api/observations/"):]
+        if ".." in rel or rel.startswith("/"):
+            self.send_response(403)
+            self.end_headers()
+            return
+        full = os.path.join(os.path.expanduser("~/observations"), rel)
+        if not os.path.isfile(full):
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b"404 Not Found")
+            return
+        ext = os.path.splitext(full)[1].lower()
+        mime = MIME_TYPES.get(ext, "application/octet-stream")
+        try:
+            with open(full, "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", mime)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "public, max-age=3600")
+            self.end_headers()
+            self.wfile.write(data)
+        except Exception:
+            self.send_response(500)
+            self.end_headers()
 
     def _json_response(self, code, data):
         body = data.encode() if isinstance(data, str) else data

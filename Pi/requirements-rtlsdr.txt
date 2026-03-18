@@ -1,0 +1,7 @@
+# Optional dependencies for RTL-SDR support + waterfall generation.
+# Install with: pip install -r requirements-rtlsdr.txt
+# System packages needed: sudo apt install librtlsdr-dev rtl-sdr
+pyrtlsdr>=0.2.93
+numpy
+scipy
+matplotlib
