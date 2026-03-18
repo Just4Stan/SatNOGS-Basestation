@@ -376,14 +376,12 @@
     #station-state {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-family: var(--font-mono);
-      font-size: 0.90rem;
       color: var(--muted);
       transition: color 0.3s;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
     .state-dot {
       width: 10px; height: 10px;
@@ -393,13 +391,16 @@
       background: var(--muted-dim);
     }
     .state-label {
-      font-weight: 600;
-      font-size: 0.92rem;
+      font-weight: 700;
+      font-size: 0.88rem;
       color: inherit;
     }
     .state-detail {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--muted);
+      margin-left: 8px;
+      padding-left: 12px;
+      border-left: 1px solid rgba(255,255,255,0.12);
     }
 
     #station-state.tracking { color: var(--accent); }
@@ -2947,11 +2948,11 @@
       stateDetail.textContent = 'Check USB connection';
     } else if (isTracking) {
       stateBar.classList.add('tracking');
-      stateLabel.textContent = 'Tracking ' + rf.satellite;
+      stateLabel.textContent = 'TRACKING — ' + rf.satellite;
       const pct = Math.round(rf.pass_progress);
       const matchPass = _passes.find(p => p.name === rf.satellite);
       const countdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.set_time))) : 0;
-      stateDetail.textContent = pct + '% \u00B7 T-' + fmtDuration(countdown);
+      stateDetail.textContent = pct + '% complete \u00B7 LOS in ' + fmtDuration(countdown);
     } else if (state === 'parked') {
       stateBar.classList.add('parked');
       stateLabel.textContent = 'Parked';
@@ -2967,19 +2968,19 @@
         stateLabel.textContent = 'Parked';
         stateDetail.textContent = isAutoEnabled ? 'Auto-tracking enabled' : 'Select a satellite to track';
       } else if (nextPass && isAutoEnabled) {
-        const mins = Math.round(secsUntil(nextPass.rise_time) / 60);
+        const secs = Math.max(0, Math.round(secsUntil(nextPass.rise_time)));
         stateBar.classList.add('waiting');
-        stateLabel.textContent = 'Waiting: ' + nextPass.name;
-        stateDetail.textContent = 'in ' + mins + ' min';
+        stateLabel.textContent = 'AUTO — Waiting';
+        stateDetail.textContent = nextPass.name + ' rises in ' + fmtDuration(secs);
       } else if (nextPass) {
-        stateLabel.textContent = 'Idle — select a satellite';
-        stateDetail.textContent = nextPass.name + ' in ' + Math.round(secsUntil(nextPass.rise_time) / 60) + ' min';
+        const secs = Math.max(0, Math.round(secsUntil(nextPass.rise_time)));
+        stateLabel.textContent = 'MANUAL — Select a satellite';
+        stateDetail.textContent = 'Next: ' + nextPass.name + ' in ' + fmtDuration(secs);
       } else if (_passes.length === 0) {
-        // No passes yet — might still be computing
         stateLabel.textContent = 'Loading satellite data...';
         stateDetail.textContent = '';
       } else {
-        stateLabel.textContent = 'Idle — no upcoming passes';
+        stateLabel.textContent = 'IDLE — No upcoming passes';
         stateDetail.textContent = '';
       }
     }
@@ -3278,21 +3279,29 @@
       item.setAttribute('aria-label',
         `${pass.name}, max elevation ${pass.max_el.toFixed(0)} degrees`);
 
+      // Skip passes that already ended
+      const secsUntilSet = secsUntil(pass.set_time);
+      if (secsUntilSet < 0) continue;
+
       let timeStr, subStr;
       const secsUntilRise = secsUntil(pass.rise_time);
       if (isActive) {
-        timeStr = 'IN PROGRESS';
-        subStr  = 'Dur: ' + fmtDuration(pass.duration);
+        const remaining = Math.max(0, Math.round(secsUntilSet));
+        timeStr = 'NOW — ' + fmtDuration(remaining) + ' left';
+        subStr  = fmtDuration(pass.duration) + ' total';
+        item.style.opacity = '0.6'; // dim in-progress passes slightly
       } else if (secsUntilRise > 0) {
-        const m = Math.floor(secsUntilRise / 60);
+        const secs = Math.round(secsUntilRise);
+        const m = Math.floor(secs / 60);
+        const s = secs % 60;
         const h = Math.floor(m / 60);
         timeStr = h > 0
           ? `in ${h}h ${m % 60}m`
-          : `in ${m}m`;
+          : m > 0 ? `in ${m}m ${s}s` : `in ${s}s`;
         subStr = fmtTime(pass.rise_time) + ' · ' + fmtDuration(pass.duration);
       } else {
         timeStr = fmtTime(pass.rise_time);
-        subStr  = 'Dur: ' + fmtDuration(pass.duration);
+        subStr  = fmtDuration(pass.duration);
       }
 
       // Transmitter metadata
