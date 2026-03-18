@@ -3653,10 +3653,21 @@
   function doStop() {
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Stopping...';
+    // Also disable auto-track so it doesn't immediately start the next pass
+    fetch('/api/auto-track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled: false }),
+    }).catch(() => {});
+    // Update the toggle UI
+    const atToggle = document.getElementById('auto-track-toggle');
+    if (atToggle) atToggle.checked = false;
+    // Send stop
     fetch('/api/stop', { method: 'POST' })
       .then(r => r.json())
       .then(d => {
-        if (!d.ok && sl) sl.textContent = 'Stop failed';
+        if (d.ok && sl) sl.textContent = 'Stopped — auto-track off';
+        else if (sl) sl.textContent = 'Stop failed';
       })
       .catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
   }

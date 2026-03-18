@@ -686,6 +686,12 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             if os.path.exists(stop_file):
                 os.remove(stop_file)
                 log("** STOP — user cancelled tracking **", logfile)
+                # Write a pause flag so daemon loop doesn't auto-start next pass
+                try:
+                    with open(os.path.expanduser("~/.station_paused"), "w") as _pf:
+                        _pf.write("paused")
+                except Exception:
+                    pass
                 break
 
             # Compute satellite position
@@ -927,18 +933,65 @@ def _run_daemon(args, logfile):
                     if not running:
                         break
 
+                    # Check if paused (user pressed Stop)
+                    paused_file = os.path.expanduser("~/.station_paused")
+                    if os.path.exists(paused_file):
+                        # Check if auto_track was re-enabled or a manual track was requested
+                        _auto = True
+                        _new_track = None
+                        try:
+                            if os.path.exists(STATION_CONF):
+                                with open(STATION_CONF, "r") as f:
+                                    _pc = json.load(f)
+                                _auto = _pc.get("auto_track", True)
+                                if _pc.get("track_mode") == "manual" and _pc.get("track_satellite"):
+                                    _new_track = _pc["track_satellite"]
+                        except Exception:
+                            pass
+
+                        if _new_track:
+                            # User selected a new satellite — resume
+                            os.remove(paused_file)
+                            log(f"Resuming: manual track {_new_track}", logfile)
+                            break  # re-enter outer loop with new target
+                        elif not _auto:
+                            # Auto-track off, stay paused
+                            time.sleep(2)
+                            continue
+                        else:
+                            # Auto-track on — user pressed stop but auto is enabled, resume
+                            os.remove(paused_file)
+
+                    # Check auto_track setting
+                    try:
+                        if os.path.exists(STATION_CONF):
+                            with open(STATION_CONF, "r") as f:
+                                _ac = json.load(f)
+                            if _ac.get("auto_track") is False and not bool(track_sat):
+                                log("Auto-track disabled — idle", logfile)
+                                # Write status so dashboard shows idle
+                                write_dashboard_status({
+                                    "streaming": False, "rssi": None, "packets": 0,
+                                    "freq_mhz": 0, "satellite": "", "pass_progress": 0,
+                                    "rf_backend": "none",
+                                })
+                                time.sleep(5)
+                                break  # break to outer loop, re-check config
+                    except Exception:
+                        pass
+
                     # Skip passes already ended
                     now_utc = datetime.datetime.now(datetime.timezone.utc)
                     rise_utc = p["rise_time"].replace(tzinfo=datetime.timezone.utc)
                     set_utc = p["set_time"].replace(tzinfo=datetime.timezone.utc)
                     if now_utc >= set_utc:
                         continue  # pass already ended
-                    # In auto mode, skip passes already well in progress
+                    # In auto mode, skip first 10% (too close to horizon)
                     # In manual mode (user selected), allow joining mid-pass
                     is_manual = bool(track_sat)
                     if now_utc > rise_utc and not is_manual:
                         elapsed = (now_utc - rise_utc).total_seconds()
-                        if elapsed > p["duration"] * 0.2:
+                        if elapsed > p["duration"] * 0.1:
                             log(f"Skipping {p['name']} — already {elapsed:.0f}s in", logfile)
                             continue
 
