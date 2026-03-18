@@ -2360,6 +2360,7 @@
   let _passes         = [];      // cached pass list from /api/passes
   let _selectedPass   = null;    // index into _passes, tapped by user
   let _activePassIdx  = null;    // index of pass that is currently in progress
+  let _nextPassIdx    = null;    // index of next upcoming pass
   let _rafHandle      = null;    // requestAnimationFrame handle for polar plot
   let _skyNeedsRedraw = true;    // dirty flag for polar canvas
   let _currentAz      = null;    // latest azimuth (degrees)
@@ -2607,6 +2608,7 @@
       if (!pass.trajectory || pass.trajectory.length < 2) return;
       const isActive   = (idx === _activePassIdx);
       const isSelected = (idx === _selectedPass);
+      const isAutoNext = (idx === _nextPassIdx) && document.getElementById('auto-track-toggle')?.checked;
       const color      = SKY_COLORS[idx % SKY_COLORS.length];
 
       ctx.beginPath();
@@ -2655,6 +2657,11 @@
         ctx.strokeStyle = color + '25';
         ctx.lineWidth = 0.8;
         ctx.stroke();
+      } else if (isAutoNext) {
+        // Auto-track next target — green highlight
+        ctx.strokeStyle = '#4ade80';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
       } else {
         // Default: all visible
         ctx.strokeStyle = color + '88';
@@ -2685,7 +2692,7 @@
       ctx.fill();
 
       // Collect label info for non-overlapping placement (drawn after all arcs)
-      if (idx < 3 || isActive || isSelected || isHovered || isNext || isPendingTarget) {
+      if (idx < 3 || isActive || isSelected || isHovered || isNext || isPendingTarget || isAutoNext) {
         // Pick label position at the trajectory midpoint (most visible spot)
         const midIdx = Math.floor(pass.trajectory.length / 2);
         const midPt = pass.trajectory[midIdx];
@@ -3384,6 +3391,7 @@
     // Find currently active and next upcoming passes
     const now = Date.now();
     _activePassIdx = null;
+    _nextPassIdx   = null;
     let nextIdx    = null;
 
     _passes.forEach((p, i) => {
@@ -3392,6 +3400,7 @@
       if (now >= rise && now < set) _activePassIdx = i;
       else if (now < rise && nextIdx === null) nextIdx = i;
     });
+    _nextPassIdx = nextIdx;
 
     // Toggle dim class based on selection (innerHTML already set above for progress)
     listEl.classList.toggle('has-selection', _selectedPass !== null);
