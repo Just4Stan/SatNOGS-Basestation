@@ -2644,10 +2644,13 @@
         ctx.lineWidth = 1.5;
         ctx.stroke();
       } else if (_isTracking && !isActive) {
-        // Tracking: hide non-active
+        // Tracking: grey out non-active
+        ctx.strokeStyle = 'rgba(148,163,184,0.12)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
       } else if (_isTracking && isActive) {
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3.5;
+        ctx.lineWidth = 4.0;
         ctx.stroke();
       } else if (isHovered) {
         // Hovered pass: bright and very thick (5x)
@@ -4092,7 +4095,9 @@
 
   /** Stop current tracking */
   function doStop() {
-    _pendingTrack = ''; // clear any pending track
+    _pendingTrack = '';
+    try { localStorage.removeItem('pendingTrack'); localStorage.removeItem('pendingTrackTime'); } catch(e) {}
+    _skyNeedsRedraw = true;
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Stopping...';
     // Also disable auto-track so it doesn't immediately start the next pass
@@ -4198,6 +4203,8 @@
   function doTrackSat(satName) {
     _pendingTrack = satName;
     _pendingTrackTime = Date.now();
+    _skyNeedsRedraw = true;
+    drawSkyPlot(); // immediate redraw to show new pending target
     try { localStorage.setItem('pendingTrack', satName); localStorage.setItem('pendingTrackTime', String(Date.now())); } catch(e) {}
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Waiting: ' + satName;
