@@ -163,21 +163,47 @@ def log(msg: str, logfile=None):
 
 
 def fetch_tles():
-    """Fetch TLE data from CelesTrak."""
+    """Fetch TLE data from SatNOGS DB (primary) + AMSAT/CelesTrak (fallback)."""
     tles = []
+    seen = set()
+
+    # Primary: SatNOGS DB JSON API (1500+ satellites)
+    try:
+        url = "https://db.satnogs.org/api/tle/?format=json"
+        req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})
+        resp = urllib.request.urlopen(req, timeout=20)
+        data = json.loads(resp.read().decode())
+        for sat in data:
+            name = sat.get("tle0", "").strip()
+            if name.startswith("0 "):
+                name = name[2:]
+            l1 = sat.get("tle1", "").strip()
+            l2 = sat.get("tle2", "").strip()
+            if name and l1.startswith("1 ") and l2.startswith("2 "):
+                tles.append((name, l1, l2))
+                seen.add(name)
+        log(f"  TLE: {len(tles)} sats from SatNOGS DB")
+    except Exception as e:
+        log(f"  TLE WARNING: SatNOGS DB failed: {e}")
+
+    # Secondary: AMSAT + CelesTrak (adds any not in SatNOGS DB)
     for url, group in TLE_URLS:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})
             resp = urllib.request.urlopen(req, timeout=10)
             lines = resp.read().decode().strip().split("\n")
             lines = [l.strip() for l in lines if l.strip()]
+            added = 0
             for i in range(0, len(lines) - 2, 3):
                 name = lines[i].strip()
                 l1 = lines[i+1].strip()
                 l2 = lines[i+2].strip()
-                if l1.startswith("1 ") and l2.startswith("2 "):
+                if l1.startswith("1 ") and l2.startswith("2 ") and name not in seen:
                     tles.append((name, l1, l2))
-            log(f"  TLE: {len(lines)//3} sats from {group}")
+                    seen.add(name)
+                    added += 1
+            if added:
+                log(f"  TLE: +{added} sats from {group}")
         except Exception as e:
             log(f"  TLE WARNING: failed to fetch {group}: {e}")
     return tles
