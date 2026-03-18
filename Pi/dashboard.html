@@ -2586,17 +2586,15 @@
       });
       const isHovered = (idx === _hoveredPass);
       const anyHovered = _hoveredPass !== null;
-      const isPendingTarget = _pendingTrack && pass.name === _pendingTrack;
+      const isPendingTarget = _pendingTrack && pass.name.trim().toLowerCase() === _pendingTrack.trim().toLowerCase();
 
       if (_pendingTrack && !isPendingTarget) {
-        // Waiting for track: dim everything except the target
-        ctx.strokeStyle = color + '15';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
+        // Waiting for track: completely hide everything except the target
+        // Don't draw at all — skip
       } else if (_pendingTrack && isPendingTarget) {
-        // The satellite we're waiting to track
+        // The satellite we're waiting to track — amber, bold
         ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 3.0;
+        ctx.lineWidth = 3.5;
         ctx.stroke();
       } else if (_isTracking && !isActive) {
         // Tracking: hide non-active
@@ -2630,8 +2628,9 @@
       }
 
       // Skip dots and labels for hidden/dimmed trajectories
+      if (_pendingTrack && !isPendingTarget) return;
       if (_isTracking && !isActive) return;
-      if (anyHovered && !isHovered) return; // don't draw dots for dimmed passes
+      if (anyHovered && !isHovered) return;
 
       // AOS dot (green) and LOS dot (red)
       const firstPt = pass.trajectory[0];
@@ -3002,7 +3001,12 @@
     if (stopBtn) stopBtn.style.display = (isTracking || _pendingTrack) ? 'flex' : 'none';
 
     // Clear pending track once station starts tracking
+    // Clear pending track when station starts tracking (case-insensitive match)
     if (isTracking) _pendingTrack = '';
+    if (_pendingTrack && rf.satellite &&
+        rf.satellite.toLowerCase().includes(_pendingTrack.toLowerCase().substring(0, 6))) {
+      _pendingTrack = ''; // name matched despite different casing between TLE sources
+    }
 
     // If a track is pending, show waiting state regardless
     if (_pendingTrack && !isTracking) {
@@ -3819,10 +3823,11 @@
       if (d.ok) {
         _onboardGoStep(5);
         // Try to show next pass info
-        fetch('/api/passes').then(r => r.json()).then(passes => {
+        fetch('/api/passes').then(r => r.json()).then(data => {
           const el = document.getElementById('onboard-next-pass');
-          if (passes && passes.length) {
-            const p = passes[0];
+          const passList = data.passes || [];
+          if (passList.length) {
+            const p = passList[0];
             el.textContent = 'Next pass: ' + (p.name || p.satellite) + ' at ' + (p.rise_time_local || p.rise_time || '');
           }
         }).catch(() => {});
@@ -3912,19 +3917,22 @@
 
   /** Set current antenna position as North (AZ=0) */
   function doSetNorth() {
-    fetch('/api/park', { method: 'POST' })
+    const fb = document.getElementById('cal-feedback');
+    fb.textContent = 'Calibrating...';
+    fb.style.color = 'var(--amber)';
+    fetch('/api/calibrate-north', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}' })
       .then(r => r.json())
       .then(d => {
-        const fb = document.getElementById('cal-feedback');
         if (d.ok) {
-          fb.textContent = 'North set — antenna zeroed to AZ=0°';
+          fb.textContent = 'North set — AZ encoder zeroed';
           fb.style.color = 'var(--green)';
         } else {
-          fb.textContent = 'Failed to set north';
+          fb.textContent = 'Failed: ' + (d.message || 'unknown error');
           fb.style.color = 'var(--red)';
         }
         setTimeout(() => { fb.textContent = ''; }, 5000);
-      });
+      })
+      .catch(() => { fb.textContent = 'Connection error'; fb.style.color = 'var(--red)'; });
   }
 
   /* Phone magnetometer compass */
@@ -3978,17 +3986,23 @@
   function doPhoneCompassCal() {
     if (_phoneHeading === null) return;
     const fb = document.getElementById('cal-feedback');
-    // Phone heading = where antenna physically points. Tell rotator this is the current AZ.
-    // We set the rotator to the phone heading so the encoder reference matches reality.
-    fetch('/api/position', {
+    fb.textContent = 'Calibrating...';
+    fb.style.color = 'var(--amber)';
+    // Zero the AZ encoder at current position (user should have rotated to North first)
+    fetch('/api/calibrate-north', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ az: _phoneHeading, el: _currentEl || 0 }),
+      body: JSON.stringify({ heading: _phoneHeading }),
     }).then(r => r.json()).then(d => {
-      fb.textContent = 'Calibrated: antenna = ' + _phoneHeading + '\u00B0 (phone compass)';
-      fb.style.color = 'var(--green)';
+      if (d.ok) {
+        fb.textContent = 'North calibrated at ' + _phoneHeading + '\u00B0 (phone compass)';
+        fb.style.color = 'var(--green)';
+      } else {
+        fb.textContent = 'Failed: ' + (d.message || 'unknown');
+        fb.style.color = 'var(--red)';
+      }
       setTimeout(() => { fb.textContent = ''; }, 5000);
-    });
+    }).catch(() => { fb.textContent = 'Connection error'; fb.style.color = 'var(--red)'; });
   }
 
   /** Stop current tracking */
@@ -4099,10 +4113,13 @@
   window.toggleAutoTrack   = toggleAutoTrack;
   window.toggleFilterPanel = toggleFilterPanel;
   window.setFilter         = setFilter;
-  window.onboardSetGPS     = onboardSetGPS;
-  window.onboardSkipGPS    = onboardSkipGPS;
-  window.onboardCalibrate  = onboardCalibrate;
-  window.onboardSkipCompass = onboardSkipCompass;
+  window.onboardSetGPS          = onboardSetGPS;
+  window.onboardSkipGPS         = onboardSkipGPS;
+  window.onboardCalibrate       = onboardCalibrate;
+  window.onboardSkipCompass     = onboardSkipCompass;
+  window.onboardAntennaAttached = onboardAntennaAttached;
+  window.onboardSelectRF        = onboardSelectRF;
+  window.onboardFinish          = onboardFinish;
 
   </script>
 

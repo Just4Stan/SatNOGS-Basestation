@@ -318,19 +318,22 @@ def _rotctl_disconnect():
 
 
 def _rotctl_cmd(cmd: str) -> str:
-    """Send a command to rotctld over persistent connection. Returns response."""
+    """Send a command to rotctld over persistent connection. Retries once on failure."""
     global _rotctl_sock
     with _rotctl_lock:
-        s = _rotctl_connect()
-        if not s:
-            return ""
-        try:
-            s.sendall((cmd + "\n").encode())
-            resp = s.recv(256).decode().strip()
-            return resp
-        except Exception:
-            _rotctl_disconnect()
-            return ""
+        for attempt in range(2):
+            s = _rotctl_connect()
+            if not s:
+                return ""
+            try:
+                s.sendall((cmd + "\n").encode())
+                resp = s.recv(256).decode().strip()
+                return resp
+            except Exception:
+                _rotctl_disconnect()
+                if attempt == 0:
+                    continue  # retry once
+                return ""
 
 
 # ---------------------------------------------------------------------------
