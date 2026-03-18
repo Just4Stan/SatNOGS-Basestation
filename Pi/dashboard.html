@@ -2617,15 +2617,19 @@
       });
       const isHovered = (idx === _hoveredPass);
       const anyHovered = _hoveredPass !== null;
-      const isPendingTarget = _pendingTrack && pass.name.trim().toLowerCase() === _pendingTrack.trim().toLowerCase();
+      const pendLower = _pendingTrack ? _pendingTrack.trim().toLowerCase() : '';
+      const passLower = pass.name.trim().toLowerCase();
+      const isPendingTarget = pendLower && (passLower === pendLower || passLower.includes(pendLower) || pendLower.includes(passLower));
 
-      if (_pendingTrack && !isPendingTarget) {
-        // Waiting for track: completely hide everything except the target
-        // Don't draw at all — skip
-      } else if (_pendingTrack && isPendingTarget) {
+      if (_pendingTrack && isPendingTarget) {
         // The satellite we're waiting to track — amber, bold
         ctx.strokeStyle = '#f59e0b';
         ctx.lineWidth = 3.5;
+        ctx.stroke();
+      } else if (_pendingTrack && !isPendingTarget) {
+        // Dim others but still show them faintly
+        ctx.strokeStyle = color + '18';
+        ctx.lineWidth = 0.6;
         ctx.stroke();
       } else if (_isTracking && !isActive) {
         // Tracking: hide non-active
@@ -2659,7 +2663,7 @@
       }
 
       // Skip dots and labels for hidden/dimmed trajectories
-      if (_pendingTrack && !isPendingTarget) return;
+      // Skip dots for non-target during pending (but trajectory lines still show faintly)
       if (_isTracking && !isActive) return;
       if (anyHovered && !isHovered) return;
 
@@ -3047,11 +3051,20 @@
       try { localStorage.removeItem('pendingTrack'); } catch(e) {}
     }
 
-    // If a track is pending, show waiting state regardless
+    // If a track is pending, show waiting state with useful detail
     if (_pendingTrack && !isTracking) {
       stateBar.classList.add('waiting');
       stateLabel.textContent = 'Waiting: ' + _pendingTrack;
-      stateDetail.textContent = 'Station processing...';
+      // Find the satellite in pass list to show rise time
+      const pendingLower = _pendingTrack.toLowerCase();
+      const pendingPass = _passes.find(p => p.name.toLowerCase().includes(pendingLower) || pendingLower.includes(p.name.toLowerCase()));
+      if (pendingPass) {
+        const secs = Math.max(0, Math.round(secsUntil(pendingPass.rise_time)));
+        if (secs > 0) stateDetail.textContent = 'Rises in ' + fmtDuration(secs) + ' — slewing to AOS';
+        else stateDetail.textContent = 'Tracking — acquiring signal';
+      } else {
+        stateDetail.textContent = 'Fetching satellite data...';
+      }
     } else if (!_rotConnected) {
       stateBar.classList.add('disconnected');
       stateLabel.textContent = 'Rotator Disconnected';
