@@ -137,7 +137,7 @@
     #app {
       position: relative;
       z-index: 10;
-      max-width: 1100px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: var(--gap);
       padding-top: calc(var(--gap) + env(safe-area-inset-top, 0px));
@@ -687,9 +687,9 @@
       flex-shrink: 0;
     }
     .pass-track-btn {
-      min-height: 28px;
-      padding: 0 10px;
-      font-size: 0.65rem;
+      min-height: 36px;
+      padding: 0 12px;
+      font-size: 0.68rem;
       flex-shrink: 0;
     }
     #passes-empty {
@@ -1844,6 +1844,7 @@
   let _passCountdown  = 0;       // seconds remaining
   let _vantaEffect    = null;    // Vanta instance (null if CDN offline)
   let _locSet         = false;   // is location currently set?
+  let _wasTracking    = false;   // previous poll tracking state (for LOS detection)
 
   /* =========================================================================
      UTILITY HELPERS
@@ -2129,6 +2130,20 @@
       ctx.arc(losPos.x, losPos.y, dotR, 0, 2 * Math.PI);
       ctx.fillStyle = '#ef4444';
       ctx.fill();
+
+      // Satellite name label at AOS (only for active, selected, or next pass)
+      if (isActive || isSelected || isNext) {
+        const labelSize = clamp(size * 0.025, 7, 11);
+        ctx.font = `500 ${labelSize}px var(--font-head, sans-serif)`;
+        ctx.fillStyle = isActive ? '#38bdf8' : color;
+        // Position label offset from AOS dot
+        const lx = aosPos.x + 6;
+        const ly = aosPos.y - 6;
+        ctx.textAlign = 'left';
+        // Truncate long names
+        const shortName = pass.name.length > 12 ? pass.name.substring(0, 12) + '\u2026' : pass.name;
+        ctx.fillText(shortName, lx, ly);
+      }
     });
 
     // ── Current satellite position (pulsing) ──
@@ -2250,9 +2265,9 @@
 
     // ── Control page: live AZ/EL + state ──
     const curAzEl = document.getElementById('ctrl-cur-az');
-    if (curAzEl) curAzEl.textContent = az !== null ? az.toFixed(1) : '---';
+    if (curAzEl) curAzEl.textContent = _currentAz !== null ? _currentAz.toFixed(1) : '---';
     const curElEl = document.getElementById('ctrl-cur-el');
-    if (curElEl) curElEl.textContent = el !== null ? el.toFixed(1) : '---';
+    if (curElEl) curElEl.textContent = _currentEl !== null ? _currentEl.toFixed(1) : '---';
     const ctrlState = document.getElementById('ctrl-rot-state');
     if (ctrlState) {
       ctrlState.className = 'rotator-status ' + state;
@@ -2260,7 +2275,7 @@
     }
     // Sync control page compass
     const arrowCtrl = document.getElementById('compass-arrow-ctrl');
-    if (arrowCtrl && az !== null) arrowCtrl.setAttribute('transform', 'rotate(' + az + ', 80, 80)');
+    if (arrowCtrl && _currentAz !== null) arrowCtrl.setAttribute('transform', 'rotate(' + _currentAz + ', 80, 80)');
 
     // ── RF ──
     const rf = d.rf || {};
@@ -2364,7 +2379,7 @@
       const pct = Math.round(rf.pass_progress);
       const matchPass = _passes.find(p => p.name === rf.satellite);
       const countdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.set_time))) : 0;
-      stateDetail.textContent = pct + '% \u00B7 T-' + countdown + 's';
+      stateDetail.textContent = pct + '% \u00B7 T-' + fmtDuration(countdown);
     } else if (state === 'parked') {
       stateBar.classList.add('parked');
       stateLabel.textContent = 'Parked';
@@ -2396,7 +2411,7 @@
       if (matchPass2) {
         const remaining = secsUntil(matchPass2.set_time);
         const t = remaining > 0 ? Math.round(remaining) : 0;
-        document.getElementById('pass-countdown').textContent = 'T-' + t + 's';
+        document.getElementById('pass-countdown').textContent = 'T-' + fmtDuration(t);
         document.getElementById('pass-max-el').textContent = 'MAX ' + matchPass2.max_el.toFixed(0) + '\u00B0';
       }
     } else {
@@ -2421,6 +2436,15 @@
         item.classList.remove('active-tracking');
       });
     }
+
+    // ── LOS detection: flash state bar and refresh passes ──
+    if (_wasTracking && !isTracking) {
+      stateBar.classList.add('parked');
+      stateLabel.textContent = 'Pass Complete — LOS';
+      stateDetail.textContent = '';
+      setTimeout(() => pollPasses(), 500); // refresh pass list immediately
+    }
+    _wasTracking = isTracking;
 
     // ── System ──
     const sys = d.system || {};
@@ -2531,7 +2555,7 @@
         snSettingsStatus.textContent = 'Station #' + (sn.station_id || '?') + ' — ' + (sn.submitted || 0) + ' frames submitted';
         snSettingsStatus.style.color = 'var(--green)';
       } else {
-        snSettingsStatus.textContent = 'Not configured — add satnogs_db_token to ~/station.conf';
+        snSettingsStatus.textContent = 'Not configured — add API token in station settings';
         snSettingsStatus.style.color = 'var(--muted)';
       }
     }
@@ -2556,13 +2580,21 @@
         }
       })
       .catch(() => {
-        // Connection lost — show disconnected state
+        // Connection lost — update all indicators
+        _rotConnected = false;
         const connDot = document.getElementById('conn-dot');
         connDot.classList.remove('connected');
         connDot.setAttribute('aria-label', 'Disconnected');
+        // Update station state bar
+        const sb = document.getElementById('station-state');
+        if (sb) {
+          sb.className = 'disconnected';
+          document.getElementById('state-label').textContent = 'Connection Lost';
+          document.getElementById('state-detail').textContent = 'Reconnecting...';
+        }
         if (_statusFirstLoad) {
-          // Still hide loading after 4s even if API unreachable
           setTimeout(() => {
+            _statusFirstLoad = false;
             hideLoading();
             runEntranceAnimation();
           }, 4000);
@@ -2785,14 +2817,15 @@
   }
 
   function doGoto() {
+    const fb = document.getElementById('cal-feedback');
     const az = parseFloat(document.getElementById('goto-az').value);
     const el = parseFloat(document.getElementById('goto-el').value);
     if (isNaN(az) || isNaN(el)) {
-      alert('Enter valid AZ and EL values.');
+      if (fb) { fb.textContent = 'Enter valid AZ and EL values'; fb.style.color = 'var(--red)'; }
       return;
     }
-    if (az < 0 || az > 360) { alert('AZ must be 0–360°.'); return; }
-    if (el < 0 || el > 90)  { alert('EL must be 0–90°.');  return; }
+    if (az < -360 || az > 360) { if (fb) { fb.textContent = 'AZ must be -360 to 360\u00B0'; fb.style.color = 'var(--red)'; } return; }
+    if (el < 0 || el > 90)     { if (fb) { fb.textContent = 'EL must be 0 to 90\u00B0'; fb.style.color = 'var(--red)'; } return; }
     fetch('/api/position', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2800,9 +2833,15 @@
     })
     .then(r => r.json())
     .then(d => {
-      if (!d.ok) alert('Position command failed.');
+      if (fb) {
+        fb.textContent = d.ok ? 'Moving to AZ ' + az.toFixed(1) + '\u00B0 EL ' + el.toFixed(1) + '\u00B0' : 'Command failed';
+        fb.style.color = d.ok ? 'var(--green)' : 'var(--red)';
+        setTimeout(() => { fb.textContent = ''; }, 4000);
+      }
     })
-    .catch(() => alert('Could not reach server.'));
+    .catch(() => {
+      if (fb) { fb.textContent = 'Cannot reach station'; fb.style.color = 'var(--red)'; }
+    });
   }
 
   function doShutdown() {
@@ -2812,7 +2851,7 @@
       <div style="
         display:flex; flex-direction:column; align-items:center; justify-content:center;
         height:100svh; height:100vh;
-        background:#0a0e1a; color:#ef4444;
+        background:#0a0e1a; color:#4ade80;
         font-family:'Space Grotesk',sans-serif; gap:20px;
       ">
         <div style="font-size:2rem; font-weight:700; letter-spacing:.3em;">AETHER</div>
@@ -2990,13 +3029,14 @@
   function doPhoneCompassCal() {
     if (_phoneHeading === null) return;
     const fb = document.getElementById('cal-feedback');
-    // Phone heading = magnetic North offset. Send this as the antenna's actual azimuth.
+    // Phone heading = where antenna physically points. Tell rotator this is the current AZ.
+    // We set the rotator to the phone heading so the encoder reference matches reality.
     fetch('/api/position', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ az: 0, el: 0 }),
+      body: JSON.stringify({ az: _phoneHeading, el: _currentEl || 0 }),
     }).then(r => r.json()).then(d => {
-      fb.textContent = 'Calibrated: antenna heading = ' + _phoneHeading + '° (phone compass)';
+      fb.textContent = 'Calibrated: antenna = ' + _phoneHeading + '\u00B0 (phone compass)';
       fb.style.color = 'var(--green)';
       setTimeout(() => { fb.textContent = ''; }, 5000);
     });

@@ -912,8 +912,22 @@ def _run_daemon(args, logfile):
                 for i, p in enumerate(passes):
                     if not running:
                         break
+
+                    # Skip passes already in progress or past — only track from AOS
+                    now_utc = datetime.datetime.now(datetime.timezone.utc)
+                    rise_utc = p["rise_time"].replace(tzinfo=datetime.timezone.utc)
+                    set_utc = p["set_time"].replace(tzinfo=datetime.timezone.utc)
+                    if now_utc >= set_utc:
+                        continue  # pass already ended
+                    if now_utc > rise_utc:
+                        # Already in progress — skip unless less than 20% through
+                        elapsed = (now_utc - rise_utc).total_seconds()
+                        if elapsed > p["duration"] * 0.2:
+                            log(f"Skipping {p['name']} — already {elapsed:.0f}s in", logfile)
+                            continue
+
                     log(f"Queued: {p['name']} max EL {p['max_el']:.1f}° in "
-                        f"{(p['rise_time'].replace(tzinfo=datetime.timezone.utc) - datetime.datetime.now(datetime.timezone.utc)).total_seconds()/60:.0f} min",
+                        f"{max(0, (rise_utc - now_utc).total_seconds())/60:.0f} min",
                         logfile)
 
                     # Per-pass radio reconfiguration
