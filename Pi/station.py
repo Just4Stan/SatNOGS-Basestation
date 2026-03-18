@@ -97,6 +97,9 @@ METRICS_INTERVAL_S = 10.0
 
 # TLE sources
 TLE_URLS = [
+    # Primary: AMSAT (reliable, no rate limiting)
+    ("https://www.amsat.org/tle/current/nasabare.txt", "AMSAT"),
+    # Fallback: CelesTrak (may 403 under rate limiting)
     ("https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=TLE", "Space Stations"),
     ("https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=TLE", "Amateur"),
     ("https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE", "Weather"),

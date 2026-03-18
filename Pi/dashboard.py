@@ -489,6 +489,9 @@ def polling_loop():
 # Pass prediction (real, via PyEphem + CelesTrak)
 # ---------------------------------------------------------------------------
 SATELLITE_GROUPS = [
+    # Primary: AMSAT (reliable, no rate limiting)
+    "https://www.amsat.org/tle/current/nasabare.txt",
+    # Fallback: CelesTrak (may 403 under rate limiting)
     "https://celestrak.org/NORAD/elements/gp.php?GROUP=stations&FORMAT=TLE",
     "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=TLE",
     "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE",
