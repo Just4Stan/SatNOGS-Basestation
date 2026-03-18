@@ -526,27 +526,64 @@ def _fetch_tles_from_url(url):
 
 
 def _fetch_tles_satnogs_db():
-    """Fetch TLEs from SatNOGS DB API (JSON). Returns dict of name -> (line1, line2)."""
+    """Fetch TLEs from SatNOGS DB API (JSON). Returns dict of name -> (line1, line2).
+    Only fetches satellites that have active UHF/VHF transmitters to save RAM."""
     import urllib.request
+
+    # First get the list of NORAD IDs with UHF/VHF transmitters
+    receivable_norads = set()
+    try:
+        url = "https://db.satnogs.org/api/transmitters/?format=json&status=active"
+        req = urllib.request.urlopen(
+            urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"}),
+            timeout=20)
+        raw = req.read()
+        data = json.loads(raw.decode())
+        del raw  # free memory immediately
+
+        for tx in data:
+            f = tx.get("downlink_low") or 0
+            if (430e6 <= f <= 440e6) or (130e6 <= f <= 175e6):
+                norad = tx.get("norad_cat_id")
+                if norad:
+                    receivable_norads.add(norad)
+        del data  # free memory
+    except Exception:
+        pass
+
+    # Then fetch TLEs — all of them, but only keep receivable ones
+    tles = {}
     try:
         url = "https://db.satnogs.org/api/tle/?format=json"
         req = urllib.request.urlopen(
             urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"}),
             timeout=20)
-        data = json.loads(req.read().decode())
-        tles = {}
+        raw = req.read()
+        data = json.loads(raw.decode())
+        del raw
+
         for sat in data:
             name = sat.get("tle0", "").strip()
-            # SatNOGS DB tle0 starts with "0 " — strip the line number prefix
             if name.startswith("0 "):
                 name = name[2:]
             l1 = sat.get("tle1", "").strip()
             l2 = sat.get("tle2", "").strip()
-            if name and l1.startswith("1 ") and l2.startswith("2 "):
-                tles[name] = (l1, l2)
-        return tles
+            if not (name and l1.startswith("1 ") and l2.startswith("2 ")):
+                continue
+            # If we have transmitter data, only keep receivable sats
+            if receivable_norads:
+                try:
+                    norad = int(l1[2:7].strip())
+                except Exception:
+                    continue
+                if norad not in receivable_norads:
+                    continue
+            tles[name] = (l1, l2)
+        del data
     except Exception:
-        return {}
+        pass
+
+    return tles
 
 
 def fetch_tles():
@@ -608,9 +645,12 @@ def _fetch_transmitters():
             norad = tx.get("norad_cat_id")
             if not norad:
                 continue
+            freq = tx.get("downlink_low") or tx.get("uplink_low") or 0
+            # Only cache UHF/VHF transmitters to save RAM
+            if not ((430e6 <= freq <= 440e6) or (130e6 <= freq <= 175e6)):
+                continue
             if norad not in tx_map:
                 tx_map[norad] = []
-            freq = tx.get("downlink_low") or tx.get("uplink_low") or 0
             mode = tx.get("mode") or ""
             baud = tx.get("baud") or 0
             tx_map[norad].append({
