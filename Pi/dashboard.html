@@ -2906,7 +2906,10 @@
     // ── Header readout ──
     const headerAz = document.getElementById('header-az');
     const headerEl = document.getElementById('header-el');
-    if (headerAz) headerAz.textContent = _currentAz !== null ? _currentAz.toFixed(1) : '---';
+    if (headerAz) {
+      const haz = _currentAz !== null ? (((_currentAz % 360) + 360) % 360) : null;
+      headerAz.textContent = haz !== null ? haz.toFixed(1) : '---';
+    }
     if (headerEl) headerEl.textContent = _currentEl !== null ? _currentEl.toFixed(1) : '---';
 
     // ── RF ──

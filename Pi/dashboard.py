@@ -887,7 +887,17 @@ def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
 def get_cached_passes():
     """Get the most recent pass computation, enriched with transmitter data."""
     with _pass_cache_lock:
-        passes = list(_pass_cache)
+        raw_passes = list(_pass_cache)
+
+    # Deduplicate by satellite name (case-insensitive) — different TLE sources
+    # can have the same satellite with different casing
+    seen_names = set()
+    passes = []
+    for p in raw_passes:
+        key = p["name"].lower().strip()
+        if key not in seen_names:
+            seen_names.add(key)
+            passes.append(p)
 
     # Enrich with transmitter data if available (may have been fetched after passes)
     if _transmitter_cache:
@@ -1495,6 +1505,28 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         # Return cached passes (computed in background polling thread)
         passes = get_cached_passes()
+
+        # Include currently-tracked satellite even if not in computed passes
+        rf_data = read_station_status()
+        if rf_data and rf_data.get("satellite"):
+            tracked_name = rf_data["satellite"]
+            if not any(p["name"].lower() == tracked_name.lower() for p in passes):
+                # The tracked sat isn't in our pass list — it came from a different TLE source
+                # Add a stub entry so the frontend knows about it
+                passes.insert(0, {
+                    "name": tracked_name,
+                    "norad_id": 0,
+                    "rise_time": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "set_time": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=15)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "max_el": 0,
+                    "duration": 900,
+                    "rise_az": 0,
+                    "set_az": 0,
+                    "trajectory": [],  # no trajectory data available
+                    "freq_mhz": rf_data.get("freq_mhz", 0),
+                    "_tracked": True,
+                })
+
         self._json_response(200, json.dumps({
             "passes": passes,
             "computing": is_pass_computing(),
