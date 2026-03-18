@@ -1669,9 +1669,24 @@
 
   <!-- Loading overlay -->
   <div id="loading-overlay" role="status" aria-label="Loading">
+    <!-- Rotating orbit graphic -->
+    <div style="position:relative;width:120px;height:120px;margin-bottom:24px">
+      <svg viewBox="0 0 120 120" style="width:120px;height:120px;animation:spin 8s linear infinite">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(56,189,248,0.08)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(56,189,248,0.05)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="24" fill="none" stroke="rgba(56,189,248,0.03)" stroke-width="1"/>
+        <circle cx="60" cy="8" r="3" fill="#38bdf8" opacity="0.9"><animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="100" cy="45" r="2" fill="#4ade80" opacity="0.7"><animate attributeName="opacity" values="0.7;0.3;0.7" dur="3s" repeatCount="indefinite"/></circle>
+        <circle cx="25" cy="90" r="2.5" fill="#f59e0b" opacity="0.6"><animate attributeName="opacity" values="0.6;0.2;0.6" dur="2.5s" repeatCount="indefinite"/></circle>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 16px var(--accent)"></div>
+      </div>
+    </div>
     <div class="loading-wordmark">AETHER</div>
     <div class="loading-sub">Ground Station</div>
-    <div class="loading-spinner"></div>
+    <div id="loading-status" style="font-family:var(--font-mono);font-size:0.68rem;color:var(--muted);margin-top:16px;transition:opacity 0.3s">Initializing station...</div>
+    <div class="loading-spinner" style="margin-top:16px"></div>
   </div>
 
   <!-- ===================================================================
@@ -2452,8 +2467,33 @@
   /* =========================================================================
      LOADING OVERLAY
      ========================================================================= */
+  const _loadStart = Date.now();
+  const _loadMessages = [
+    { t: 0, msg: 'Initializing station...' },
+    { t: 500, msg: 'Connecting to rotator...' },
+    { t: 1200, msg: 'Loading satellite database...' },
+    { t: 2000, msg: 'Computing trajectories...' },
+  ];
+
+  // Animate loading messages
+  _loadMessages.forEach(m => {
+    setTimeout(() => {
+      const el = document.getElementById('loading-status');
+      if (el) el.textContent = m.msg;
+    }, m.t);
+  });
+
   function hideLoading() {
-    document.getElementById('loading-overlay').classList.add('hidden');
+    // Minimum 2.5 seconds display time for the loading animation
+    const elapsed = Date.now() - _loadStart;
+    const remaining = Math.max(0, 2500 - elapsed);
+    setTimeout(() => {
+      const el = document.getElementById('loading-status');
+      if (el) el.textContent = 'Ready';
+      setTimeout(() => {
+        document.getElementById('loading-overlay').classList.add('hidden');
+      }, 300);
+    }, remaining);
   }
 
   /* =========================================================================
