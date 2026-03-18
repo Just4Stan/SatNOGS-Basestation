@@ -1816,21 +1816,14 @@
 
             <!-- Filter panel (hidden by default) -->
             <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
-              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Frequency</div>
-              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                <button class="filter-chip active" data-filter="all" onclick="setFilter('all')">All</button>
-                <button class="filter-chip" data-filter="uhf" onclick="setFilter('uhf')">430-440 MHz</button>
-                <button class="filter-chip" data-filter="vhf" onclick="setFilter('vhf')">VHF</button>
-              </div>
-              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Receiver</div>
-              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                <button class="filter-chip" data-filter="cc1200" onclick="setFilter('cc1200')">CC1200</button>
-                <button class="filter-chip" data-filter="rtlsdr" onclick="setFilter('rtlsdr')">SDR only</button>
-              </div>
-              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Quality</div>
               <div style="display:flex;flex-wrap:wrap;gap:3px">
-                <button class="filter-chip" data-filter="high" onclick="setFilter('high')">High pass (&gt;45°)</button>
-                <button class="filter-chip" data-filter="medium" onclick="setFilter('medium')">Medium (&gt;20°)</button>
+                <button class="filter-chip active" data-filter="all" onclick="toggleFilter('all')">All</button>
+                <button class="filter-chip" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
+                <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (144)</button>
+                <button class="filter-chip" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
+                <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR</button>
+                <button class="filter-chip" data-filter="high" onclick="toggleFilter('high')">&gt;45°</button>
+                <button class="filter-chip" data-filter="medium" onclick="toggleFilter('medium')">&gt;20°</button>
               </div>
             </div>
             <div class="pass-list" id="pass-list" role="list">
@@ -3207,20 +3200,26 @@
     );
     _skyNeedsRedraw = true;
 
-    // Apply filter
+    // Apply filters (multiple can be active simultaneously)
     let filtered = _passes;
-    if (_activeFilter === 'uhf') filtered = _passes.filter(p => {
-      const f = p.freq_mhz || 0;
-      return (f >= 430 && f <= 440) || !f; // include unknown freq
-    });
-    else if (_activeFilter === 'vhf') filtered = _passes.filter(p => {
-      const f = p.freq_mhz || 0;
-      return f >= 130 && f <= 175;
-    });
-    else if (_activeFilter === 'cc1200') filtered = _passes.filter(p => p.cc1200_ok);
-    else if (_activeFilter === 'rtlsdr') filtered = _passes.filter(p => !p.cc1200_ok && p.mode);
-    else if (_activeFilter === 'high') filtered = _passes.filter(p => p.max_el >= 45);
-    else if (_activeFilter === 'medium') filtered = _passes.filter(p => p.max_el >= 20);
+    if (!_activeFilters.has('all')) {
+      filtered = _passes.filter(p => {
+        let ok = true;
+        if (_activeFilters.has('uhf')) {
+          const f = p.freq_mhz || 0;
+          if (!(f >= 430 && f <= 440) && f > 0) ok = false;
+        }
+        if (_activeFilters.has('vhf')) {
+          const f = p.freq_mhz || 0;
+          if (!(f >= 130 && f <= 175) && f > 0) ok = false;
+        }
+        if (_activeFilters.has('cc1200') && !p.cc1200_ok) ok = false;
+        if (_activeFilters.has('rtlsdr') && p.cc1200_ok) ok = false;
+        if (_activeFilters.has('high') && p.max_el < 45) ok = false;
+        if (_activeFilters.has('medium') && p.max_el < 20) ok = false;
+        return ok;
+      });
+    }
 
     const listEl = document.getElementById('pass-list');
 
@@ -3855,20 +3854,30 @@
   }
 
   /** Toggle filter panel visibility */
-  let _activeFilter = 'all';
+  let _activeFilters = new Set(['all']);
   function toggleFilterPanel() {
     const panel = document.getElementById('filter-panel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
   }
 
-  /** Set active filter and re-render pass list */
-  function setFilter(filter) {
-    _activeFilter = filter;
+  /** Toggle a filter chip (multi-select) */
+  function toggleFilter(filter) {
+    if (filter === 'all') {
+      _activeFilters = new Set(['all']);
+    } else {
+      _activeFilters.delete('all');
+      if (_activeFilters.has(filter)) _activeFilters.delete(filter);
+      else _activeFilters.add(filter);
+      if (_activeFilters.size === 0) _activeFilters.add('all');
+    }
     document.querySelectorAll('.filter-chip').forEach(c => {
-      c.classList.toggle('active', c.getAttribute('data-filter') === filter);
+      c.classList.toggle('active', _activeFilters.has(c.getAttribute('data-filter')));
     });
     applyPasses({ passes: _passes, computing: false });
   }
+
+  // Keep old name for compat
+  function setFilter(f) { toggleFilter(f); }
 
   /** Toggle auto-track mode */
   function toggleAutoTrack(enabled) {
