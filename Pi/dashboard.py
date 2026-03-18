@@ -662,24 +662,138 @@ _pass_cache_lock = threading.Lock()
 PASS_CACHE_SECONDS = 60    # recompute every minute (removes passed sats, adds new ones)
 
 
+_pass_progress = ""  # human-readable progress string
+
+
 def _recompute_passes_if_stale():
-    """Background recompute of passes — called from polling thread."""
-    global _pass_cache, _pass_cache_time, _pass_computing
+    """Background recompute of passes — pushes partial results as batches complete."""
+    global _pass_cache, _pass_cache_time, _pass_computing, _pass_progress
 
     now = time.time()
     if (now - _pass_cache_time) < PASS_CACHE_SECONDS:
         return
 
     _pass_computing = True
+    _pass_progress = "Loading station location..."
     lat, lon, elev = read_station_conf()
     if lat is None:
         lat, lon, elev = DEFAULT_LAT, DEFAULT_LON, DEFAULT_ELEV
 
-    passes = compute_passes(lat, lon, elev)
+    _pass_progress = "Fetching satellite database..."
+    tles = fetch_tles()
+    if not tles:
+        _pass_computing = False
+        _pass_progress = "No TLE data — check internet"
+        return
+
+    _pass_progress = f"Loaded {len(tles)} satellites, computing passes..."
+
+    if not EPHEM_AVAILABLE:
+        _pass_computing = False
+        return
+
+    # Compute in batches of 100 — push partial results after each batch
+    all_passes = []
+    items = list(tles.items())
+    total = len(items)
+    batch_size = 100
+
+    for batch_start in range(0, total, batch_size):
+        batch_end = min(batch_start + batch_size, total)
+        batch_items = items[batch_start:batch_end]
+        _pass_progress = f"Computing {batch_end}/{total} satellites..."
+
+        batch_passes = _compute_passes_batch(
+            batch_items, lat, lon, elev, hours=12)
+        all_passes.extend(batch_passes)
+
+        # Push partial results so the frontend has something to show
+        all_passes.sort(key=lambda p: p.get("rise_time", ""))
+        with _pass_cache_lock:
+            _pass_cache = all_passes[:50]
+
     with _pass_cache_lock:
-        _pass_cache = passes
-        _pass_cache_time = now
+        all_passes.sort(key=lambda p: p.get("rise_time", ""))
+        _pass_cache = all_passes[:50]
+        _pass_cache_time = time.time()
     _pass_computing = False
+    _pass_progress = ""
+
+
+def _compute_passes_batch(tle_items, lat, lon, elev, hours=12):
+    """Compute passes for a batch of TLE items. Returns list of pass dicts."""
+    observer = ephem.Observer()
+    observer.lat = str(lat)
+    observer.lon = str(lon)
+    observer.elevation = float(elev)
+    observer.horizon = "0"
+    observer.pressure = 0
+
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    start_ephem = ephem.Date(now_utc.strftime("%Y/%m/%d %H:%M:%S"))
+    end_ephem = start_ephem + hours / 24.0
+
+    passes = []
+    for name, (l1, l2) in tle_items:
+        try:
+            sat = ephem.readtle(name, l1, l2)
+            observer.date = start_ephem
+
+            while observer.date < end_ephem:
+                try:
+                    rise_t, rise_az, max_t, max_el, set_t, set_az = observer.next_pass(sat)
+                except Exception:
+                    break
+                if rise_t is None or set_t is None:
+                    break
+                if rise_t > end_ephem:
+                    break
+
+                max_el_deg = math.degrees(float(max_el))
+                if max_el_deg < 5.0:
+                    observer.date = set_t + ephem.minute
+                    continue
+
+                rise_dt = ephem.Date(rise_t).datetime().replace(tzinfo=datetime.timezone.utc)
+                set_dt = ephem.Date(set_t).datetime().replace(tzinfo=datetime.timezone.utc)
+                duration = int((set_dt - rise_dt).total_seconds())
+
+                # Trajectory: 20 points
+                trajectory = []
+                n_points = 20
+                for i in range(n_points + 1):
+                    t_frac = i / n_points
+                    t_ephem = rise_t + (set_t - rise_t) * t_frac
+                    observer.date = t_ephem
+                    sat.compute(observer)
+                    trajectory.append({
+                        "az": round(math.degrees(float(sat.az)), 1),
+                        "el": round(max(0.0, math.degrees(float(sat.alt))), 1),
+                        "t": round(t_frac * duration),
+                    })
+
+                norad_id = 0
+                try:
+                    norad_id = int(l1[2:7].strip())
+                except Exception:
+                    pass
+
+                passes.append({
+                    "name": name,
+                    "norad_id": norad_id,
+                    "rise_time": rise_dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "set_time": set_dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "max_el": round(max_el_deg, 1),
+                    "duration": duration,
+                    "rise_az": round(math.degrees(float(rise_az)), 1),
+                    "set_az": round(math.degrees(float(set_az)), 1),
+                    "trajectory": trajectory,
+                })
+                observer.date = set_t + ephem.minute
+        except Exception:
+            continue
+
+    return passes
 
 
 def get_cached_passes():
@@ -713,6 +827,9 @@ def get_cached_passes():
 
 def is_pass_computing():
     return _pass_computing
+
+def get_pass_progress():
+    return _pass_progress
 
 
 def compute_passes(lat, lon, elev, hours=12, max_passes=50):
@@ -1103,6 +1220,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self._json_response(200, json.dumps({
             "passes": passes,
             "computing": is_pass_computing(),
+            "progress": get_pass_progress(),
         }))
 
     def _serve_observation(self, path):

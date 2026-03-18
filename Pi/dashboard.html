@@ -2972,6 +2972,10 @@
       } else if (nextPass) {
         stateLabel.textContent = 'Idle — select a satellite';
         stateDetail.textContent = nextPass.name + ' in ' + Math.round(secsUntil(nextPass.rise_time) / 60) + ' min';
+      } else if (_passes.length === 0) {
+        // No passes yet — might still be computing
+        stateLabel.textContent = 'Loading satellite data...';
+        stateDetail.textContent = '';
       } else {
         stateLabel.textContent = 'Idle — no upcoming passes';
         stateDetail.textContent = '';
@@ -3222,12 +3226,20 @@
 
     if (filtered.length === 0 && _passes.length === 0) {
       const isComputing = data.computing;
+      const progress = data.progress || '';
       if (isComputing) {
-        listEl.innerHTML = '<div style="text-align:center;padding:24px 0"><div class="mini-spinner" style="margin:0 auto 8px"></div><div style="color:var(--accent);font-size:0.80rem">Computing passes...</div><div style="color:var(--muted);font-size:0.68rem;margin-top:4px">~30s on first load</div></div>';
+        listEl.innerHTML = '<div style="text-align:center;padding:24px 0"><div class="mini-spinner" style="margin:0 auto 8px"></div><div style="color:var(--accent);font-size:0.80rem">' + (progress || 'Computing passes...') + '</div></div>';
       } else {
         listEl.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:0.80rem;padding:24px 0">No upcoming passes</div>';
       }
       return;
+    }
+    // Show computing progress banner at top of list when partial results available
+    if (data.computing && _passes.length > 0) {
+      const prog = data.progress || 'Computing more...';
+      listEl.innerHTML = '<div style="text-align:center;padding:4px;font-size:0.65rem;color:var(--accent);border-bottom:1px solid var(--card-border);margin-bottom:4px">' + prog + '</div>';
+    } else {
+      listEl.innerHTML = '';
     }
 
     // Find currently active and next upcoming passes
@@ -3242,8 +3254,7 @@
       else if (now < rise && nextIdx === null) nextIdx = i;
     });
 
-    listEl.innerHTML = '';
-    // Toggle dim class based on selection
+    // Toggle dim class based on selection (innerHTML already set above for progress)
     listEl.classList.toggle('has-selection', _selectedPass !== null);
 
     filtered.forEach((pass, idx) => {
