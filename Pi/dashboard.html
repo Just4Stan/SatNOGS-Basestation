@@ -2282,6 +2282,7 @@
   let _locSet         = false;   // is location currently set?
   let _wasTracking    = false;   // previous poll tracking state (for LOS detection)
   let _isTracking     = false;   // currently tracking a satellite (from status API)
+  let _hoveredPass    = null;    // index into _passes, hovered in pass list
 
   /* =========================================================================
      UTILITY HELPERS
@@ -2523,14 +2524,26 @@
         if (ti === 0) ctx.moveTo(pos.x, pos.y);
         else          ctx.lineTo(pos.x, pos.y);
       });
+      const isHovered = (idx === _hoveredPass);
+      const anyHovered = _hoveredPass !== null;
+
       if (_isTracking && !isActive) {
-        // Tracking mode: hide all non-active trajectories
-        // Don't draw them at all
+        // Tracking: hide non-active
       } else if (_isTracking && isActive) {
         ctx.strokeStyle = '#38bdf8';
         ctx.lineWidth = 3.5;
         ctx.stroke();
-      } else if (_selectedPass !== null && isSelected) {
+      } else if (isHovered) {
+        // Hovered pass: bright and thick
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3.0;
+        ctx.stroke();
+      } else if (anyHovered && !isHovered) {
+        // Something is hovered but not this one: dim
+        ctx.strokeStyle = color + '20';
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      } else if (isSelected) {
         ctx.strokeStyle = color;
         ctx.lineWidth = 2.5;
         ctx.stroke();
@@ -2539,17 +2552,15 @@
         ctx.lineWidth = 0.8;
         ctx.stroke();
       } else {
-        // Default: all trajectories visible
+        // Default: all visible
         ctx.strokeStyle = color + '88';
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
-      // Skip dots and labels for hidden trajectories
+      // Skip dots and labels for hidden/dimmed trajectories
       if (_isTracking && !isActive) return;
-      if (_selectedPass !== null && !isSelected && !_isTracking) {
-        // Dimmed — skip dots but keep trajectory line
-      }
+      if (anyHovered && !isHovered) return; // don't draw dots for dimmed passes
 
       // AOS dot (green) and LOS dot (red)
       const firstPt = pass.trajectory[0];
@@ -3270,6 +3281,15 @@
       item.addEventListener('click', selectFn);
       item.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectFn(); }
+      });
+      // Hover to preview trajectory on sky plot
+      item.addEventListener('mouseenter', () => {
+        _hoveredPass = globalIdx;
+        _skyNeedsRedraw = true;
+      });
+      item.addEventListener('mouseleave', () => {
+        _hoveredPass = null;
+        _skyNeedsRedraw = true;
       });
 
       listEl.appendChild(item);

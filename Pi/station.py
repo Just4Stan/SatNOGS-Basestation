@@ -965,14 +965,25 @@ def _run_daemon(args, logfile):
                             # Auto-track on — user pressed stop but auto is enabled, resume
                             os.remove(paused_file)
 
-                    # Check auto_track setting
+                    # Re-read station.conf for manual track requests and auto_track
                     try:
                         if os.path.exists(STATION_CONF):
                             with open(STATION_CONF, "r") as f:
                                 _ac = json.load(f)
+                            # Check for manual track request (always honored, even with auto off)
+                            if _ac.get("track_mode") == "manual" and _ac.get("track_satellite"):
+                                new_target = _ac["track_satellite"]
+                                log(f"Manual track request: {new_target}", logfile)
+                                # Clear it so it doesn't repeat
+                                _ac["track_mode"] = "auto"
+                                _ac["track_satellite"] = ""
+                                with open(STATION_CONF, "w") as f:
+                                    json.dump(_ac, f, indent=4)
+                                track_sat = new_target
+                                break  # break inner loop to re-enter with new target
+                            # If auto-track is off and no manual request, stay idle
                             if _ac.get("auto_track") is False and not bool(track_sat):
                                 log("Auto-track disabled — idle", logfile)
-                                # Write status so dashboard shows idle
                                 write_dashboard_status({
                                     "streaming": False, "rssi": None, "packets": 0,
                                     "freq_mhz": 0, "satellite": "", "pass_progress": 0,
@@ -1071,11 +1082,21 @@ def _run_daemon(args, logfile):
             if not running:
                 break
 
-            log(f"Sleeping {args.loop_delay}s before next cycle...", logfile)
-            for _ in range(args.loop_delay):
-                if not running:
-                    break
-                time.sleep(1)
+            # Short sleep between cycles — check for manual track requests every 3s
+            log(f"Waiting for next cycle (checking every 3s)...", logfile)
+            wait_end = time.time() + args.loop_delay
+            while running and time.time() < wait_end:
+                # Check for manual track request during sleep
+                try:
+                    if os.path.exists(STATION_CONF):
+                        with open(STATION_CONF, "r") as f:
+                            _wc = json.load(f)
+                        if _wc.get("track_mode") == "manual" and _wc.get("track_satellite"):
+                            log(f"Track request during sleep: {_wc['track_satellite']}", logfile)
+                            break  # exit sleep to process request
+                except Exception:
+                    pass
+                time.sleep(3)
 
     finally:
         clear_dashboard_status()
