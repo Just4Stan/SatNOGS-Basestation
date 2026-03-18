@@ -3675,7 +3675,7 @@
 
     // 4. Repeat polls
     setInterval(pollStatus,  1000);
-    setInterval(pollPasses, 60000);
+    setInterval(pollPasses, 30000); // refresh pass list every 30s
 
     // 5. Fallback: if first status hasn't arrived in 5s, show dashboard anyway
     setTimeout(() => {

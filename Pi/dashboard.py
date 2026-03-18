@@ -632,7 +632,7 @@ _pass_cache = []           # cached computed passes
 _pass_cache_time = 0.0     # unix timestamp of last computation
 _pass_computing = False    # True while background computation is running
 _pass_cache_lock = threading.Lock()
-PASS_CACHE_SECONDS = 120   # recompute every 2 minutes
+PASS_CACHE_SECONDS = 60    # recompute every minute (removes passed sats, adds new ones)
 
 
 def _recompute_passes_if_stale():
