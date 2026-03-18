@@ -2759,7 +2759,9 @@
 
     // ── Antenna pointing position (always shown when connected) ──
     if (_currentAz !== null && _currentEl !== null && _rotConnected) {
-      const pos  = polarToXY(_currentAz, _currentEl, cx, cy, maxR);
+      // Normalize AZ to 0-360 (rotator uses negative AZ for wrapping)
+      const antAz = ((_currentAz % 360) + 360) % 360;
+      const pos  = polarToXY(antAz, _currentEl, cx, cy, maxR);
       const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400);
 
       // Outer glow ring
@@ -2809,8 +2811,10 @@
     if (arrow) {
       arrow.setAttribute('transform', `rotate(${az || 0}, 80, 80)`);
     }
+    // Normalize AZ to 0-360 for display
+    const dispAz = az !== null ? (((az % 360) + 360) % 360) : null;
     document.getElementById('az-val').textContent =
-      az !== null ? az.toFixed(1) : '---.-';
+      dispAz !== null ? dispAz.toFixed(1) : '---.-';
   }
 
   /* =========================================================================
