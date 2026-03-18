@@ -376,9 +376,9 @@
     #station-state {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       font-family: var(--font-mono);
-      font-size: 0.72rem;
+      font-size: 0.90rem;
       color: var(--muted);
       transition: color 0.3s;
       white-space: nowrap;
@@ -386,24 +386,27 @@
       text-overflow: ellipsis;
     }
     .state-dot {
-      width: 7px; height: 7px;
+      width: 10px; height: 10px;
       border-radius: 50%;
       flex-shrink: 0;
       transition: background 0.3s, box-shadow 0.3s;
       background: var(--muted-dim);
     }
     .state-label {
-      font-weight: 500;
+      font-weight: 600;
+      font-size: 0.92rem;
       color: inherit;
     }
     .state-detail {
-      font-size: 0.65rem;
-      color: var(--muted-dim);
+      font-size: 0.78rem;
+      color: var(--muted);
     }
 
     #station-state.tracking { color: var(--accent); }
+    #station-state.tracking .state-label { font-size: 1.0rem; }
     #station-state.tracking .state-dot {
       background: var(--accent);
+      width: 12px; height: 12px;
       animation: pulse-accent 1.2s ease-in-out infinite;
     }
     #station-state.waiting { color: var(--amber); }
@@ -881,16 +884,18 @@
     }
 
     .pass-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      grid-template-rows: auto auto;
+      gap: 2px 6px;
       padding: 8px 8px;
       border-radius: var(--radius-sm);
       margin-bottom: 2px;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background 0.15s, border-color 0.15s, opacity 0.2s;
       min-height: 44px;
       border: 1px solid transparent;
+      align-items: center;
     }
     .pass-item:hover { background: rgba(255,255,255,0.04); }
     .pass-item.selected {
@@ -1729,6 +1734,8 @@
       <div class="header-readout" id="header-readout">
         <span class="val" id="header-az">---</span><span class="sep">/</span><span class="val" id="header-el">---</span>&deg;
       </div>
+      <span id="header-temp" style="font-family:var(--font-mono);font-size:0.70rem;color:var(--muted)">--°C</span>
+      <span id="header-ram" style="font-family:var(--font-mono);font-size:0.70rem;color:var(--muted)">--%</span>
       <span id="header-time" aria-live="polite">--:--:--</span>
     </div>
   </header>
@@ -2248,6 +2255,7 @@
   let _vantaEffect    = null;    // Vanta instance (null if CDN offline)
   let _locSet         = false;   // is location currently set?
   let _wasTracking    = false;   // previous poll tracking state (for LOS detection)
+  let _isTracking     = false;   // currently tracking a satellite (from status API)
 
   /* =========================================================================
      UTILITY HELPERS
@@ -2511,34 +2519,40 @@
         if (ti === 0) ctx.moveTo(pos.x, pos.y);
         else          ctx.lineTo(pos.x, pos.y);
       });
-      // During tracking: only show the active trajectory
-      // When a pass is selected: highlight it, dim rest
-      const isTrackingAny = _activePassIdx !== null;
-      if (isTrackingAny && !isActive) {
-        // Skip non-active trajectories during tracking
-        ctx.strokeStyle = color + '15';
-        ctx.lineWidth = 0.5;
-      } else if (_selectedPass !== null && !isSelected) {
-        ctx.strokeStyle = color + '20';
-        ctx.lineWidth = 0.8;
-      } else if (isActive) {
+      if (_isTracking && !isActive) {
+        // Tracking mode: hide all non-active trajectories
+        // Don't draw them at all
+      } else if (_isTracking && isActive) {
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3.0;
-      } else if (isSelected) {
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+      } else if (_selectedPass !== null && isSelected) {
         ctx.strokeStyle = color;
         ctx.lineWidth = 2.5;
+        ctx.stroke();
+      } else if (_selectedPass !== null && !isSelected) {
+        ctx.strokeStyle = color + '25';
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
       } else {
-        ctx.strokeStyle = color + '55';
-        ctx.lineWidth = 1.2;
+        // Default: all trajectories visible
+        ctx.strokeStyle = color + '88';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       }
-      ctx.stroke();
+
+      // Skip dots and labels for hidden trajectories
+      if (_isTracking && !isActive) return;
+      if (_selectedPass !== null && !isSelected && !_isTracking) {
+        // Dimmed — skip dots but keep trajectory line
+      }
 
       // AOS dot (green) and LOS dot (red)
       const firstPt = pass.trajectory[0];
       const lastPt  = pass.trajectory[pass.trajectory.length - 1];
       const aosPos  = polarToXY(firstPt.az, firstPt.el, cx, cy, maxR);
       const losPos  = polarToXY(lastPt.az,  lastPt.el,  cx, cy, maxR);
-      const dotR    = isActive || isSelected ? 4 : 3;
+      const dotR    = isActive || isSelected ? 5 : 3;
 
       ctx.beginPath();
       ctx.arc(aosPos.x, aosPos.y, dotR, 0, 2 * Math.PI);
@@ -2891,6 +2905,7 @@
     const stateLabel = document.getElementById('state-label');
     const stateDetail = document.getElementById('state-detail');
     const isTracking = !!(rf.satellite && rf.pass_progress > 0 && rf.pass_progress < 100);
+    _isTracking = isTracking;
 
     stateBar.className = ''; // reset
     const stopBtn = document.getElementById('stop-btn');
@@ -3009,6 +3024,12 @@
     if (srEl) srEl.textContent = `${used} / ${total} MB`;
     const suEl = document.getElementById('settings-uptime');
     if (suEl) suEl.textContent = sys.uptime || '---';
+
+    // Header system stats
+    const htEl = document.getElementById('header-temp');
+    if (htEl) htEl.textContent = (temp !== null && temp !== undefined) ? temp.toFixed(0) + '°C' : '--°C';
+    const hrEl = document.getElementById('header-ram');
+    if (hrEl && total > 0) hrEl.textContent = Math.round(used / total * 100) + '%';
 
     const ts = d.last_update || '';
     document.getElementById('header-time').textContent = ts || '--:--:--';
@@ -3205,16 +3226,11 @@
         subStr  = 'Dur: ' + fmtDuration(pass.duration);
       }
 
-      const trackBtn = `<button class="btn btn-accent pass-track-btn" onclick="event.stopPropagation();doTrackSat('${pass.name.replace(/'/g, "\\'")}')">Track</button>`;
-
       item.innerHTML = `
         <div class="pass-item-name${isNext ? ' next-label' : ''}">${pass.name}</div>
-        <div class="max-el-badge">${pass.max_el.toFixed(0)}°</div>
-        <div class="pass-meta">
-          <div class="pass-meta-top">${timeStr}</div>
-          <div class="pass-meta-bot">${subStr}</div>
-        </div>
-        ${trackBtn}
+        <div class="max-el-badge">${pass.max_el.toFixed(0)}&deg;</div>
+        <button class="btn btn-accent pass-track-btn" onclick="event.stopPropagation();doTrackSat('${pass.name.replace(/'/g, "\\'")}')">&#9654;</button>
+        <div class="pass-meta-bot" style="grid-column:1/4">${timeStr} &middot; ${subStr}</div>
       `;
 
       // Tap to select and highlight trajectory
