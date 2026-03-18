@@ -175,26 +175,8 @@ def fetch_tles():
     tles = []
     seen = set()
 
-    # Primary: SatNOGS DB JSON API (1500+ satellites)
-    try:
-        url = "https://db.satnogs.org/api/tle/?format=json"
-        req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})
-        resp = urllib.request.urlopen(req, timeout=20)
-        data = json.loads(resp.read().decode())
-        for sat in data:
-            name = sat.get("tle0", "").strip()
-            if name.startswith("0 "):
-                name = name[2:]
-            l1 = sat.get("tle1", "").strip()
-            l2 = sat.get("tle2", "").strip()
-            if name and l1.startswith("1 ") and l2.startswith("2 "):
-                tles.append((name, l1, l2))
-                seen.add(name)
-        log(f"  TLE: {len(tles)} sats from SatNOGS DB")
-    except Exception as e:
-        log(f"  TLE WARNING: SatNOGS DB failed: {e}")
-
-    # Secondary: AMSAT + CelesTrak (adds any not in SatNOGS DB)
+    # Only use AMSAT + CelesTrak for station.py (lightweight, ~80 sats)
+    # Dashboard.py handles the full SatNOGS DB catalog separately
     for url, group in TLE_URLS:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})

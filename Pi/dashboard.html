@@ -1682,6 +1682,9 @@
       <div class="onboarding-steps-indicator">
         <div class="step-dot active" id="onboard-dot-1"></div>
         <div class="step-dot" id="onboard-dot-2"></div>
+        <div class="step-dot" id="onboard-dot-3"></div>
+        <div class="step-dot" id="onboard-dot-4"></div>
+        <div class="step-dot" id="onboard-dot-5"></div>
       </div>
 
       <!-- Step 1: GPS -->
@@ -1720,6 +1723,57 @@
         <div style="margin-top:12px">
           <button class="onboarding-btn secondary" onclick="onboardSkipCompass()">Skip &mdash; Assume North</button>
         </div>
+      </div>
+
+      <!-- Step 3: Attach Antenna -->
+      <div class="onboarding-step" id="onboard-step-3">
+        <div class="onboarding-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12L7 2l5 10-5 10z"/><path d="M12 12h10"/><circle cx="22" cy="12" r="1"/>
+          </svg>
+        </div>
+        <div class="onboarding-title">Attach Antenna</div>
+        <div class="onboarding-desc">The mount is level and pointing North. Attach your antenna horizontally to the mount now. Make sure it is secure before continuing.</div>
+        <button class="onboarding-btn" onclick="onboardAntennaAttached()" style="margin-top:20px">Antenna Attached</button>
+      </div>
+
+      <!-- Step 4: Choose Receiver -->
+      <div class="onboarding-step" id="onboard-step-4">
+        <div class="onboarding-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+        <div class="onboarding-title">Choose Receiver</div>
+        <div class="onboarding-desc">Select the radio hardware connected to your station.</div>
+        <div id="onboard-hw-status" style="font-family:var(--font-mono);font-size:0.72rem;color:var(--amber);margin-bottom:12px">Detecting hardware...</div>
+        <div id="onboard-rf-options" style="display:flex;flex-direction:column;gap:8px">
+          <button class="onboarding-btn" id="onboard-rf-auto" onclick="onboardSelectRF('auto')" style="text-align:left;padding:12px 16px">
+            <strong>Auto</strong><br><span style="font-size:0.75rem;color:var(--muted)">Automatically use best available receiver</span>
+          </button>
+          <button class="onboarding-btn secondary" id="onboard-rf-cc1200" onclick="onboardSelectRF('cc1200')" style="text-align:left;padding:12px 16px">
+            <strong>CC1200 HAT</strong><br><span style="font-size:0.75rem;color:var(--muted)">Built-in radio modem &mdash; decodes packets directly</span>
+          </button>
+          <button class="onboarding-btn secondary" id="onboard-rf-rtlsdr" onclick="onboardSelectRF('rtlsdr')" style="text-align:left;padding:12px 16px">
+            <strong>RTL-SDR</strong><br><span style="font-size:0.75rem;color:var(--muted)">Software-defined radio &mdash; waterfall + wideband</span>
+          </button>
+          <button class="onboarding-btn secondary" id="onboard-rf-none" onclick="onboardSelectRF('none')" style="text-align:left;padding:12px 16px">
+            <strong>None</strong><br><span style="font-size:0.75rem;color:var(--muted)">Rotator tracking only, no radio</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Ready -->
+      <div class="onboarding-step" id="onboard-step-5">
+        <div class="onboarding-icon" style="background:rgba(74,222,128,0.15)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="onboarding-title">Station Ready</div>
+        <div class="onboarding-desc">Your ground station is operational. Satellites will appear in the Track page as they come into range.</div>
+        <div id="onboard-next-pass" style="font-family:var(--font-mono);font-size:0.8rem;color:var(--muted);margin:12px 0"></div>
+        <button class="onboarding-btn" onclick="onboardFinish()" style="margin-top:12px">Go to Tracker</button>
       </div>
     </div>
   </div>
@@ -2532,8 +2586,19 @@
       });
       const isHovered = (idx === _hoveredPass);
       const anyHovered = _hoveredPass !== null;
+      const isPendingTarget = _pendingTrack && pass.name === _pendingTrack;
 
-      if (_isTracking && !isActive) {
+      if (_pendingTrack && !isPendingTarget) {
+        // Waiting for track: dim everything except the target
+        ctx.strokeStyle = color + '15';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      } else if (_pendingTrack && isPendingTarget) {
+        // The satellite we're waiting to track
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 3.0;
+        ctx.stroke();
+      } else if (_isTracking && !isActive) {
         // Tracking: hide non-active
       } else if (_isTracking && isActive) {
         ctx.strokeStyle = '#38bdf8';
@@ -2692,8 +2757,8 @@
       }
     }
 
-    // ── Antenna pointing position (only shown during tracking) ──
-    if (_isTracking && _currentAz !== null && _currentEl !== null && _rotConnected) {
+    // ── Antenna pointing position (always shown when connected) ──
+    if (_currentAz !== null && _currentEl !== null && _rotConnected) {
       const pos  = polarToXY(_currentAz, _currentEl, cx, cy, maxR);
       const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400);
 
@@ -3578,8 +3643,18 @@
   let _onboardingComplete = false;
 
   function showOnboarding() {
-    if (localStorage.getItem('aether-onboarded')) return;
-    document.getElementById('onboarding-overlay').classList.remove('hidden');
+    // Check server-side setup_complete flag (not just localStorage)
+    fetch('/api/setup-status').then(r => r.json()).then(d => {
+      if (d.setup_complete) {
+        _onboardingComplete = true;
+        return;
+      }
+      document.getElementById('onboarding-overlay').classList.remove('hidden');
+    }).catch(() => {
+      // If server unreachable, fall back to localStorage
+      if (localStorage.getItem('aether-onboarded')) return;
+      document.getElementById('onboarding-overlay').classList.remove('hidden');
+    });
   }
 
   function hideOnboarding() {
@@ -3610,7 +3685,7 @@
           if (resp.ok) {
             resultEl.textContent = lat.toFixed(4) + '\u00B0N, ' + lon.toFixed(4) + '\u00B0E';
             resultEl.classList.remove('error');
-            setTimeout(() => onboardGoStep2(), 800);
+            setTimeout(() => _onboardGoStep(2), 800);
           } else {
             resultEl.textContent = 'Server error';
             resultEl.classList.add('error');
@@ -3637,16 +3712,7 @@
     }).catch(() => {});
     resultEl.textContent = 'Using Campus Geel (51.17\u00B0N, 4.97\u00B0E)';
     resultEl.classList.remove('error');
-    setTimeout(() => onboardGoStep2(), 600);
-  }
-
-  function onboardGoStep2() {
-    document.getElementById('onboard-step-1').classList.remove('active');
-    document.getElementById('onboard-step-2').classList.add('active');
-    document.getElementById('onboard-dot-1').classList.remove('active');
-    document.getElementById('onboard-dot-2').classList.add('active');
-    // Start compass listener for onboarding
-    _initOnboardCompass();
+    setTimeout(() => _onboardGoStep(2), 600);
   }
 
   function _initOnboardCompass() {
@@ -3691,18 +3757,93 @@
     const calBtn = document.getElementById('onboard-cal-btn');
     const heading = calBtn._heading;
     if (heading == null) return;
-    fetch('/api/position', {
+    calBtn.disabled = true;
+    calBtn.textContent = 'Calibrating...';
+    // Zero the AZ encoder (stops rotctld, sends ZERO, restarts rotctld)
+    fetch('/api/calibrate-north', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({az: heading, el: _currentEl || 0}),
-    }).then(() => {
-      hideOnboarding();
+      body: JSON.stringify({heading: heading}),
+    }).then(r => r.json()).then(d => {
+      if (d.ok) {
+        const statusEl = document.getElementById('onboard-compass-status');
+        statusEl.textContent = 'North calibrated at ' + heading + '\u00B0';
+        statusEl.style.color = 'var(--green)';
+        setTimeout(() => _onboardGoStep(3), 800);
+      } else {
+        calBtn.textContent = 'Retry';
+        calBtn.disabled = false;
+        document.getElementById('onboard-compass-status').textContent = 'Error: ' + (d.message || 'unknown');
+      }
+    }).catch(() => {
+      calBtn.textContent = 'Retry';
+      calBtn.disabled = false;
     });
   }
 
   function onboardSkipCompass() {
-    // Assume current direction is North (don't send any calibration)
+    // Assume current direction is North — send ZERO to zero encoder at current position
+    fetch('/api/calibrate-north', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: '{}'})
+      .catch(() => {});
+    _onboardGoStep(3);
+  }
+
+  function onboardAntennaAttached() {
+    _onboardGoStep(4);
+    // Detect hardware while user sees step 4
+    fetch('/api/detect-hardware').then(r => r.json()).then(hw => {
+      const statusEl = document.getElementById('onboard-hw-status');
+      const parts = [];
+      if (hw.cc1200 && hw.cc1200.detected) parts.push('CC1200 HAT');
+      if (hw.rtlsdr && hw.rtlsdr.detected) parts.push('RTL-SDR');
+      if (hw.rotator && hw.rotator.detected) parts.push('Rotator');
+      statusEl.textContent = parts.length ? 'Detected: ' + parts.join(', ') : 'No RF hardware detected';
+      statusEl.style.color = parts.length ? 'var(--green)' : 'var(--amber)';
+      // Highlight detected options
+      if (hw.cc1200 && hw.cc1200.detected)
+        document.getElementById('onboard-rf-cc1200').style.borderColor = 'var(--green)';
+      if (hw.rtlsdr && hw.rtlsdr.detected)
+        document.getElementById('onboard-rf-rtlsdr').style.borderColor = 'var(--green)';
+    }).catch(() => {
+      document.getElementById('onboard-hw-status').textContent = 'Could not detect hardware';
+    });
+  }
+
+  function onboardSelectRF(mode) {
+    // Show step 5 and complete setup on server
+    fetch('/api/setup-complete', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({rf_mode: mode}),
+    }).then(r => r.json()).then(d => {
+      if (d.ok) {
+        _onboardGoStep(5);
+        // Try to show next pass info
+        fetch('/api/passes').then(r => r.json()).then(passes => {
+          const el = document.getElementById('onboard-next-pass');
+          if (passes && passes.length) {
+            const p = passes[0];
+            el.textContent = 'Next pass: ' + (p.name || p.satellite) + ' at ' + (p.rise_time_local || p.rise_time || '');
+          }
+        }).catch(() => {});
+      }
+    }).catch(() => {
+      _onboardGoStep(5);
+    });
+  }
+
+  function onboardFinish() {
     hideOnboarding();
+  }
+
+  function _onboardGoStep(n) {
+    for (let i = 1; i <= 5; i++) {
+      const step = document.getElementById('onboard-step-' + i);
+      const dot = document.getElementById('onboard-dot-' + i);
+      if (step) step.classList.toggle('active', i === n);
+      if (dot) dot.classList.toggle('active', i === n);
+    }
+    if (n === 2) _initOnboardCompass();
   }
 
   /* =========================================================================

@@ -17,9 +17,14 @@ Architecture:
     - GET  /                    → dashboard.html from same directory
     - GET  /api/status          → JSON status blob (polled by JS)
     - GET  /api/passes          → upcoming satellite passes (PyEphem)
+    - GET  /api/detect-hardware → probe CC1200, RTL-SDR, rotator
+    - GET  /api/setup-status    → check if setup wizard is complete
     - POST /api/location        → save lat/lon/elev to ~/station.conf
     - POST /api/position        → send position command to rotctld
     - POST /api/park            → send park command to rotctld
+    - POST /api/calibrate-north → zero AZ encoder (direct serial ZERO cmd)
+    - POST /api/setup-complete  → mark setup wizard done, save RF mode
+    - POST /api/reset-setup     → reset setup_complete flag (re-run wizard)
     - POST /api/shutdown        → park rotator + sudo shutdown
 
 Flags:
@@ -101,6 +106,7 @@ status = {
                 "queued": 0, "failed": 0, "last_submit": None},
     "last_update": "",
     "simulation": False,
+    "setup_complete": False,
 }
 status_lock = threading.Lock()
 
@@ -424,6 +430,7 @@ def polling_loop():
                         "set": lat is not None,
                     }
                     status["last_update"] = datetime.datetime.now().strftime("%H:%M:%S")
+                    status["setup_complete"] = is_setup_complete()
             else:
                 connected, az, el = poll_rotctld()
 
@@ -472,6 +479,7 @@ def polling_loop():
                     status["satnogs"] = satnogs_status
                     status["last_update"] = datetime.datetime.now().strftime("%H:%M:%S")
                     status["simulation"] = False
+                    status["setup_complete"] = is_setup_complete()
         except Exception:
             pass
 
@@ -702,7 +710,7 @@ _pass_cache = []           # cached computed passes
 _pass_cache_time = 0.0     # unix timestamp of last computation
 _pass_computing = False    # True while background computation is running
 _pass_cache_lock = threading.Lock()
-PASS_CACHE_SECONDS = 60    # recompute every minute (removes passed sats, adds new ones)
+PASS_CACHE_SECONDS = 900   # recompute every 15 min
 
 
 _pass_progress = ""  # human-readable progress string
@@ -771,7 +779,7 @@ def _recompute_passes_if_stale():
         _pass_progress = f"Computing {batch_end}/{total} satellites..."
 
         batch_passes = _compute_passes_batch(
-            batch_items, lat, lon, elev, hours=12)
+            batch_items, lat, lon, elev, hours=2)
         all_passes.extend(batch_passes)
 
         # Push partial results so the frontend has something to show
@@ -787,7 +795,7 @@ def _recompute_passes_if_stale():
     _pass_progress = ""
 
 
-def _compute_passes_batch(tle_items, lat, lon, elev, hours=12):
+def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
     """Compute passes for a batch of TLE items. Returns list of pass dicts."""
     observer = ephem.Observer()
     observer.lat = str(lat)
@@ -899,7 +907,7 @@ def get_pass_progress():
     return _pass_progress
 
 
-def compute_passes(lat, lon, elev, hours=12, max_passes=50):
+def compute_passes(lat, lon, elev, hours=2, max_passes=50):
     """Compute upcoming passes using PyEphem. Returns list of pass dicts."""
     if not EPHEM_AVAILABLE:
         return []
@@ -1053,6 +1061,128 @@ def do_shutdown():
     subprocess.Popen(["sudo", "shutdown", "-h", "now"])
 
 
+def calibrate_north():
+    """Send ZERO command to rotator to reset AZ encoder to 0° (= North).
+
+    rotctld's EasyComm backend does NOT support arbitrary command passthrough
+    (the 'w' command only works with standard EasyComm commands). So we must:
+    1. Disconnect our rotctld socket
+    2. Stop rotctld systemd service (releases serial port)
+    3. Open serial port directly and send ZERO
+    4. Restart rotctld
+
+    Returns (ok, message)."""
+    import glob as _glob
+    try:
+        import serial
+    except ImportError:
+        return False, "pyserial not available"
+
+    # Find the rotator serial port
+    ports = _glob.glob("/dev/ttyACM*")
+    if not ports:
+        return False, "No rotator USB serial port found"
+    port = ports[0]
+
+    # Disconnect our cached rotctld socket (it will reconnect on next poll)
+    _rotctl_disconnect()
+
+    # Stop rotctld so it releases the serial port
+    subprocess.run(["sudo", "systemctl", "stop", "rotctld.service"],
+                   capture_output=True, timeout=5)
+    time.sleep(1)
+
+    # Send ZERO directly
+    resp_text = ""
+    try:
+        ser = serial.Serial(port, 115200, timeout=2)
+        time.sleep(0.2)
+        # Flush any stale data
+        ser.reset_input_buffer()
+        ser.write(b"ZERO\n")
+        time.sleep(0.5)
+        resp_text = ser.read(ser.in_waiting or 128).decode(errors="replace").strip()
+        ser.close()
+    except Exception as e:
+        # Restart rotctld even if ZERO failed
+        subprocess.run(["sudo", "systemctl", "start", "rotctld.service"],
+                       capture_output=True, timeout=5)
+        return False, f"Serial error: {e}"
+
+    # Restart rotctld
+    subprocess.run(["sudo", "systemctl", "start", "rotctld.service"],
+                   capture_output=True, timeout=5)
+
+    return True, resp_text or "Encoders zeroed"
+
+
+def detect_hardware():
+    """Probe for available RF hardware. Returns dict of detected devices."""
+    import glob as _glob
+
+    result = {
+        "cc1200": {"detected": False, "port": None},
+        "rtlsdr": {"detected": False, "device": None},
+        "rotator": {"detected": False, "port": None},
+    }
+
+    # Check rotator (USB ACM)
+    acm_ports = _glob.glob("/dev/ttyACM*")
+    if acm_ports:
+        result["rotator"]["detected"] = True
+        result["rotator"]["port"] = acm_ports[0]
+
+    # Check CC1200 HAT (UART /dev/serial0)
+    if os.path.exists("/dev/serial0"):
+        try:
+            import serial
+            ser = serial.Serial("/dev/serial0", 115200, timeout=1)
+            # Send a simple ping — the RF HAT firmware responds to NOP/version
+            # Use a minimal probe: just check if the port opens
+            ser.close()
+            result["cc1200"]["detected"] = True
+            result["cc1200"]["port"] = "/dev/serial0"
+        except Exception:
+            pass
+
+    # Check RTL-SDR (USB VID:PID 0bda:2838)
+    try:
+        r = subprocess.run(["lsusb"], capture_output=True, text=True, timeout=3)
+        if "0bda:2838" in r.stdout or "RTL2838" in r.stdout:
+            result["rtlsdr"]["detected"] = True
+            result["rtlsdr"]["device"] = "RTL2838"
+    except Exception:
+        pass
+
+    return result
+
+
+def save_setup_complete():
+    """Mark setup wizard as complete in station.conf."""
+    existing = {}
+    try:
+        if os.path.exists(STATION_CONF):
+            with open(STATION_CONF, "r") as f:
+                existing = json.load(f)
+    except Exception:
+        pass
+    existing["setup_complete"] = True
+    with open(STATION_CONF, "w") as f:
+        json.dump(existing, f, indent=4)
+
+
+def is_setup_complete():
+    """Check if setup wizard has been completed."""
+    try:
+        if os.path.exists(STATION_CONF):
+            with open(STATION_CONF, "r") as f:
+                cfg = json.load(f)
+            return cfg.get("setup_complete", False)
+    except Exception:
+        pass
+    return False
+
+
 # ---------------------------------------------------------------------------
 # Static file serving helpers
 # ---------------------------------------------------------------------------
@@ -1092,6 +1222,20 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         elif path.startswith("/api/observations/"):
             self._serve_observation(path)
+
+        elif path == "/api/detect-hardware":
+            if SIMULATE:
+                hw = {"cc1200": {"detected": True, "port": "/dev/serial0"},
+                      "rtlsdr": {"detected": True, "device": "RTL2838"},
+                      "rotator": {"detected": True, "port": "/dev/ttyACM0"}}
+            else:
+                hw = detect_hardware()
+            self._json_response(200, json.dumps(hw))
+
+        elif path == "/api/setup-status":
+            self._json_response(200, json.dumps({
+                "setup_complete": is_setup_complete()
+            }))
 
         elif path == "/" or path == "/index.html":
             self._serve_dashboard()
@@ -1220,6 +1364,49 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 with open(STATION_CONF, "w") as f:
                     json.dump(existing, f, indent=4)
                 self._json_response(200, json.dumps({"ok": True, "mode": mode}))
+            except Exception as e:
+                self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
+
+        elif path == "/api/calibrate-north":
+            if SIMULATE:
+                self._json_response(200, json.dumps(
+                    {"ok": True, "message": "Simulated: AZ zeroed to North"}))
+            else:
+                ok, msg = calibrate_north()
+                self._json_response(200, json.dumps({"ok": ok, "message": msg}))
+
+        elif path == "/api/setup-complete":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(length)) if length else {}
+                # Optionally save RF mode from the setup wizard
+                rf_mode = body.get("rf_mode")
+                if rf_mode and rf_mode in ("none", "cc1200", "rtlsdr", "auto"):
+                    existing = {}
+                    try:
+                        if os.path.exists(STATION_CONF):
+                            with open(STATION_CONF, "r") as f:
+                                existing = json.load(f)
+                    except Exception:
+                        pass
+                    existing["rf_mode"] = rf_mode
+                    with open(STATION_CONF, "w") as f:
+                        json.dump(existing, f, indent=4)
+                save_setup_complete()
+                self._json_response(200, json.dumps({"ok": True}))
+            except Exception as e:
+                self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
+
+        elif path == "/api/reset-setup":
+            try:
+                existing = {}
+                if os.path.exists(STATION_CONF):
+                    with open(STATION_CONF, "r") as f:
+                        existing = json.load(f)
+                existing["setup_complete"] = False
+                with open(STATION_CONF, "w") as f:
+                    json.dump(existing, f, indent=4)
+                self._json_response(200, json.dumps({"ok": True}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
