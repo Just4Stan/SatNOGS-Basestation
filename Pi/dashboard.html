@@ -891,7 +891,9 @@
       gap: 2px 6px;
       padding: 8px 8px;
       border-radius: var(--radius-sm);
-      margin-bottom: -1px; /* overlap slightly to prevent hover gaps */
+      margin-bottom: 0; /* no gap between items */
+      padding-top: 10px;
+      padding-bottom: 10px;
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s, opacity 0.2s;
       min-height: 44px;
@@ -3281,7 +3283,7 @@
 
       // Skip passes that already ended
       const secsUntilSet = secsUntil(pass.set_time);
-      if (secsUntilSet < 0) continue;
+      if (secsUntilSet < 0) return; // skip ended passes (forEach uses return, not continue)
 
       let timeStr, subStr;
       const secsUntilRise = secsUntil(pass.rise_time);
@@ -3850,6 +3852,7 @@
 
   /** Stop current tracking */
   function doStop() {
+    _pendingTrack = ''; // clear any pending track
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Stopping...';
     // Also disable auto-track so it doesn't immediately start the next pass

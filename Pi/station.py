@@ -162,8 +162,16 @@ def log(msg: str, logfile=None):
         logfile.flush()
 
 
+_tle_cache_station = []
+_tle_cache_station_time = 0.0
+
 def fetch_tles():
-    """Fetch TLE data from SatNOGS DB (primary) + AMSAT/CelesTrak (fallback)."""
+    """Fetch TLE data from SatNOGS DB (primary) + AMSAT/CelesTrak (fallback). Cached 30 min."""
+    global _tle_cache_station, _tle_cache_station_time
+    now = time.time()
+    if _tle_cache_station and (now - _tle_cache_station_time) < 1800:
+        return _tle_cache_station
+
     tles = []
     seen = set()
 
@@ -206,6 +214,9 @@ def fetch_tles():
                 log(f"  TLE: +{added} sats from {group}")
         except Exception as e:
             log(f"  TLE WARNING: failed to fetch {group}: {e}")
+    if tles:
+        _tle_cache_station = tles
+        _tle_cache_station_time = time.time()
     return tles
 
 
@@ -676,11 +687,26 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     wait = (rise_utc - now_utc).total_seconds()
     if wait > 0:
         log(f"Waiting {wait:.0f}s for AOS...", logfile)
+        stop_file = os.path.expanduser("~/.station_stop")
+        track_file_check = os.path.expanduser("~/.station_track")
         while wait > 0.5:
-            time.sleep(min(wait, 1.0))
+            time.sleep(min(wait, 3.0))
             now_utc = datetime.datetime.now(datetime.timezone.utc)
             wait = (rise_utc - now_utc).total_seconds()
             if not running:
+                return
+            # Check for stop or new track during AOS wait
+            if os.path.exists(stop_file):
+                os.remove(stop_file)
+                log("** STOP during AOS wait **", logfile)
+                try:
+                    with open(os.path.expanduser("~/.station_paused"), "w") as _pf:
+                        _pf.write("paused")
+                except Exception:
+                    pass
+                return
+            if os.path.exists(track_file_check):
+                log("New track request during AOS wait — aborting", logfile)
                 return
 
     log("** AOS — pass started **", logfile)
@@ -848,6 +874,23 @@ def _run_daemon(args, logfile):
     log("==========================================", logfile)
     log(" SatNOGS Station — DAEMON MODE", logfile)
     log("==========================================", logfile)
+
+    # Wait for setup wizard completion (GPS, north cal, antenna, RF mode)
+    log("Waiting for setup wizard completion (open dashboard on phone)...", logfile)
+    while running:
+        try:
+            if os.path.exists(STATION_CONF):
+                with open(STATION_CONF, "r") as f:
+                    _sc = json.load(f)
+                if _sc.get("setup_complete", False):
+                    break
+        except Exception:
+            pass
+        time.sleep(5)
+
+    if not running:
+        return
+    log("Setup wizard complete", logfile)
 
     # Wait for station.conf (set via phone GPS on dashboard)
     log("Waiting for station location (set GPS via dashboard)...", logfile)
