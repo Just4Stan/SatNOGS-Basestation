@@ -962,6 +962,30 @@ def _run_daemon(args, logfile):
                     os.remove(track_file)
                     if track_sat:
                         log(f"Manual track: {track_sat}", logfile)
+                        # If satellite not in AMSAT TLEs, fetch from SatNOGS DB
+                        search = track_sat.upper()
+                        found = any(search in n.upper() for n, l1, l2 in tles)
+                        if not found:
+                            log(f"Not in AMSAT, fetching from SatNOGS DB...", logfile)
+                            try:
+                                url = "https://db.satnogs.org/api/tle/?format=json"
+                                req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})
+                                resp = urllib.request.urlopen(req, timeout=20)
+                                data = json.loads(resp.read().decode())
+                                for sat in data:
+                                    name = sat.get("tle0", "").strip()
+                                    if name.startswith("0 "):
+                                        name = name[2:]
+                                    if search in name.upper():
+                                        l1 = sat.get("tle1", "").strip()
+                                        l2 = sat.get("tle2", "").strip()
+                                        if l1.startswith("1 ") and l2.startswith("2 "):
+                                            tles.append((name, l1, l2))
+                                            log(f"Found {name} in SatNOGS DB", logfile)
+                                            break
+                                del data  # free memory
+                            except Exception as e:
+                                log(f"SatNOGS DB fetch failed: {e}", logfile)
                 except Exception:
                     pass
 

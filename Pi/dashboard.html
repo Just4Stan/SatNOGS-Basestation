@@ -2343,6 +2343,7 @@
   let _isTracking     = false;   // currently tracking a satellite (from status API)
   let _hoveredPass    = null;    // index into _passes, hovered in pass list
   let _pendingTrack   = '';      // satellite name of pending track request
+  try { _pendingTrack = localStorage.getItem('pendingTrack') || ''; } catch(e) {}
 
   /* =========================================================================
      UTILITY HELPERS
@@ -3002,10 +3003,11 @@
 
     // Clear pending track once station starts tracking
     // Clear pending track when station starts tracking (case-insensitive match)
-    if (isTracking) _pendingTrack = '';
+    if (isTracking) { _pendingTrack = ''; try { localStorage.removeItem('pendingTrack'); } catch(e) {} }
     if (_pendingTrack && rf.satellite &&
         rf.satellite.toLowerCase().includes(_pendingTrack.toLowerCase().substring(0, 6))) {
-      _pendingTrack = ''; // name matched despite different casing between TLE sources
+      _pendingTrack = '';
+      try { localStorage.removeItem('pendingTrack'); } catch(e) {}
     }
 
     // If a track is pending, show waiting state regardless
@@ -4067,6 +4069,7 @@
   /** Track a specific satellite — called from pass list */
   function doTrackSat(satName) {
     _pendingTrack = satName;
+    try { localStorage.setItem('pendingTrack', satName); } catch(e) {}
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Waiting: ' + satName;
     const sd = document.getElementById('state-detail');
@@ -4112,6 +4115,7 @@
   window.doStop            = doStop;
   window.toggleAutoTrack   = toggleAutoTrack;
   window.toggleFilterPanel = toggleFilterPanel;
+  window.toggleFilter      = toggleFilter;
   window.setFilter         = setFilter;
   window.onboardSetGPS          = onboardSetGPS;
   window.onboardSkipGPS         = onboardSkipGPS;
