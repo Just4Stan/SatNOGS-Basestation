@@ -2279,9 +2279,16 @@
         </div>
       </article>
 
-      <!-- Power / Shutdown -->
+      <!-- Power -->
       <article class="card settings-section" aria-label="Power">
         <div class="card-title">Power</div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Restart Pi</div>
+            <div class="setting-sublabel">Reboots the Pi — services auto-start</div>
+          </div>
+          <button class="btn btn-accent" onclick="doRestart()">Restart</button>
+        </div>
         <div class="setting-row">
           <div>
             <div class="setting-label">Shutdown Pi</div>
@@ -3763,6 +3770,24 @@
     });
   }
 
+  function doRestart() {
+    if (!confirm('Restart the Pi?\n\nServices will auto-start after reboot (~60s).')) return;
+    fetch('/api/restart', { method: 'POST' }).catch(() => {});
+    document.body.innerHTML = `
+      <div style="
+        display:flex; flex-direction:column; align-items:center; justify-content:center;
+        height:100svh; height:100vh;
+        background:#0a0e1a; color:#38bdf8;
+        font-family:'Space Grotesk',sans-serif; gap:20px;
+      ">
+        <div class="loading-spinner" style="width:40px;height:40px;border:2px solid rgba(56,189,248,0.15);border-top-color:#38bdf8;border-radius:50%;animation:spin 0.85s linear infinite"></div>
+        <div style="font-size:2rem; font-weight:700; letter-spacing:.3em;">AETHER</div>
+        <div style="font-size:1rem; color:#94a3b8;">Restarting — reconnecting in 60s...</div>
+      </div>`;
+    // Auto-reload after 60 seconds
+    setTimeout(() => { window.location.reload(); }, 60000);
+  }
+
   function doShutdown() {
     if (!confirm('Shut down the Pi?\n\nThe antenna will park first. This takes ~5 seconds.')) return;
     fetch('/api/shutdown', { method: 'POST' }).catch(() => {});
@@ -4098,7 +4123,7 @@
         const cx = mx * scaleX, cy = my * scaleY;
 
         // Find nearest trajectory point
-        let bestIdx = null, bestDist = 30 * (window.devicePixelRatio || 1); // 30px threshold
+        let bestIdx = null, bestDist = 15 * (window.devicePixelRatio || 1); // 15px threshold (tighter)
         _passes.forEach((pass, idx) => {
           if (!pass.trajectory) return;
           pass.trajectory.forEach(pt => {
@@ -4385,6 +4410,7 @@
   window.setGPS            = setGPS;
   window.doPark            = doPark;
   window.doGoto            = doGoto;
+  window.doRestart         = doRestart;
   window.doShutdown        = doShutdown;
   window.switchPage        = switchPage;
   window.doSetNorth        = doSetNorth;

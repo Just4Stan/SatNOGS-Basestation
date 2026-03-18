@@ -1515,6 +1515,13 @@ class DashboardHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
+        elif path == "/api/restart":
+            if SIMULATE:
+                self._json_response(200, json.dumps({"ok": False, "error": "Not available in simulation"}))
+            else:
+                self._json_response(200, json.dumps({"ok": True}))
+                threading.Thread(target=lambda: (send_park(), time.sleep(3), subprocess.Popen(["sudo", "reboot"])), daemon=True).start()
+
         elif path == "/api/shutdown":
             if SIMULATE:
                 self._json_response(200, json.dumps(
