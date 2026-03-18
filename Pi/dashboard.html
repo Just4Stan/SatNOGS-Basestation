@@ -1786,14 +1786,12 @@
           </article>
         </div>
 
-        <!-- CENTER COLUMN: Sky Plot -->
-        <div class="track-col-center">
-          <article class="card" id="card-skyplot" aria-label="Sky plot">
-            <div class="card-title">Sky Plot</div>
-            <div id="sky-canvas-wrap">
-              <canvas id="sky-canvas" aria-label="Polar sky plot showing satellite trajectories"></canvas>
-            </div>
-          </article>
+        <!-- CENTER COLUMN: Sky Plot (no card wrapper, just the canvas) -->
+        <div class="track-col-center" id="card-skyplot">
+          <div id="sky-canvas-wrap">
+            <canvas id="sky-canvas" aria-label="Polar sky plot showing satellite trajectories"
+                    style="border-radius:16px"></canvas>
+          </div>
         </div>
 
         <!-- RIGHT COLUMN: RF Status + Rotator -->
@@ -1944,30 +1942,15 @@
           </div>
         </article>
 
-        <!-- SYSTEM STATUS -->
-        <article class="card" id="card-system" aria-label="System status">
-          <div class="card-title">System</div>
-          <div class="sys-bar">
-            <div class="sys-stat">
-              <span class="sys-label">Temp</span>
-              <span class="sys-val" id="sys-temp">-- &deg;C</span>
-            </div>
-            <div class="sys-stat">
-              <span class="sys-label">RAM</span>
-              <div class="ram-track" title="RAM usage">
-                <div id="ram-bar" style="width:0%"></div>
-              </div>
-              <span class="sys-val" id="sys-ram">-- / -- MB</span>
-            </div>
-            <div class="sys-stat">
-              <span class="sys-label">Uptime</span>
-              <span class="sys-val" id="sys-uptime">---</span>
-            </div>
-            <div class="sys-update">
-              <span id="sys-last-update">--:--:--</span>
-            </div>
-          </div>
-        </article>
+        <!-- System card moved to settings — hidden here, IDs kept for JS -->
+        <div style="display:none" aria-hidden="true">
+          <span id="card-system"></span>
+          <span id="sys-temp"></span>
+          <span id="sys-ram"></span>
+          <span id="sys-uptime"></span>
+          <span id="sys-last-update"></span>
+          <div id="ram-bar"></div>
+        </div>
       </div>
 
     </div><!-- /#page-track -->
