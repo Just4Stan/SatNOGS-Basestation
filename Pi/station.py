@@ -773,6 +773,12 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             rf.stop_rx()
             m = rf.get_metrics()
             log(f"Pass summary: {m.packets} packets, {m.total_bytes} bytes ({rf.name()})", logfile)
+        # Always park after tracking ends (clean exit)
+        try:
+            rotctl.park()
+            log("Parked after pass", logfile)
+        except Exception:
+            pass
         clear_dashboard_status()
 
     if rf:
@@ -921,14 +927,16 @@ def _run_daemon(args, logfile):
                     if not running:
                         break
 
-                    # Skip passes already in progress or past — only track from AOS
+                    # Skip passes already ended
                     now_utc = datetime.datetime.now(datetime.timezone.utc)
                     rise_utc = p["rise_time"].replace(tzinfo=datetime.timezone.utc)
                     set_utc = p["set_time"].replace(tzinfo=datetime.timezone.utc)
                     if now_utc >= set_utc:
                         continue  # pass already ended
-                    if now_utc > rise_utc:
-                        # Already in progress — skip unless less than 20% through
+                    # In auto mode, skip passes already well in progress
+                    # In manual mode (user selected), allow joining mid-pass
+                    is_manual = bool(track_sat)
+                    if now_utc > rise_utc and not is_manual:
                         elapsed = (now_utc - rise_utc).total_seconds()
                         if elapsed > p["duration"] * 0.2:
                             log(f"Skipping {p['name']} — already {elapsed:.0f}s in", logfile)
@@ -961,6 +969,25 @@ def _run_daemon(args, logfile):
                                buzzer=buzzer,
                                lat=sta_lat, lon=sta_lon, elev=sta_elev,
                                satnogs=satnogs)
+
+                    # Check for new manual track request between passes
+                    stop_file = os.path.expanduser("~/.station_stop")
+                    if os.path.exists(stop_file):
+                        os.remove(stop_file)
+                    try:
+                        if os.path.exists(STATION_CONF):
+                            with open(STATION_CONF, "r") as f:
+                                _c2 = json.load(f)
+                            if _c2.get("track_mode") == "manual" and _c2.get("track_satellite"):
+                                log(f"New track request: {_c2['track_satellite']}", logfile)
+                                break  # break inner loop to re-enter outer loop with new target
+                            # Check auto-track toggle
+                            if _c2.get("auto_track") is False:
+                                log("Auto-track disabled — waiting", logfile)
+                                break
+                    except Exception:
+                        pass
+
                     if i < len(passes) - 1 and running:
                         rotctl.park()
                         # Flush queued frames between passes (internet may be up now)

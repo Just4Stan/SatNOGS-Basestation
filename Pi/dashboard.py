@@ -444,13 +444,15 @@ def polling_loop():
                 if rf_data and "satnogs" in rf_data:
                     satnogs_status = rf_data["satnogs"]
 
-                # Read current rf_mode from station.conf
+                # Read current rf_mode and auto_track from station.conf
                 rf_mode = "auto"
+                auto_track = True
                 try:
                     if os.path.exists(STATION_CONF):
                         with open(STATION_CONF, "r") as f:
                             _conf = json.load(f)
                         rf_mode = _conf.get("rf_mode", "auto")
+                        auto_track = _conf.get("auto_track", True)
                 except Exception:
                     pass
 
@@ -461,6 +463,7 @@ def polling_loop():
                     }
                     status["rf"] = rf_status
                     status["rf_mode"] = rf_mode
+                    status["auto_track"] = auto_track
                     status["system"] = sys_stats
                     status["location"] = {
                         "lat": lat, "lon": lon, "elev": elev,
@@ -800,6 +803,28 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._json_response(200, json.dumps({"ok": True}))
             except Exception as e:
                 self._json_response(500, json.dumps({"ok": False, "error": str(e)}))
+
+        elif path == "/api/auto-track":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(length))
+                enabled = body.get("enabled", True)
+                existing = {}
+                try:
+                    if os.path.exists(STATION_CONF):
+                        with open(STATION_CONF, "r") as f:
+                            existing = json.load(f)
+                except Exception:
+                    pass
+                existing["auto_track"] = bool(enabled)
+                if enabled:
+                    existing["track_mode"] = "auto"
+                    existing["track_satellite"] = ""
+                with open(STATION_CONF, "w") as f:
+                    json.dump(existing, f, indent=4)
+                self._json_response(200, json.dumps({"ok": True, "auto_track": bool(enabled)}))
+            except Exception as e:
+                self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
         elif path == "/api/track":
             try:

@@ -593,17 +593,16 @@
       width: 100%;
       height: auto;
       border-radius: 8px;
-      /* Enforce minimum height on mobile */
-      min-height: 280px;
+      min-height: 240px;
     }
     @media (min-width: 640px) {
       #sky-canvas {
-        min-height: 340px;
+        min-height: 280px;
       }
     }
     @media (min-width: 900px) {
       #sky-canvas {
-        min-height: 420px;
+        min-height: 340px;
       }
     }
 
@@ -1399,7 +1398,15 @@
 
       <!-- UPCOMING PASSES -->
       <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
-        <div class="card-title">Upcoming Passes</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="card-title" style="margin-bottom:0">Upcoming Passes</div>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.72rem;color:var(--muted)">
+            Auto
+            <input type="checkbox" id="auto-track-toggle" checked
+                   onchange="toggleAutoTrack(this.checked)"
+                   style="width:36px;height:20px;accent-color:var(--accent);cursor:pointer">
+          </label>
+        </div>
         <div class="pass-list" id="pass-list" role="list">
           <div id="passes-empty">No pass data — waiting for API...</div>
         </div>
@@ -2133,17 +2140,17 @@
       ctx.fillStyle = '#ef4444';
       ctx.fill();
 
-      // Satellite name label at AOS (only for active, selected, or next pass)
-      if (isActive || isSelected || isNext) {
+      // Satellite name label at AOS — always show for first 5, selected, or active
+      if (idx < 5 || isActive || isSelected || isNext) {
         const labelSize = clamp(size * 0.025, 7, 11);
         ctx.font = `500 ${labelSize}px var(--font-head, sans-serif)`;
-        ctx.fillStyle = isActive ? '#38bdf8' : color;
-        // Position label offset from AOS dot
-        const lx = aosPos.x + 6;
-        const ly = aosPos.y - 6;
-        ctx.textAlign = 'left';
-        // Truncate long names
-        const shortName = pass.name.length > 12 ? pass.name.substring(0, 12) + '\u2026' : pass.name;
+        ctx.fillStyle = isActive ? '#38bdf8' : isSelected ? color : color + 'aa';
+        // Position label — offset from AOS, avoid overlapping center
+        const angle = Math.atan2(aosPos.y - cy, aosPos.x - cx);
+        const lx = aosPos.x + Math.cos(angle) * 10;
+        const ly = aosPos.y + Math.sin(angle) * 10 - 4;
+        ctx.textAlign = aosPos.x > cx ? 'left' : 'right';
+        const shortName = pass.name.length > 14 ? pass.name.substring(0, 14) + '\u2026' : pass.name;
         ctx.fillText(shortName, lx, ly);
       }
     });
@@ -2619,6 +2626,12 @@
         snSettingsStatus.textContent = 'Not configured — add API token in station settings';
         snSettingsStatus.style.color = 'var(--muted)';
       }
+    }
+
+    // ── Auto-track toggle sync ──
+    const atToggle = document.getElementById('auto-track-toggle');
+    if (atToggle && d.auto_track !== undefined) {
+      atToggle.checked = d.auto_track;
     }
 
     // ── Simulation badge ──
@@ -3105,33 +3118,54 @@
 
   /** Stop current tracking */
   function doStop() {
+    const sl = document.getElementById('state-label');
+    if (sl) sl.textContent = 'Stopping...';
     fetch('/api/stop', { method: 'POST' })
       .then(r => r.json())
       .then(d => {
-        if (d.ok) {
-          const sl = document.getElementById('state-label');
-          if (sl) { sl.textContent = 'Stopping...'; }
-        }
-      });
+        if (!d.ok && sl) sl.textContent = 'Stop failed';
+      })
+      .catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
+  }
+
+  /** Toggle auto-track mode */
+  function toggleAutoTrack(enabled) {
+    fetch('/api/auto-track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }),
+    });
   }
 
   /** Track a specific satellite — called from pass list */
   function doTrackSat(satName) {
-    fetch('/api/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ satellite: satName, mode: 'manual' }),
+    // Immediate feedback on state bar
+    const sl = document.getElementById('state-label');
+    if (sl) sl.textContent = 'Starting track: ' + satName + '...';
+
+    // Stop current tracking first, then request new
+    fetch('/api/stop', { method: 'POST' }).then(() => {
+      return fetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ satellite: satName, mode: 'manual' }),
+      });
     }).then(r => r.json()).then(d => {
       if (d.ok) {
-        // Visual feedback — briefly highlight the item
-        const items = document.querySelectorAll('.pass-item');
-        items.forEach(item => {
+        if (sl) sl.textContent = 'Tracking: ' + satName;
+        // Highlight the item
+        document.querySelectorAll('.pass-item').forEach(item => {
           if (item.textContent.includes(satName)) {
             item.style.borderColor = 'var(--green)';
-            setTimeout(() => { item.style.borderColor = ''; }, 2000);
+            item.style.background = 'rgba(74,222,128,0.08)';
+            setTimeout(() => { item.style.borderColor = ''; item.style.background = ''; }, 3000);
           }
         });
+      } else {
+        if (sl) sl.textContent = 'Track failed: ' + (d.error || 'unknown');
       }
+    }).catch(() => {
+      if (sl) sl.textContent = 'Cannot reach station';
     });
   }
 
@@ -3145,6 +3179,7 @@
   window.doPhoneCompassCal = doPhoneCompassCal;
   window.doTrackSat       = doTrackSat;
   window.doStop           = doStop;
+  window.toggleAutoTrack  = toggleAutoTrack;
 
   </script>
 
