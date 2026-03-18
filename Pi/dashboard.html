@@ -3057,6 +3057,8 @@
     const stateDetail = document.getElementById('state-detail');
     const isTracking = !!(rf.satellite && rf.pass_progress > 0 && rf.pass_progress < 100);
     _isTracking = isTracking;
+    // Store tracked satellite name so applyPasses can match the right active pass
+    _passes._trackedName = rf.satellite || '';
 
     stateBar.className = ''; // reset
     const stopBtn = document.getElementById('stop-btn');
@@ -3407,10 +3409,23 @@
     _nextPassIdx   = null;
     let nextIdx    = null;
 
+    // If tracking, match by satellite name first (not just timing)
+    const trackedSat = _isTracking ? (_passes._trackedName || '') : '';
+
     _passes.forEach((p, i) => {
       const rise = new Date(p.rise_time).getTime();
       const set  = new Date(p.set_time).getTime();
-      if (now >= rise && now < set) _activePassIdx = i;
+      if (now >= rise && now < set) {
+        // If we're tracking a specific satellite, only set active for THAT satellite
+        if (trackedSat) {
+          if (p.name.toLowerCase().includes(trackedSat.toLowerCase()) ||
+              trackedSat.toLowerCase().includes(p.name.toLowerCase())) {
+            _activePassIdx = i;
+          }
+        } else {
+          _activePassIdx = i;
+        }
+      }
       else if (now < rise && nextIdx === null) nextIdx = i;
     });
     _nextPassIdx = nextIdx;
