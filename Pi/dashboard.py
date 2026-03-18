@@ -34,6 +34,7 @@ Flags:
     --bind <addr>               → bind address (default 0.0.0.0)
 """
 
+import gc
 import os
 import sys
 import json
@@ -239,7 +240,7 @@ class Simulator:
 
             # Generate trajectory points (21 points → 20 intervals)
             trajectory = []
-            n_points = 20
+            n_points = 10
             az_span = (set_az - rise_az + 360) % 360
             for i in range(n_points + 1):
                 t_frac = i / n_points
@@ -774,7 +775,7 @@ def _recompute_passes_if_stale():
     # Compute in batches of 100 — push partial results after each batch
     all_passes = []
     total = len(items)
-    batch_size = 100
+    batch_size = 50  # smaller batches = less peak RAM
 
     for batch_start in range(0, total, batch_size):
         batch_end = min(batch_start + batch_size, total)
@@ -788,14 +789,16 @@ def _recompute_passes_if_stale():
         # Push partial results so the frontend has something to show
         all_passes.sort(key=lambda p: p.get("rise_time", ""))
         with _pass_cache_lock:
-            _pass_cache = all_passes[:50]
+            _pass_cache = all_passes[:25]
+        gc.collect()  # free memory between batches
 
     with _pass_cache_lock:
         all_passes.sort(key=lambda p: p.get("rise_time", ""))
-        _pass_cache = all_passes[:50]
+        _pass_cache = all_passes[:25]
         _pass_cache_time = time.time()
     _pass_computing = False
     _pass_progress = ""
+    gc.collect()  # final cleanup
 
 
 def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
@@ -838,7 +841,7 @@ def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
 
                 # Trajectory: 20 points
                 trajectory = []
-                n_points = 20
+                n_points = 10
                 for i in range(n_points + 1):
                     t_frac = i / n_points
                     t_ephem = rise_t + (set_t - rise_t) * t_frac
@@ -910,7 +913,7 @@ def get_pass_progress():
     return _pass_progress
 
 
-def compute_passes(lat, lon, elev, hours=2, max_passes=50):
+def compute_passes(lat, lon, elev, hours=2, max_passes=25):
     """Compute upcoming passes using PyEphem. Returns list of pass dicts."""
     if not EPHEM_AVAILABLE:
         return []
@@ -962,7 +965,7 @@ def compute_passes(lat, lon, elev, hours=2, max_passes=50):
 
                 # Compute trajectory: ~20 points along the pass
                 trajectory = []
-                n_points = 20
+                n_points = 10
                 for i in range(n_points + 1):
                     t_frac = i / n_points
                     t_ephem = rise_t + (set_t - rise_t) * t_frac
@@ -1371,11 +1374,22 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
         elif path == "/api/calibrate-north":
+            # Read optional heading from POST body (for logging only)
+            heading = None
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                if length:
+                    body = json.loads(self.rfile.read(length))
+                    heading = body.get("heading")
+            except Exception:
+                pass
             if SIMULATE:
                 self._json_response(200, json.dumps(
-                    {"ok": True, "message": "Simulated: AZ zeroed to North"}))
+                    {"ok": True, "message": f"Simulated: AZ zeroed to North (phone heading: {heading})"}))
             else:
                 ok, msg = calibrate_north()
+                if heading is not None:
+                    msg += f" (phone compass: {heading}\u00B0)"
                 self._json_response(200, json.dumps({"ok": ok, "message": msg}))
 
         elif path == "/api/setup-complete":
