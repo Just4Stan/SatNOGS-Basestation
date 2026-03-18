@@ -479,6 +479,7 @@ def polling_loop():
         try:
             if not SIMULATE:
                 _recompute_passes_if_stale()
+                _fetch_transmitters()  # enrich with freq/modulation data
         except Exception:
             pass
 
@@ -544,6 +545,87 @@ def fetch_tles():
 
 
 # ---------------------------------------------------------------------------
+# SatNOGS DB transmitter cache — enriches passes with freq/modulation info
+# ---------------------------------------------------------------------------
+_transmitter_cache = {}       # norad_id -> [{freq, mode, baud, description, ...}]
+_transmitter_cache_time = 0.0
+TRANSMITTER_CACHE_SECONDS = 7200  # 2 hours
+
+# CC1200-compatible modulations
+CC1200_MODES = {'GFSK', 'GMSK', 'FSK', 'MSK', 'OOK', 'ASK', '2FSK', '2GFSK', '4FSK', '4GFSK',
+                'AFSK', 'FM'}  # AFSK/FM are borderline but listed for display
+# Modulations that need RTL-SDR
+RTLSDR_ONLY_MODES = {'BPSK', 'DBPSK', 'QPSK', 'OQPSK', 'DQPSK', 'LoRa', 'SSTV', 'CW', 'USB', 'LSB'}
+
+
+def _fetch_transmitters():
+    """Fetch satellite transmitter data from SatNOGS DB API."""
+    global _transmitter_cache, _transmitter_cache_time
+
+    now = time.time()
+    if _transmitter_cache and (now - _transmitter_cache_time) < TRANSMITTER_CACHE_SECONDS:
+        return
+
+    import urllib.request
+    try:
+        url = "https://db.satnogs.org/api/transmitters/?format=json&status=active"
+        req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})
+        resp = urllib.request.urlopen(req, timeout=15)
+        data = json.loads(resp.read().decode())
+
+        tx_map = {}
+        for tx in data:
+            norad = tx.get("norad_cat_id")
+            if not norad:
+                continue
+            if norad not in tx_map:
+                tx_map[norad] = []
+            freq = tx.get("downlink_low") or tx.get("uplink_low") or 0
+            mode = tx.get("mode") or ""
+            baud = tx.get("baud") or 0
+            tx_map[norad].append({
+                "freq_hz": freq,
+                "freq_mhz": round(freq / 1e6, 3) if freq else 0,
+                "mode": mode,
+                "baud": baud,
+                "description": tx.get("description", ""),
+                "type": tx.get("type", ""),
+                "band": _freq_to_band(freq),
+                "cc1200_ok": mode.upper().replace("-", "").replace(" ", "") in
+                             {m.upper().replace("-", "") for m in CC1200_MODES},
+                "rtlsdr_ok": True,  # RTL-SDR can capture anything
+            })
+
+        _transmitter_cache = tx_map
+        _transmitter_cache_time = now
+    except Exception:
+        pass  # silently fail — passes work without enrichment
+
+
+def _freq_to_band(freq_hz):
+    """Classify frequency into band name."""
+    if not freq_hz:
+        return ""
+    f = freq_hz / 1e6
+    if f < 30:
+        return "HF"
+    elif f < 300:
+        return "VHF"
+    elif f < 1000:
+        return "UHF"
+    elif f < 3000:
+        return "L-band"
+    elif f < 10000:
+        return "S-band"
+    return "other"
+
+
+def get_transmitter_info(norad_id):
+    """Get transmitter info for a satellite. Returns list of transmitters."""
+    return _transmitter_cache.get(norad_id, [])
+
+
+# ---------------------------------------------------------------------------
 # Pass computation cache — runs in background thread, never blocks HTTP
 # ---------------------------------------------------------------------------
 _pass_cache = []           # cached computed passes
@@ -574,9 +656,32 @@ def _recompute_passes_if_stale():
 
 
 def get_cached_passes():
-    """Get the most recent pass computation (never blocks)."""
+    """Get the most recent pass computation, enriched with transmitter data."""
     with _pass_cache_lock:
-        return list(_pass_cache)
+        passes = list(_pass_cache)
+
+    # Enrich with transmitter data if available (may have been fetched after passes)
+    if _transmitter_cache:
+        for p in passes:
+            norad = p.get("norad_id", 0)
+            if norad and "freq_mhz" not in p:
+                tx_list = get_transmitter_info(norad)
+                best_tx = None
+                for tx in tx_list:
+                    if 400e6 <= (tx.get("freq_hz") or 0) <= 470e6:
+                        if best_tx is None or abs(tx["freq_hz"] - 433e6) < abs(best_tx["freq_hz"] - 433e6):
+                            best_tx = tx
+                if not best_tx and tx_list:
+                    best_tx = tx_list[0]
+                if best_tx:
+                    p["freq_mhz"] = best_tx.get("freq_mhz", 0)
+                    p["mode"] = best_tx.get("mode", "")
+                    p["baud"] = best_tx.get("baud", 0)
+                    p["band"] = best_tx.get("band", "")
+                    p["cc1200_ok"] = best_tx.get("cc1200_ok", False)
+                    p["rtlsdr_ok"] = True
+
+    return passes
 
 
 def is_pass_computing():
@@ -649,8 +754,27 @@ def compute_passes(lat, lon, elev, hours=12, max_passes=10):
                         "t": round(t_frac * duration),
                     })
 
-                passes.append({
+                # Extract NORAD ID from TLE line 1
+                norad_id = 0
+                try:
+                    norad_id = int(l1[2:7].strip())
+                except Exception:
+                    pass
+
+                # Enrich with transmitter info from SatNOGS DB
+                tx_list = get_transmitter_info(norad_id)
+                # Pick the best UHF transmitter (closest to 433 MHz)
+                best_tx = None
+                for tx in tx_list:
+                    if 400e6 <= (tx.get("freq_hz") or 0) <= 470e6:
+                        if best_tx is None or abs(tx["freq_hz"] - 433e6) < abs(best_tx["freq_hz"] - 433e6):
+                            best_tx = tx
+                if not best_tx and tx_list:
+                    best_tx = tx_list[0]  # fallback to first transmitter
+
+                pass_entry = {
                     "name": name,
+                    "norad_id": norad_id,
                     "rise_time": rise_dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "set_time": set_dt.strftime("%Y-%m-%dT%H:%M:%SZ"),
                     "max_el": round(max_el_deg, 1),
@@ -658,7 +782,16 @@ def compute_passes(lat, lon, elev, hours=12, max_passes=10):
                     "rise_az": round(math.degrees(float(rise_az)), 1),
                     "set_az": round(math.degrees(float(set_az)), 1),
                     "trajectory": trajectory,
-                })
+                }
+                if best_tx:
+                    pass_entry["freq_mhz"] = best_tx.get("freq_mhz", 0)
+                    pass_entry["mode"] = best_tx.get("mode", "")
+                    pass_entry["baud"] = best_tx.get("baud", 0)
+                    pass_entry["band"] = best_tx.get("band", "")
+                    pass_entry["cc1200_ok"] = best_tx.get("cc1200_ok", False)
+                    pass_entry["rtlsdr_ok"] = True
+
+                passes.append(pass_entry)
 
                 # Advance past this pass to find the next one for this satellite
                 observer.date = set_t + ephem.minute

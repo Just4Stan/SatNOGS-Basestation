@@ -963,6 +963,23 @@
       font-size: 0.64rem !important;
       flex-shrink: 0;
     }
+    .filter-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 99px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
     #passes-empty {
       text-align: center;
       color: var(--muted-dim);
@@ -1786,10 +1803,26 @@
           <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
             <div class="passes-header">
               <div class="card-title">Passes</div>
-              <label class="auto-track-label" title="Auto mode: automatically tracks the next best satellite pass. Turn off to manually select which satellite to track.">
-                Auto
-                <input type="checkbox" id="auto-track-toggle" onchange="toggleAutoTrack(this.checked)">
-              </label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button class="filter-btn" id="filter-toggle-btn" onclick="toggleFilterPanel()"
+                        title="Filter satellites by frequency, modulation, compatibility"
+                        style="background:none;border:1px solid var(--card-border);border-radius:6px;color:var(--muted);padding:3px 8px;font-size:0.65rem;cursor:pointer;font-family:var(--font-mono)">Filter</button>
+                <label class="auto-track-label" title="Auto mode: automatically tracks the next best satellite pass. Turn off to manually select which satellite to track.">
+                  Auto
+                  <input type="checkbox" id="auto-track-toggle" onchange="toggleAutoTrack(this.checked)">
+                </label>
+              </div>
+            </div>
+
+            <!-- Filter panel (hidden by default) -->
+            <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
+              <div style="display:flex;flex-wrap:wrap;gap:4px">
+                <button class="filter-chip active" data-filter="all" onclick="setFilter('all')">All</button>
+                <button class="filter-chip" data-filter="uhf" onclick="setFilter('uhf')">UHF</button>
+                <button class="filter-chip" data-filter="vhf" onclick="setFilter('vhf')">VHF</button>
+                <button class="filter-chip" data-filter="cc1200" onclick="setFilter('cc1200')">CC1200</button>
+                <button class="filter-chip" data-filter="rtlsdr" onclick="setFilter('rtlsdr')">RTL-SDR</button>
+              </div>
             </div>
             <div class="pass-list" id="pass-list" role="list">
               <div class="passes-loading">
@@ -2216,13 +2249,7 @@
   </div><!-- /#app -->
 
 
-  <!-- Three.js + Vanta.js (CDN, graceful degradation) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"
-          crossorigin="anonymous"
-          onerror="window._threeLoaded=false"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.globe.min.js"
-          crossorigin="anonymous"
-          onerror="window._vantaLoaded=false"></script>
+  <!-- Three.js + Vanta.js removed — too heavy on GPU/RAM -->
 
   <!-- GSAP (CDN, graceful degradation) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
@@ -2287,30 +2314,8 @@
      VANTA.JS GLOBE BACKGROUND
      ========================================================================= */
   function initVanta() {
-    try {
-      if (typeof VANTA === 'undefined' || typeof THREE === 'undefined') return;
-      _vantaEffect = VANTA.GLOBE({
-        el:           "#vanta-bg",
-        THREE:        THREE,
-        mouseControls:   false,
-        touchControls:   false,
-        gyroControls:    false,
-        backgroundColor: 0x0a0e1a,
-        color:           0x38bdf8,
-        color2:          0x1e3a5f,
-        size:            1.0,
-        points:          8.0,
-        maxDistance:     22.0,
-        spacing:         17.0,
-      });
-      // Fade the vanta layer in once it's rendered
-      setTimeout(() => {
-        document.getElementById('vanta-bg').classList.add('ready');
-      }, 600);
-    } catch (e) {
-      // Offline or library issue — star CSS background stays visible
-      console.warn('Vanta.js init failed (offline?):', e.message);
-    }
+    // Vanta.js 3D globe disabled — uses too much GPU/RAM on client devices
+    // The CSS star background provides the visual effect without GPU cost
   }
 
   /* =========================================================================
@@ -2702,10 +2707,14 @@
   }
 
   /** Animation loop — only redraws when data changes or pulsing dot needs update */
+  let _lastSkyDraw = 0;
   function skyRenderLoop() {
-    // Always redraw for the pulsing dot if rotator is active
-    if (_rotConnected || _skyNeedsRedraw) {
+    const now = Date.now();
+    // Throttle to ~4 fps (250ms) unless data changed, then draw immediately
+    if (_skyNeedsRedraw || ((_rotConnected || _isTracking) && now - _lastSkyDraw > 250)) {
       drawSkyPlot();
+      _skyNeedsRedraw = false;
+      _lastSkyDraw = now;
     }
     _rafHandle = requestAnimationFrame(skyRenderLoop);
   }
@@ -3174,9 +3183,16 @@
     );
     _skyNeedsRedraw = true;
 
+    // Apply filter
+    let filtered = _passes;
+    if (_activeFilter === 'uhf') filtered = _passes.filter(p => p.band === 'UHF' || !p.band);
+    else if (_activeFilter === 'vhf') filtered = _passes.filter(p => p.band === 'VHF');
+    else if (_activeFilter === 'cc1200') filtered = _passes.filter(p => p.cc1200_ok);
+    else if (_activeFilter === 'rtlsdr') filtered = _passes.filter(p => !p.cc1200_ok);
+
     const listEl = document.getElementById('pass-list');
 
-    if (_passes.length === 0) {
+    if (filtered.length === 0 && _passes.length === 0) {
       const isComputing = data.computing;
       if (isComputing) {
         listEl.innerHTML = '<div style="text-align:center;padding:24px 0"><div class="mini-spinner" style="margin:0 auto 8px"></div><div style="color:var(--accent);font-size:0.80rem">Computing passes...</div><div style="color:var(--muted);font-size:0.68rem;margin-top:4px">~30s on first load</div></div>';
@@ -3202,12 +3218,14 @@
     // Toggle dim class based on selection
     listEl.classList.toggle('has-selection', _selectedPass !== null);
 
-    _passes.forEach((pass, idx) => {
-      const isNext   = (idx === nextIdx);
-      const isActive = (idx === _activePassIdx);
+    filtered.forEach((pass, idx) => {
+      // Map back to _passes index for sky plot selection
+      const globalIdx = _passes.indexOf(pass);
+      const isNext   = (globalIdx === nextIdx);
+      const isActive = (globalIdx === _activePassIdx);
       const item     = document.createElement('div');
       item.className = 'pass-item' + (isNext ? ' next' : '') +
-                       (idx === _selectedPass ? ' selected' : '');
+                       (globalIdx === _selectedPass ? ' selected' : '');
       item.setAttribute('role', 'listitem');
       item.setAttribute('tabindex', '0');
       item.setAttribute('aria-label',
@@ -3230,16 +3248,22 @@
         subStr  = 'Dur: ' + fmtDuration(pass.duration);
       }
 
+      // Transmitter metadata
+      const freqStr = pass.freq_mhz ? pass.freq_mhz.toFixed(1) + ' MHz' : '';
+      const modeStr = pass.mode || '';
+      const compatClass = pass.cc1200_ok ? 'compat-cc1200' : pass.rtlsdr_ok ? 'compat-rtlsdr' : 'compat-none';
+      const compatLabel = pass.cc1200_ok ? 'CC' : 'SDR';
+
       item.innerHTML = `
         <div class="pass-item-name${isNext ? ' next-label' : ''}">${pass.name}</div>
         <div class="max-el-badge">${pass.max_el.toFixed(0)}&deg;</div>
         <button class="btn btn-accent pass-track-btn" onclick="event.stopPropagation();doTrackSat('${pass.name.replace(/'/g, "\\'")}')">&#9654;</button>
-        <div class="pass-meta-bot" style="grid-column:1/4">${timeStr} &middot; ${subStr}</div>
+        <div class="pass-meta-bot" style="grid-column:1/4">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}</div>
       `;
 
       // Tap to select and highlight trajectory
       const selectFn = () => {
-        _selectedPass   = (_selectedPass === idx) ? null : idx;
+        _selectedPass   = (_selectedPass === globalIdx) ? null : globalIdx;
         _skyNeedsRedraw = true;
         applyPasses({ passes: _passes }); // re-render list
       };
@@ -3770,6 +3794,22 @@
       .catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
   }
 
+  /** Toggle filter panel visibility */
+  let _activeFilter = 'all';
+  function toggleFilterPanel() {
+    const panel = document.getElementById('filter-panel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+
+  /** Set active filter and re-render pass list */
+  function setFilter(filter) {
+    _activeFilter = filter;
+    document.querySelectorAll('.filter-chip').forEach(c => {
+      c.classList.toggle('active', c.getAttribute('data-filter') === filter);
+    });
+    applyPasses({ passes: _passes, computing: false });
+  }
+
   /** Toggle auto-track mode */
   function toggleAutoTrack(enabled) {
     fetch('/api/auto-track', {
@@ -3822,6 +3862,8 @@
   window.doTrackSat        = doTrackSat;
   window.doStop            = doStop;
   window.toggleAutoTrack   = toggleAutoTrack;
+  window.toggleFilterPanel = toggleFilterPanel;
+  window.setFilter         = setFilter;
   window.onboardSetGPS     = onboardSetGPS;
   window.onboardSkipGPS    = onboardSkipGPS;
   window.onboardCalibrate  = onboardCalibrate;
