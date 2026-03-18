@@ -1873,14 +1873,28 @@
 
             <!-- Filter panel (hidden by default) -->
             <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
-              <div style="display:flex;flex-wrap:wrap;gap:3px">
+              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Band</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
                 <button class="filter-chip" data-filter="all" onclick="toggleFilter('all')">All</button>
                 <button class="filter-chip active" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
                 <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (144)</button>
+              </div>
+              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Receiver</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
                 <button class="filter-chip" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
-                <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR</button>
-                <button class="filter-chip" data-filter="high" onclick="toggleFilter('high')">&gt;45°</button>
-                <button class="filter-chip" data-filter="medium" onclick="toggleFilter('medium')">&gt;20°</button>
+                <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR only</button>
+              </div>
+              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Category</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
+                <button class="filter-chip" data-filter="amateur" onclick="toggleFilter('amateur')">Amateur</button>
+                <button class="filter-chip" data-filter="cubesat" onclick="toggleFilter('cubesat')">CubeSat</button>
+                <button class="filter-chip" data-filter="weather" onclick="toggleFilter('weather')">Weather</button>
+                <button class="filter-chip" data-filter="space-station" onclick="toggleFilter('space-station')">Station</button>
+              </div>
+              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Quality</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px">
+                <button class="filter-chip" data-filter="high" onclick="toggleFilter('high')">&gt;45&deg;</button>
+                <button class="filter-chip" data-filter="medium" onclick="toggleFilter('medium')">&gt;20&deg;</button>
               </div>
             </div>
             <div class="pass-list" id="pass-list" role="list">
@@ -2276,6 +2290,22 @@
     <footer id="site-footer">
     </footer>
 
+    <!-- SATELLITE INFO POPUP -->
+    <div id="sat-popup" style="display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px" onclick="closeSatPopup()">
+      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:24px;max-width:420px;width:100%;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)" onclick="event.stopPropagation()">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-weight:700;font-size:1.1rem" id="popup-sat-name">---</div>
+          <button onclick="closeSatPopup()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:4px">&times;</button>
+        </div>
+        <div id="popup-sat-details" style="font-family:var(--font-mono);font-size:0.78rem;color:var(--muted);line-height:1.8">
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button class="btn btn-accent" id="popup-track-btn" style="flex:1;min-height:44px" onclick="popupTrack()">Track This Satellite</button>
+          <button class="btn btn-amber" style="min-height:44px;padding:0 16px" onclick="closeSatPopup()">Close</button>
+        </div>
+      </div>
+    </div>
+
     <!-- BOTTOM TAB BAR -->
     <nav id="tab-bar" aria-label="Navigation">
       <button class="tab-item active" data-page="page-track" onclick="switchPage('page-track')">
@@ -2651,7 +2681,7 @@
       ctx.fill();
 
       // Collect label info for non-overlapping placement (drawn after all arcs)
-      if (idx < 8 || isActive || isSelected || isNext) {
+      if (idx < 3 || isActive || isSelected || isHovered || isNext || isPendingTarget) {
         // Pick label position at the trajectory midpoint (most visible spot)
         const midIdx = Math.floor(pass.trajectory.length / 2);
         const midPt = pass.trajectory[midIdx];
@@ -3309,6 +3339,11 @@
         if (_activeFilters.has('rtlsdr') && p.cc1200_ok) ok = false;
         if (_activeFilters.has('high') && p.max_el < 45) ok = false;
         if (_activeFilters.has('medium') && p.max_el < 20) ok = false;
+        // Category filters
+        if (_activeFilters.has('amateur') && p.category !== 'amateur') ok = false;
+        if (_activeFilters.has('cubesat') && p.category !== 'cubesat') ok = false;
+        if (_activeFilters.has('weather') && p.category !== 'weather') ok = false;
+        if (_activeFilters.has('space-station') && p.category !== 'space-station') ok = false;
         return ok;
       });
     }
@@ -3399,11 +3434,12 @@
         <div class="pass-meta-bot" style="grid-column:1/4">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}</div>
       `;
 
-      // Tap to select and highlight trajectory
+      // Click to open satellite info popup
+      const passData = pass;
       const selectFn = () => {
-        _selectedPass   = (_selectedPass === globalIdx) ? null : globalIdx;
+        _selectedPass = (_selectedPass === globalIdx) ? null : globalIdx;
         _skyNeedsRedraw = true;
-        applyPasses({ passes: _passes }); // re-render list
+        showSatPopup(passData);
       };
       item.addEventListener('click', selectFn);
       item.addEventListener('keydown', e => {
@@ -4046,6 +4082,51 @@
       .catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
   }
 
+  /** Satellite info popup */
+  let _popupSatName = '';
+  function showSatPopup(pass) {
+    _popupSatName = pass.name;
+    document.getElementById('popup-sat-name').textContent = pass.name;
+    const details = document.getElementById('popup-sat-details');
+    const freq = pass.freq_mhz ? pass.freq_mhz.toFixed(3) + ' MHz' : 'Unknown';
+    const mode = pass.mode || 'Unknown';
+    const compat = pass.cc1200_ok ? 'CC1200 (hardware modem)' : 'RTL-SDR (software defined)';
+    const cat = pass.category || 'Unknown';
+    const maxEl = pass.max_el ? pass.max_el.toFixed(1) + '\u00B0' : '--';
+    const norad = pass.norad_id || '--';
+    const dur = pass.duration ? fmtDuration(pass.duration) : '--';
+    const riseAz = pass.rise_az ? pass.rise_az.toFixed(0) + '\u00B0' : '--';
+    const setAz = pass.set_az ? pass.set_az.toFixed(0) + '\u00B0' : '--';
+
+    details.innerHTML = `
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px">
+        <span style="color:var(--muted)">NORAD ID</span><span>${norad}</span>
+        <span style="color:var(--muted)">Category</span><span style="text-transform:capitalize">${cat.replace('-',' ')}</span>
+        <span style="color:var(--muted)">Frequency</span><span>${freq}</span>
+        <span style="color:var(--muted)">Modulation</span><span>${mode}</span>
+        <span style="color:var(--muted)">Receiver</span><span>${compat}</span>
+        <span style="color:var(--muted)">Max Elevation</span><span>${maxEl}</span>
+        <span style="color:var(--muted)">Duration</span><span>${dur}</span>
+        <span style="color:var(--muted)">Rise &rarr; Set</span><span>AZ ${riseAz} &rarr; ${setAz}</span>
+        <span style="color:var(--muted)">Rise Time</span><span>${pass.rise_time ? fmtTime(pass.rise_time) : '--'}</span>
+      </div>
+      ${norad !== '--' ? '<div style="margin-top:12px"><a href="https://db.satnogs.org/satellite/' + norad + '/" target="_blank" rel="noopener" style="color:var(--accent);font-size:0.72rem;text-decoration:none">View on SatNOGS DB &rarr;</a></div>' : ''}
+    `;
+    document.getElementById('sat-popup').style.display = 'flex';
+  }
+
+  function closeSatPopup() {
+    document.getElementById('sat-popup').style.display = 'none';
+    _popupSatName = '';
+  }
+
+  function popupTrack() {
+    if (_popupSatName) {
+      doTrackSat(_popupSatName);
+      closeSatPopup();
+    }
+  }
+
   /** Toggle filter panel visibility */
   let _activeFilters = new Set(['uhf']); // default: only show UHF (our frequency)
   function toggleFilterPanel() {
@@ -4130,6 +4211,9 @@
   window.doStop            = doStop;
   window.toggleAutoTrack   = toggleAutoTrack;
   window.toggleFilterPanel = toggleFilterPanel;
+  window.showSatPopup      = showSatPopup;
+  window.closeSatPopup     = closeSatPopup;
+  window.popupTrack        = popupTrack;
   window.toggleFilter      = toggleFilter;
   window.setFilter         = setFilter;
   window.onboardSetGPS          = onboardSetGPS;

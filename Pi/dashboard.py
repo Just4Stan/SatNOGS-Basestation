@@ -49,6 +49,39 @@ import datetime
 import threading
 import subprocess
 from pathlib import Path
+
+# ---------------------------------------------------------------------------
+# RAM protection — Pi 3A+ has only 416MB
+# ---------------------------------------------------------------------------
+RAM_LIMIT_MB = 300  # abort computation if RAM exceeds this
+
+
+def _get_ram_used_mb():
+    """Get current RAM usage in MB."""
+    try:
+        with open("/proc/meminfo", "r") as f:
+            lines = f.readlines()
+        mem = {}
+        for line in lines:
+            parts = line.split()
+            if len(parts) >= 2:
+                mem[parts[0].rstrip(":")] = int(parts[1])
+        total = mem.get("MemTotal", 0) // 1024
+        avail = mem.get("MemAvailable", mem.get("MemFree", 0)) // 1024
+        return total - avail
+    except Exception:
+        return 0
+
+
+def _check_ram(context=""):
+    """Check RAM and force GC if above threshold. Returns True if OK."""
+    used = _get_ram_used_mb()
+    if used > RAM_LIMIT_MB:
+        gc.collect()
+        used = _get_ram_used_mb()
+        if used > RAM_LIMIT_MB:
+            return False  # still too high after GC
+    return True
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # Optional: ephem for real pass prediction
@@ -645,6 +678,9 @@ def _fetch_transmitters():
     if _transmitter_cache and (now - _transmitter_cache_time) < TRANSMITTER_CACHE_SECONDS:
         return
 
+    if not _check_ram("transmitter_fetch"):
+        return  # skip if RAM too high
+
     import urllib.request
     try:
         url = "https://db.satnogs.org/api/transmitters/?format=json&status=active"
@@ -680,8 +716,26 @@ def _fetch_transmitters():
 
         _transmitter_cache = tx_map
         _transmitter_cache_time = now
+        del data
+        gc.collect()
     except Exception:
         pass  # silently fail — passes work without enrichment
+
+
+def _classify_satellite(name):
+    """Classify satellite by category from name patterns."""
+    n = name.upper()
+    if any(x in n for x in ['ISS', 'ZARYA', 'NAUKA', 'TIANHE']):
+        return 'space-station'
+    if any(x in n for x in ['NOAA', 'METEOR', 'FENGYUN', 'METOP']):
+        return 'weather'
+    if any(x in n for x in ['CUBESAT', 'CUBE', 'SAT-', 'NANOSAT', 'PICOSAT']):
+        return 'cubesat'
+    if any(x in n for x in ['OSCAR', 'AO-', 'FO-', 'SO-', 'CO-', 'AMSAT', 'HAMSAT']):
+        return 'amateur'
+    if any(x in n for x in ['COSMOS', 'OBJECT', 'DEB', 'R/B']):
+        return 'debris'
+    return 'other'
 
 
 def _freq_to_band(freq_hz):
@@ -778,6 +832,11 @@ def _recompute_passes_if_stale():
     batch_size = 50  # smaller batches = less peak RAM
 
     for batch_start in range(0, total, batch_size):
+        # RAM protection: abort if memory too high
+        if not _check_ram("pass_computation"):
+            _pass_progress = f"Stopped at {batch_start}/{total} (RAM limit)"
+            break
+
         batch_end = min(batch_start + batch_size, total)
         batch_items = items[batch_start:batch_end]
         _pass_progress = f"Computing {batch_end}/{total} satellites..."
@@ -790,7 +849,7 @@ def _recompute_passes_if_stale():
         all_passes.sort(key=lambda p: p.get("rise_time", ""))
         with _pass_cache_lock:
             _pass_cache = all_passes[:25]
-        gc.collect()  # free memory between batches
+        gc.collect()
 
     with _pass_cache_lock:
         all_passes.sort(key=lambda p: p.get("rise_time", ""))
@@ -798,7 +857,16 @@ def _recompute_passes_if_stale():
         _pass_cache_time = time.time()
     _pass_computing = False
     _pass_progress = ""
-    gc.collect()  # final cleanup
+    gc.collect()
+
+    # Save TLE cache to disk so station.py can use it (unified data source)
+    try:
+        tle_file = os.path.expanduser("~/.station_tles.json")
+        with open(tle_file, "w") as f:
+            # Save as {name: [l1, l2]} dict
+            json.dump({name: list(lines) for name, lines in tles.items()}, f)
+    except Exception:
+        pass
 
 
 def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
@@ -919,6 +987,9 @@ def get_cached_passes():
                     p["band"] = best_tx.get("band", "")
                     p["cc1200_ok"] = best_tx.get("cc1200_ok", False)
                     p["rtlsdr_ok"] = True
+            # Always add category
+            if "category" not in p:
+                p["category"] = _classify_satellite(p.get("name", ""))
 
     return passes
 

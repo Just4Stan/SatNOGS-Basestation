@@ -166,7 +166,7 @@ _tle_cache_station = []
 _tle_cache_station_time = 0.0
 
 def fetch_tles():
-    """Fetch TLE data from SatNOGS DB (primary) + AMSAT/CelesTrak (fallback). Cached 30 min."""
+    """Fetch TLEs. Uses dashboard's cache first, then AMSAT as fallback. Cached 30 min."""
     global _tle_cache_station, _tle_cache_station_time
     now = time.time()
     if _tle_cache_station and (now - _tle_cache_station_time) < 1800:
@@ -174,6 +174,23 @@ def fetch_tles():
 
     tles = []
     seen = set()
+
+    # Primary: dashboard's cached TLE file (shared data source, no extra API calls)
+    tle_file = os.path.expanduser("~/.station_tles.json")
+    try:
+        if os.path.exists(tle_file):
+            mtime = os.path.getmtime(tle_file)
+            if now - mtime < 7200:  # use if less than 2 hours old
+                with open(tle_file, "r") as f:
+                    data = json.load(f)
+                for name, lines in data.items():
+                    if len(lines) == 2 and lines[0].startswith("1 ") and lines[1].startswith("2 "):
+                        tles.append((name, lines[0], lines[1]))
+                        seen.add(name)
+                log(f"  TLE: {len(tles)} sats from dashboard cache")
+                del data
+    except Exception as e:
+        log(f"  TLE: dashboard cache failed: {e}")
 
     # Only use AMSAT + CelesTrak for station.py (lightweight, ~80 sats)
     # Dashboard.py handles the full SatNOGS DB catalog separately
