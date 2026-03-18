@@ -2374,7 +2374,17 @@
   let _isTracking     = false;   // currently tracking a satellite (from status API)
   let _hoveredPass    = null;    // index into _passes, hovered in pass list
   let _pendingTrack   = '';      // satellite name of pending track request
-  try { _pendingTrack = localStorage.getItem('pendingTrack') || ''; } catch(e) {}
+  let _pendingTrackTime = 0;    // when the pending track was set
+  try {
+    _pendingTrack = localStorage.getItem('pendingTrack') || '';
+    _pendingTrackTime = parseInt(localStorage.getItem('pendingTrackTime') || '0');
+    // Auto-clear stale pending tracks (older than 5 minutes)
+    if (_pendingTrack && Date.now() - _pendingTrackTime > 300000) {
+      _pendingTrack = '';
+      localStorage.removeItem('pendingTrack');
+      localStorage.removeItem('pendingTrackTime');
+    }
+  } catch(e) {}
 
   /* =========================================================================
      UTILITY HELPERS
@@ -2631,7 +2641,7 @@
       } else if (_pendingTrack && !isPendingTarget) {
         // Dim others but keep visible
         ctx.strokeStyle = color + '40';
-        ctx.lineWidth = 1.0;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       } else if (_isTracking && !isActive) {
         // Tracking: hide non-active
@@ -2640,14 +2650,14 @@
         ctx.lineWidth = 3.5;
         ctx.stroke();
       } else if (isHovered) {
-        // Hovered pass: bright and thick
+        // Hovered pass: bright and very thick (5x)
         ctx.strokeStyle = color;
-        ctx.lineWidth = 3.0;
+        ctx.lineWidth = 5.0;
         ctx.stroke();
       } else if (anyHovered && !isHovered) {
-        // Something is hovered but not this one: dim
-        ctx.strokeStyle = color + '20';
-        ctx.lineWidth = 0.7;
+        // Something is hovered: dim others
+        ctx.strokeStyle = color + '30';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
       } else if (isSelected) {
         ctx.strokeStyle = color;
@@ -2663,9 +2673,9 @@
         ctx.lineWidth = 2.5;
         ctx.stroke();
       } else {
-        // Default: all visible
+        // Default: all visible (2x thickness)
         ctx.strokeStyle = color + '88';
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       }
 
@@ -4187,7 +4197,8 @@
   /** Track a specific satellite — called from pass list */
   function doTrackSat(satName) {
     _pendingTrack = satName;
-    try { localStorage.setItem('pendingTrack', satName); } catch(e) {}
+    _pendingTrackTime = Date.now();
+    try { localStorage.setItem('pendingTrack', satName); localStorage.setItem('pendingTrackTime', String(Date.now())); } catch(e) {}
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Waiting: ' + satName;
     const sd = document.getElementById('state-detail');
