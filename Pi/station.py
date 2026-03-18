@@ -901,23 +901,18 @@ def _run_daemon(args, logfile):
                 time.sleep(60)
                 continue
 
-            # Read tracking preference from station.conf (set by dashboard)
+            # Read tracking preference — check track file first (most reliable)
             track_sat = args.sat  # CLI arg takes priority
-            try:
-                if os.path.exists(STATION_CONF):
-                    with open(STATION_CONF, "r") as f:
-                        _conf = json.load(f)
-                    track_mode = _conf.get("track_mode", "auto")
-                    if track_mode == "manual" and _conf.get("track_satellite"):
-                        track_sat = _conf["track_satellite"]
-                        log(f"Dashboard selected: {track_sat}", logfile)
-                        # Clear after reading so it doesn't repeat forever
-                        _conf["track_mode"] = "auto"
-                        _conf["track_satellite"] = ""
-                        with open(STATION_CONF, "w") as f:
-                            json.dump(_conf, f, indent=4)
-            except Exception:
-                pass
+            track_file = os.path.expanduser("~/.station_track")
+            if not track_sat and os.path.exists(track_file):
+                try:
+                    with open(track_file, "r") as f:
+                        track_sat = f.read().strip()
+                    os.remove(track_file)
+                    if track_sat:
+                        log(f"Manual track: {track_sat}", logfile)
+                except Exception:
+                    pass
 
             # Filter by satellite name if specified
             if track_sat:
@@ -965,32 +960,32 @@ def _run_daemon(args, logfile):
                             # Auto-track on — user pressed stop but auto is enabled, resume
                             os.remove(paused_file)
 
-                    # Re-read station.conf for manual track requests and auto_track
+                    # Check for manual track request (file-based, always honored)
+                    track_file = os.path.expanduser("~/.station_track")
+                    if os.path.exists(track_file):
+                        try:
+                            with open(track_file, "r") as f:
+                                new_target = f.read().strip()
+                            os.remove(track_file)
+                            if new_target:
+                                log(f"New track request: {new_target}", logfile)
+                                break  # break inner loop to re-enter outer with new target
+                        except Exception:
+                            pass
+
+                    # If auto-track is off and no manual request, stay idle
                     try:
                         if os.path.exists(STATION_CONF):
                             with open(STATION_CONF, "r") as f:
                                 _ac = json.load(f)
-                            # Check for manual track request (always honored, even with auto off)
-                            if _ac.get("track_mode") == "manual" and _ac.get("track_satellite"):
-                                new_target = _ac["track_satellite"]
-                                log(f"Manual track request: {new_target}", logfile)
-                                # Clear it so it doesn't repeat
-                                _ac["track_mode"] = "auto"
-                                _ac["track_satellite"] = ""
-                                with open(STATION_CONF, "w") as f:
-                                    json.dump(_ac, f, indent=4)
-                                track_sat = new_target
-                                break  # break inner loop to re-enter with new target
-                            # If auto-track is off and no manual request, stay idle
                             if _ac.get("auto_track") is False and not bool(track_sat):
-                                log("Auto-track disabled — idle", logfile)
                                 write_dashboard_status({
                                     "streaming": False, "rssi": None, "packets": 0,
                                     "freq_mhz": 0, "satellite": "", "pass_progress": 0,
                                     "rf_backend": "none",
                                 })
                                 time.sleep(5)
-                                break  # break to outer loop, re-check config
+                                break  # break to outer loop, re-check
                     except Exception:
                         pass
 
@@ -1085,17 +1080,12 @@ def _run_daemon(args, logfile):
             # Short sleep between cycles — check for manual track requests every 3s
             log(f"Waiting for next cycle (checking every 3s)...", logfile)
             wait_end = time.time() + args.loop_delay
+            track_file = os.path.expanduser("~/.station_track")
             while running and time.time() < wait_end:
                 # Check for manual track request during sleep
-                try:
-                    if os.path.exists(STATION_CONF):
-                        with open(STATION_CONF, "r") as f:
-                            _wc = json.load(f)
-                        if _wc.get("track_mode") == "manual" and _wc.get("track_satellite"):
-                            log(f"Track request during sleep: {_wc['track_satellite']}", logfile)
-                            break  # exit sleep to process request
-                except Exception:
-                    pass
+                if os.path.exists(track_file):
+                    log("Track request received — waking up", logfile)
+                    break
                 time.sleep(3)
 
     finally:

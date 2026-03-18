@@ -1816,12 +1816,21 @@
 
             <!-- Filter panel (hidden by default) -->
             <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
-              <div style="display:flex;flex-wrap:wrap;gap:4px">
+              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Frequency</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
                 <button class="filter-chip active" data-filter="all" onclick="setFilter('all')">All</button>
-                <button class="filter-chip" data-filter="uhf" onclick="setFilter('uhf')">UHF</button>
+                <button class="filter-chip" data-filter="uhf" onclick="setFilter('uhf')">430-440 MHz</button>
                 <button class="filter-chip" data-filter="vhf" onclick="setFilter('vhf')">VHF</button>
+              </div>
+              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Receiver</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
                 <button class="filter-chip" data-filter="cc1200" onclick="setFilter('cc1200')">CC1200</button>
-                <button class="filter-chip" data-filter="rtlsdr" onclick="setFilter('rtlsdr')">RTL-SDR</button>
+                <button class="filter-chip" data-filter="rtlsdr" onclick="setFilter('rtlsdr')">SDR only</button>
+              </div>
+              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Quality</div>
+              <div style="display:flex;flex-wrap:wrap;gap:3px">
+                <button class="filter-chip" data-filter="high" onclick="setFilter('high')">High pass (&gt;45°)</button>
+                <button class="filter-chip" data-filter="medium" onclick="setFilter('medium')">Medium (&gt;20°)</button>
               </div>
             </div>
             <div class="pass-list" id="pass-list" role="list">
@@ -2686,8 +2695,8 @@
       }
     }
 
-    // ── Antenna pointing position (pulsing cyan dot) ──
-    if (_currentAz !== null && _currentEl !== null && _rotConnected) {
+    // ── Antenna pointing position (only shown during tracking) ──
+    if (_isTracking && _currentAz !== null && _currentEl !== null && _rotConnected) {
       const pos  = polarToXY(_currentAz, _currentEl, cx, cy, maxR);
       const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400);
 
@@ -3196,10 +3205,18 @@
 
     // Apply filter
     let filtered = _passes;
-    if (_activeFilter === 'uhf') filtered = _passes.filter(p => p.band === 'UHF' || !p.band);
-    else if (_activeFilter === 'vhf') filtered = _passes.filter(p => p.band === 'VHF');
+    if (_activeFilter === 'uhf') filtered = _passes.filter(p => {
+      const f = p.freq_mhz || 0;
+      return (f >= 430 && f <= 440) || !f; // include unknown freq
+    });
+    else if (_activeFilter === 'vhf') filtered = _passes.filter(p => {
+      const f = p.freq_mhz || 0;
+      return f >= 130 && f <= 175;
+    });
     else if (_activeFilter === 'cc1200') filtered = _passes.filter(p => p.cc1200_ok);
-    else if (_activeFilter === 'rtlsdr') filtered = _passes.filter(p => !p.cc1200_ok);
+    else if (_activeFilter === 'rtlsdr') filtered = _passes.filter(p => !p.cc1200_ok && p.mode);
+    else if (_activeFilter === 'high') filtered = _passes.filter(p => p.max_el >= 45);
+    else if (_activeFilter === 'medium') filtered = _passes.filter(p => p.max_el >= 20);
 
     const listEl = document.getElementById('pass-list');
 
@@ -3286,10 +3303,12 @@
       item.addEventListener('mouseenter', () => {
         _hoveredPass = globalIdx;
         _skyNeedsRedraw = true;
+        drawSkyPlot(); // immediate redraw on hover
       });
       item.addEventListener('mouseleave', () => {
         _hoveredPass = null;
         _skyNeedsRedraw = true;
+        drawSkyPlot(); // immediate redraw on leave
       });
 
       listEl.appendChild(item);

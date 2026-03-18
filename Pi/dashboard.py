@@ -525,8 +525,29 @@ def _fetch_tles_from_url(url):
         return {}
 
 
+def _fetch_tles_satnogs_db():
+    """Fetch TLEs from SatNOGS DB API (JSON). Returns dict of name -> (line1, line2)."""
+    import urllib.request
+    try:
+        url = "https://db.satnogs.org/api/tle/?format=json"
+        req = urllib.request.urlopen(
+            urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"}),
+            timeout=20)
+        data = json.loads(req.read().decode())
+        tles = {}
+        for sat in data:
+            name = sat.get("tle0", "").strip()
+            l1 = sat.get("tle1", "").strip()
+            l2 = sat.get("tle2", "").strip()
+            if name and l1.startswith("1 ") and l2.startswith("2 "):
+                tles[name] = (l1, l2)
+        return tles
+    except Exception:
+        return {}
+
+
 def fetch_tles():
-    """Fetch TLEs from CelesTrak (multiple groups). Cached for 2 hours."""
+    """Fetch TLEs from multiple sources. Cached for 2 hours."""
     global _tle_cache, _tle_cache_time
 
     now = time.time()
@@ -534,6 +555,12 @@ def fetch_tles():
         return _tle_cache
 
     combined = {}
+
+    # Primary: SatNOGS DB (1500+ satellites)
+    satnogs_tles = _fetch_tles_satnogs_db()
+    combined.update(satnogs_tles)
+
+    # Secondary: AMSAT + CelesTrak (may add some not in SatNOGS DB)
     for url in SATELLITE_GROUPS:
         tles = _fetch_tles_from_url(url)
         combined.update(tles)
@@ -688,7 +715,7 @@ def is_pass_computing():
     return _pass_computing
 
 
-def compute_passes(lat, lon, elev, hours=12, max_passes=10):
+def compute_passes(lat, lon, elev, hours=12, max_passes=50):
     """Compute upcoming passes using PyEphem. Returns list of pass dicts."""
     if not EPHEM_AVAILABLE:
         return []
@@ -974,20 +1001,17 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 length = int(self.headers.get("Content-Length", 0))
                 body = json.loads(self.rfile.read(length))
                 sat_name = body.get("satellite", "")
-                mode = body.get("mode", "auto")  # auto, manual, or specific sat name
-                # Save tracking preference to station.conf
-                existing = {}
-                try:
-                    if os.path.exists(STATION_CONF):
-                        with open(STATION_CONF, "r") as f:
-                            existing = json.load(f)
-                except Exception:
-                    pass
-                existing["track_mode"] = mode
-                existing["track_satellite"] = sat_name
-                with open(STATION_CONF, "w") as f:
-                    json.dump(existing, f, indent=4)
-                self._json_response(200, json.dumps({"ok": True, "mode": mode, "satellite": sat_name}))
+                # Write track file — station.py picks this up within 3s
+                track_file = os.path.expanduser("~/.station_track")
+                with open(track_file, "w") as f:
+                    f.write(sat_name)
+                # Also remove stop/pause flags
+                for flag in ["~/.station_stop", "~/.station_paused"]:
+                    try:
+                        os.remove(os.path.expanduser(flag))
+                    except FileNotFoundError:
+                        pass
+                self._json_response(200, json.dumps({"ok": True, "satellite": sat_name}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
