@@ -4111,9 +4111,11 @@
     }
 
     // 6b. Sky plot canvas hover — detect nearest trajectory on mousemove
+    // 6b. Sky plot canvas click — select nearest trajectory
     const skyCanvas = document.getElementById('sky-canvas');
     if (skyCanvas) {
-      skyCanvas.addEventListener('mousemove', function(e) {
+      skyCanvas.style.cursor = 'pointer';
+      skyCanvas.addEventListener('click', function(e) {
         if (!_passes.length || _isTracking || _pendingTrack) return;
         const rect = skyCanvas.getBoundingClientRect();
         const mx = e.clientX - rect.left;
@@ -4122,32 +4124,49 @@
         const scaleY = skyCanvas.height / rect.height;
         const cx = mx * scaleX, cy = my * scaleY;
 
-        // Find nearest trajectory point
-        let bestIdx = null, bestDist = 15 * (window.devicePixelRatio || 1); // 15px threshold (tighter)
+        // Find nearest trajectory
+        let bestIdx = null, bestDist = 25 * (window.devicePixelRatio || 1);
+        const wrap = document.getElementById('sky-canvas-wrap');
+        const size = wrap ? wrap.getBoundingClientRect().width : 400;
+        const dpr = window.devicePixelRatio || 1;
+        const pcx = size * dpr / 2, pcy = size * dpr / 2;
+        const maxR = pcx * 0.88;
+
         _passes.forEach((pass, idx) => {
           if (!pass.trajectory) return;
           pass.trajectory.forEach(pt => {
-            const wrap = document.getElementById('sky-canvas-wrap');
-            const size = wrap ? wrap.getBoundingClientRect().width : 400;
-            const dpr = window.devicePixelRatio || 1;
-            const pcx = size * dpr / 2, pcy = size * dpr / 2;
-            const maxR = pcx * 0.88;
             const pos = polarToXY(pt.az, pt.el, pcx, pcy, maxR);
             const d = Math.sqrt((pos.x - cx) ** 2 + (pos.y - cy) ** 2);
             if (d < bestDist) { bestDist = d; bestIdx = idx; }
           });
         });
-        if (bestIdx !== _hoveredPass) {
-          _hoveredPass = bestIdx;
+
+        if (bestIdx !== null) {
+          // Select it on the sky plot
+          _selectedPass = bestIdx;
           _skyNeedsRedraw = true;
           drawSkyPlot();
-        }
-      });
-      skyCanvas.addEventListener('mouseleave', function() {
-        if (_hoveredPass !== null) {
-          _hoveredPass = null;
+
+          // Open the satellite popup
+          showSatPopup(_passes[bestIdx]);
+
+          // Scroll the pass list to this satellite and highlight it
+          const passItems = document.querySelectorAll('.pass-item');
+          passItems.forEach((item, i) => {
+            if (item.textContent.includes(_passes[bestIdx].name)) {
+              item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              item.classList.add('selected');
+            }
+          });
+
+          // Re-render pass list to update selection styling
+          applyPasses({ passes: _passes, computing: false });
+        } else {
+          // Click on empty space — deselect
+          _selectedPass = null;
           _skyNeedsRedraw = true;
           drawSkyPlot();
+          applyPasses({ passes: _passes, computing: false });
         }
       });
     }
