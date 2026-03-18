@@ -537,6 +537,9 @@ def _fetch_tles_satnogs_db():
         tles = {}
         for sat in data:
             name = sat.get("tle0", "").strip()
+            # SatNOGS DB tle0 starts with "0 " — strip the line number prefix
+            if name.startswith("0 "):
+                name = name[2:]
             l1 = sat.get("tle1", "").strip()
             l2 = sat.get("tle2", "").strip()
             if name and l1.startswith("1 ") and l2.startswith("2 "):
@@ -686,15 +689,39 @@ def _recompute_passes_if_stale():
         _pass_progress = "No TLE data — check internet"
         return
 
-    _pass_progress = f"Loaded {len(tles)} satellites, computing passes..."
-
     if not EPHEM_AVAILABLE:
         _pass_computing = False
         return
 
+    # Pre-filter: only compute passes for satellites with receivable transmitters
+    # (UHF 430-440 MHz or VHF 130-175 MHz — our antenna bands)
+    if _transmitter_cache:
+        receivable_norads = set()
+        for norad, txs in _transmitter_cache.items():
+            for tx in txs:
+                f = tx.get("freq_hz", 0)
+                if (430e6 <= f <= 440e6) or (130e6 <= f <= 175e6):
+                    receivable_norads.add(norad)
+                    break
+
+        # Filter TLEs to only receivable satellites
+        filtered_items = []
+        for name, (l1, l2) in tles.items():
+            try:
+                norad = int(l1[2:7].strip())
+            except Exception:
+                norad = 0
+            if norad in receivable_norads or not _transmitter_cache:
+                filtered_items.append((name, (l1, l2)))
+
+        _pass_progress = f"Found {len(filtered_items)} receivable sats (of {len(tles)} total), computing..."
+        items = filtered_items
+    else:
+        _pass_progress = f"Loaded {len(tles)} satellites, computing passes..."
+        items = list(tles.items())
+
     # Compute in batches of 100 — push partial results after each batch
     all_passes = []
-    items = list(tles.items())
     total = len(items)
     batch_size = 100
 

@@ -890,7 +890,7 @@
       gap: 2px 6px;
       padding: 8px 8px;
       border-radius: var(--radius-sm);
-      margin-bottom: 2px;
+      margin-bottom: -1px; /* overlap slightly to prevent hover gaps */
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s, opacity 0.2s;
       min-height: 44px;
@@ -1817,8 +1817,8 @@
             <!-- Filter panel (hidden by default) -->
             <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
               <div style="display:flex;flex-wrap:wrap;gap:3px">
-                <button class="filter-chip active" data-filter="all" onclick="toggleFilter('all')">All</button>
-                <button class="filter-chip" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
+                <button class="filter-chip" data-filter="all" onclick="toggleFilter('all')">All</button>
+                <button class="filter-chip active" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
                 <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (144)</button>
                 <button class="filter-chip" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
                 <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR</button>
@@ -2285,6 +2285,7 @@
   let _wasTracking    = false;   // previous poll tracking state (for LOS detection)
   let _isTracking     = false;   // currently tracking a satellite (from status API)
   let _hoveredPass    = null;    // index into _passes, hovered in pass list
+  let _pendingTrack   = '';      // satellite name of pending track request
 
   /* =========================================================================
      UTILITY HELPERS
@@ -2930,9 +2931,17 @@
 
     stateBar.className = ''; // reset
     const stopBtn = document.getElementById('stop-btn');
-    if (stopBtn) stopBtn.style.display = isTracking ? 'flex' : 'none';
+    if (stopBtn) stopBtn.style.display = (isTracking || _pendingTrack) ? 'flex' : 'none';
 
-    if (!_rotConnected) {
+    // Clear pending track once station starts tracking
+    if (isTracking) _pendingTrack = '';
+
+    // If a track is pending, show waiting state regardless
+    if (_pendingTrack && !isTracking) {
+      stateBar.classList.add('waiting');
+      stateLabel.textContent = 'Waiting: ' + _pendingTrack;
+      stateDetail.textContent = 'Station processing...';
+    } else if (!_rotConnected) {
       stateBar.classList.add('disconnected');
       stateLabel.textContent = 'Rotator Disconnected';
       stateDetail.textContent = 'Check USB connection';
@@ -3854,7 +3863,7 @@
   }
 
   /** Toggle filter panel visibility */
-  let _activeFilters = new Set(['all']);
+  let _activeFilters = new Set(['uhf']); // default: only show UHF (our frequency)
   function toggleFilterPanel() {
     const panel = document.getElementById('filter-panel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
@@ -3890,9 +3899,13 @@
 
   /** Track a specific satellite — called from pass list */
   function doTrackSat(satName) {
-    // Immediate feedback on state bar
+    _pendingTrack = satName;
     const sl = document.getElementById('state-label');
-    if (sl) sl.textContent = 'Starting track: ' + satName + '...';
+    if (sl) sl.textContent = 'Waiting: ' + satName;
+    const sd = document.getElementById('state-detail');
+    if (sd) sd.textContent = 'Sending to station...';
+    const sb = document.getElementById('station-state');
+    if (sb) { sb.className = ''; sb.classList.add('waiting'); }
 
     // Stop current tracking first, then request new
     fetch('/api/stop', { method: 'POST' }).then(() => {
