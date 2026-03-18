@@ -3326,11 +3326,21 @@
     });
   }
 
+  let _passPolling = false;
   function pollPasses() {
+    if (_passPolling) return; // prevent overlapping requests
+    _passPolling = true;
     fetch('/api/passes')
       .then(r => r.json())
-      .then(d => applyPasses(d))
-      .catch(() => {});
+      .then(d => {
+        _passPolling = false;
+        applyPasses(d);
+        // If still computing, poll again in 3s for live updates
+        if (d.computing) {
+          setTimeout(pollPasses, 3000);
+        }
+      })
+      .catch(() => { _passPolling = false; });
   }
 
   /* =========================================================================
