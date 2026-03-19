@@ -3120,7 +3120,7 @@
       return (tName && (aName === tName || aName.includes(tName) || tName.includes(aName))) ||
              (pName && (aName === pName || aName.includes(pName) || pName.includes(aName)));
     })();
-    if (_focusGuardOk && _activePassIdx !== null && _passes[_activePassIdx]) {
+    if (_isTracking && _focusGuardOk && _activePassIdx !== null && _passes[_activePassIdx]) {
       const activePass = _passes[_activePassIdx];
       const traj = activePass.trajectory;
       if (traj && traj.length >= 2 && _passProgress > 0) {
@@ -3747,6 +3747,7 @@
       stateBar.classList.add('parked');
       stateLabel.textContent = 'Pass Complete — LOS';
       stateDetail.textContent = '';
+      _selectedPass = null; // clear any stale selection
       setTimeout(() => pollPasses(), 500);
       setTimeout(() => pollPassHistory(), 1000); // refresh history after pass
     }
