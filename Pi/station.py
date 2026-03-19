@@ -801,9 +801,17 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             az = math.degrees(float(sat.az))
             el = math.degrees(float(sat.alt))
 
-            # Send to rotator
+            # Send to rotator (reconnect on failure)
             if el >= 0:
-                rotctl.set_position(az, el)
+                try:
+                    rotctl.set_position(az, el)
+                except (BrokenPipeError, OSError, ConnectionError):
+                    log("Rotctld connection lost — reconnecting...", logfile)
+                    try:
+                        rotctl.connect()
+                        rotctl.set_position(az, el)
+                    except Exception:
+                        pass  # will retry next tick
 
             # Doppler correction
             now_mono = time.time()
@@ -902,7 +910,13 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             rotctl.park()
             log("Parked after pass", logfile)
         except Exception:
-            pass
+            # Retry park with reconnect (rotctld may have restarted)
+            try:
+                rotctl.connect()
+                rotctl.park()
+                log("Parked after reconnect", logfile)
+            except Exception:
+                log("WARNING: could not park rotator", logfile)
         clear_dashboard_status()
 
     if rf:

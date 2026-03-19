@@ -1785,7 +1785,12 @@ def main():
         print("      Install with: pip install ephem")
 
     def on_signal(sig, frame):
-        server.shutdown()
+        # Fast exit — serve_forever() can block on network I/O in polling thread
+        try:
+            server.socket.close()
+        except Exception:
+            pass
+        os._exit(0)
 
     signal.signal(signal.SIGINT, on_signal)
     signal.signal(signal.SIGTERM, on_signal)
