@@ -535,7 +535,7 @@ def polling_loop():
         except Exception:
             pass
 
-        time.sleep(0.25)  # 4Hz polling for smooth rotator movement on dashboard
+        time.sleep(0.5)  # 2Hz polling — 4Hz caused OOM on Pi 3A+
 
 
 # ---------------------------------------------------------------------------

@@ -3270,7 +3270,7 @@
     if (arrow) {
       // Use CSS transform for smooth interpolation between 4Hz polls
       arrow.style.transformOrigin = '80px 80px';
-      arrow.style.transition = 'transform 0.25s linear';
+      arrow.style.transition = 'transform 0.5s linear';
       arrow.style.transform = `rotate(${az || 0}deg)`;
       arrow.removeAttribute('transform'); // remove SVG attribute, use CSS
     }
@@ -3367,7 +3367,7 @@
     const arrowCtrl = document.getElementById('compass-arrow-ctrl');
     if (arrowCtrl && ctrlAz !== null) {
       arrowCtrl.style.transformOrigin = '80px 80px';
-      arrowCtrl.style.transition = 'transform 0.25s linear';
+      arrowCtrl.style.transition = 'transform 0.5s linear';
       arrowCtrl.style.transform = `rotate(${ctrlAz}deg)`;
       arrowCtrl.removeAttribute('transform');
     }
@@ -4638,7 +4638,7 @@
     pollPassHistory();
 
     // 4. Repeat polls
-    setInterval(pollStatus,  250); // 4Hz for smooth rotator animation
+    setInterval(pollStatus,  500); // 2Hz — 4Hz caused OOM on Pi 3A+
     setInterval(pollPasses, 15000);
     setInterval(pollPassHistory, 30000);
     // Client-side countdown updater — re-renders pass list every 3s for live times
