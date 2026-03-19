@@ -454,7 +454,14 @@ def _rotator_state(connected, rf_data):
 
 
 def polling_loop():
-    """Background thread: updates the shared status dict every 1 second."""
+    """Background thread: updates the shared status dict every 0.25 second."""
+    # Failsafe: park rotator on dashboard startup if not actively tracking
+    try:
+        st = read_station_status()
+        if not st or not st.get("satellite"):
+            _rotctl_cmd("P 0.0 0.0")
+    except Exception:
+        pass
     while True:
         try:
             if SIMULATE:
@@ -528,7 +535,7 @@ def polling_loop():
         except Exception:
             pass
 
-        time.sleep(1)
+        time.sleep(0.25)  # 4Hz polling for smooth rotator movement on dashboard
 
 
 # ---------------------------------------------------------------------------
@@ -768,15 +775,16 @@ _pass_cache = []           # cached computed passes
 _pass_cache_time = 0.0     # unix timestamp of last computation
 _pass_computing = False    # True while background computation is running
 _pass_cache_lock = threading.Lock()
-PASS_CACHE_SECONDS = 900   # recompute every 15 min
+PASS_CACHE_SECONDS = 300   # recompute every 5 min (server-side filters expired passes between recomputes)
 
 
 _pass_progress = ""  # human-readable progress string
+_tracked_pass_preserve = None  # preserved pass data for currently tracked satellite
 
 
 def _recompute_passes_if_stale():
     """Background recompute of passes — pushes partial results as batches complete."""
-    global _pass_cache, _pass_cache_time, _pass_computing, _pass_progress
+    global _pass_cache, _pass_cache_time, _pass_computing, _pass_progress, _tracked_pass_preserve
 
     now = time.time()
     if (now - _pass_cache_time) < PASS_CACHE_SECONDS:
@@ -957,15 +965,59 @@ def get_cached_passes():
     with _pass_cache_lock:
         raw_passes = list(_pass_cache)
 
-    # Deduplicate by satellite name (case-insensitive) — different TLE sources
-    # can have the same satellite with different casing
+    # Filter out passes that have already ended — but keep the currently tracked satellite
+    now_iso = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+    tracked_name = ""
+    try:
+        st = read_station_status()
+        if st and st.get("satellite"):
+            tracked_name = st["satellite"].lower().strip()
+    except Exception:
+        pass
+    # Also check track file
+    try:
+        tf = os.path.expanduser("~/.station_track")
+        if not tracked_name and os.path.exists(tf):
+            with open(tf) as f:
+                tracked_name = f.read().strip().lower()
+    except Exception:
+        pass
+    raw_passes = [p for p in raw_passes
+                  if p.get("set_time", "") >= now_iso
+                  or (tracked_name and tracked_name in p["name"].lower())]
+
+    # If tracked satellite disappeared from cache (recompute dropped it), inject preserved copy
+    global _tracked_pass_preserve
+    if tracked_name:
+        found = any(tracked_name in p["name"].lower() for p in raw_passes)
+        if found:
+            # Update preserved copy while pass is still in cache
+            for p in raw_passes:
+                if tracked_name in p["name"].lower():
+                    _tracked_pass_preserve = dict(p)
+                    break
+        elif _tracked_pass_preserve and tracked_name in _tracked_pass_preserve["name"].lower():
+            # Re-inject preserved pass data
+            raw_passes.append(_tracked_pass_preserve)
+    elif _tracked_pass_preserve:
+        _tracked_pass_preserve = None  # clear when not tracking
+
+    # Deduplicate by NORAD ID first (same sat from different TLE sources, e.g.
+    # "OSCAR 7" vs "AO-07" both NORAD 7530), then by name as fallback
+    seen_norads = set()
     seen_names = set()
     passes = []
     for p in raw_passes:
+        norad = p.get("norad_id", 0)
         key = p["name"].lower().strip()
-        if key not in seen_names:
-            seen_names.add(key)
-            passes.append(p)
+        if norad and norad in seen_norads:
+            continue
+        if key in seen_names:
+            continue
+        if norad:
+            seen_norads.add(norad)
+        seen_names.add(key)
+        passes.append(dict(p))  # shallow copy to avoid mutating shared cache dicts
 
     # Enrich with transmitter data if available (may have been fetched after passes)
     if _transmitter_cache:
@@ -1314,6 +1366,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
         elif path == "/api/passes":
             self._handle_passes()
 
+        elif path == "/api/pass-history":
+            self._handle_pass_history()
+
         elif path.startswith("/api/observations/"):
             self._serve_observation(path)
 
@@ -1593,6 +1648,18 @@ class DashboardHandler(BaseHTTPRequestHandler):
             "computing": is_pass_computing(),
             "progress": get_pass_progress(),
         }))
+
+    def _handle_pass_history(self):
+        """Return recent pass tracking history."""
+        history_file = os.path.expanduser("~/.station_pass_history.json")
+        history = []
+        try:
+            if os.path.exists(history_file):
+                with open(history_file, "r") as f:
+                    history = json.load(f)
+        except Exception:
+            pass
+        self._json_response(200, json.dumps(history))
 
     def _serve_observation(self, path):
         """Serve files from ~/observations/ (waterfall PNGs, etc.)."""

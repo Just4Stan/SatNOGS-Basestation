@@ -92,6 +92,7 @@ UPDATE_HZ     = 10           # rotator update rate
 DOPPLER_HZ    = 2            # Doppler update rate (don't thrash CC1200 regs)
 MIN_ELEV      = 5.0          # minimum pass elevation
 STATUS_FILE   = os.path.expanduser("~/.station_status.json")  # read by dashboard.py
+HISTORY_FILE  = os.path.expanduser("~/.station_pass_history.json")  # recent pass log
 PREDICT_HOURS = 12
 METRICS_INTERVAL_S = 10.0
 
@@ -146,6 +147,30 @@ def clear_dashboard_status():
     try:
         if os.path.exists(STATUS_FILE):
             os.remove(STATUS_FILE)
+    except Exception:
+        pass
+
+
+def record_pass_history(name, pass_info, packets=0, total_bytes=0, peak_rssi=None):
+    """Append a completed pass to the history file (keeps last 20)."""
+    try:
+        history = []
+        if os.path.exists(HISTORY_FILE):
+            with open(HISTORY_FILE, "r") as f:
+                history = json.load(f)
+        entry = {
+            "name": name,
+            "time": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "duration": round(pass_info.get("duration", 0)),
+            "max_el": round(pass_info.get("max_el", 0), 1),
+            "packets": packets,
+            "bytes": total_bytes,
+            "peak_rssi": peak_rssi,
+        }
+        history.append(entry)
+        history = history[-20:]  # keep last 20
+        with open(HISTORY_FILE, "w") as f:
+            json.dump(history, f)
     except Exception:
         pass
 
@@ -680,6 +705,18 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     log(f"Slewing to AOS: AZ {rise_az:.1f} EL 0.0", logfile)
     rotctl.set_position(rise_az, 0)
 
+    # Write status during pre-AOS slew so dashboard knows we're active
+    write_dashboard_status({
+        "satellite": name, "pass_progress": 0, "freq_mhz": args.uhf_freq,
+        "streaming": False, "rssi": None, "packets": 0, "rf_backend": "none",
+        "cmd_az": round(rise_az, 2), "cmd_el": 0.0,
+        "max_el": round(pass_info["max_el"], 1),
+        "rise_az": round(pass_info["rise_az"], 1),
+        "set_az": round(pass_info["set_az"], 1),
+        "los_seconds": round(pass_info["duration"], 0),
+        "duration": round(pass_info["duration"], 0),
+    })
+
     # Wait for AOS
     now_utc = datetime.datetime.now(datetime.timezone.utc)
     rise_utc = pass_info["rise_time"].replace(tzinfo=datetime.timezone.utc)
@@ -740,13 +777,23 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             if os.path.exists(stop_file):
                 os.remove(stop_file)
                 log("** STOP — user cancelled tracking **", logfile)
-                # Write a pause flag so daemon loop doesn't auto-start next pass
                 try:
                     with open(os.path.expanduser("~/.station_paused"), "w") as _pf:
                         _pf.write("paused")
                 except Exception:
                     pass
                 break
+            # Check for new track request (user clicked Track on a different satellite)
+            track_file_mid = os.path.expanduser("~/.station_track")
+            if os.path.exists(track_file_mid):
+                try:
+                    with open(track_file_mid) as _tf:
+                        new_sat = _tf.read().strip()
+                    if new_sat.lower() != name.lower():
+                        log(f"** New track: {new_sat} — aborting {name} **", logfile)
+                        break
+                except Exception:
+                    pass
 
             # Compute satellite position
             obs.date = ephem.Date(now_utc)
@@ -814,6 +861,19 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
                 status_data["satellite"] = name
                 status_data["pass_progress"] = round(progress, 1)
                 status_data["freq_mhz"] = args.uhf_freq
+                # Telemetry for focus panel
+                status_data["cmd_az"] = round(az, 2)
+                status_data["cmd_el"] = round(el, 2)
+                status_data["range_km"] = round(float(sat.range) / 1000, 1)
+                status_data["range_rate"] = round(float(sat.range_velocity), 1)
+                status_data["max_el"] = round(pass_info["max_el"], 1)
+                status_data["rise_az"] = round(pass_info["rise_az"], 1)
+                status_data["set_az"] = round(pass_info["set_az"], 1)
+                status_data["los_seconds"] = round(remaining, 0)
+                status_data["duration"] = round(pass_info["duration"], 0)
+                # Doppler: compute from range_velocity even if not correcting RF
+                _dop_hz = doppler_shift(args.uhf_freq * 1e6, float(sat.range_velocity)) - args.uhf_freq * 1e6
+                status_data["doppler_hz"] = round(_dop_hz, 1)
                 if satnogs:
                     status_data["satnogs"] = satnogs.get_stats()
                 write_dashboard_status(status_data)
@@ -829,10 +889,14 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
         log("** LOS — pass complete **", logfile)
         if buzzer:
             buzzer.beep_los()
+        pkts, nbytes, peak_rssi = 0, 0, None
         if rf:
             rf.stop_rx()
             m = rf.get_metrics()
-            log(f"Pass summary: {m.packets} packets, {m.total_bytes} bytes ({rf.name()})", logfile)
+            pkts, nbytes = m.packets, m.total_bytes
+            peak_rssi = getattr(m, 'peak_rssi', None)
+            log(f"Pass summary: {pkts} packets, {nbytes} bytes ({rf.name()})", logfile)
+        record_pass_history(name, pass_info, pkts, nbytes, peak_rssi)
         # Always park after tracking ends (clean exit)
         try:
             rotctl.park()

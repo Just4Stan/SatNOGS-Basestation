@@ -659,6 +659,9 @@
       flex-shrink: 0;
     }
     #pass-banner.active { display: block; }
+    /* Hide banner when focus panel is active — data is in the focus panel */
+    .focus-active ~ #pass-banner.active,
+    body.focus-mode #pass-banner.active { display: none; }
 
     .pass-banner-top {
       display: flex;
@@ -795,17 +798,54 @@
 
     /* Left column: passes */
     .track-col-left {
-      width: 260px;
+      width: 320px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
       min-height: 0;
+      position: relative;
+      overflow: hidden;
     }
     .track-col-left .card {
       display: flex;
       flex-direction: column;
       flex: 1;
       min-height: 0;
+    }
+    /* Focus mode: left col content slides and swaps */
+    .track-col-left .pass-list-wrap {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s;
+    }
+    .track-col-left.focus-active .pass-list-wrap {
+      transform: translateX(-120%);
+      opacity: 0;
+      pointer-events: none;
+      height: 0;
+      flex: 0;
+      overflow: hidden;
+    }
+    .track-col-left .focus-panel {
+      flex-direction: column;
+      flex: 0;
+      min-height: 0;
+      overflow-y: auto;
+      transform: translateX(120%);
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s 0.1s;
+    }
+    .track-col-left.focus-active .focus-panel {
+      display: flex;
+      flex: 1;
+      height: auto;
+      overflow-y: auto;
+      transform: translateX(0);
+      opacity: 1;
     }
 
     /* Center column: sky plot */
@@ -824,7 +864,7 @@
 
     /* Right column: RF status */
     .track-col-right {
-      width: 230px;
+      width: 290px;
       flex-shrink: 0;
       display: flex;
       flex-direction: column;
@@ -886,12 +926,12 @@
 
     .pass-item {
       display: grid;
-      grid-template-columns: 1fr auto auto;
+      grid-template-columns: 6px 1fr auto auto;
       grid-template-rows: auto auto;
       gap: 2px 6px;
       padding: 8px 8px;
       border-radius: var(--radius-sm);
-      margin-bottom: 0; /* no gap between items */
+      margin-bottom: 0;
       padding-top: 10px;
       padding-bottom: 10px;
       cursor: pointer;
@@ -917,6 +957,18 @@
       background: rgba(56,189,248,0.04);
       border-color: rgba(56,189,248,0.10);
     }
+    /* Status dot — first column */
+    .pass-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      align-self: center;
+      grid-row: 1;
+    }
+    .pass-dot.dot-overhead { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+    .pass-dot.dot-soon     { background: var(--green); box-shadow: 0 0 4px var(--green-glow); }
+    .pass-dot.dot-upcoming { background: var(--muted-dim); }
+    .pass-item.pass-overhead { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.18); }
+    .pass-item.pass-soon    { background: rgba(74,222,128,0.04); border-color: rgba(74,222,128,0.10); }
 
     .pass-item-name {
       flex: 1;
@@ -1610,7 +1662,7 @@
       .track-col-center {
         order: 1;
         flex: none;
-        min-height: 55vh;
+        min-height: 50vh;
       }
       .track-col-right {
         width: 100%;
@@ -1618,6 +1670,39 @@
         flex: none;
       }
       #compass-svg { width: 110px; height: 110px; }
+
+      /* Focus mode on mobile: sky plot first, compact telemetry below */
+      .track-col-left.focus-active {
+        order: 2;  /* below sky plot */
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      .track-col-center {
+        min-height: 45vh !important; /* sky plot prominent */
+      }
+      .track-col-left.focus-active .focus-panel {
+        max-height: none;
+      }
+      .track-col-left.focus-active .focus-panel article {
+        padding: 8px;
+        gap: 4px;
+      }
+      /* Hide right column during mobile focus to save space */
+      body.focus-mode .track-col-right {
+        display: none;
+      }
+      /* Compact top bar on mobile */
+      .header-right { font-size: 0.55rem; gap: 5px; }
+      .header-right .header-readout { font-size: 0.55rem; }
+      /* Hide temp/RAM on mobile — AZ/EL and time are enough */
+      #header-temp, #header-ram { display: none; }
+      /* Smaller state text on mobile */
+      .state-label { font-size: 0.65rem !important; }
+      .state-detail { font-size: 0.55rem !important; }
+      /* Hide pass banner on mobile (focus panel replaces it) */
+      #pass-banner { display: none !important; }
+      /* Smaller location pill */
+      #loc-pill { font-size: 0.55rem; padding: 1px 6px; }
     }
 
     @media (max-width: 360px) {
@@ -1627,8 +1712,8 @@
     }
 
     @media (min-width: 769px) and (max-width: 1100px) {
-      .track-col-left { width: 200px; }
-      .track-col-right { width: 210px; }
+      .track-col-left { width: 260px; }
+      .track-col-right { width: 260px; }
     }
 
     @media (min-width: 1100px) {
@@ -1870,56 +1955,158 @@
 
       <div class="track-layout" id="main-grid">
 
-        <!-- LEFT COLUMN: Pass List -->
-        <div class="track-col-left">
-          <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
-            <div class="passes-header">
-              <div class="card-title">Passes</div>
-              <div style="display:flex;gap:6px;align-items:center">
-                <button class="filter-btn" id="filter-toggle-btn" onclick="toggleFilterPanel()"
-                        title="Filter satellites by frequency, modulation, compatibility"
-                        style="background:none;border:1px solid var(--card-border);border-radius:6px;color:var(--muted);padding:3px 8px;font-size:0.65rem;cursor:pointer;font-family:var(--font-mono)">Filter</button>
-                <label class="auto-track-label" title="Auto mode: automatically tracks the next best satellite pass. Turn off to manually select which satellite to track.">
-                  Auto
-                  <input type="checkbox" id="auto-track-toggle" onchange="toggleAutoTrack(this.checked)">
-                </label>
-              </div>
-            </div>
+        <!-- LEFT COLUMN: Pass List / Tracking Focus -->
+        <div class="track-col-left" id="track-col-left">
 
-            <!-- Filter panel (hidden by default) -->
-            <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
-              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Band</div>
-              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                <button class="filter-chip" data-filter="all" onclick="toggleFilter('all')">All</button>
-                <button class="filter-chip active" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
-                <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (144)</button>
+          <!-- Normal: pass list (slides out during tracking) -->
+          <div class="pass-list-wrap">
+            <article class="card" id="card-passes" aria-label="Upcoming satellite passes">
+              <div class="passes-header">
+                <div class="card-title">Passes</div>
+                <div style="display:flex;gap:6px;align-items:center">
+                  <button class="filter-btn" id="filter-toggle-btn" onclick="toggleFilterPanel()"
+                          title="Filter satellites by frequency, modulation, compatibility"
+                          style="background:none;border:1px solid var(--card-border);border-radius:6px;color:var(--muted);padding:3px 8px;font-size:0.65rem;cursor:pointer;font-family:var(--font-mono)">Filter</button>
+                  <label class="auto-track-label" title="Auto mode: automatically tracks the next best satellite pass. Turn off to manually select which satellite to track.">
+                    Auto
+                    <input type="checkbox" id="auto-track-toggle" onchange="toggleAutoTrack(this.checked)">
+                  </label>
+                </div>
               </div>
-              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Receiver</div>
-              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                <button class="filter-chip" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
-                <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR only</button>
+
+              <!-- Filter panel (hidden by default) -->
+              <div id="filter-panel" style="display:none;padding:8px 0;border-bottom:1px solid var(--card-border);margin-bottom:8px">
+                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Band</div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
+                  <button class="filter-chip" data-filter="all" onclick="toggleFilter('all')">All</button>
+                  <button class="filter-chip active" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
+                  <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (144)</button>
+                </div>
+                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Receiver</div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
+                  <button class="filter-chip" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
+                  <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR only</button>
+                </div>
+                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Category</div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
+                  <button class="filter-chip" data-filter="amateur" onclick="toggleFilter('amateur')">Amateur</button>
+                  <button class="filter-chip" data-filter="cubesat" onclick="toggleFilter('cubesat')">CubeSat</button>
+                  <button class="filter-chip" data-filter="weather" onclick="toggleFilter('weather')">Weather</button>
+                  <button class="filter-chip" data-filter="space-station" onclick="toggleFilter('space-station')">Station</button>
+                </div>
+                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Quality</div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px">
+                  <button class="filter-chip" data-filter="high" onclick="toggleFilter('high')">&gt;45&deg;</button>
+                  <button class="filter-chip" data-filter="medium" onclick="toggleFilter('medium')">&gt;20&deg;</button>
+                </div>
               </div>
-              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Category</div>
-              <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                <button class="filter-chip" data-filter="amateur" onclick="toggleFilter('amateur')">Amateur</button>
-                <button class="filter-chip" data-filter="cubesat" onclick="toggleFilter('cubesat')">CubeSat</button>
-                <button class="filter-chip" data-filter="weather" onclick="toggleFilter('weather')">Weather</button>
-                <button class="filter-chip" data-filter="space-station" onclick="toggleFilter('space-station')">Station</button>
+              <div class="pass-list" id="pass-list" role="list">
+                <div class="passes-loading">
+                  <div class="mini-spinner"></div>
+                  Computing passes...
+                </div>
               </div>
-              <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Quality</div>
-              <div style="display:flex;flex-wrap:wrap;gap:3px">
-                <button class="filter-chip" data-filter="high" onclick="toggleFilter('high')">&gt;45&deg;</button>
-                <button class="filter-chip" data-filter="medium" onclick="toggleFilter('medium')">&gt;20&deg;</button>
+              <div id="passes-empty" style="display:none"></div>
+            </article>
+          </div>
+
+          <!-- Focus mode: tracking telemetry (slides in during tracking) -->
+          <div class="focus-panel" id="focus-panel">
+            <article class="card" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow-y:auto">
+              <!-- Header -->
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <div id="focus-sat-name" style="font-size:1.1rem;font-weight:700;color:var(--text)">---</div>
+                <button class="btn btn-solid-red" onclick="doStop()" style="min-height:24px;padding:0 8px;font-size:0.60rem">Stop</button>
               </div>
-            </div>
-            <div class="pass-list" id="pass-list" role="list">
-              <div class="passes-loading">
-                <div class="mini-spinner"></div>
-                Computing passes...
+
+              <!-- Progress -->
+              <div style="margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;font-size:0.55rem;color:var(--muted);margin-bottom:2px">
+                  <span id="focus-pass-time" style="color:var(--accent)">---</span>
+                  <span id="focus-progress-pct">0%</span>
+                </div>
+                <div class="pass-progress-track" style="height:3px">
+                  <div id="focus-progress-bar" style="height:100%;background:var(--accent);border-radius:2px;width:0;transition:width 0.5s"></div>
+                </div>
               </div>
-            </div>
-            <div id="passes-empty" style="display:none"></div>
-          </article>
+
+              <!-- RSSI Sparkline -->
+              <div class="card" style="padding:6px 8px;margin-bottom:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                  <div style="font-size:0.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Signal Strength</div>
+                  <div style="display:flex;align-items:baseline;gap:4px">
+                    <span id="focus-rssi" style="font-family:var(--font-mono);font-size:0.88rem;font-weight:700;color:var(--green)">---</span>
+                    <span style="font-size:0.50rem;color:var(--muted-dim)">dBm</span>
+                  </div>
+                </div>
+                <canvas id="rssi-sparkline" width="280" height="40" style="width:100%;height:40px;border-radius:4px;background:rgba(0,0,0,0.2)"></canvas>
+              </div>
+
+              <!-- Range & Doppler (unique — not shown elsewhere) -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+                <div class="card" style="padding:6px 8px;text-align:center">
+                  <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Range</div>
+                  <div id="focus-range" style="font-family:var(--font-mono);font-size:0.92rem;font-weight:700;color:var(--text)">--- km</div>
+                  <div id="focus-velocity" style="font-size:0.48rem;color:var(--muted-dim)">--- km/s</div>
+                </div>
+                <div class="card" style="padding:6px 8px;text-align:center">
+                  <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Doppler</div>
+                  <div id="focus-doppler" style="font-family:var(--font-mono);font-size:0.92rem;font-weight:700;color:var(--text)">--- Hz</div>
+                  <div id="focus-doppler-dir" style="font-size:0.48rem;color:var(--muted-dim)">---</div>
+                </div>
+              </div>
+
+              <!-- Pointing (unique — shows commanded vs actual) -->
+              <div class="card" style="padding:6px 8px;margin-bottom:8px">
+                <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Pointing</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-family:var(--font-mono);font-size:0.68rem">
+                  <div style="color:var(--muted-dim);font-size:0.50rem">CMD</div>
+                  <div style="color:var(--muted-dim);font-size:0.50rem">ACTUAL</div>
+                  <div style="color:var(--muted-dim);font-size:0.50rem">ERROR</div>
+                  <div id="focus-cmd-az" style="color:var(--text)">--°</div>
+                  <div id="focus-act-az" style="color:var(--text)">--°</div>
+                  <div id="focus-err-az" style="color:var(--green)">--°</div>
+                  <div id="focus-cmd-el" style="color:var(--text)">--°</div>
+                  <div id="focus-act-el" style="color:var(--text)">--°</div>
+                  <div id="focus-err-el" style="color:var(--green)">--°</div>
+                </div>
+              </div>
+
+              <!-- Packets & Link -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+                <div class="card" style="padding:6px 8px;text-align:center">
+                  <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Packets</div>
+                  <div id="focus-packets" style="font-family:var(--font-mono);font-size:0.92rem;font-weight:700;color:var(--text)">0</div>
+                  <div id="focus-bytes" style="font-size:0.48rem;color:var(--muted-dim)">0 bytes</div>
+                </div>
+                <div class="card" style="padding:6px 8px;text-align:center">
+                  <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Link Margin</div>
+                  <div id="focus-link-margin" style="font-family:var(--font-mono);font-size:0.92rem;font-weight:700;color:var(--green)">---</div>
+                  <div id="focus-fspl" style="font-size:0.48rem;color:var(--muted-dim)">FSPL ---</div>
+                </div>
+              </div>
+
+              <!-- Pass Geometry -->
+              <div class="card" style="padding:6px 8px;margin-bottom:8px">
+                <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px">Pass Geometry</div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.62rem;color:var(--text)">
+                  <span>AOS <span id="focus-rise-az">--°</span></span>
+                  <span>MAX <span id="focus-max-el" style="color:var(--accent)">--°</span></span>
+                  <span>LOS <span id="focus-set-az">--°</span></span>
+                </div>
+              </div>
+
+              <!-- Link status -->
+              <div class="card" style="padding:6px 8px">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Status</div>
+                  <div id="focus-link" style="font-family:var(--font-mono);font-size:0.65rem;color:var(--green)">Awaiting signal...</div>
+                </div>
+              </div>
+
+            </article>
+          </div>
+
         </div>
 
         <!-- CENTER COLUMN: Sky Plot (no card wrapper, just the canvas) -->
@@ -2034,6 +2221,12 @@
               <div class="wf-label">Last Waterfall</div>
               <img id="waterfall-img" src="" alt="Waterfall spectrogram">
             </div>
+          </article>
+
+          <!-- PASS HISTORY -->
+          <article class="card" id="card-history" aria-label="Recent pass history" style="flex:0 0 auto;max-height:200px;overflow-y:auto">
+            <div class="card-title" style="font-size:0.68rem">Recent Passes</div>
+            <div id="history-list" style="font-size:0.62rem;color:var(--muted)">No passes tracked yet</div>
           </article>
 
         </div><!-- /.track-col-right -->
@@ -2394,6 +2587,9 @@
   let _locSet         = false;   // is location currently set?
   let _wasTracking    = false;   // previous poll tracking state (for LOS detection)
   let _isTracking     = false;   // currently tracking a satellite (from status API)
+  let _trackedSatName = '';      // satellite name from station.py rf.satellite
+  let _trackedPassCache = null;  // cached pass data for tracked satellite (survives pass list rebuilds)
+  let _liveTrajectory = [];      // built from cmd_az/cmd_el during tracking (fallback when no pass data)
   let _hoveredPass    = null;    // index into _passes, hovered in pass list
   let _pendingTrack   = '';      // satellite name of pending track request
   let _pendingTrackTime = 0;    // when the pending track was set
@@ -2401,7 +2597,7 @@
     _pendingTrack = localStorage.getItem('pendingTrack') || '';
     _pendingTrackTime = parseInt(localStorage.getItem('pendingTrackTime') || '0');
     // Auto-clear stale pending tracks (older than 5 minutes)
-    if (_pendingTrack && Date.now() - _pendingTrackTime > 300000) {
+    if (_pendingTrack && Date.now() - _pendingTrackTime > 600000) { // 10 min timeout for long passes
       _pendingTrack = '';
       localStorage.removeItem('pendingTrack');
       localStorage.removeItem('pendingTrackTime');
@@ -2434,6 +2630,48 @@
 
   /** Clamp a value between min and max */
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /** Draw RSSI sparkline on canvas */
+  function _drawRssiSparkline(data) {
+    const c = document.getElementById('rssi-sparkline');
+    if (!c || !data.length) return;
+    const ctx = c.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const w = c.clientWidth, h = c.clientHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    // Scale: -130 dBm (bottom) to -40 dBm (top)
+    const minDb = -130, maxDb = -40;
+    const yScale = (v) => h - ((clamp(v, minDb, maxDb) - minDb) / (maxDb - minDb)) * h;
+
+    // Grid lines at -120, -100, -80, -60
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 0.5;
+    [-120, -100, -80, -60].forEach(db => {
+      const y = yScale(db);
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    });
+
+    // Draw line
+    ctx.beginPath();
+    const step = w / Math.max(data.length - 1, 1);
+    data.forEach((v, i) => {
+      const x = i * step, y = yScale(v);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Fill under
+    ctx.lineTo((data.length - 1) * step, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(56,189,248,0.08)';
+    ctx.fill();
+  }
 
   /* =========================================================================
      VANTA.JS GLOBE BACKGROUND
@@ -2593,6 +2831,7 @@
   }
 
   function drawSkyPlot() {
+    window._lastSatPos = null; // reset SAT position for ANT label overlap check
     const canvas = document.getElementById('sky-canvas');
     const wrap   = document.getElementById('sky-canvas-wrap');
     const wrapRect = wrap.getBoundingClientRect();
@@ -2704,25 +2943,25 @@
       const passLower = pass.name.trim().toLowerCase();
       const isPendingTarget = pendLower && (passLower === pendLower || passLower.includes(pendLower) || pendLower.includes(passLower));
 
-      if (_pendingTrack && isPendingTarget) {
-        // The satellite we're waiting to track — amber, bold
-        ctx.strokeStyle = '#f59e0b';
-        ctx.lineWidth = 3.5;
+      // Focus mode: determine if this pass is the tracked target
+      // Use multiple matching strategies to avoid flicker during pass list rebuilds
+      const trackedLower = (_trackedSatName || '').trim().toLowerCase();
+      const isTrackedByName = trackedLower && (passLower === trackedLower || passLower.includes(trackedLower) || trackedLower.includes(passLower));
+      const isFocusTarget = isPendingTarget || isTrackedByName;
+      const inFocusMode = !!(_pendingTrack || _isTracking);
+
+      // Focus mode guard: check body class too (survives _isTracking flicker)
+      const bodyFocusMode = document.body.classList.contains('focus-mode');
+      const effectiveFocusMode = inFocusMode || bodyFocusMode;
+
+      if (effectiveFocusMode && isFocusTarget) {
+        // The tracked satellite — bold, colored by state
+        ctx.strokeStyle = _isTracking ? '#38bdf8' : '#f59e0b';
+        ctx.lineWidth = _isTracking ? 4.0 : 3.5;
         ctx.stroke();
-      } else if (_pendingTrack && !isPendingTarget) {
-        // Dim others but keep visible
-        ctx.strokeStyle = color + '40';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      } else if (_isTracking && !isActive) {
-        // Tracking: grey out non-active
-        ctx.strokeStyle = 'rgba(148,163,184,0.12)';
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
-      } else if (_isTracking && isActive) {
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 4.0;
-        ctx.stroke();
+      } else if (effectiveFocusMode) {
+        // Hide EVERYTHING else in focus mode — no exceptions
+        return;
       } else if (isHovered) {
         // Hovered pass: bright and very thick (5x)
         ctx.strokeStyle = color;
@@ -2776,7 +3015,7 @@
       ctx.fill();
 
       // Collect label info for non-overlapping placement (drawn after all arcs)
-      if (idx < 3 || isActive || isSelected || isHovered || isNext || isPendingTarget || isAutoNext) {
+      if (idx < 3 || isActive || isSelected || isHovered || idx === _nextPassIdx || isPendingTarget || isAutoNext) {
         // Pick label position at the trajectory midpoint (most visible spot)
         const midIdx = Math.floor(pass.trajectory.length / 2);
         const midPt = pass.trajectory[midIdx];
@@ -2834,7 +3073,16 @@
     });
 
     // ── Satellite position on trajectory (interpolated from pass progress) ──
-    if (_activePassIdx !== null && _passes[_activePassIdx]) {
+    // In focus mode, only draw if the active pass IS the tracked satellite
+    const _focusGuardOk = !document.body.classList.contains('focus-mode') || (function() {
+      if (_activePassIdx === null || !_passes[_activePassIdx]) return false;
+      const aName = _passes[_activePassIdx].name.trim().toLowerCase();
+      const tName = (_trackedSatName || '').trim().toLowerCase();
+      const pName = (_pendingTrack || '').trim().toLowerCase();
+      return (tName && (aName === tName || aName.includes(tName) || tName.includes(aName))) ||
+             (pName && (aName === pName || aName.includes(pName) || pName.includes(aName)));
+    })();
+    if (_focusGuardOk && _activePassIdx !== null && _passes[_activePassIdx]) {
       const activePass = _passes[_activePassIdx];
       const traj = activePass.trajectory;
       if (traj && traj.length >= 2 && _passProgress > 0) {
@@ -2867,6 +3115,7 @@
         ctx.fillStyle = '#4ade80';
         ctx.textAlign = 'left';
         ctx.fillText('SAT', satPos.x + 8, satPos.y + 3);
+        window._lastSatPos = satPos; // for ANT label overlap check
 
         // Draw completed portion of trajectory as spline
         ctx.beginPath();
@@ -2897,6 +3146,34 @@
       }
     }
 
+    // ── Live trajectory fallback (built from cmd_az/cmd_el when pass data unavailable) ──
+    // Only draw if the pass-data SAT marker wasn't already drawn (avoid duplicate SAT labels)
+    if (document.body.classList.contains('focus-mode') && _liveTrajectory.length >= 2 && !window._lastSatPos) {
+      ctx.beginPath();
+      const livePts = _liveTrajectory.map(pt => polarToXY(pt.az, pt.el, cx, cy, maxR));
+      ctx.moveTo(livePts[0].x, livePts[0].y);
+      for (let ti = 1; ti < livePts.length; ti++) {
+        ctx.lineTo(livePts[ti].x, livePts[ti].y);
+      }
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      // SAT marker at last point
+      const lastPt = livePts[livePts.length - 1];
+      ctx.beginPath();
+      ctx.arc(lastPt.x, lastPt.y, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#4ade80';
+      ctx.shadowColor = '#4ade80';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.font = `bold ${clamp(size * 0.022, 7, 10)}px var(--font-mono, monospace)`;
+      ctx.fillStyle = '#4ade80';
+      ctx.textAlign = 'left';
+      ctx.fillText('SAT', lastPt.x + 8, lastPt.y + 3);
+      window._lastSatPos = lastPt; // for ANT label overlap check
+    }
+
     // ── Antenna pointing position (always shown when connected) ──
     if (_currentAz !== null && _currentEl !== null && _rotConnected) {
       // Normalize AZ to 0-360 (rotator uses negative AZ for wrapping)
@@ -2919,12 +3196,16 @@
       ctx.fill();
       ctx.shadowBlur = 0;
 
-      // Label "ANT"
+      // Label — show "ANT" or combined "SAT/ANT" if SAT marker is nearby
       ctx.font = `bold ${clamp(size * 0.022, 7, 10)}px var(--font-mono, monospace)`;
-      ctx.fillStyle = '#38bdf8';
       ctx.textAlign = 'left';
       ctx.shadowBlur = 0;
-      ctx.fillText('ANT', pos.x + 8, pos.y + 3);
+      if (window._lastSatPos && Math.hypot(pos.x - window._lastSatPos.x, pos.y - window._lastSatPos.y) < 20) {
+        // SAT is overlapping — skip ANT label (SAT label already shown)
+      } else {
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillText('ANT', pos.x + 8, pos.y + 3);
+      }
     }
 
     _skyNeedsRedraw = false;
@@ -2949,7 +3230,11 @@
   function updateCompass(az) {
     const arrow = document.getElementById('compass-arrow');
     if (arrow) {
-      arrow.setAttribute('transform', `rotate(${az || 0}, 80, 80)`);
+      // Use CSS transform for smooth interpolation between 4Hz polls
+      arrow.style.transformOrigin = '80px 80px';
+      arrow.style.transition = 'transform 0.25s linear';
+      arrow.style.transform = `rotate(${az || 0}deg)`;
+      arrow.removeAttribute('transform'); // remove SVG attribute, use CSS
     }
     // Normalize AZ to 0-360 for display
     const dispAz = az !== null ? (((az % 360) + 360) % 360) : null;
@@ -3141,23 +3426,45 @@
     const stateBar   = document.getElementById('station-state');
     const stateLabel = document.getElementById('state-label');
     const stateDetail = document.getElementById('state-detail');
-    const isTracking = !!(rf.satellite && rf.pass_progress > 0 && rf.pass_progress < 100);
+    // Tracking = station.py has a satellite name in status (covers pre-AOS slew + active tracking)
+    const isTracking = !!(rf.satellite && rf.pass_progress != null && rf.pass_progress < 100);
     _isTracking = isTracking;
-    // Store tracked satellite name so applyPasses can match the right active pass
-    _passes._trackedName = rf.satellite || '';
+    // Store tracked satellite name for sky plot focus matching
+    _trackedSatName = rf.satellite || _pendingTrack || '';
+    // Build live trajectory from cmd_az/cmd_el (fallback when pass data unavailable)
+    if (isTracking && rf.cmd_az != null && rf.cmd_el != null && rf.cmd_el > 0) {
+      const last = _liveTrajectory.length ? _liveTrajectory[_liveTrajectory.length - 1] : null;
+      if (!last || Math.abs(last.az - rf.cmd_az) > 0.3 || Math.abs(last.el - rf.cmd_el) > 0.3) {
+        _liveTrajectory.push({ az: rf.cmd_az, el: rf.cmd_el });
+      }
+    }
+    if (!isTracking && _liveTrajectory.length) _liveTrajectory = [];
 
     stateBar.className = ''; // reset
     const stopBtn = document.getElementById('stop-btn');
     if (stopBtn) stopBtn.style.display = (isTracking || _pendingTrack) ? 'flex' : 'none';
 
     // Clear pending track once station starts tracking
-    // Clear pending track when station starts tracking (case-insensitive match)
     if (isTracking) { _pendingTrack = ''; try { localStorage.removeItem('pendingTrack'); } catch(e) {} }
     if (_pendingTrack && rf.satellite &&
         rf.satellite.toLowerCase().includes(_pendingTrack.toLowerCase().substring(0, 6))) {
       _pendingTrack = '';
       try { localStorage.removeItem('pendingTrack'); } catch(e) {}
     }
+    // Re-send track command if station.py hasn't picked it up (e.g. after service restart)
+    if (_pendingTrack && !isTracking && !rf.satellite &&
+        Date.now() - _pendingTrackTime > 10000) { // 10s grace period
+      // Check every 15s if we need to re-write the track file
+      if (!window._lastTrackResend || Date.now() - window._lastTrackResend > 15000) {
+        window._lastTrackResend = Date.now();
+        fetch('/api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ satellite: _pendingTrack, mode: 'manual' }),
+        }).catch(() => {});
+      }
+    }
+    // Clear stale pending track — only after the 10-min localStorage timeout expires
 
     // If a track is pending, show waiting state with useful detail
     if (_pendingTrack && !isTracking) {
@@ -3226,6 +3533,7 @@
       document.getElementById('pass-progress-bar').setAttribute('aria-valuenow', Math.round(rf.pass_progress));
       _passProgress = rf.pass_progress;
 
+      // Try to find pass in list for max_el and countdown
       const bannerSatLower = rf.satellite.toLowerCase();
       const matchPass2 = _passes.find(p => p.name.toLowerCase() === bannerSatLower || p.name.toLowerCase().includes(bannerSatLower) || bannerSatLower.includes(p.name.toLowerCase()));
       if (matchPass2) {
@@ -3233,16 +3541,149 @@
         const t = remaining > 0 ? Math.round(remaining) : 0;
         document.getElementById('pass-countdown').textContent = 'T-' + fmtDuration(t);
         document.getElementById('pass-max-el').textContent = 'MAX ' + matchPass2.max_el.toFixed(0) + '\u00B0';
+      } else {
+        // Pass expired from API — estimate from progress (100% = LOS)
+        const pctLeft = Math.max(0, 100 - rf.pass_progress);
+        document.getElementById('pass-countdown').textContent = pctLeft > 0 ? Math.round(pctLeft) + '% left' : 'LOS';
       }
     } else {
       banner.classList.remove('active');
+    }
+
+    // ── Focus mode: swap left column pass list ↔ telemetry ──
+    const colLeft = document.getElementById('track-col-left');
+    if (isTracking || _pendingTrack) {
+      if (!colLeft.classList.contains('focus-active')) {
+        colLeft.classList.add('focus-active');
+        document.body.classList.add('focus-mode');
+      }
+      // Update focus panel telemetry
+      const satName = rf.satellite || _pendingTrack || '---';
+      document.getElementById('focus-sat-name').textContent = satName;
+
+      const matchFocus = _passes.find(p => {
+        const sl = satName.toLowerCase();
+        return p.name.toLowerCase() === sl || p.name.toLowerCase().includes(sl) || sl.includes(p.name.toLowerCase());
+      });
+
+      // Progress
+      const pctF = rf.pass_progress || 0;
+      const losS = rf.los_seconds || (matchFocus ? Math.max(0, Math.round(secsUntil(matchFocus.set_time))) : 0);
+      document.getElementById('focus-pass-time').textContent = pctF > 0
+        ? 'LOS in ' + fmtDuration(losS)
+        : _pendingTrack ? 'Waiting for AOS...' : '---';
+      document.getElementById('focus-progress-bar').style.width = pctF + '%';
+      document.getElementById('focus-progress-pct').textContent = Math.round(pctF) + '%';
+
+      // RSSI + sparkline
+      const rssiVal = rf.rssi != null ? rf.rssi.toFixed(1) : '---';
+      const rssiEl2 = document.getElementById('focus-rssi');
+      rssiEl2.textContent = rssiVal;
+      rssiEl2.style.color = rf.rssi != null ? (rf.rssi > -80 ? 'var(--green)' : rf.rssi > -100 ? 'var(--amber)' : 'var(--red)') : 'var(--muted)';
+      // Push to sparkline history
+      if (pctF > 0) {
+        if (!window._rssiHistory) window._rssiHistory = [];
+        window._rssiHistory.push(rf.rssi != null ? rf.rssi : -130);
+        if (window._rssiHistory.length > 120) window._rssiHistory.shift();
+        _drawRssiSparkline(window._rssiHistory);
+      }
+
+      // Range & Doppler (from station.py telemetry)
+      const rangeKm = rf.range_km;
+      const rangeRate = rf.range_rate;
+      const dopplerHz = rf.doppler_hz;
+      document.getElementById('focus-range').textContent = rangeKm != null ? rangeKm.toFixed(0) + ' km' : '--- km';
+      document.getElementById('focus-velocity').textContent = rangeRate != null ? (rangeRate / 1000).toFixed(2) + ' km/s' : '---';
+      document.getElementById('focus-doppler').textContent = dopplerHz != null
+        ? (Math.abs(dopplerHz) > 1000 ? (dopplerHz / 1000).toFixed(1) + ' kHz' : dopplerHz.toFixed(0) + ' Hz')
+        : '--- Hz';
+      document.getElementById('focus-doppler-dir').textContent = dopplerHz != null
+        ? (dopplerHz > 0 ? 'approaching' : dopplerHz < 0 ? 'receding' : 'at TCA')
+        : '---';
+
+      // Pointing error (commanded vs actual)
+      const cmdAz = rf.cmd_az;
+      const cmdEl = rf.cmd_el;
+      const normActAz = _currentAz != null ? ((_currentAz % 360) + 360) % 360 : null;
+      const normCmdAz = cmdAz != null ? ((cmdAz % 360) + 360) % 360 : null;
+      document.getElementById('focus-cmd-az').textContent = normCmdAz != null ? normCmdAz.toFixed(1) + '°' : '--°';
+      document.getElementById('focus-act-az').textContent = normActAz != null ? normActAz.toFixed(1) + '°' : '--°';
+      document.getElementById('focus-cmd-el').textContent = cmdEl != null ? cmdEl.toFixed(1) + '°' : '--°';
+      document.getElementById('focus-act-el').textContent = _currentEl != null ? _currentEl.toFixed(1) + '°' : '--°';
+      // Compute errors
+      let errAz = null, errEl = null;
+      if (normCmdAz != null && normActAz != null) {
+        errAz = normActAz - normCmdAz;
+        if (errAz > 180) errAz -= 360;
+        if (errAz < -180) errAz += 360;
+      }
+      if (cmdEl != null && _currentEl != null) errEl = _currentEl - cmdEl;
+      const errAzEl = document.getElementById('focus-err-az');
+      const errElEl = document.getElementById('focus-err-el');
+      if (errAz != null) {
+        errAzEl.textContent = (errAz >= 0 ? '+' : '') + errAz.toFixed(1) + '°';
+        errAzEl.style.color = Math.abs(errAz) < 1 ? 'var(--green)' : Math.abs(errAz) < 3 ? 'var(--amber)' : 'var(--red)';
+      }
+      if (errEl != null) {
+        errElEl.textContent = (errEl >= 0 ? '+' : '') + errEl.toFixed(1) + '°';
+        errElEl.style.color = Math.abs(errEl) < 1 ? 'var(--green)' : Math.abs(errEl) < 3 ? 'var(--amber)' : 'var(--red)';
+      }
+
+      // Packets
+      document.getElementById('focus-packets').textContent = rf.packets || 0;
+      document.getElementById('focus-bytes').textContent = (rf.total_bytes || 0) + ' bytes';
+
+      // Link margin: FSPL = 20*log10(d_km) + 20*log10(f_MHz) + 32.45
+      // Expected RX = TX_power + TX_gain + RX_gain - FSPL
+      // AetherSpace: +14 dBm TX, ~2 dBi TX ant, ~10 dBi RX ant (Yagi)
+      if (rangeKm != null && rf.freq_mhz) {
+        const fspl = 20 * Math.log10(rangeKm) + 20 * Math.log10(rf.freq_mhz) + 32.45;
+        const expectedRx = 14 + 2 + 10 - fspl; // dBm
+        document.getElementById('focus-fspl').textContent = 'FSPL ' + fspl.toFixed(1) + ' dB';
+        const marginEl = document.getElementById('focus-link-margin');
+        if (rf.rssi != null) {
+          const margin = rf.rssi - (-120); // margin above noise floor
+          marginEl.textContent = margin.toFixed(1) + ' dB';
+          marginEl.style.color = margin > 10 ? 'var(--green)' : margin > 3 ? 'var(--amber)' : 'var(--red)';
+        } else {
+          marginEl.textContent = expectedRx.toFixed(1) + ' dBm';
+          marginEl.style.color = 'var(--muted)';
+        }
+      }
+
+      // Pass geometry
+      document.getElementById('focus-max-el').textContent = (rf.max_el || (matchFocus ? matchFocus.max_el : '--')).toFixed ? (rf.max_el || matchFocus?.max_el || 0).toFixed(0) + '°' : '--°';
+      document.getElementById('focus-rise-az').textContent = rf.rise_az != null ? rf.rise_az.toFixed(0) + '°' : (matchFocus ? matchFocus.rise_az?.toFixed(0) + '°' : '--°');
+      document.getElementById('focus-set-az').textContent = rf.set_az != null ? rf.set_az.toFixed(0) + '°' : '--°';
+
+      // Link status
+      const linkEl = document.getElementById('focus-link');
+      if (rf.packets > 0) {
+        linkEl.textContent = 'Receiving — ' + rf.packets + ' packets';
+        linkEl.style.color = 'var(--green)';
+      } else if (rf.rssi != null && rf.rssi > -110) {
+        linkEl.textContent = 'Signal detected, decoding...';
+        linkEl.style.color = 'var(--amber)';
+      } else if (pctF > 0) {
+        linkEl.textContent = 'Tracking — awaiting signal';
+        linkEl.style.color = 'var(--muted)';
+      } else {
+        linkEl.textContent = 'Slewing to AOS position';
+        linkEl.style.color = 'var(--muted-dim)';
+      }
+    } else {
+      if (colLeft.classList.contains('focus-active')) {
+        colLeft.classList.remove('focus-active');
+        document.body.classList.remove('focus-mode');
+        window._rssiHistory = []; // clear sparkline for next pass
+        _trackedPassCache = null; // clear cached trajectory
+      }
     }
 
     // ── Dim pass list during tracking ──
     const passList = document.getElementById('pass-list');
     if (isTracking) {
       passList.classList.add('tracking-active');
-      // Highlight the active satellite
       passList.querySelectorAll('.pass-item').forEach(item => {
         if (item.textContent.includes(rf.satellite)) {
           item.classList.add('active-tracking');
@@ -3257,12 +3698,13 @@
       });
     }
 
-    // ── LOS detection: flash state bar and refresh passes ──
+    // ── LOS detection: flash state bar, exit focus, refresh passes ──
     if (_wasTracking && !isTracking) {
       stateBar.classList.add('parked');
       stateLabel.textContent = 'Pass Complete — LOS';
       stateDetail.textContent = '';
-      setTimeout(() => pollPasses(), 500); // refresh pass list immediately
+      setTimeout(() => pollPasses(), 500);
+      setTimeout(() => pollPassHistory(), 1000); // refresh history after pass
     }
     _wasTracking = isTracking;
 
@@ -3300,8 +3742,11 @@
     if (hrEl && total > 0) hrEl.textContent = Math.round(used / total * 100) + '% RAM';
 
     const ts = d.last_update || '';
-    document.getElementById('header-time').textContent = ts || '--:--:--';
-    document.getElementById('sys-last-update').textContent = ts || '--:--:--';
+    // Header clock: always use client-side UTC for consistency
+    const _now = new Date();
+    const utcStr = _now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'UTC' });
+    document.getElementById('header-time').textContent = utcStr;
+    document.getElementById('sys-last-update').textContent = ts || utcStr;
 
     // ── Location ──
     const loc = d.location || {};
@@ -3441,6 +3886,28 @@
     _passes = (data.passes || []).sort((a, b) =>
       new Date(a.rise_time) - new Date(b.rise_time)
     );
+
+    // Cache tracked pass trajectory (survives server-side filtering)
+    if (_trackedSatName || _pendingTrack) {
+      const tgt = (_trackedSatName || _pendingTrack).trim().toLowerCase();
+      const match = _passes.find(p => {
+        const n = p.name.trim().toLowerCase();
+        return n === tgt || n.includes(tgt) || tgt.includes(n);
+      });
+      if (match && match.trajectory) _trackedPassCache = match;
+    }
+    // Re-inject cached tracked pass if it disappeared from the server response
+    if (_trackedPassCache && (_isTracking || _pendingTrack)) {
+      const tgt = (_trackedSatName || _pendingTrack).trim().toLowerCase();
+      const exists = _passes.some(p => {
+        const n = p.name.trim().toLowerCase();
+        return n === tgt || n.includes(tgt) || tgt.includes(n);
+      });
+      if (!exists) {
+        _passes.push(_trackedPassCache);
+      }
+    }
+
     _skyNeedsRedraw = true;
 
     // Apply filters (multiple can be active simultaneously)
@@ -3536,15 +4003,26 @@
 
       // Skip passes that already ended
       const secsUntilSet = secsUntil(pass.set_time);
-      if (secsUntilSet < 0) return; // skip ended passes (forEach uses return, not continue)
+      if (secsUntilSet < 0) return;
+
+      // Determine pass state for color coding
+      // Orange = overhead now, Green = coming soon (<5min), Grey = later
+      const secsUntilRise = secsUntil(pass.rise_time);
+      let dotClass, itemClass;
+      if (isActive || (secsUntilSet >= 0 && secsUntilRise <= 0)) {
+        dotClass = 'dot-overhead'; itemClass = 'pass-overhead';
+      } else if (secsUntilRise > 0 && secsUntilRise <= 300) {
+        dotClass = 'dot-soon'; itemClass = 'pass-soon';
+      } else {
+        dotClass = 'dot-upcoming'; itemClass = '';
+      }
+      if (itemClass) item.classList.add(itemClass);
 
       let timeStr, subStr;
-      const secsUntilRise = secsUntil(pass.rise_time);
-      if (isActive) {
+      if (isActive || (secsUntilSet >= 0 && secsUntilRise <= 0)) {
         const remaining = Math.max(0, Math.round(secsUntilSet));
-        timeStr = 'NOW — ' + fmtDuration(remaining) + ' left';
+        timeStr = fmtDuration(remaining) + ' left';
         subStr  = fmtDuration(pass.duration) + ' total';
-        item.style.opacity = '0.6'; // dim in-progress passes slightly
       } else if (secsUntilRise > 0) {
         const secs = Math.round(secsUntilRise);
         const m = Math.floor(secs / 60);
@@ -3562,18 +4040,17 @@
       // Transmitter metadata
       const freqStr = pass.freq_mhz ? pass.freq_mhz.toFixed(1) + ' MHz' : '';
       const modeStr = pass.mode || '';
-      const compatClass = pass.cc1200_ok ? 'compat-cc1200' : pass.rtlsdr_ok ? 'compat-rtlsdr' : 'compat-none';
-      const compatLabel = pass.cc1200_ok ? 'CC' : 'SDR';
 
       const isPending = _pendingTrack && pass.name.toLowerCase().includes(_pendingTrack.toLowerCase());
       const pendingBadge = isPending ? ' <span style="font-size:0.55rem;color:#f59e0b;font-family:var(--font-mono);letter-spacing:0.08em">TRACKING</span>' : '';
       const nextBadge = isNext && !_pendingTrack && !_isTracking ? ' next-label' : '';
 
       item.innerHTML = `
+        <div class="pass-dot ${dotClass}"></div>
         <div class="pass-item-name${nextBadge}">${pass.name}${pendingBadge}</div>
         <div class="max-el-badge">${pass.max_el.toFixed(0)}&deg;</div>
         <button class="btn btn-accent pass-track-btn" onclick="event.stopPropagation();doTrackSat('${pass.name.replace(/'/g, "\\'")}')">&#9654;</button>
-        <div class="pass-meta-bot" style="grid-column:1/4">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}</div>
+        <div class="pass-meta-bot" style="grid-column:2/5">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}</div>
       `;
 
       // Click to open satellite info popup
@@ -4059,6 +4536,32 @@
   }
 
   /* =========================================================================
+     PASS HISTORY
+     ========================================================================= */
+  function pollPassHistory() {
+    fetch('/api/pass-history').then(r => r.json()).then(history => {
+      const el = document.getElementById('history-list');
+      if (!el) return;
+      if (!history || history.length === 0) {
+        el.innerHTML = '<div style="color:var(--muted-dim);padding:4px 0">No passes tracked yet</div>';
+        return;
+      }
+      // Show most recent first
+      el.innerHTML = history.slice().reverse().map(h => {
+        const t = new Date(h.time);
+        const timeStr = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' });
+        const pkts = h.packets || 0;
+        const dur = h.duration ? Math.round(h.duration / 60) + 'm' : '--';
+        const rssi = h.peak_rssi != null ? h.peak_rssi + ' dBm' : '';
+        return `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <span style="color:var(--text);font-weight:500">${h.name}</span>
+          <span>${timeStr} · ${dur} · ${h.max_el}° · ${pkts} pkt${rssi ? ' · ' + rssi : ''}</span>
+        </div>`;
+      }).join('');
+    }).catch(() => {});
+  }
+
+  /* =========================================================================
      INIT
      ========================================================================= */
   window.addEventListener('DOMContentLoaded', () => {
@@ -4084,16 +4587,18 @@
     // 3. Kick off API polling
     pollStatus();
     pollPasses();
+    pollPassHistory();
 
     // 4. Repeat polls
-    setInterval(pollStatus,  1000);
-    setInterval(pollPasses, 30000);
-    // Client-side countdown updater — re-renders pass list times every 5s
+    setInterval(pollStatus,  250); // 4Hz for smooth rotator animation
+    setInterval(pollPasses, 15000);
+    setInterval(pollPassHistory, 30000);
+    // Client-side countdown updater — re-renders pass list every 3s for live times
     setInterval(() => {
       if (_passes.length > 0 && !_passPolling) {
         applyPasses({ passes: _passes, computing: false });
       }
-    }, 5000);
+    }, 3000);
 
     // 5. Fallback: if first status hasn't arrived in 5s, show dashboard anyway
     setTimeout(() => {
@@ -4109,6 +4614,14 @@
       const ro = new ResizeObserver(() => { _skyNeedsRedraw = true; });
       ro.observe(document.getElementById('sky-canvas-wrap'));
     }
+
+    // 6a. Fix sky plot trace disappearing on alt-tab (rAF pauses when hidden)
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        _skyNeedsRedraw = true;
+        drawSkyPlot();
+      }
+    });
 
     // 6b. Sky plot canvas hover — detect nearest trajectory on mousemove
     // 6b. Sky plot canvas click — select nearest trajectory
@@ -4389,8 +4902,15 @@
   function doTrackSat(satName) {
     _pendingTrack = satName;
     _pendingTrackTime = Date.now();
+    // Cache the pass data immediately so it survives server-side filtering
+    const tgt = satName.trim().toLowerCase();
+    const matchPass = _passes.find(p => {
+      const n = p.name.trim().toLowerCase();
+      return n === tgt || n.includes(tgt) || tgt.includes(n);
+    });
+    if (matchPass && matchPass.trajectory) _trackedPassCache = matchPass;
     _skyNeedsRedraw = true;
-    drawSkyPlot(); // immediate redraw to show new pending target
+    drawSkyPlot();
     try { localStorage.setItem('pendingTrack', satName); localStorage.setItem('pendingTrackTime', String(Date.now())); } catch(e) {}
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Waiting: ' + satName;

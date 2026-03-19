@@ -27,7 +27,7 @@ echo ""
 # ------------------------------------------------------------------
 # 1. WiFi rfkill fix (Trixie blocks WiFi without regulatory domain)
 # ------------------------------------------------------------------
-echo "[1/8] WiFi rfkill fix..."
+echo "[1/9] WiFi rfkill fix..."
 
 # Kill systemd-rfkill permanently — it re-blocks WiFi on NM restart
 systemctl mask systemd-rfkill.service systemd-rfkill.socket 2>/dev/null || true
@@ -90,7 +90,7 @@ ip link set wlan0 up 2>/dev/null || true
 # ------------------------------------------------------------------
 # 2. WiFi network configuration
 # ------------------------------------------------------------------
-echo "[2/8] WiFi network..."
+echo "[2/9] WiFi network..."
 
 # Add WiFi network via NetworkManager if nmcli is available
 if command -v nmcli &>/dev/null; then
@@ -127,7 +127,7 @@ fi
 # ------------------------------------------------------------------
 # 3. UART setup (for RF HAT communication)
 # ------------------------------------------------------------------
-echo "[3/8] UART setup..."
+echo "[3/9] UART setup..."
 
 if [ -f "$BOOT_CONFIG" ]; then
     # Enable UART
@@ -154,7 +154,7 @@ systemctl stop serial-getty@ttyAMA0.service 2>/dev/null || true
 # ------------------------------------------------------------------
 # 4. Install system packages
 # ------------------------------------------------------------------
-echo "[4/8] System packages..."
+echo "[4/9] System packages..."
 
 apt-get update -qq
 apt-get install -y -qq python3-pip hamlib-utils git 2>/dev/null
@@ -163,7 +163,7 @@ echo "  hamlib-utils (rotctld), python3-pip installed"
 # ------------------------------------------------------------------
 # 5. Install Python dependencies
 # ------------------------------------------------------------------
-echo "[5/8] Python dependencies..."
+echo "[5/9] Python dependencies..."
 
 pip install --break-system-packages pyserial ephem 2>/dev/null || \
 pip install pyserial ephem
@@ -172,7 +172,7 @@ echo "  pyserial, ephem installed"
 # ------------------------------------------------------------------
 # 6. Install rotctld service
 # ------------------------------------------------------------------
-echo "[6/8] rotctld service..."
+echo "[6/9] rotctld service..."
 
 cat > /etc/systemd/system/rotctld.service << 'ROTCTLD_EOF'
 [Unit]
@@ -198,7 +198,23 @@ echo "  rotctld.service installed (auto-starts when USB plugged in)"
 # ------------------------------------------------------------------
 # 7. Install station services
 # ------------------------------------------------------------------
-echo "[7/8] Station services..."
+echo "[7/9] WiFi provisioning service..."
+
+cp "$SERVICES_DIR/wifi-provision.service" /etc/systemd/system/
+# Install dnsmasq for captive portal DNS redirect
+apt-get install -y -qq dnsmasq 2>/dev/null
+# Disable dnsmasq by default — wifi_provision.py manages it on demand
+systemctl disable dnsmasq.service 2>/dev/null || true
+systemctl stop dnsmasq.service 2>/dev/null || true
+
+systemctl daemon-reload
+systemctl enable wifi-provision.service
+echo "  wifi-provision.service installed and enabled"
+
+# ------------------------------------------------------------------
+# 8. Install station services
+# ------------------------------------------------------------------
+echo "[8/9] Station services..."
 
 cp "$SERVICES_DIR/dashboard.service" /etc/systemd/system/
 cp "$SERVICES_DIR/station.service"   /etc/systemd/system/
@@ -209,9 +225,9 @@ systemctl enable station.service
 echo "  dashboard.service + station.service installed and enabled"
 
 # ------------------------------------------------------------------
-# 8. SSH key persistence + user setup
+# 9. SSH key persistence + user setup
 # ------------------------------------------------------------------
-echo "[8/8] SSH setup..."
+echo "[9/9] SSH setup..."
 
 # Ensure SSH is enabled
 systemctl enable ssh 2>/dev/null || systemctl enable sshd 2>/dev/null || true
@@ -219,7 +235,22 @@ systemctl start ssh 2>/dev/null || systemctl start sshd 2>/dev/null || true
 
 # Add pi user to dialout group (for serial port access)
 usermod -aG dialout pi 2>/dev/null || true
-echo "  SSH enabled, pi user in dialout group"
+
+# Allow pi user passwordless sudo for station management commands
+# dashboard.py: systemctl stop/start rotctld, shutdown
+# wifi_provision.py (if run manually): nmcli, dnsmasq, killall
+cat > /etc/sudoers.d/satnogs << 'SUDOERS_EOF'
+pi ALL=(ALL) NOPASSWD: /usr/bin/systemctl stop rotctld.service
+pi ALL=(ALL) NOPASSWD: /usr/bin/systemctl start rotctld.service
+pi ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart rotctld.service
+pi ALL=(ALL) NOPASSWD: /sbin/shutdown
+pi ALL=(ALL) NOPASSWD: /usr/sbin/shutdown
+pi ALL=(ALL) NOPASSWD: /usr/bin/nmcli
+pi ALL=(ALL) NOPASSWD: /usr/sbin/dnsmasq
+pi ALL=(ALL) NOPASSWD: /usr/bin/killall dnsmasq
+SUDOERS_EOF
+chmod 440 /etc/sudoers.d/satnogs
+echo "  SSH enabled, pi user in dialout group, sudoers configured"
 
 # ------------------------------------------------------------------
 # Done
@@ -231,15 +262,17 @@ echo "==========================================="
 echo ""
 echo "After reboot:"
 echo "  1. Plug in MotorPCB USB → rotctld starts automatically"
-echo "  2. Open https://<pi-ip>:5000 on your phone"
-echo "  3. Tap 'Set Location' for GPS"
-echo "  4. station.py daemon auto-tracks passes"
+echo "  2. If no known WiFi: connect phone to 'SatNOGS-Setup' AP"
+echo "  3. Enter your hotspot/WiFi credentials in the captive portal"
+echo "  4. Open https://<pi-ip>:5000 on your phone"
+echo "  5. Follow the setup wizard (GPS, North, antenna, receiver)"
 echo ""
 echo "Quick checks after reboot:"
-echo "  systemctl status rfkill-unblock  # WiFi fix"
-echo "  systemctl status rotctld         # rotator (needs USB)"
-echo "  systemctl status dashboard       # web dashboard"
-echo "  systemctl status station         # pass tracker"
-echo "  ip addr show wlan0               # WiFi IP"
+echo "  systemctl status rfkill-unblock    # WiFi fix"
+echo "  systemctl status wifi-provision    # WiFi provisioning"
+echo "  systemctl status rotctld           # rotator (needs USB)"
+echo "  systemctl status dashboard         # web dashboard"
+echo "  systemctl status station           # pass tracker"
+echo "  ip addr show wlan0                 # WiFi IP"
 echo ""
 echo "Run: sudo reboot"
