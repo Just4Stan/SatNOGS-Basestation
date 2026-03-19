@@ -3316,7 +3316,8 @@
 
     // ── Control page: live AZ/EL + state ──
     const curAzEl = document.getElementById('ctrl-cur-az');
-    if (curAzEl) curAzEl.textContent = _currentAz !== null ? _currentAz.toFixed(1) : '---';
+    const ctrlAz = _currentAz !== null ? ((_currentAz % 360) + 360) % 360 : null;
+    if (curAzEl) curAzEl.textContent = ctrlAz !== null ? ctrlAz.toFixed(1) : '---';
     const curElEl = document.getElementById('ctrl-cur-el');
     if (curElEl) curElEl.textContent = _currentEl !== null ? _currentEl.toFixed(1) : '---';
     const ctrlState = document.getElementById('ctrl-rot-state');
@@ -3326,7 +3327,12 @@
     }
     // Sync control page compass
     const arrowCtrl = document.getElementById('compass-arrow-ctrl');
-    if (arrowCtrl && _currentAz !== null) arrowCtrl.setAttribute('transform', 'rotate(' + _currentAz + ', 80, 80)');
+    if (arrowCtrl && ctrlAz !== null) {
+      arrowCtrl.style.transformOrigin = '80px 80px';
+      arrowCtrl.style.transition = 'transform 0.25s linear';
+      arrowCtrl.style.transform = `rotate(${ctrlAz}deg)`;
+      arrowCtrl.removeAttribute('transform');
+    }
 
     // ── Header readout ──
     const headerAz = document.getElementById('header-az');
@@ -3948,6 +3954,8 @@
       }
       return;
     }
+    // Preserve scroll position across re-renders (countdown updates every 3s)
+    const _savedScroll = listEl.scrollTop;
     // Show computing progress banner at top of list when partial results available
     if (data.computing && _passes.length > 0) {
       const prog = data.progress || 'Computing more...';
@@ -4078,6 +4086,8 @@
 
       listEl.appendChild(item);
     });
+    // Restore scroll position after DOM rebuild
+    listEl.scrollTop = _savedScroll;
   }
 
   let _passPolling = false;
