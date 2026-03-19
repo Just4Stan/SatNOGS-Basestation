@@ -1758,6 +1758,7 @@ def main():
     poller = threading.Thread(target=polling_loop, daemon=True)
     poller.start()
 
+    HTTPServer.allow_reuse_address = True
     server = HTTPServer((args.bind, args.port), DashboardHandler)
 
     if not args.no_ssl:
