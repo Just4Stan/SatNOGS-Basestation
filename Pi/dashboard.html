@@ -1641,6 +1641,37 @@
     }
     @media (max-width: 480px) {
       .ctrl-divider { display: none; }
+
+      /* Top bar: stack vertically or hide non-essential */
+      #site-header {
+        padding-left: 8px;
+        padding-right: 8px;
+        gap: 4px;
+      }
+      .header-left { gap: 4px; }
+      .wordmark { font-size: 0.75rem; letter-spacing: 0.10em; }
+      #loc-pill { display: none; } /* hide location on very narrow screens */
+      .header-center {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+      }
+      #station-state {
+        gap: 4px;
+        overflow: hidden;
+      }
+      .state-label {
+        font-size: 0.58rem !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+      }
+      .state-detail { display: none !important; } /* hide detail line on narrow */
+      #stop-btn { min-height: 24px !important; padding: 0 6px !important; font-size: 0.55rem !important; }
+      .header-right { gap: 3px; }
+      .header-readout { font-size: 0.50rem !important; }
+      #header-time { font-size: 0.55rem !important; }
     }
 
     /* =====================================================================
@@ -1691,6 +1722,13 @@
       body.focus-mode .track-col-right {
         display: none;
       }
+      /* Focus panel: compact for mobile */
+      #focus-panel .card { padding: 5px 6px !important; margin-bottom: 4px !important; }
+      .focus-pointing-grid { font-size: 0.56rem !important; gap: 2px !important; }
+      .focus-two-col { gap: 4px !important; margin-bottom: 4px !important; }
+      .focus-two-col .card { padding: 4px 6px !important; }
+      /* Hide pointing section on very narrow screens — error shows in top bar */
+      .focus-pointing { display: none !important; }
       /* Compact top bar on mobile */
       .header-right { font-size: 0.55rem; gap: 5px; }
       .header-right .header-readout { font-size: 0.55rem; }
@@ -2043,7 +2081,7 @@
               </div>
 
               <!-- Range & Doppler (unique — not shown elsewhere) -->
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+              <div class="focus-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
                 <div class="card" style="padding:6px 8px;text-align:center">
                   <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Range</div>
                   <div id="focus-range" style="font-family:var(--font-mono);font-size:0.92rem;font-weight:700;color:var(--text)">--- km</div>
@@ -2057,9 +2095,9 @@
               </div>
 
               <!-- Pointing (unique — shows commanded vs actual) -->
-              <div class="card" style="padding:6px 8px;margin-bottom:8px">
+              <div class="card focus-pointing" style="padding:6px 8px;margin-bottom:8px">
                 <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Pointing</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-family:var(--font-mono);font-size:0.68rem">
+                <div class="focus-pointing-grid" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-family:var(--font-mono);font-size:0.68rem">
                   <div style="color:var(--muted-dim);font-size:0.50rem">CMD</div>
                   <div style="color:var(--muted-dim);font-size:0.50rem">ACTUAL</div>
                   <div style="color:var(--muted-dim);font-size:0.50rem">ERROR</div>
@@ -2073,7 +2111,7 @@
               </div>
 
               <!-- Packets & Link -->
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+              <div class="focus-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
                 <div class="card" style="padding:6px 8px;text-align:center">
                   <div style="font-size:0.50rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em">Packets</div>
                   <div id="focus-packets" style="font-family:var(--font-mono);font-size:0.92rem;font-weight:700;color:var(--text)">0</div>
