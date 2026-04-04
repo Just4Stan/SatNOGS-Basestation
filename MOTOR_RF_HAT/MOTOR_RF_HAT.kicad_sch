@@ -1,0 +1,17 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "10.0.0")
+	(uuid "f0e1d2c3-b4a5-6789-0abc-def012345678")
+	(paper "A3")
+	(title_block
+		(title "MOTOR_RF_HAT — Combined Motor Control + RF HAT")
+		(date "2026-04-04")
+		(rev "0.1")
+		(company "SatNOGS Basestation — Stan Coene & Robbe Lehaen")
+		(comment 1 "KU Leuven Campus Geel — ELO-ICT Master Thesis 2025-2026")
+		(comment 2 "Pi 3A+ HAT: 2x A4950 motor driver + UHF/VHF CC1200 + ADXL345 IMU")
+		(comment 3 "Single RP2040 Pico — unified COBS protocol over UART")
+	)
+	(lib_symbols)
+)
