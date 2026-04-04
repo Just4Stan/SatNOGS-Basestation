@@ -1120,7 +1120,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "000e0620-d2d4-4b39-9977-baa0f4a5ac43")
-		(property "Reference" "#PWR011"
+		(property "Reference" "#PWR075"
 			(at 54.61 93.98 0)
 			(hide yes)
 			(show_name no)
@@ -1180,7 +1180,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR011")
+					(reference "#PWR075")
 					(unit 1)
 				)
 			)
@@ -1197,7 +1197,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "021f5b59-be25-4596-b8ab-8366e007c03b")
-		(property "Reference" "TP13"
+		(property "Reference" "TP7"
 			(at 83.566 48.26 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1259,7 +1259,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP13")
+					(reference "TP7")
 					(unit 1)
 				)
 			)
@@ -1277,7 +1277,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0440140e-093a-4667-892d-20c98a814d3e")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR081"
 			(at 80.01 67.31 0)
 			(hide yes)
 			(show_name no)
@@ -1337,7 +1337,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR09")
+					(reference "#PWR081")
 					(unit 1)
 				)
 			)
@@ -1354,7 +1354,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "061c7d29-419a-482c-beed-9edf51d841ae")
-		(property "Reference" "TP1"
+		(property "Reference" "TP18"
 			(at 83.566 92.71 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1416,7 +1416,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP1")
+					(reference "TP18")
 					(unit 1)
 				)
 			)
@@ -1433,7 +1433,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "06504179-93ba-4fc9-a50b-8cb57d3312a6")
-		(property "Reference" "TP9"
+		(property "Reference" "TP11"
 			(at 83.566 58.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1495,7 +1495,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP9")
+					(reference "TP11")
 					(unit 1)
 				)
 			)
@@ -1512,7 +1512,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "1bd58db6-d362-480f-8454-297c4859850c")
-		(property "Reference" "TP12"
+		(property "Reference" "TP8"
 			(at 83.566 50.8 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1574,7 +1574,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP12")
+					(reference "TP8")
 					(unit 1)
 				)
 			)
@@ -1591,7 +1591,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "2909582e-33c7-48a9-ad4c-c1ac0a7e3210")
-		(property "Reference" "TP18"
+		(property "Reference" "TP2"
 			(at 83.566 25.4 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1653,7 +1653,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP18")
+					(reference "TP2")
 					(unit 1)
 				)
 			)
@@ -1670,7 +1670,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "31e8276c-7942-4f93-9e65-d0b74eda209c")
-		(property "Reference" "TP4"
+		(property "Reference" "TP15"
 			(at 83.566 85.09 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1732,7 +1732,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP4")
+					(reference "TP15")
 					(unit 1)
 				)
 			)
@@ -1750,7 +1750,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "37d15459-c687-4380-b718-52081c28c826")
-		(property "Reference" "#PWR065"
+		(property "Reference" "#PWR080"
 			(at 80.01 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -1810,7 +1810,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR065")
+					(reference "#PWR080")
 					(unit 1)
 				)
 			)
@@ -1834,7 +1834,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "37f890de-3c6a-4acd-840e-bf3b09dc31ba")
-		(property "Reference" "#PWR012"
+		(property "Reference" "#PWR082"
 			(at 80.01 104.14 0)
 			(hide yes)
 			(show_name no)
@@ -1894,7 +1894,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR012")
+					(reference "#PWR082")
 					(unit 1)
 				)
 			)
@@ -1911,7 +1911,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "4142492d-39de-4ffc-8be0-b2b3d8cedd30")
-		(property "Reference" "TP5"
+		(property "Reference" "TP14"
 			(at 83.566 82.55 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1973,7 +1973,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP5")
+					(reference "TP14")
 					(unit 1)
 				)
 			)
@@ -1990,7 +1990,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "4517fd77-152a-44a0-8e4e-cdca0924ba93")
-		(property "Reference" "TP17"
+		(property "Reference" "TP3"
 			(at 83.566 27.94 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2052,7 +2052,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP17")
+					(reference "TP3")
 					(unit 1)
 				)
 			)
@@ -2069,7 +2069,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "545d1d29-e509-45de-91c9-b1953cf7d873")
-		(property "Reference" "TP16"
+		(property "Reference" "TP4"
 			(at 83.566 30.48 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2131,7 +2131,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP16")
+					(reference "TP4")
 					(unit 1)
 				)
 			)
@@ -2149,7 +2149,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5b068e6e-c4e4-4338-baef-e5ad2227785e")
-		(property "Reference" "#PWR068"
+		(property "Reference" "#PWR076"
 			(at 59.69 34.29 0)
 			(hide yes)
 			(show_name no)
@@ -2209,7 +2209,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR068")
+					(reference "#PWR076")
 					(unit 1)
 				)
 			)
@@ -2232,7 +2232,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "5cfa5dca-72a0-463a-86ce-efa99582827e")
-		(property "Reference" "TP3"
+		(property "Reference" "TP16"
 			(at 83.566 87.63 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2294,7 +2294,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP3")
+					(reference "TP16")
 					(unit 1)
 				)
 			)
@@ -2312,7 +2312,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "5d5062e5-a0b1-441f-acd4-22949090ab46")
-		(property "Reference" "#PWR066"
+		(property "Reference" "#PWR078"
 			(at 67.31 34.29 0)
 			(hide yes)
 			(show_name no)
@@ -2372,7 +2372,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR066")
+					(reference "#PWR078")
 					(unit 1)
 				)
 			)
@@ -2395,7 +2395,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "6c2cfb64-c251-49c7-9650-e422d13d9c59")
-		(property "Reference" "TP6"
+		(property "Reference" "TP19"
 			(at 83.566 95.25 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2457,7 +2457,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP6")
+					(reference "TP19")
 					(unit 1)
 				)
 			)
@@ -2474,7 +2474,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "6d5aafe7-5600-4e3e-b2c8-b4f806a0327c")
-		(property "Reference" "TP8"
+		(property "Reference" "TP12"
 			(at 83.566 77.47 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2536,7 +2536,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP8")
+					(reference "TP12")
 					(unit 1)
 				)
 			)
@@ -2633,7 +2633,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7cc062b1-a6e8-47ba-8d67-1ff271b0c2dc")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR077"
 			(at 59.69 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -2693,7 +2693,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR07")
+					(reference "#PWR077")
 					(unit 1)
 				)
 			)
@@ -2710,7 +2710,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "88258baa-21db-45e1-8688-703d76e8ad06")
-		(property "Reference" "TP2"
+		(property "Reference" "TP17"
 			(at 83.566 90.17 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2772,7 +2772,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP2")
+					(reference "TP17")
 					(unit 1)
 				)
 			)
@@ -2789,7 +2789,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "8d678750-47e2-4bd0-ae89-7124eaaa1198")
-		(property "Reference" "TP11"
+		(property "Reference" "TP9"
 			(at 83.566 53.34 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2851,7 +2851,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP11")
+					(reference "TP9")
 					(unit 1)
 				)
 			)
@@ -2868,7 +2868,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "9a8cccba-2357-480c-ad69-1e4b78029235")
-		(property "Reference" "TP15"
+		(property "Reference" "TP5"
 			(at 83.566 33.02 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2930,7 +2930,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP15")
+					(reference "TP5")
 					(unit 1)
 				)
 			)
@@ -2948,7 +2948,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a8f78958-6ad0-4921-bbc8-161ee64d49ad")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR079"
 			(at 67.31 57.15 0)
 			(hide yes)
 			(show_name no)
@@ -3008,7 +3008,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR08")
+					(reference "#PWR079")
 					(unit 1)
 				)
 			)
@@ -3025,7 +3025,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "c326a02c-f197-427b-9aec-67cdd46c3c8d")
-		(property "Reference" "TP14"
+		(property "Reference" "TP6"
 			(at 83.566 35.56 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3087,7 +3087,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP14")
+					(reference "TP6")
 					(unit 1)
 				)
 			)
@@ -3105,7 +3105,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d4eb92fb-cf0e-438d-904e-8b31f5fa7760")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR074"
 			(at 46.99 93.98 0)
 			(hide yes)
 			(show_name no)
@@ -3165,7 +3165,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "#PWR010")
+					(reference "#PWR074")
 					(unit 1)
 				)
 			)
@@ -3182,7 +3182,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "eb49ded7-7280-4063-8fe2-7aad4b57aec2")
-		(property "Reference" "TP7"
+		(property "Reference" "TP13"
 			(at 83.566 80.01 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -3244,7 +3244,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/897cf420-fdd5-435e-b081-e1fa633c20b5"
-					(reference "TP7")
+					(reference "TP13")
 					(unit 1)
 				)
 			)

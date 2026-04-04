@@ -1,4 +1,5 @@
 (fp_lib_table
   (version 7)
   (lib (name "components")(type "KiCad")(uri "${KIPRJMOD}/components.pretty")(options "")(descr "Project-local footprints"))
+  (lib (name "TestPoint")(type "KiCad")(uri "${KIPRJMOD}/components.pretty")(options "")(descr "Alias for TestPoint:smallpad resolution"))
 )

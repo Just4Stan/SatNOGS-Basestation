@@ -1441,14 +1441,6 @@
 		(uuid "0876cea5-5b22-45e8-84da-d6aafe7f2104")
 	)
 	(no_connect
-		(at 83.82 77.47)
-		(uuid "099bfc4c-7cd7-403b-9ce9-a567f8fadc89")
-	)
-	(no_connect
-		(at 83.82 110.49)
-		(uuid "26f2bcd3-5aec-411c-b255-45a01801b489")
-	)
-	(no_connect
 		(at 129.54 102.87)
 		(uuid "3fb4958f-247f-4b6a-97c3-ec2a57f32969")
 	)
@@ -1461,16 +1453,8 @@
 		(uuid "b2baa85a-4ba3-4768-92e6-454c45b87485")
 	)
 	(no_connect
-		(at 83.82 107.95)
-		(uuid "b831c8e7-0508-463d-8db4-579259ea6e41")
-	)
-	(no_connect
 		(at 83.82 67.31)
 		(uuid "f0f7bf9e-71bc-45eb-a412-481433e385b0")
-	)
-	(no_connect
-		(at 83.82 80.01)
-		(uuid "fc5a145a-30bc-4981-9b98-8422a7528e1a")
 	)
 	(wire
 		(pts
@@ -1559,6 +1543,17 @@
 		)
 		(uuid "640895b1-0ab5-4012-a6ec-cb154297b527")
 	)
+	(hierarchical_label "AZ_ENC_A"
+		(shape input)
+		(at 83.82 107.95 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "65870aeb-5878-4b2c-93ce-efa500c330f0")
+	)
 	(hierarchical_label "VHF_GPIO0"
 		(shape input)
 		(at 129.54 90.17 0)
@@ -1580,6 +1575,17 @@
 			(justify right)
 		)
 		(uuid "6ab8aa7b-4d52-4434-887b-5ab257b66043")
+	)
+	(hierarchical_label "AZ_ENC_B"
+		(shape input)
+		(at 83.82 110.49 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6fdabae7-1113-405e-8f9c-496c8bd5bb87")
 	)
 	(hierarchical_label "VHF_GPIO2"
 		(shape input)
@@ -1625,6 +1631,17 @@
 		)
 		(uuid "8b8930b5-eac9-4cf4-8274-2ac44ff7b022")
 	)
+	(hierarchical_label "AZ_IN1"
+		(shape input)
+		(at 83.82 77.47 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b72d8d0d-336c-437d-b024-27ae7f43bf83")
+	)
 	(hierarchical_label "UART_RX"
 		(shape input)
 		(at 83.82 74.93 180)
@@ -1668,6 +1685,17 @@
 			(justify left)
 		)
 		(uuid "da4b6c07-7a4d-4404-8afd-f2382203daf0")
+	)
+	(hierarchical_label "AZ_IN2"
+		(shape input)
+		(at 83.82 80.01 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ec6b8ff9-39e7-4874-b878-9724d582096b")
 	)
 	(hierarchical_label "VHF_GPIO3"
 		(shape input)
@@ -1713,7 +1741,7 @@
 		(in_pos_files yes)
 		(dnp no)
 		(uuid "1d4dbb0a-f969-4dd4-a509-2d9d053c1e05")
-		(property "Reference" "U3"
+		(property "Reference" "U4"
 			(at 87.63 123.19 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1933,7 +1961,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
-					(reference "U3")
+					(reference "U4")
 					(unit 1)
 				)
 			)
@@ -1951,7 +1979,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "329790a2-9654-4f02-90aa-077cc3011607")
-		(property "Reference" "#PWR020"
+		(property "Reference" "#PWR040"
 			(at 111.76 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -2011,7 +2039,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
-					(reference "#PWR020")
+					(reference "#PWR040")
 					(unit 1)
 				)
 			)
@@ -2029,7 +2057,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3e225462-f1a5-4a4c-a53b-18e92053a091")
-		(property "Reference" "#PWR040"
+		(property "Reference" "#PWR042"
 			(at 135.89 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -2090,7 +2118,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
-					(reference "#PWR040")
+					(reference "#PWR042")
 					(unit 1)
 				)
 			)
@@ -2108,7 +2136,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "771868ac-0c25-4590-87e7-46d44c3da363")
-		(property "Reference" "#PWR019"
+		(property "Reference" "#PWR038"
 			(at 106.68 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -2168,7 +2196,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
-					(reference "#PWR019")
+					(reference "#PWR038")
 					(unit 1)
 				)
 			)
@@ -2186,7 +2214,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8b218d26-85b4-466e-9a57-ef21c5bb2537")
-		(property "Reference" "#PWR018"
+		(property "Reference" "#PWR037"
 			(at 101.6 53.34 0)
 			(hide yes)
 			(show_name no)
@@ -2246,7 +2274,7 @@
 		(instances
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
-					(reference "#PWR018")
+					(reference "#PWR037")
 					(unit 1)
 				)
 			)
