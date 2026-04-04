@@ -469,8 +469,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "components"
+    ],
+    "pinned_symbol_libs": [
+      "components"
+    ]
   },
   "meta": {
     "filename": "MOTOR_RF_HAT.kicad_pro",
@@ -640,15 +644,36 @@
     "subpart_id_separator": 0,
     "top_level_sheets": [
       {
-        "filename": "RF_HAT.kicad_sch",
-        "name": "RF_HAT",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "filename": "MOTOR_RF_HAT.kicad_sch",
+        "name": "MOTOR_RF_HAT",
+        "uuid": "300cf3d4-e317-44c8-acd8-5f9989779c7c"
       }
     ],
-    "used_designators": "",
+    "used_designators": "D1,D7,#PWR59-63,H5-6",
     "variants": []
   },
-  "sheets": [],
+  "sheets": [
+    [
+      "300cf3d4-e317-44c8-acd8-5f9989779c7c",
+      "MOTOR_RF_HAT"
+    ],
+    [
+      "4304a2bc-ba15-4549-9abd-1aeb0fc86918",
+      "CC1200_UHF_432MHz"
+    ],
+    [
+      "b5374fb6-6911-4d97-b6ed-89df84753480",
+      "CC1200_VHF_144MHz"
+    ],
+    [
+      "3e644d4e-3c70-4dba-b47a-c0e6db07080d",
+      "Pico_SPI_Host"
+    ],
+    [
+      "df2c4ae5-dfcc-4b06-a511-feaff2e2867e",
+      "Pi_Header"
+    ]
+  ],
   "text_variables": {},
   "tuning_profiles": {
     "meta": {
