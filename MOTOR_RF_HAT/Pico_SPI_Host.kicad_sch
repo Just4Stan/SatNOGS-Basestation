@@ -5,7 +5,7 @@
 	(uuid "5ca4abfc-1136-4b23-a1ac-ca7fd0a7eea0")
 	(paper "A3")
 	(title_block
-		(title "RF_HAT")
+		(title "MOTOR_RF_HAT")
 	)
 	(lib_symbols
 		(symbol "MCU_Module:RaspberryPi_Pico"
@@ -1705,7 +1705,7 @@
 				(hide yes)
 			)
 		)
-		(property "project_name" "RF_HAT"
+		(property "project_name" "MOTOR_RF_HAT"
 			(at 109.22 92.7099 0)
 			(effects
 				(font
@@ -1986,7 +1986,7 @@
 			(uuid "e4450e7c-7cde-4434-b40d-3fa4b11e7bc5")
 		)
 		(instances
-			(project "RF_HAT"
+			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
 					(reference "#PWR040")
 					(unit 1)
@@ -2052,7 +2052,7 @@
 			(uuid "a300738c-72b0-4b14-8b27-c5bb5fd4d0eb")
 		)
 		(instances
-			(project "RF_HAT"
+			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
 					(reference "#PWR019")
 					(unit 1)

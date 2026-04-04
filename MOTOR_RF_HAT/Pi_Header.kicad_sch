@@ -5,7 +5,7 @@
 	(uuid "0ddfd0b9-5e50-4fc0-8890-159e27de246a")
 	(paper "A3")
 	(title_block
-		(title "RF_HAT")
+		(title "MOTOR_RF_HAT")
 	)
 	(lib_symbols
 		(symbol "Connector:Raspberry_Pi_2_3"
@@ -1322,7 +1322,7 @@
 			(uuid "3268a3e6-3c69-485d-be2d-664d6c4fd1db")
 		)
 		(instances
-			(project "RF_HAT"
+			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/df2c4ae5-dfcc-4b06-a511-feaff2e2867e"
 					(reference "#PWR041")
 					(unit 1)
@@ -1391,7 +1391,7 @@
 				(hide yes)
 			)
 		)
-		(property "project_name" "RF_HAT"
+		(property "project_name" "MOTOR_RF_HAT"
 			(at 53.34 71.1199 0)
 			(effects
 				(font
