@@ -8,6 +8,129 @@
 		(title "MOTOR_RF_HAT")
 	)
 	(lib_symbols
+		(symbol "Connector:TestPoint_Small"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0.762)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "TP"
+				(at 0 3.81 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "TestPoint_Small"
+				(at 0 2.032 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 5.08 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "test point"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "test point tp"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "Pin* Test*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "TestPoint_Small_0_1"
+				(circle
+					(center 0 0)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "TestPoint_Small_1_1"
+				(pin passive line
+					(at 0 0 90)
+					(length 0)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Connector_Generic:Conn_01x01"
 			(pin_names
 				(offset 1.016)
@@ -2559,6 +2682,16 @@
 		)
 		(uuid "5cc2753e-148b-4f0c-b42c-20426bb022af")
 	)
+	(text "add breakout pads"
+		(exclude_from_sim no)
+		(at 69.596 188.214 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "443f4120-e642-46e5-a330-6bbf581db515")
+	)
 	(text "FPWM version of the LMR51420YFDDCR for less output ripple at low voltage and more consistency but less efficient"
 		(exclude_from_sim no)
 		(at 73.66 17.018 0)
@@ -2630,6 +2763,12 @@
 		(uuid "79b3db79-7ce1-4e78-9a9c-028511147786")
 	)
 	(junction
+		(at 64.77 203.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8b5ea5a2-0435-4d2d-9008-d6ca92801b53")
+	)
+	(junction
 		(at 119.38 43.18)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2683,6 +2822,12 @@
 		(color 0 0 0 0)
 		(uuid "f2e024fe-eb0f-4826-888a-f9e4666b5c3a")
 	)
+	(junction
+		(at 64.77 175.26)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "f3bf488d-1809-40f0-98a7-eabd784598bb")
+	)
 	(no_connect
 		(at 266.7 33.02)
 		(uuid "6108a240-9c30-4bcd-9d3d-344edf3ce201")
@@ -2695,6 +2840,42 @@
 		(at 30.48 48.26)
 		(uuid "c3487b3b-b8a5-44d8-a895-4300e854bff5")
 	)
+	(bus_entry
+		(at 34.29 187.96)
+		(size -2.54 -2.54)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0c99c087-2a70-443e-b3ab-989ef3013312")
+	)
+	(bus_entry
+		(at 34.29 182.88)
+		(size -2.54 -2.54)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "26fb957a-99e2-4fa3-b7b5-8099da8a4781")
+	)
+	(bus_entry
+		(at 34.29 185.42)
+		(size -2.54 -2.54)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bd133f50-5b1d-447d-b733-c83de7dbaab3")
+	)
+	(bus_entry
+		(at 34.29 190.5)
+		(size -2.54 -2.54)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f228b6fe-0d88-4cfc-bb61-af04948ee523")
+	)
 	(wire
 		(pts
 			(xy 119.38 52.07) (xy 119.38 53.34)
@@ -2704,6 +2885,36 @@
 			(type default)
 		)
 		(uuid "01f5f5a7-d851-4bdd-9877-39672c6ef5e0")
+	)
+	(wire
+		(pts
+			(xy 66.04 203.2) (xy 66.04 200.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0370fc09-7b37-4370-be43-cd798ed88627")
+	)
+	(bus
+		(pts
+			(xy 31.75 177.8) (xy 31.75 180.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "062a61d3-4e32-4de1-9e59-55f91ec63159")
+	)
+	(bus
+		(pts
+			(xy 31.75 182.88) (xy 31.75 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "07b35e29-f915-419c-b276-e04077e54a13")
 	)
 	(wire
 		(pts
@@ -2724,6 +2935,16 @@
 			(type default)
 		)
 		(uuid "0c80a6e8-a250-439e-b687-302f4f9f266a")
+	)
+	(wire
+		(pts
+			(xy 64.77 203.2) (xy 66.04 203.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0d2669a9-7c6d-4938-a4d0-015a8bc30ec6")
 	)
 	(wire
 		(pts
@@ -2767,6 +2988,16 @@
 	)
 	(wire
 		(pts
+			(xy 34.29 187.96) (xy 53.34 187.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "19d90f6e-cb41-42c0-8286-b5bfffb5261b")
+	)
+	(wire
+		(pts
 			(xy 220.98 88.9) (xy 257.81 88.9)
 		)
 		(stroke
@@ -2774,6 +3005,16 @@
 			(type default)
 		)
 		(uuid "1bfcd5a9-37a7-4319-8ac6-03409db9a7a8")
+	)
+	(wire
+		(pts
+			(xy 34.29 182.88) (xy 53.34 182.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1ca5796b-3d6e-407e-a45c-d7bb79b51ca6")
 	)
 	(wire
 		(pts
@@ -2794,6 +3035,16 @@
 			(type default)
 		)
 		(uuid "1e243ae0-a6ac-4bbe-a11d-4c28f6053edc")
+	)
+	(bus
+		(pts
+			(xy 3.81 177.8) (xy 31.75 177.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1f37a95b-3768-46a7-bec1-41bdc733f7ac")
 	)
 	(wire
 		(pts
@@ -2824,6 +3075,26 @@
 			(type default)
 		)
 		(uuid "282eada0-fc19-4991-8706-03f644b8e74e")
+	)
+	(wire
+		(pts
+			(xy 34.29 190.5) (xy 53.34 190.5)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "29fb9787-d195-4f10-a7a4-82b1b33584ad")
+	)
+	(wire
+		(pts
+			(xy 3.81 193.04) (xy 53.34 193.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c50e375-3590-4d7d-9f40-47749d2b64ca")
 	)
 	(wire
 		(pts
@@ -2877,6 +3148,16 @@
 	)
 	(wire
 		(pts
+			(xy 66.04 175.26) (xy 66.04 177.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3ed982c5-9889-46d8-83a3-f46cfbbf8a77")
+	)
+	(wire
+		(pts
 			(xy 44.45 29.21) (xy 44.45 38.1)
 		)
 		(stroke
@@ -2904,6 +3185,16 @@
 			(type default)
 		)
 		(uuid "4f730a39-5dcb-4d8f-b3d8-8832e1f61589")
+	)
+	(wire
+		(pts
+			(xy 63.5 177.8) (xy 63.5 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52e21dd2-6815-44db-951d-fde927ce82e7")
 	)
 	(wire
 		(pts
@@ -2965,6 +3256,16 @@
 		)
 		(uuid "6d91b7bf-b2d3-4e7c-9a8f-f412deefec87")
 	)
+	(bus
+		(pts
+			(xy 31.75 185.42) (xy 31.75 187.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6ff6de68-a76e-474f-9909-4f90f55291fe")
+	)
 	(wire
 		(pts
 			(xy 220.98 105.41) (xy 220.98 106.68)
@@ -2994,6 +3295,16 @@
 			(type default)
 		)
 		(uuid "7f786737-1ee2-4277-be01-9385212d3227")
+	)
+	(wire
+		(pts
+			(xy 63.5 175.26) (xy 64.77 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "837db26e-a67b-4478-9e4a-c1d323f7f547")
 	)
 	(wire
 		(pts
@@ -3044,6 +3355,16 @@
 			(type default)
 		)
 		(uuid "8e8c636c-706f-49e5-b22a-00ee084d498c")
+	)
+	(wire
+		(pts
+			(xy 63.5 203.2) (xy 64.77 203.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "900778dc-27f0-43b1-b1da-17e5d77a21e5")
 	)
 	(wire
 		(pts
@@ -3117,6 +3438,36 @@
 	)
 	(wire
 		(pts
+			(xy 64.77 175.26) (xy 66.04 175.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a7147c16-dc12-4a7d-9a2d-c784d59ee846")
+	)
+	(wire
+		(pts
+			(xy 63.5 200.66) (xy 63.5 203.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aa97c759-7e2a-4e80-a10e-f8954dd2cf37")
+	)
+	(wire
+		(pts
+			(xy 34.29 185.42) (xy 53.34 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aba90741-f408-48ce-bd6a-e4e811ac2696")
+	)
+	(wire
+		(pts
 			(xy 68.58 114.3) (xy 93.98 114.3)
 		)
 		(stroke
@@ -3144,6 +3495,16 @@
 			(type default)
 		)
 		(uuid "b74a8585-acae-4333-8ef3-c1d6d6ea462c")
+	)
+	(bus
+		(pts
+			(xy 31.75 180.34) (xy 31.75 182.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b7852ba7-484e-4288-83f2-fa9e87486025")
 	)
 	(wire
 		(pts
@@ -3325,6 +3686,16 @@
 		)
 		(uuid "ffbbc760-f8bf-4d26-b351-d878db4f0d62")
 	)
+	(label "SPI0.MISO"
+		(at 35.56 182.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "2524be3b-2de7-4a61-883d-4f012fc0c8df")
+	)
 	(label "WS2812B"
 		(at 147.32 114.3 0)
 		(effects
@@ -3345,6 +3716,46 @@
 		)
 		(uuid "3939a261-1860-485b-a0bd-3e159727853c")
 	)
+	(label "SPI0{MISO MOSI SS SCK}"
+		(at 5.08 177.8 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4180764f-2035-4bb0-ae4d-f68e553dd890")
+	)
+	(label "SPI0.MOSI"
+		(at 35.56 185.42 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "a856542b-1ec3-4bcf-b2a6-2e43ec091076")
+	)
+	(label "SPI0.SCK"
+		(at 35.56 187.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c63a3170-7efa-4edc-9aa7-546c556fbd13")
+	)
+	(label "SPI0.SS"
+		(at 35.56 190.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d6347f25-0c90-47e2-84fd-a513d15cd1a8")
+	)
 	(label "WS2812B"
 		(at 201.93 33.02 180)
 		(effects
@@ -3354,6 +3765,28 @@
 			(justify right bottom)
 		)
 		(uuid "eeed8b0c-3938-40fb-94ef-c7869d92cab2")
+	)
+	(hierarchical_label "SPI0"
+		(shape bidirectional)
+		(at 3.81 177.8 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "4b30359a-f4d9-4a15-820b-8aac78279e4a")
+	)
+	(hierarchical_label "Gyro Int"
+		(shape output)
+		(at 3.81 193.04 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fa0e2ebe-63b5-4770-80c1-1985dfafcc00")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -3428,6 +3861,84 @@
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
 					(reference "#PWR055")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 64.77 203.2 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "074639fc-23fc-434c-b719-ebef5aeb4127")
+		(property "Reference" "#PWR052"
+			(at 64.77 209.55 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 64.77 208.28 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 64.77 203.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 64.77 203.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 64.77 203.2 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "dfee2ebb-2018-4d33-8ed0-085b19c06420")
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(reference "#PWR052")
 					(unit 1)
 				)
 			)
@@ -6077,6 +6588,85 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:TestPoint_Small")
+		(at 54.61 151.13 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9d17d35b-153d-485c-868e-e082b940948a")
+		(property "Reference" "TP19"
+			(at 55.88 149.8599 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "TestPoint_Small"
+			(at 55.88 152.3999 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "components:smallpad"
+			(at 59.69 151.13 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 59.69 151.13 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 54.61 151.13 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "e9c93691-c01b-4927-8c05-5b3d311b8318")
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(reference "TP19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Diode:1N4148WS")
 		(at 220.98 96.52 270)
 		(unit 1)
@@ -6181,6 +6771,84 @@
 			(project ""
 				(path "/33b95a2b-ca29-460b-a614-2f8c95471ec2/8d78ee46-cfd4-4767-aeb1-db6a1629dfc6"
 					(reference "D4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 64.77 175.26 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9fdb61d0-158c-4db0-9ca2-84288c41a89d")
+		(property "Reference" "#PWR051"
+			(at 64.77 179.07 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 64.77 170.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "components:smallpad"
+			(at 64.77 175.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 64.77 175.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 64.77 175.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "239fc44c-ceae-40b0-a679-8c68a02ac3dc")
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(reference "#PWR051")
 					(unit 1)
 				)
 			)
@@ -7730,6 +8398,370 @@
 		)
 	)
 	(sheet
+		(at 145 170)
+		(size 45 22)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "4f5472c0-6604-4cc6-afcd-e747174f7e5b")
+		(property "Sheetname" "Elevation"
+			(at 145 169.2884 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "elevation.kicad_sch"
+			(at 145 192.5846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "EL_EN{slash}IN1" bidirectional
+			(at 145 173 180)
+			(uuid "8e3e6cf9-d197-4a55-a7e2-37b32ef0ac93")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_PH{slash}IN2" bidirectional
+			(at 145 175.54 180)
+			(uuid "f7ebaa3e-538d-4f60-acd0-38b3fe978d02")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_PWM" bidirectional
+			(at 145 178.08 180)
+			(uuid "a4d0b58c-2648-4c31-a561-1d7caa37e61a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_ALERT" bidirectional
+			(at 145 180.62 180)
+			(uuid "31ba771b-16fc-432d-8f94-5d38ab2bef7e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_MOTOR_+" bidirectional
+			(at 145 183.16 180)
+			(uuid "269e940b-e476-43c9-95eb-9e0c21e54e75")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_MOTOR_-" bidirectional
+			(at 145 185.7 180)
+			(uuid "e4947380-2db4-4b4c-993d-d50257d151e3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(page "#")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 97.66 233.925)
+		(size 30 12)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "6f3393fe-c74a-42aa-9470-0ef6302bc345")
+		(property "Sheetname" "Gyro"
+			(at 97.66 233.2134 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "gyro.kicad_sch"
+			(at 97.66 246.5096 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "SPI0" bidirectional
+			(at 127.66 242.925 0)
+			(uuid "280f4b9f-c59e-4c56-8f29-f6cb2f166710")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Gyro Int" bidirectional
+			(at 127.66 240.385 0)
+			(uuid "c39a091f-67f8-4fc9-a215-eecf043d20a5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(page "#")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 200 190)
+		(size 30 16)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "897cf420-fdd5-435e-b081-e1fa633c20b5")
+		(property "Sheetname" "Solder_Pads"
+			(at 200 189.2884 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "solder_pads.kicad_sch"
+			(at 200 206.5846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "UART0" bidirectional
+			(at 200 193 180)
+			(uuid "3c389d73-90fa-4dd1-9a53-24ef67588d16")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SPI0" bidirectional
+			(at 200 195.54 180)
+			(uuid "6ee7dc27-7bb8-420d-8993-dc5230163bb1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "I2C1" bidirectional
+			(at 200 198.08 180)
+			(uuid "8cbfa12e-511b-4ee1-ba1d-38947167deb5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Gyro Int" bidirectional
+			(at 200 200.62 180)
+			(uuid "c42e3bb9-a66c-48ef-b458-a3464133d505")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(page "#")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 90 170)
+		(size 45 22)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "aeab1957-f17a-493b-8e0c-019f06012911")
+		(property "Sheetname" "Azimuth"
+			(at 90 169.2884 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "azimuth.kicad_sch"
+			(at 90 192.5846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "AZ_EN{slash}IN1" bidirectional
+			(at 90 173 180)
+			(uuid "6a9a86f6-699b-4ae5-a2a3-c27501154688")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_PH{slash}IN2" bidirectional
+			(at 90 175.54 180)
+			(uuid "3fad6835-65c5-4eda-a3ab-783563805217")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_PWM" bidirectional
+			(at 90 178.08 180)
+			(uuid "19d36d5d-80c5-4709-b404-a19d92531163")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_ALERT" bidirectional
+			(at 90 180.62 180)
+			(uuid "64e7b28d-41b9-4423-a1ed-b8808f38a645")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_MOTOR_+" bidirectional
+			(at 90 183.16 180)
+			(uuid "5b90d268-e33b-4d31-a2c1-375937482f21")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_MOTOR_-" bidirectional
+			(at 90 185.7 180)
+			(uuid "09a06a83-ee47-4f96-901c-8124e418e187")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(page "#")
+				)
+			)
+		)
+	)
+	(sheet
 		(at 16.67 110.49)
 		(size 51.91 25.4)
 		(exclude_from_sim no)
@@ -7856,6 +8888,152 @@
 		)
 	)
 	(sheet
+		(at 137.955 197.94)
+		(size 55 35)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "baddf2fd-a49c-44bc-8ff5-dce9cf0b07cd")
+		(property "Sheetname" "Encoders"
+			(at 137.955 197.2284 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "encoders.kicad_sch"
+			(at 137.955 233.5246 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "AZ_MOTOR_+" bidirectional
+			(at 137.955 200.94 180)
+			(uuid "52f12ef5-6220-461d-bb44-2c87f5cfe20f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_MOTOR_-" bidirectional
+			(at 137.955 203.48 180)
+			(uuid "88185ef3-5ff9-4911-b8b1-a34a5f266a51")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_MOTOR_+" bidirectional
+			(at 137.955 206.02 180)
+			(uuid "c0706e49-6cec-40a5-91fa-420fed7deeeb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_MOTOR_-" bidirectional
+			(at 137.955 208.56 180)
+			(uuid "3256eca1-bd83-49e0-bd4b-bdc36f390629")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_ENC_A" bidirectional
+			(at 137.955 211.1 180)
+			(uuid "c17bad4a-55ea-4bd2-9b5f-9127bbbf5447")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_ENC_B" bidirectional
+			(at 137.955 213.64 180)
+			(uuid "63035fe3-7aa7-4d70-92de-e59defeaa5b0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_ENC_A" bidirectional
+			(at 137.955 216.18 180)
+			(uuid "a1b72450-e643-4623-89d1-b33cf9ac5035")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_ENC_B" bidirectional
+			(at 137.955 218.72 180)
+			(uuid "cc7228f7-9bc9-4101-b0f8-67976e90a38f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "AZ_END" bidirectional
+			(at 137.955 221.26 180)
+			(uuid "9d070a84-7c12-4a07-9c40-a431badf9db2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "EL_END" bidirectional
+			(at 137.955 223.8 180)
+			(uuid "b4b88c03-ea81-4fc2-977a-2557f09bf225")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "MOTOR_RF_HAT"
+				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
+					(page "#")
+				)
+			)
+		)
+	)
+	(sheet
 		(at 189.23 72.39)
 		(size 21.59 22.86)
 		(exclude_from_sim no)
@@ -7917,516 +9095,6 @@
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
 					(page "2")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 25.56 170)
-		(size 55 35)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "baddf2fd-a49c-44bc-8ff5-dce9cf0b07cd")
-		(property "Sheetname" "Encoders"
-			(at 25.56 169.2884 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "encoders.kicad_sch"
-			(at 25.56 205.5846 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "AZ_MOTOR_+" bidirectional
-			(at 25.56 173.00 180)
-			(uuid "52f12ef5-6220-461d-bb44-2c87f5cfe20f")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_MOTOR_-" bidirectional
-			(at 25.56 175.54 180)
-			(uuid "88185ef3-5ff9-4911-b8b1-a34a5f266a51")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_MOTOR_+" bidirectional
-			(at 25.56 178.08 180)
-			(uuid "c0706e49-6cec-40a5-91fa-420fed7deeeb")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_MOTOR_-" bidirectional
-			(at 25.56 180.62 180)
-			(uuid "3256eca1-bd83-49e0-bd4b-bdc36f390629")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_ENC_A" bidirectional
-			(at 25.56 183.16 180)
-			(uuid "c17bad4a-55ea-4bd2-9b5f-9127bbbf5447")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_ENC_B" bidirectional
-			(at 25.56 185.70 180)
-			(uuid "63035fe3-7aa7-4d70-92de-e59defeaa5b0")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_ENC_A" bidirectional
-			(at 25.56 188.24 180)
-			(uuid "a1b72450-e643-4623-89d1-b33cf9ac5035")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_ENC_B" bidirectional
-			(at 25.56 190.78 180)
-			(uuid "cc7228f7-9bc9-4101-b0f8-67976e90a38f")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_END" bidirectional
-			(at 25.56 193.32 180)
-			(uuid "9d070a84-7c12-4a07-9c40-a431badf9db2")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_END" bidirectional
-			(at 25.56 195.86 180)
-			(uuid "b4b88c03-ea81-4fc2-977a-2557f09bf225")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(page "")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 90 170)
-		(size 45 22)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "aeab1957-f17a-493b-8e0c-019f06012911")
-		(property "Sheetname" "Azimuth"
-			(at 90 169.2884 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "azimuth.kicad_sch"
-			(at 90 192.5846 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "AZ_EN{slash}IN1" bidirectional
-			(at 90 173.00 180)
-			(uuid "6a9a86f6-699b-4ae5-a2a3-c27501154688")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_PH{slash}IN2" bidirectional
-			(at 90 175.54 180)
-			(uuid "3fad6835-65c5-4eda-a3ab-783563805217")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_PWM" bidirectional
-			(at 90 178.08 180)
-			(uuid "19d36d5d-80c5-4709-b404-a19d92531163")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_ALERT" bidirectional
-			(at 90 180.62 180)
-			(uuid "64e7b28d-41b9-4423-a1ed-b8808f38a645")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_MOTOR_+" bidirectional
-			(at 90 183.16 180)
-			(uuid "5b90d268-e33b-4d31-a2c1-375937482f21")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_MOTOR_-" bidirectional
-			(at 90 185.70 180)
-			(uuid "09a06a83-ee47-4f96-901c-8124e418e187")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(page "")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 145 170)
-		(size 45 22)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "4f5472c0-6604-4cc6-afcd-e747174f7e5b")
-		(property "Sheetname" "Elevation"
-			(at 145 169.2884 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "elevation.kicad_sch"
-			(at 145 192.5846 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "EL_EN{slash}IN1" bidirectional
-			(at 145 173.00 180)
-			(uuid "8e3e6cf9-d197-4a55-a7e2-37b32ef0ac93")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_PH{slash}IN2" bidirectional
-			(at 145 175.54 180)
-			(uuid "f7ebaa3e-538d-4f60-acd0-38b3fe978d02")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_PWM" bidirectional
-			(at 145 178.08 180)
-			(uuid "a4d0b58c-2648-4c31-a561-1d7caa37e61a")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_ALERT" bidirectional
-			(at 145 180.62 180)
-			(uuid "31ba771b-16fc-432d-8f94-5d38ab2bef7e")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_MOTOR_+" bidirectional
-			(at 145 183.16 180)
-			(uuid "269e940b-e476-43c9-95eb-9e0c21e54e75")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_MOTOR_-" bidirectional
-			(at 145 185.70 180)
-			(uuid "e4947380-2db4-4b4c-993d-d50257d151e3")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(page "")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 200 170)
-		(size 30 12)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "6f3393fe-c74a-42aa-9470-0ef6302bc345")
-		(property "Sheetname" "Gyro"
-			(at 200 169.2884 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "gyro.kicad_sch"
-			(at 200 182.5846 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "SPI0" bidirectional
-			(at 200 173.00 180)
-			(uuid "280f4b9f-c59e-4c56-8f29-f6cb2f166710")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "Gyro Int" bidirectional
-			(at 200 175.54 180)
-			(uuid "c39a091f-67f8-4fc9-a215-eecf043d20a5")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(page "")
-				)
-			)
-		)
-	)
-	(sheet
-		(at 200 190)
-		(size 30 16)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(stroke
-			(width 0.1524)
-			(type solid)
-		)
-		(fill
-			(color 0 0 0 0)
-		)
-		(uuid "897cf420-fdd5-435e-b081-e1fa633c20b5")
-		(property "Sheetname" "Solder_Pads"
-			(at 200 189.2884 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left bottom)
-			)
-		)
-		(property "Sheetfile" "solder_pads.kicad_sch"
-			(at 200 206.5846 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left top)
-			)
-		)
-		(pin "UART0" bidirectional
-			(at 200 193.00 180)
-			(uuid "3c389d73-90fa-4dd1-9a53-24ef67588d16")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "SPI0" bidirectional
-			(at 200 195.54 180)
-			(uuid "6ee7dc27-7bb8-420d-8993-dc5230163bb1")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "I2C1" bidirectional
-			(at 200 198.08 180)
-			(uuid "8cbfa12e-511b-4ee1-ba1d-38947167deb5")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "Gyro Int" bidirectional
-			(at 200 200.62 180)
-			(uuid "c42e3bb9-a66c-48ef-b458-a3464133d505")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(page "")
 				)
 			)
 		)
