@@ -1,0 +1,85 @@
+(footprint "smallpad"
+		(layer "F.Cu")
+		(uuid "1255b282-bb6e-47ac-ad8f-425bd5943b5c")
+		(property "Reference" "TP11"
+			(at -0.000001 -0.5 20)
+			(unlocked yes)
+			(layer "F.SilkS")
+			(hide yes)
+			(uuid "c31e4896-d795-4cf9-a550-9af2d984a787")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.1)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 0 1 20)
+			(unlocked yes)
+			(layer "F.Fab")
+			(uuid "56e39754-0fa3-469d-8d7d-c44429b05d6b")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 0 0 20)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "212e1164-6003-4b88-aaa0-60e617f14182")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property "Description" "test point"
+			(at 0 0 20)
+			(unlocked yes)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "9d2342bf-5b00-4821-b61b-91c2754139c2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(property ki_fp_filters "Pin* Test*")
+		(path "/3c150972-37e2-49a0-a860-55a93c5169ad/8d678750-47e2-4bd0-ae89-7124eaaa1198")
+		(sheetname "/Solder Pads/")
+		(sheetfile "solder_pads.kicad_sch")
+		(attr exclude_from_pos_files)
+		(fp_text user "${REFERENCE}"
+			(at 0 2.500001 20)
+			(unlocked yes)
+			(layer "F.Fab")
+			(uuid "251315c4-8167-4baa-912e-7f96b7a16dc2")
+			(effects
+				(font
+					(size 1 1)
+					(thickness 0.15)
+				)
+			)
+		)
+		(pad "1" thru_hole roundrect
+			(at 0 0 20)
+			(size 3 1.6)
+			(drill 0.6)
+			(layers "*.Cu" "*.Mask")
+			(remove_unused_layers no)
+			(roundrect_rratio 0.35)
+			(net 1 "GND")
+			(pinfunction "1")
+			(pintype "passive")
+			(uuid "c4ed0e81-c14b-4336-b90e-b49aab63baa7")
+		)
+		(embedded_fonts no)
+	)

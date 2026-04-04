@@ -268,7 +268,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "easyeda2kicad:TB6642FG,8,EL"
+		(symbol "components:TB6642FG_8_EL"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -288,7 +288,7 @@
 					)
 				)
 			)
-			(property "Footprint" "easyeda2kicad:HSOP-16_L13.5-W6.4-P1.00-LS9.6-BL-EP"
+			(property "Footprint" "components:HSOP-16_L13.5-W6.4-P1.00-LS9.6-BL-EP"
 				(at 2.54 -17.78 0)
 				(effects
 					(font
@@ -2095,7 +2095,7 @@
 		)
 	)
 	(symbol
-		(lib_id "easyeda2kicad:TB6642FG,8,EL")
+		(lib_id "components:TB6642FG_8_EL")
 		(at 97.79 71.12 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2119,7 +2119,7 @@
 				)
 			)
 		)
-		(property "Footprint" "easyeda2kicad:HSOP-16_L13.5-W6.4-P1.00-LS9.6-BL-EP"
+		(property "Footprint" "components:HSOP-16_L13.5-W6.4-P1.00-LS9.6-BL-EP"
 			(at 97.79 88.9 0)
 			(effects
 				(font

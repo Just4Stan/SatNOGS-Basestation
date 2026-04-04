@@ -1144,7 +1144,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 48.26 0)
 			(effects
 				(font
@@ -1277,7 +1277,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 92.71 0)
 			(effects
 				(font
@@ -1344,7 +1344,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 58.42 0)
 			(effects
 				(font
@@ -1411,7 +1411,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 50.8 0)
 			(effects
 				(font
@@ -1478,7 +1478,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 25.4 0)
 			(effects
 				(font
@@ -1545,7 +1545,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 85.09 0)
 			(effects
 				(font
@@ -1744,7 +1744,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 82.55 0)
 			(effects
 				(font
@@ -1811,7 +1811,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 27.94 0)
 			(effects
 				(font
@@ -1878,7 +1878,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 30.48 0)
 			(effects
 				(font
@@ -2011,7 +2011,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 87.63 0)
 			(effects
 				(font
@@ -2144,7 +2144,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 95.25 0)
 			(effects
 				(font
@@ -2211,7 +2211,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 77.47 0)
 			(effects
 				(font
@@ -2278,7 +2278,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 55.88 0)
 			(effects
 				(font
@@ -2411,7 +2411,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 90.17 0)
 			(effects
 				(font
@@ -2478,7 +2478,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 53.34 0)
 			(effects
 				(font
@@ -2545,7 +2545,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 33.02 0)
 			(effects
 				(font
@@ -2678,7 +2678,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 35.56 0)
 			(effects
 				(font
@@ -2811,7 +2811,7 @@
 				(hide yes)
 			)
 		)
-		(property "Footprint" "TestPoint:smallpad"
+		(property "Footprint" "components:smallpad"
 			(at 87.63 80.01 0)
 			(effects
 				(font
