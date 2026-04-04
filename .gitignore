@@ -73,3 +73,4 @@ station.conf
 # Keep only the latest compiled firmware at root
 firmware-*.uf2
 !firmware.uf2
+MOTOR_RF_HAT/.history/
