@@ -645,7 +645,7 @@
         "uuid": "300cf3d4-e317-44c8-acd8-5f9989779c7c"
       }
     ],
-    "used_designators": "TP19,#PWR51-52",
+    "used_designators": "R13-14,C52-56,C65-67,#PWR53-54,#PWR60,#PWR62-64,U6-7",
     "variants": []
   },
   "sheets": [
@@ -670,20 +670,20 @@
       "Pi_Header"
     ],
     [
-      "aeab1957-f17a-493b-8e0c-019f06012911",
-      "Azimuth"
-    ],
-    [
       "6f3393fe-c74a-42aa-9470-0ef6302bc345",
       "Gyro"
     ],
     [
-      "baddf2fd-a49c-44bc-8ff5-dce9cf0b07cd",
-      "Encoders"
+      "aeab1957-f17a-493b-8e0c-019f06012911",
+      "Azimuth"
     ],
     [
       "4f5472c0-6604-4cc6-afcd-e747174f7e5b",
       "Elevation"
+    ],
+    [
+      "baddf2fd-a49c-44bc-8ff5-dce9cf0b07cd",
+      "Encoders"
     ],
     [
       "897cf420-fdd5-435e-b081-e1fa633c20b5",

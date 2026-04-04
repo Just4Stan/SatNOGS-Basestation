@@ -3256,6 +3256,16 @@
 		)
 		(uuid "6d91b7bf-b2d3-4e7c-9a8f-f412deefec87")
 	)
+	(wire
+		(pts
+			(xy 125.73 170.18) (xy 158.75 170.18)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6fd54aa8-804d-44d4-b6a0-2a859554e9cb")
+	)
 	(bus
 		(pts
 			(xy 31.75 185.42) (xy 31.75 187.96)
@@ -3278,6 +3288,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 163.83) (xy 158.75 163.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73748587-7f56-43d9-9bdb-642d5cb7c494")
+	)
+	(wire
+		(pts
 			(xy 68.58 121.92) (xy 93.98 121.92)
 		)
 		(stroke
@@ -3285,6 +3305,16 @@
 			(type default)
 		)
 		(uuid "73975ab8-97c6-45e0-b4d9-0ce172526de8")
+	)
+	(wire
+		(pts
+			(xy 152.4 161.29) (xy 158.75 161.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7bb74d71-e0f2-4d6b-9d36-a7ac046006c7")
 	)
 	(wire
 		(pts
@@ -3575,6 +3605,16 @@
 			(type default)
 		)
 		(uuid "e69edc71-7455-48b2-a913-c0a775319674")
+	)
+	(wire
+		(pts
+			(xy 125.73 172.72) (xy 158.75 172.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "edf66e4a-dfbd-49d7-81a7-f356e1e40fac")
 	)
 	(wire
 		(pts
@@ -6809,7 +6849,7 @@
 				)
 			)
 		)
-		(property "Footprint" "components:smallpad"
+		(property "Footprint" ""
 			(at 64.77 175.26 0)
 			(hide yes)
 			(show_name no)
@@ -8398,8 +8438,8 @@
 		)
 	)
 	(sheet
-		(at 145 170)
-		(size 45 22)
+		(at 132.715 145.235)
+		(size 19.685 21.135)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -8414,7 +8454,7 @@
 		)
 		(uuid "4f5472c0-6604-4cc6-afcd-e747174f7e5b")
 		(property "Sheetname" "Elevation"
-			(at 145 169.2884 0)
+			(at 132.715 144.5234 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8425,7 +8465,7 @@
 			)
 		)
 		(property "Sheetfile" "elevation.kicad_sch"
-			(at 145 192.5846 0)
+			(at 132.715 166.9546 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8436,63 +8476,43 @@
 			)
 		)
 		(pin "EL_EN{slash}IN1" bidirectional
-			(at 145 173 180)
+			(at 141.605 145.235 90)
 			(uuid "8e3e6cf9-d197-4a55-a7e2-37b32ef0ac93")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "EL_PH{slash}IN2" bidirectional
-			(at 145 175.54 180)
+			(at 139.065 145.235 90)
 			(uuid "f7ebaa3e-538d-4f60-acd0-38b3fe978d02")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
-			)
-		)
-		(pin "EL_PWM" bidirectional
-			(at 145 178.08 180)
-			(uuid "a4d0b58c-2648-4c31-a561-1d7caa37e61a")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_ALERT" bidirectional
-			(at 145 180.62 180)
-			(uuid "31ba771b-16fc-432d-8f94-5d38ab2bef7e")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "EL_MOTOR_+" bidirectional
-			(at 145 183.16 180)
+			(at 152.4 161.29 0)
 			(uuid "269e940b-e476-43c9-95eb-9e0c21e54e75")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "EL_MOTOR_-" bidirectional
-			(at 145 185.7 180)
+			(at 152.4 163.83 0)
 			(uuid "e4947380-2db4-4b4c-993d-d50257d151e3")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(instances
@@ -8656,8 +8676,8 @@
 		)
 	)
 	(sheet
-		(at 90 170)
-		(size 45 22)
+		(at 106.045 145.415)
+		(size 19.685 29.845)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -8672,7 +8692,7 @@
 		)
 		(uuid "aeab1957-f17a-493b-8e0c-019f06012911")
 		(property "Sheetname" "Azimuth"
-			(at 90 169.2884 0)
+			(at 106.045 144.7034 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8683,7 +8703,7 @@
 			)
 		)
 		(property "Sheetfile" "azimuth.kicad_sch"
-			(at 90 192.5846 0)
+			(at 106.045 175.8446 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8694,63 +8714,43 @@
 			)
 		)
 		(pin "AZ_EN{slash}IN1" bidirectional
-			(at 90 173 180)
+			(at 114.935 145.415 90)
 			(uuid "6a9a86f6-699b-4ae5-a2a3-c27501154688")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "AZ_PH{slash}IN2" bidirectional
-			(at 90 175.54 180)
+			(at 111.76 145.415 90)
 			(uuid "3fad6835-65c5-4eda-a3ab-783563805217")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
-			)
-		)
-		(pin "AZ_PWM" bidirectional
-			(at 90 178.08 180)
-			(uuid "19d36d5d-80c5-4709-b404-a19d92531163")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "AZ_ALERT" bidirectional
-			(at 90 180.62 180)
-			(uuid "64e7b28d-41b9-4423-a1ed-b8808f38a645")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "AZ_MOTOR_+" bidirectional
-			(at 90 183.16 180)
+			(at 125.73 170.18 0)
 			(uuid "5b90d268-e33b-4d31-a2c1-375937482f21")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "AZ_MOTOR_-" bidirectional
-			(at 90 185.7 180)
+			(at 125.73 172.72 0)
 			(uuid "09a06a83-ee47-4f96-901c-8124e418e187")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(instances
@@ -8888,13 +8888,12 @@
 		)
 	)
 	(sheet
-		(at 137.955 197.94)
-		(size 55 35)
+		(at 158.75 145.87)
+		(size 17.145 30.66)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(stroke
 			(width 0.1524)
 			(type solid)
@@ -8904,7 +8903,7 @@
 		)
 		(uuid "baddf2fd-a49c-44bc-8ff5-dce9cf0b07cd")
 		(property "Sheetname" "Encoders"
-			(at 137.955 197.2284 0)
+			(at 203.675 145.288 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8915,7 +8914,7 @@
 			)
 		)
 		(property "Sheetfile" "encoders.kicad_sch"
-			(at 137.955 233.5246 0)
+			(at 153.637 177.546 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8926,7 +8925,7 @@
 			)
 		)
 		(pin "AZ_MOTOR_+" bidirectional
-			(at 137.955 200.94 180)
+			(at 158.75 170.18 180)
 			(uuid "52f12ef5-6220-461d-bb44-2c87f5cfe20f")
 			(effects
 				(font
@@ -8936,7 +8935,7 @@
 			)
 		)
 		(pin "AZ_MOTOR_-" bidirectional
-			(at 137.955 203.48 180)
+			(at 158.75 172.72 180)
 			(uuid "88185ef3-5ff9-4911-b8b1-a34a5f266a51")
 			(effects
 				(font
@@ -8946,7 +8945,7 @@
 			)
 		)
 		(pin "EL_MOTOR_+" bidirectional
-			(at 137.955 206.02 180)
+			(at 158.75 161.29 180)
 			(uuid "c0706e49-6cec-40a5-91fa-420fed7deeeb")
 			(effects
 				(font
@@ -8956,7 +8955,7 @@
 			)
 		)
 		(pin "EL_MOTOR_-" bidirectional
-			(at 137.955 208.56 180)
+			(at 158.75 163.83 180)
 			(uuid "3256eca1-bd83-49e0-bd4b-bdc36f390629")
 			(effects
 				(font
@@ -8966,63 +8965,43 @@
 			)
 		)
 		(pin "AZ_ENC_A" bidirectional
-			(at 137.955 211.1 180)
+			(at 172.72 145.87 90)
 			(uuid "c17bad4a-55ea-4bd2-9b5f-9127bbbf5447")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "AZ_ENC_B" bidirectional
-			(at 137.955 213.64 180)
+			(at 167.64 145.87 90)
 			(uuid "63035fe3-7aa7-4d70-92de-e59defeaa5b0")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "EL_ENC_A" bidirectional
-			(at 137.955 216.18 180)
+			(at 170.18 145.87 90)
 			(uuid "a1b72450-e643-4623-89d1-b33cf9ac5035")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(pin "EL_ENC_B" bidirectional
-			(at 137.955 218.72 180)
+			(at 165.1 145.87 90)
 			(uuid "cc7228f7-9bc9-4101-b0f8-67976e90a38f")
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
-			)
-		)
-		(pin "AZ_END" bidirectional
-			(at 137.955 221.26 180)
-			(uuid "9d070a84-7c12-4a07-9c40-a431badf9db2")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(pin "EL_END" bidirectional
-			(at 137.955 223.8 180)
-			(uuid "b4b88c03-ea81-4fc2-977a-2557f09bf225")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
+				(justify right)
 			)
 		)
 		(instances
