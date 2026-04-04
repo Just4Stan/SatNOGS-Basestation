@@ -469,12 +469,8 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [
-      "components"
-    ],
-    "pinned_symbol_libs": [
-      "components"
-    ]
+    "pinned_footprint_libs": [],
+    "pinned_symbol_libs": []
   },
   "meta": {
     "filename": "MOTOR_RF_HAT.kicad_pro",
@@ -649,7 +645,7 @@
         "uuid": "300cf3d4-e317-44c8-acd8-5f9989779c7c"
       }
     ],
-    "used_designators": "D1,D7,#PWR59-63,H5-6",
+    "used_designators": "",
     "variants": []
   },
   "sheets": [
