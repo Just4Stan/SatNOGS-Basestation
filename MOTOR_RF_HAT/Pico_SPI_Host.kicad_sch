@@ -1441,16 +1441,20 @@
 		(uuid "0876cea5-5b22-45e8-84da-d6aafe7f2104")
 	)
 	(no_connect
-		(at 129.54 102.87)
-		(uuid "3fb4958f-247f-4b6a-97c3-ec2a57f32969")
-	)
-	(no_connect
 		(at 83.82 64.77)
 		(uuid "883cf303-8c7e-45c1-9eb3-1ce6fcb2b64b")
 	)
 	(no_connect
-		(at 129.54 105.41)
-		(uuid "b2baa85a-4ba3-4768-92e6-454c45b87485")
+		(at 101.6 49.53)
+		(uuid "8dd8722f-1706-4401-827c-1111e6c30d79")
+	)
+	(no_connect
+		(at 83.82 95.25)
+		(uuid "ab26adfd-522e-4d32-8c61-9fcb6e33712a")
+	)
+	(no_connect
+		(at 83.82 87.63)
+		(uuid "e6748aa3-e358-4070-900f-164f818bd50c")
 	)
 	(no_connect
 		(at 83.82 67.31)
@@ -1458,13 +1462,13 @@
 	)
 	(wire
 		(pts
-			(xy 106.68 45.72) (xy 106.68 49.53)
+			(xy 106.68 46.99) (xy 106.68 49.53)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "8c50612e-5d10-483d-8f6e-e1cec3b99fa7")
+		(uuid "5dc4c0ca-a70c-4eb4-8757-28d795e6c508")
 	)
 	(hierarchical_label "UHF_MISO"
 		(shape input)
@@ -1487,6 +1491,17 @@
 			(justify left)
 		)
 		(uuid "0866d2ec-d2a5-4927-96f3-58149c579d23")
+	)
+	(hierarchical_label "EL_IN1"
+		(shape input)
+		(at 129.54 102.87 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0e383f6b-42da-41b6-be6c-f8092e22aae1")
 	)
 	(hierarchical_label "UHF_SCLK"
 		(shape input)
@@ -1521,16 +1536,27 @@
 		)
 		(uuid "3ee103c1-ed8d-4b83-bc86-6b539258d7d7")
 	)
-	(hierarchical_label "UHF_GPIO3"
+	(hierarchical_label "EL_IN2"
 		(shape input)
-		(at 83.82 87.63 180)
+		(at 129.54 105.41 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left)
 		)
-		(uuid "536f77d4-5947-4a55-beec-0758267da721")
+		(uuid "5a8a571c-f5a9-4c09-9fd9-6a74c915b863")
+	)
+	(hierarchical_label "EL_ENC_B"
+		(shape input)
+		(at 129.54 90.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5d0dbd1c-a680-4c93-88e6-9aff9768a231")
 	)
 	(hierarchical_label "UHF_CSN"
 		(shape input)
@@ -1554,17 +1580,6 @@
 		)
 		(uuid "65870aeb-5878-4b2c-93ce-efa500c330f0")
 	)
-	(hierarchical_label "VHF_GPIO0"
-		(shape input)
-		(at 129.54 90.17 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "68e21f3b-9acf-463c-97c2-d42a3e7a0957")
-	)
 	(hierarchical_label "UHF_MOSI"
 		(shape input)
 		(at 83.82 100.33 180)
@@ -1587,17 +1602,6 @@
 		)
 		(uuid "6fdabae7-1113-405e-8f9c-496c8bd5bb87")
 	)
-	(hierarchical_label "VHF_GPIO2"
-		(shape input)
-		(at 129.54 87.63 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "714f2816-e5f0-485f-a0c4-496d75070185")
-	)
 	(hierarchical_label "VHF_CSN"
 		(shape input)
 		(at 129.54 77.47 0)
@@ -1608,6 +1612,17 @@
 			(justify left)
 		)
 		(uuid "8266e269-044e-4bce-9294-1099ff6c156e")
+	)
+	(hierarchical_label "EL_ENC_A"
+		(shape input)
+		(at 129.54 87.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8700068c-3484-4309-9e51-076e57438081")
 	)
 	(hierarchical_label "UHF_GPIO0"
 		(shape input)
@@ -1653,17 +1668,6 @@
 		)
 		(uuid "c558afac-8211-4c23-b61a-d8006d53dd25")
 	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 83.82 95.25 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "cbc740eb-25ed-4a51-994b-9b4a4ab593b1")
-	)
 	(hierarchical_label "VHF_SCLK"
 		(shape input)
 		(at 129.54 80.01 0)
@@ -1697,7 +1701,7 @@
 		)
 		(uuid "ec6b8ff9-39e7-4874-b878-9724d582096b")
 	)
-	(hierarchical_label "VHF_GPIO3"
+	(hierarchical_label "IMU_CS"
 		(shape input)
 		(at 129.54 100.33 0)
 		(effects
@@ -2126,7 +2130,7 @@
 	)
 	(symbol
 		(lib_id "power:+5V")
-		(at 106.68 45.72 0)
+		(at 106.68 46.99 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -2137,7 +2141,7 @@
 		(fields_autoplaced yes)
 		(uuid "771868ac-0c25-4590-87e7-46d44c3da363")
 		(property "Reference" "#PWR038"
-			(at 106.68 49.53 0)
+			(at 106.68 50.8 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2148,7 +2152,7 @@
 			)
 		)
 		(property "Value" "+5V_USB"
-			(at 106.68 40.64 0)
+			(at 106.68 41.91 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2158,7 +2162,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 106.68 45.72 0)
+			(at 106.68 46.99 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2169,7 +2173,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 106.68 45.72 0)
+			(at 106.68 46.99 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2180,7 +2184,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 106.68 45.72 0)
+			(at 106.68 46.99 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -2197,84 +2201,6 @@
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
 					(reference "#PWR038")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 101.6 49.53 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "8b218d26-85b4-466e-9a57-ef21c5bb2537")
-		(property "Reference" "#PWR037"
-			(at 101.6 53.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+5V"
-			(at 101.6 44.45 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 101.6 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 101.6 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 101.6 49.53 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "ff2eeb13-b4b8-4300-97e6-12c9b7151d3e")
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c/3e644d4e-3c70-4dba-b47a-c0e6db07080d"
-					(reference "#PWR037")
 					(unit 1)
 				)
 			)

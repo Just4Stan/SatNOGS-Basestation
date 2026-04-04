@@ -2190,6 +2190,14 @@
 		(color 0 0 0 0)
 		(uuid "f7678d5a-5ba7-4c60-8bcf-731e92f2e2c2")
 	)
+	(no_connect
+		(at 99.06 74.93)
+		(uuid "8b13a977-9291-4228-87d3-2938581af552")
+	)
+	(no_connect
+		(at 99.06 72.39)
+		(uuid "ae54b660-63f0-45a7-a324-6733de031320")
+	)
 	(wire
 		(pts
 			(xy 180.34 116.84) (xy 187.96 116.84)
@@ -3070,28 +3078,6 @@
 		)
 		(uuid "f0f16128-043d-4c72-abb2-be1a2deaad6c")
 	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 99.06 72.39 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "0d6e5ea5-6943-42a5-9309-8d7624d12f19")
-	)
-	(hierarchical_label "UHF_GPIO3"
-		(shape input)
-		(at 99.06 74.93 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "1b26e45c-e4a3-4437-acfb-8826db856d20")
-	)
 	(hierarchical_label "UHF_SCLK"
 		(shape input)
 		(at 67.31 59.69 180)
@@ -3136,17 +3122,6 @@
 		)
 		(uuid "83a308d1-f403-4190-83e8-6e11054dac86")
 	)
-	(hierarchical_label "UHF_GPIO3"
-		(shape input)
-		(at 99.06 74.93 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "945c392e-0301-4f6a-8659-91652ad0264c")
-	)
 	(hierarchical_label "UHF_RESET"
 		(shape input)
 		(at 90.17 52.07 180)
@@ -3168,17 +3143,6 @@
 			(justify right)
 		)
 		(uuid "ab9e13d2-1e16-4de7-a0f9-ffbfcebb35b4")
-	)
-	(hierarchical_label "UHF_GPIO2"
-		(shape input)
-		(at 99.06 72.39 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e7a5eced-ae32-4fb2-96e9-7dd95d26e688")
 	)
 	(hierarchical_label "UHF_CSN"
 		(shape input)

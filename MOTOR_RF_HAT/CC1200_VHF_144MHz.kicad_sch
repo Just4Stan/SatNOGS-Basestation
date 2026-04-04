@@ -2190,6 +2190,18 @@
 		(color 0 0 0 0)
 		(uuid "fdc49999-4e35-45f7-b018-fc9c4304ed21")
 	)
+	(no_connect
+		(at 80.01 71.12)
+		(uuid "068f4f82-156d-46af-b931-941df3e6078c")
+	)
+	(no_connect
+		(at 80.01 68.58)
+		(uuid "27258d40-ca51-415a-af28-db215a8ae917")
+	)
+	(no_connect
+		(at 80.01 66.04)
+		(uuid "2a005a8f-c8f3-43f5-84fd-fc236349bdd3")
+	)
 	(wire
 		(pts
 			(xy 39.37 85.09) (xy 39.37 76.2)
@@ -3113,39 +3125,6 @@
 			(justify right)
 		)
 		(uuid "571a6f7f-14e7-4811-ae4c-86f266a26b14")
-	)
-	(hierarchical_label "VHF_GPIO0"
-		(shape input)
-		(at 80.01 66.04 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5a0e10c9-4a57-4593-91b3-66ea8dc6cb25")
-	)
-	(hierarchical_label "VHF_GPIO3"
-		(shape input)
-		(at 80.01 71.12 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "5e4e0856-d633-4a07-92ab-425615b3e550")
-	)
-	(hierarchical_label "VHF_GPIO2"
-		(shape input)
-		(at 80.01 68.58 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "e0e7d0c5-89c9-4829-adbf-33f7a15155a0")
 	)
 	(hierarchical_label "VHF_MISO"
 		(shape input)

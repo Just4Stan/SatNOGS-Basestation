@@ -587,12 +587,84 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "LCSC",
+          "name": "LCSC",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "LCSC Part",
+          "name": "LCSC Part",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Device",
+          "name": "Sim.Device",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "WURTH",
+          "name": "WURTH",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "hierarchy_path",
+          "name": "hierarchy_path",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "mouser",
+          "name": "mouser",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "project_name",
+          "name": "project_name",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "root_uuid",
+          "name": "root_uuid",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Farnell",
+          "name": "Farnell",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
-      "name": "Default Editing",
+      "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
     },
@@ -670,10 +742,6 @@
       "Pi_Header"
     ],
     [
-      "6f3393fe-c74a-42aa-9470-0ef6302bc345",
-      "Gyro"
-    ],
-    [
       "aeab1957-f17a-493b-8e0c-019f06012911",
       "Azimuth"
     ],
@@ -684,10 +752,6 @@
     [
       "baddf2fd-a49c-44bc-8ff5-dce9cf0b07cd",
       "Encoders"
-    ],
-    [
-      "897cf420-fdd5-435e-b081-e1fa633c20b5",
-      "Solder_Pads"
     ]
   ],
   "text_variables": {},
