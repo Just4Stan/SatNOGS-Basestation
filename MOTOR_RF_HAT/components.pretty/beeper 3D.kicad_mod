@@ -80,7 +80,7 @@
 		(layer "F.SilkS")
 		(uuid "a1e6aeaf-1a79-4816-bc37-2e9dd5f4c584")
 	)
-	(model "${KIPRJMOD}/components.pretty/beeper.stp"
+	(model "${KIPRJMOD}/components.3dshapes/beeper.stp"
 		(offset
 			(xyz 0 0 0)
 		)

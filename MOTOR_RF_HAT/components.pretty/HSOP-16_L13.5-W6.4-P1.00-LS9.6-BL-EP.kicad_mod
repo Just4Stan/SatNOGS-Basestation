@@ -333,7 +333,7 @@
 			(uuid "7ef60161-6f7d-4911-9405-af3f2804a57d")
 		)
 		(embedded_fonts no)
-		(model "${EASYEDA2KICAD}/easyeda2kicad.3dshapes/HSOP-16_L13.5-W6.4-P1.00-LS9.6-BL-EP.wrl"
+		(model "${KIPRJMOD}/components.3dshapes/HSOP-16.step"
 			(offset
 				(xyz -0 0 -0)
 			)

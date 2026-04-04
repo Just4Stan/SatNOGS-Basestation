@@ -45,7 +45,7 @@
   (fp_text user REF** (at -0.000127 12.149606) (layer F.Fab)
     (effects (font (size 1 1) (thickness 0.15)))
   )
-  (model packages3d/CONN-TH_XT30PW-M.step
+  (model "${KIPRJMOD}/components.3dshapes/CONN-TH_XT30PW-M.step"
     (at (xyz -0.000005 -0.039568 -0.07874))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))

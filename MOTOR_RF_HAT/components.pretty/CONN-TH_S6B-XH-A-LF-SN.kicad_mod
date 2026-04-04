@@ -213,7 +213,7 @@
 		(uuid "abe308e0-996a-4921-8c08-41f02a61803d")
 	)
 	(embedded_fonts no)
-	(model "${KIPRJMOD}/components.pretty/CONN-TH_S6B-XH-A-LF-SN.step"
+	(model "${KIPRJMOD}/components.3dshapes/CONN-TH_S6B-XH-A-LF-SN.step"
 		(offset
 			(xyz 0 -0.035999 0.000007)
 		)
