@@ -1974,7 +1974,7 @@
 			(uuid "1fced38a-f128-4ea9-b5b3-dee77bea1043")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Connector_AMASS.3dshapes/AMASS_XT30PW-M_1x02_P2.50mm_Horizontal.step"
+		(model "${KIPRJMOD}/components.3dshapes/CONN-TH_XT30PW-M.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -9397,7 +9397,7 @@
 			(uuid "1545750e-a86d-486e-813e-204fd8e00647")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/LED_SMD.3dshapes/LED_WS2812B-2020_PLCC4_2.0x2.0mm.step"
+		(model "${KIPRJMOD}/components.3dshapes/WS2812B_2020.stp"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -14484,7 +14484,7 @@
 			(uuid "2d44294d-0f09-4a48-9b2f-29f10ecf66f4")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/LED_SMD.3dshapes/LED_WS2812B-2020_PLCC4_2.0x2.0mm.step"
+		(model "${KIPRJMOD}/components.3dshapes/WS2812B_2020.stp"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -15217,7 +15217,7 @@
 			(uuid "97b7e551-db2b-4b40-aeb9-e018479ab84b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm.step"
+		(model "${KICAD10_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.81mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -26055,7 +26055,7 @@
 			(uuid "26e574a5-dd71-4262-80f4-a2170e86fa3d")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.3mm.step"
+		(model "${KICAD10_3DMODEL_DIR}/Package_SO.3dshapes/SOIC-8-1EP_3.9x4.9mm_P1.27mm_EP2.41x3.81mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -30756,7 +30756,7 @@
 			(uuid "8c3cc613-4a79-4d31-996d-b359f97bc850")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/LED_SMD.3dshapes/LED_WS2812B-2020_PLCC4_2.0x2.0mm.step"
+		(model "${KIPRJMOD}/components.3dshapes/WS2812B_2020.stp"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -32740,7 +32740,7 @@
 			(uuid "95c33a7d-0639-4a0d-81b4-6f35db3e1340")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/LED_SMD.3dshapes/LED_WS2812B-2020_PLCC4_2.0x2.0mm.step"
+		(model "${KIPRJMOD}/components.3dshapes/WS2812B_2020.stp"
 			(offset
 				(xyz 0 0 0)
 			)
