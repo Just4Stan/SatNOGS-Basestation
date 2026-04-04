@@ -333,7 +333,6 @@
 			(uuid "7ef60161-6f7d-4911-9405-af3f2804a57d")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/components.3dshapes/HSOP-16.step"
 			(offset
 				(xyz -0 0 -0)
 			)
