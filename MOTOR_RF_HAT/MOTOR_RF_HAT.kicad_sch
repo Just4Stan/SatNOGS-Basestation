@@ -2733,6 +2733,12 @@
 		(uuid "063f3a3d-381f-4501-ab1d-fb26f95b3cb7")
 	)
 	(junction
+		(at 227.33 52.07)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1302df62-00a9-4aac-84b3-80b585b790af")
+	)
+	(junction
 		(at 228.6 25.4)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -2779,6 +2785,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "79b3db79-7ce1-4e78-9a9c-028511147786")
+	)
+	(junction
+		(at 236.22 52.07)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "79f8ebcb-c9c1-41ae-853b-4c5832f7d04d")
 	)
 	(junction
 		(at 119.38 43.18)
@@ -2990,6 +3002,16 @@
 	)
 	(wire
 		(pts
+			(xy 227.33 52.07) (xy 236.22 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2319fca8-8d09-4bb6-85b8-94ead3eaeae0")
+	)
+	(wire
+		(pts
 			(xy 68.58 88.9) (xy 93.98 88.9)
 		)
 		(stroke
@@ -3157,6 +3179,16 @@
 			(type default)
 		)
 		(uuid "56c942ef-b18c-4ceb-895a-2b4b7440d6aa")
+	)
+	(wire
+		(pts
+			(xy 218.44 52.07) (xy 227.33 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5ae2e45a-63a5-4244-8d9c-a17776afc874")
 	)
 	(wire
 		(pts
@@ -3420,6 +3452,16 @@
 	)
 	(wire
 		(pts
+			(xy 236.22 52.07) (xy 245.11 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ab3cc3e6-7810-4d37-9d9e-0d524fae506d")
+	)
+	(wire
+		(pts
 			(xy 68.58 114.3) (xy 93.98 114.3)
 		)
 		(stroke
@@ -3430,7 +3472,7 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 33.02) (xy 205.74 33.02)
+			(xy 160.02 33.02) (xy 205.74 33.02)
 		)
 		(stroke
 			(width 0)
@@ -3510,7 +3552,7 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 72.39) (xy 158.75 33.02)
+			(xy 160.02 72.39) (xy 160.02 33.02)
 		)
 		(stroke
 			(width 0)
@@ -3689,7 +3731,7 @@
 		(uuid "3939a261-1860-485b-a0bd-3e159727853c")
 	)
 	(label "WS2812B"
-		(at 201.93 33.02 180)
+		(at 203.2 33.02 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3697,6 +3739,16 @@
 			(justify right bottom)
 		)
 		(uuid "eeed8b0c-3938-40fb-94ef-c7869d92cab2")
+	)
+	(label "4.5V"
+		(at 227.33 52.07 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f7e66e42-b256-463e-a69f-0e224634bf34")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -3771,164 +3823,6 @@
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
 					(reference "#PWR07")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 218.44 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "0b171175-13be-453c-a3e0-5912cc027a3a")
-		(property "Reference" "#PWR08"
-			(at 218.44 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 220.98 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 218.44 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 218.44 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 218.44 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "ad5e59e6-b84e-4a36-acb7-9363f5f4f25c")
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(reference "#PWR08")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 236.22 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "0d5013fa-be77-41d1-b7e0-e71711c959f9")
-		(property "Reference" "#PWR015"
-			(at 236.22 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 238.76 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 236.22 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 236.22 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 236.22 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "bc2c30f8-b4c4-4587-80f7-3e32e3321f6d")
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(reference "#PWR015")
 					(unit 1)
 				)
 			)
@@ -4111,9 +4005,9 @@
 		)
 		(property "LCSC" "C965555"
 			(at 0 0 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(hide yes)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4122,9 +4016,9 @@
 		)
 		(property "MPN" "WS2812B-2020"
 			(at 0 0 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(hide yes)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4381,14 +4275,22 @@
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "MPN" "WS2812B-2020"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "3"
 			(uuid "11f4d1cf-060b-49b9-8068-375c2b9b53c4")
@@ -4642,85 +4544,6 @@
 			(project "MOTOR_RF_HAT"
 				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
 					(reference "D1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+3V3")
-		(at 227.33 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "353c55bf-5354-472a-a95c-4b97e4793c13")
-		(property "Reference" "#PWR012"
-			(at 227.33 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 229.87 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 227.33 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 227.33 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 227.33 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "ae278140-79cf-4ff1-86a0-8783245d3395")
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -6608,85 +6431,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:+3V3")
-		(at 245.11 52.07 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "988e1797-bfab-46bf-baf3-4d1128e5d769")
-		(property "Reference" "#PWR018"
-			(at 245.11 55.88 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 247.65 50.7999 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at 245.11 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 245.11 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+3V3\""
-			(at 245.11 52.07 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5f6a5560-a348-4b38-a574-dac4469170a9")
-		)
-		(instances
-			(project "MOTOR_RF_HAT"
-				(path "/300cf3d4-e317-44c8-acd8-5f9989779c7c"
-					(reference "#PWR018")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Connector:TestPoint_Small")
 		(at 67.31 144.78 90)
 		(unit 1)
@@ -6856,21 +6600,33 @@
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "MPN" "1N4148WS"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "Farnell" "1612348"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "2"
 			(uuid "086788f1-b2c6-43df-b49b-e3ca58ea91c7")
@@ -7559,14 +7315,22 @@
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "MPN" "WS2812B-2020"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "3"
 			(uuid "47ce6eb6-ff70-46f3-a04f-c28cae46b958")
@@ -8045,21 +7809,33 @@
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "MPN" "BSS138"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "Farnell" "9845330"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "3"
 			(uuid "0bff4325-cda3-4238-9c1e-71940f81412f")
@@ -8236,14 +8012,22 @@
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "MPN" "WS2812B-2020"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "3"
 			(uuid "a81a66d8-2fcf-4b31-bb52-da601f09232f")
@@ -8689,7 +8473,7 @@
 			)
 		)
 		(pin "WS2812" input
-			(at 159.385 72.39 90)
+			(at 160.02 72.39 90)
 			(uuid "51406ac3-2ac3-475c-960a-457de88dc0e8")
 			(effects
 				(font

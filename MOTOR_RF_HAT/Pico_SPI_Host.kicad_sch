@@ -1831,8 +1831,8 @@
 				)
 			)
 		)
-		(property "Farnell" "3643332"
-			(at 106.68 87.63 0)
+		(property "LCSC" "C7203002"
+			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1842,26 +1842,27 @@
 				)
 			)
 		)
-		(property "LCSC" "C7203002"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
-		)
 		(property "MPN" "SC0915"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(property "Farnell" "3643332"
 			(at 0 0 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
-			(effects (font (size 1.27 1.27)))
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
 		)
 		(pin "30"
 			(uuid "2a25e14e-9c22-4a4c-8ae2-c4bdb73b6e83")
