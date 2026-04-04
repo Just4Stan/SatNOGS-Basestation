@@ -1,0 +1,8 @@
+{
+    "name": "cc1200_driver",
+    "version": "1.0.0",
+    "description": "TI CC1200 SPI driver with RP2040 HAL (from RobbeLehaen/CC1200RXFrontend)",
+    "build": {
+        "flags": "-Iinclude"
+    }
+}
