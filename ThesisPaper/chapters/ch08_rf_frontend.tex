@@ -34,7 +34,7 @@ In theory, grounded coplanar waveguide (GCPW) is preferred for RF routing due to
 
 In the final design, microstrip routing was used for both the 144\,MHz and 433\,MHz bands. This choice was primarily driven by space constraints imposed by the compact form factor (Raspberry Pi shield size), as GCPW requires additional lateral clearance for ground pours and via fences, increasing the required routing area.
 
-At the given frequencies, where wavelengths are approximately 2.08\,m and 0.69\,m respectively, and considering that the complete matching network fits within approximately 10\,mm $\times$ 15\,mm, the expected performance difference between GCPW and microstrip is small. This makes microstrip a practical and sufficiently accurate solution while allowing a more compact layout.
+At the given frequencies, where wavelengths are approximately 2.08\,m and 0.69\,m respectively, and considering that the complete matching network fits within approximately 10\,mm $\times$ 15\,mm, these dimensions are small compared to the wavelength. In particular, they remain well below \(\lambda/10\) (approximately 208\,mm and 69\,mm at 144\,MHz and 433\,MHz, respectively), meaning the interconnects can be considered electrically short. As a result, the expected performance difference between GCPW and microstrip is small, making microstrip a practical and sufficiently accurate solution while allowing a more compact layout.
 
 To compensate for the reduced field confinement of microstrip:
 
