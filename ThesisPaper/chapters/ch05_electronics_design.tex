@@ -9,7 +9,7 @@ The RF PCB implements the front-end architecture responsible for signal transmis
 \subsection{System Overview}
 \label{subsec:rf_system_overview}
 
-The RF PCB is based on a microcontroller-controlled dual-transceiver architecture supporting both the VHF (144,MHz) and UHF (433,MHz) frequency bands.
+The RF PCB is based on a microcontroller-controlled dual-transceiver architecture supporting both the VHF (144\,MHz) and UHF (433\,MHz) frequency bands.
 
 The design consists of the following functional blocks:
 
@@ -41,14 +41,40 @@ The RP2040 was selected due to its availability of multiple SPI peripherals, all
 
 Furthermore, the platform supports rapid firmware development and iteration through a well-established software ecosystem, enabling efficient testing and debugging during the development process.
 
+The GPIO assignment of the RP2040 was selected to utilize two independent SPI peripherals while maintaining a simple and deterministic interface to the host system.
+
+\begin{table}[H]
+\centering
+\caption{RP2040 Pin Assignment for RF PCB}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{GPIO} & \textbf{Function} & \textbf{Connected To} \\
+\hline
+GPIO0  & UART TX & Raspberry Pi RX (J3) \\
+GPIO1  & UART RX & Raspberry Pi TX (J3) \\
+\hline
+GPIO10 & SPI (UHF) MOSI & CC1200 UHF \\
+GPIO11 & SPI (UHF) MISO & CC1200 UHF \\
+GPIO12 & SPI (UHF) SCLK & CC1200 UHF \\
+GPIO13 & SPI (UHF) CS   & CC1200 UHF \\
+\hline
+GPIO18 & SPI (VHF) MOSI & CC1200 VHF \\
+GPIO19 & SPI (VHF) MISO & CC1200 VHF \\
+GPIO16 & SPI (VHF) SCLK & CC1200 VHF \\
+GPIO17 & SPI (VHF) CS   & CC1200 VHF \\
+\hline
+\end{tabular}
+\label{tab:rp2040_pinout}
+\end{table}
+
 \subsection{RF Transceiver Subsystem}
 \label{subsec:rf_transceivers}
 
 The RF PCB employs two CC1200 transceivers to enable dual-band operation:
 
 \begin{itemize}
-\item One transceiver configured for the 144,MHz VHF band
-\item One transceiver configured for the 433,MHz UHF band
+\item One transceiver configured for the 144\,MHz VHF band
+\item One transceiver configured for the 433\,MHz UHF band
 \end{itemize}
 
 Each transceiver operates independently and includes its own supporting circuitry:
@@ -63,13 +89,15 @@ The use of two dedicated transceivers eliminates the need for RF switching netwo
 
 Key control and interface signals include SPI communication lines, interrupt outputs (GDO pins), and device control signals such as reset.
 
+This independent operation allows simultaneous configuration and rapid switching between frequency bands at the system level.
+
 \subsection{Communication Interfaces}
 \label{subsec:rf_interfaces}
 
 \subsubsection{SPI Communication}
 \label{subsubsec:rf_spi}
 
-Each RF transceiver is connected to the microcontroller via a dedicated SPI interface, allowing independent communication with both devices.
+Each RF transceiver is connected to the microcontroller via a dedicated hardware SPI interface on the RP2040, allowing independent communication with both devices.
 
 The SPI interfaces consist of the following signals:
 
@@ -97,7 +125,7 @@ This interface is used for:
 \item Debugging and diagnostic output
 \end{itemize}
 
-The UART operates at 3.3,V logic levels and provides a simple and robust communication channel.
+The UART operates at 3.3\,V logic levels and provides a simple and robust communication channel.
 
 
 \subsection{Power Distribution Network}
@@ -111,22 +139,7 @@ The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard low-n
 
 Local decoupling capacitors are placed close to the supply pins of each active component to reduce supply noise, provide transient current during switching events, and improve overall system stability.
 
-\subsection{Design Trade-offs}
-\label{subsec:rf_tradeoffs}
-
-\subsubsection{Dual Transceiver Architecture}
-
-Using two separate transceivers eliminates the need for RF switching networks, reducing insertion loss and simplifying the RF signal path. The trade-off is increased component count and PCB area.
-
-\subsubsection{Dedicated SPI Interfaces}
-
-Providing each transceiver with its own SPI bus increases pin usage but improves communication reliability and simplifies system control.
-
-\subsubsection{Microcontroller Selection}
-
-The RP2040 was selected due to its multiple SPI peripherals, sufficient processing capability, and compatibility with the Raspberry Pi ecosystem.
-
-
+Figure~X illustrates the power distribution architecture of the RF PCB, including the conversion from the 24\,V input to the regulated 5\,V and 3.3\,V supply rails.
 \subsection{Summary}
 \label{subsec:rf_summary}
 
