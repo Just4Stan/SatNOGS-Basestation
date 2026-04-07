@@ -11,16 +11,34 @@ On the first RF front-end prototype, a 4-layer stackup was considered sufficient
 
 \subsection{6-Layer Stackup Strategy}
 
-The PCB stackup is organized as follows:
+The PCB is implemented using JLCPCB's \texttt{JLC0612IH-3313} 6-layer stackup with a nominal thickness of 1.2\,mm. The layer arrangement is selected to ensure that RF traces on the top layer have a well-defined impedance with a continuous ground reference directly beneath them, while also providing adequate separation between RF, power, and digital domains.
 
-\begin{itemize}
-    \item \textbf{L1 (Top):} RF routing, including matching networks and connectors.
-    \item \textbf{L2:} Continuous ground plane which is the primary RF return path.
-    \item \textbf{L3:} Power distribution plane (3.3\,V, 5\,V).
-    \item \textbf{L4:} Secondary ground plane to improve shielding and reduce coupling between layers.
-    \item \textbf{L5:} Digital and control signal routing.
-    \item \textbf{L6 (Bottom):} Auxiliary signals and placement of the Pi Pico microcontroller.
-\end{itemize}
+\begin{table}[H]
+    \centering
+    \caption{6-layer PCB stackup with electrical function and material properties.}
+    \label{tab:rf_stackup_functional}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{l l l l c X}
+        \toprule
+        \textbf{Layer} & \textbf{Type} & \textbf{Thickness} & \textbf{Material} & \textbf{$\varepsilon_r$} & \textbf{Function} \\
+        \midrule
+        F.Cu   & Copper       & 0.035\,mm (1\,oz)   & ---     & ---  & RF routing, matching networks, SMA feedlines \\
+        Dielectric 1 & Prepreg 3313 & 0.0994\,mm & NP-155F & 4.1  &  \\
+        In1.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Primary ground plane (RF return path) \\
+        Dielectric 2 & Core   & 0.35\,mm            & NP-155F & 4.36 &  \\
+        In2.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Power distribution (3.3\,V, 5\,V) \\
+        Dielectric 3 & Prepreg 2116 & 0.1164\,mm & NP-155F & 4.16 &  \\
+        In3.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Secondary ground plane (coupling reduction) \\
+        Dielectric 4 & Core   & 0.35\,mm            & NP-155F & 4.36 &  \\
+        In4.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Digital and control signal routing \\
+        Dielectric 5 & Prepreg 3313 & 0.0994\,mm & NP-155F & 4.1  &  \\
+        B.Cu   & Copper       & 0.035\,mm (1\,oz)   & ---     & ---  & Auxiliary signals and component placement \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+This stackup ensures that RF traces on the top layer (F.Cu) are implemented as controlled-impedance microstrip lines referenced to the continuous ground plane on In1.Cu. The relatively thin dielectric (0.0994\,mm) enables a compact 50\,$\Omega$ trace width (0.15\,mm), while the additional ground plane (In3.Cu) improves electromagnetic shielding and reduces coupling between the RF, power, and digital domains.
 
 The use of dual ground planes (L2 and L4) improves electromagnetic shielding and reduces coupling between RF and digital layers, while separating digital routing on L5 minimizes interference with sensitive RF signals on the top layer.
 
@@ -35,14 +53,6 @@ In theory, grounded coplanar waveguide (GCPW) is preferred for RF routing due to
 In the final design, microstrip routing was used for both the 144\,MHz and 433\,MHz bands. This choice was primarily driven by space constraints imposed by the compact form factor (Raspberry Pi shield size), as GCPW requires additional lateral clearance for ground pours and via fences, increasing the required routing area.
 
 At the given frequencies, where wavelengths are approximately 2.08\,m and 0.69\,m respectively, and considering that the complete matching network fits within approximately 10\,mm $\times$ 15\,mm, these dimensions are small compared to the wavelength. In particular, they remain well below \(\lambda/10\) (approximately 208\,mm and 69\,mm at 144\,MHz and 433\,MHz, respectively), meaning the interconnects can be considered electrically short. As a result, the expected performance difference between GCPW and microstrip is small, making microstrip a practical and sufficiently accurate solution while allowing a more compact layout.
-
-To compensate for the reduced field confinement of microstrip:
-
-\begin{itemize}
-    \item A continuous ground plane is maintained directly beneath all RF traces (L2).
-    \item Ground stitching vias are placed near RF components and along critical signal paths.
-    \item RF traces are kept short to minimize radiation and losses.
-\end{itemize}
 
 \subsection{Frequency-Dependent Layout Considerations}
 
