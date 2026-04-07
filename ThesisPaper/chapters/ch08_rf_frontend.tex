@@ -46,13 +46,32 @@ The key rule is that all RF traces on L1 must have an uninterrupted ground refer
 
 \subsection{Transmission Line Implementation}
 
-All RF signal paths were routed with controlled impedance considerations, targeting an impedance of 50\,$\Omega$.
+All RF signal paths are routed with controlled impedance considerations, targeting a characteristic impedance of 50\,$\Omega$, which is standard for RF systems and ensures proper matching with external components such as SMA connectors and measurement equipment.
 
-In theory, grounded coplanar waveguide (GCPW) is preferred for RF routing due to improved field confinement, reduced radiation, and better isolation. This was implemented on the first prototype. However, due to minimum via size constraints (to reduce PCB manufacturing cost), the matching network occupied a significant area.
+In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype. However, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact form-factor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
 
-In the final design, microstrip routing was used for both the 144\,MHz and 433\,MHz bands. This choice was primarily driven by space constraints imposed by the compact form factor (Raspberry Pi shield size), as GCPW requires additional lateral clearance for ground pours and via fences, increasing the required routing area.
+The RF traces are implemented as microstrip lines on the top layer (F.Cu), referenced to the continuous ground plane on In1.Cu. The characteristic impedance of a microstrip line can be approximated as:
 
-At the given frequencies, where wavelengths are approximately 2.08\,m and 0.69\,m respectively, and considering that the complete matching network fits within approximately 10\,mm $\times$ 15\,mm, these dimensions are small compared to the wavelength. In particular, they remain well below \(\lambda/10\) (approximately 208\,mm and 69\,mm at 144\,MHz and 433\,MHz, respectively), meaning the interconnects can be considered electrically short. As a result, the expected performance difference between GCPW and microstrip is small, making microstrip a practical and sufficiently accurate solution while allowing a more compact layout.
+\begin{equation}
+Z_0 = \frac{60}{\sqrt{\varepsilon_{\text{eff}}}} 
+\ln \left( \frac{8h}{w} + \frac{w}{4h} \right)
+\end{equation}
+
+with the effective dielectric constant given by:
+
+\begin{equation}
+\varepsilon_{\text{eff}} = \frac{\varepsilon_r + 1}{2} 
++ \frac{\varepsilon_r - 1}{2} 
+\left( \frac{1}{\sqrt{1 + 12h/w}} \right)
+\end{equation}
+
+where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate.
+
+Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.15\,mm. This width is used for all RF interconnects between the matching network and the SMA connectors.
+
+At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited. 
+
+Although GCPW would generally provide improved field confinement and isolation, microstrip routing offers a suitable trade-off between RF performance and compactness in this design. By maintaining a continuous ground reference, minimizing trace lengths, and applying sufficient ground stitching, the performance degradation is expected to remain limited while enabling a significantly more compact layout.
 
 \subsection{Frequency-Dependent Layout Considerations}
 
