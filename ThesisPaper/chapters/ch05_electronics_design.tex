@@ -1,4 +1,140 @@
-% ══════════════════════════════════════════════════════════════════════════════
 \chapter{Electronics Design}
 \label{ch:electronics}
-% ══════════════════════════════════════════════════════════════════════════════
+
+\section{RF PCB Design}
+\label{sec:rf_pcb}
+
+The RF PCB implements the front-end architecture responsible for signal transmission, reception, and communication with the host system. This section describes the electrical design of the PCB, including system architecture, component selection, and interconnections between subsystems.
+
+\subsection{System Overview}
+\label{subsec:rf_system_overview}
+
+The RF PCB is based on a microcontroller-controlled dual-transceiver architecture supporting both the VHF (144,MHz) and UHF (433,MHz) frequency bands.
+
+The design consists of the following functional blocks:
+
+\begin{itemize}
+\item A microcontroller for system control and data handling
+\item Two RF transceivers (VHF and UHF)
+\item Dedicated SPI communication interfaces
+\item A UART interface to the Raspberry Pi host
+\item Power distribution and filtering circuitry
+\end{itemize}
+
+Figure~X illustrates the high-level architecture of the RF PCB and the interaction between these subsystems.
+
+\subsection{Microcontroller Subsystem}
+\label{subsec:rf_microcontroller}
+
+The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040. This device acts as the central control unit of the system.
+
+Its primary responsibilities include:
+
+\begin{itemize}
+\item Configuration of both RF transceivers via SPI
+\item Handling of transmit and receive data
+\item Communication with the host system via UART
+\item Control of auxiliary signals such as chip select and interrupt lines
+\end{itemize}
+
+The RP2040 was selected due to its availability of multiple SPI peripherals, allowing independent communication with each RF transceiver. Additionally, its 3.3,V logic level ensures direct compatibility with the RF components without requiring level shifting.
+
+Furthermore, the platform supports rapid firmware development and iteration through a well-established software ecosystem, enabling efficient testing and debugging during the development process.
+
+\subsection{RF Transceiver Subsystem}
+\label{subsec:rf_transceivers}
+
+The RF PCB employs two CC1200 transceivers to enable dual-band operation:
+
+\begin{itemize}
+\item One transceiver configured for the 144,MHz VHF band
+\item One transceiver configured for the 433,MHz UHF band
+\end{itemize}
+
+Each transceiver operates independently and includes its own supporting circuitry:
+
+\begin{itemize}
+\item A 40,MHz crystal oscillator for frequency reference
+\item External matching and filtering components
+\item Decoupling capacitors for supply stabilization
+\end{itemize}
+
+The use of two dedicated transceivers eliminates the need for RF switching networks, simplifying the signal path and avoiding additional insertion losses.
+
+Key control and interface signals include SPI communication lines, interrupt outputs (GDO pins), and device control signals such as reset.
+
+\subsection{Communication Interfaces}
+\label{subsec:rf_interfaces}
+
+\subsubsection{SPI Communication}
+\label{subsubsec:rf_spi}
+
+Each RF transceiver is connected to the microcontroller via a dedicated SPI interface, allowing independent communication with both devices.
+
+The SPI interfaces consist of the following signals:
+
+\begin{itemize}
+\item Serial clock (SCLK)
+\item Master-out slave-in (MOSI)
+\item Master-in slave-out (MISO)
+\item Chip select (CS)
+\end{itemize}
+
+Interrupt lines from each transceiver are connected to the microcontroller to signal events such as packet reception or transmission completion.
+
+Using separate SPI buses avoids contention and ensures deterministic communication timing.
+
+\subsubsection{UART Interface to Host}
+\label{subsubsec:rf_uart}
+
+Communication between the RF PCB and the Raspberry Pi host is implemented via a UART interface.
+
+This interface is used for:
+
+\begin{itemize}
+\item Transferring received RF data to the host
+\item Receiving configuration and control commands
+\item Debugging and diagnostic output
+\end{itemize}
+
+The UART operates at 3.3,V logic levels and provides a simple and robust communication channel.
+
+
+\subsection{Power Distribution Network}
+\label{subsec:rf_power}
+
+The RF PCB is powered from a 24\,V input supplied via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using a buck converter. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
+
+Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count.
+
+The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard low-noise linear regulator. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. By relying on the integrated regulator of the Pico, no additional external 3.3\,V regulator is required, which reduces both cost and design complexity.
+
+Local decoupling capacitors are placed close to the supply pins of each active component to reduce supply noise, provide transient current during switching events, and improve overall system stability.
+
+\subsection{Design Trade-offs}
+\label{subsec:rf_tradeoffs}
+
+\subsubsection{Dual Transceiver Architecture}
+
+Using two separate transceivers eliminates the need for RF switching networks, reducing insertion loss and simplifying the RF signal path. The trade-off is increased component count and PCB area.
+
+\subsubsection{Dedicated SPI Interfaces}
+
+Providing each transceiver with its own SPI bus increases pin usage but improves communication reliability and simplifies system control.
+
+\subsubsection{Microcontroller Selection}
+
+The RP2040 was selected due to its multiple SPI peripherals, sufficient processing capability, and compatibility with the Raspberry Pi ecosystem.
+
+
+\subsection{Summary}
+\label{subsec:rf_summary}
+
+The RF PCB electrical design integrates a microcontroller, dual RF transceivers, and dedicated communication interfaces into a modular and robust architecture. This design forms the foundation for the RF layout considerations discussed in the following chapter.
+
+\section{Azimuth/Elevation (AZ/EL) PCB Design}
+\label{sec:azel_pcb}
+
+This section will describe the electrical design of the azimuth and elevation control PCB, including motor control, sensing, communication interfaces, and power distribution.
+
+% (To be completed)
