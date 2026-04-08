@@ -5,7 +5,7 @@
 \section{RF PCB Layout Considerations}
 \label{sec:rf_layout}
 
-The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are relatively low in frequency compared to microwave systems, careful RF design is still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
+The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are sub GHz and thus relatively low in frequency compared to microwave systems, careful RF design is still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
 
 On the first RF front-end prototype, a 4-layer stackup was considered sufficient because it had no size constraints. However, to achieve a more compact design within the form factor of a Raspberry Pi shield, a 6-layer stackup was adopted. This enables improved separation of RF, power, and digital domains while maintaining a continuous ground reference.
 
@@ -40,15 +40,15 @@ The PCB is implemented using JLCPCB's \texttt{JLC0612IH-3313} 6-layer stackup wi
 
 This stackup ensures that RF traces on the top layer (F.Cu) are implemented as controlled-impedance microstrip lines referenced to the continuous ground plane on In1.Cu. The relatively thin dielectric (0.0994\,mm) enables a compact 50\,$\Omega$ trace width (0.15\,mm), while the additional ground plane (In3.Cu) improves electromagnetic shielding and reduces coupling between the RF, power, and digital domains.
 
-The use of dual ground planes (L2 and L4) improves electromagnetic shielding and reduces coupling between RF and digital layers, while separating digital routing on L5 minimizes interference with sensitive RF signals on the top layer.
+The use of two ground planes (L2 and L4) improves electromagnetic shielding and reduces coupling between RF and digital layers. Additionally separating digital routing on L5 minimizes interference with sensitive RF signals on the top layer.
 
-The key rule is that all RF traces on L1 must have an uninterrupted ground reference directly beneath them on L2. No splits or voids are allowed under RF lines, as this would disrupt the current return path, increase loop area, and lead to additional radiation and impedance discontinuities.
+The key rule is that no splits or voids in the groundplane are allowed under RF lines, as this would disrupt the current return path, increase loop area, and lead to additional radiation and impedance discontinuities.
 
 \subsection{Transmission Line Implementation}
 
 All RF signal paths are routed with controlled impedance considerations, targeting a characteristic impedance of 50\,$\Omega$, which is standard for RF systems and ensures proper matching with external components such as SMA connectors and measurement equipment.
 
-In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype. However, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact form-factor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
+In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact formfactor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
 
 The RF traces are implemented as microstrip lines on the top layer (F.Cu), referenced to the continuous ground plane on In1.Cu. The characteristic impedance of a microstrip line can be approximated as:
 
