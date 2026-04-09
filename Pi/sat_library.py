@@ -58,8 +58,12 @@ SATNOGS_MODE_MAP = {
 def pick_best_uhf_transmitter(tx_list: list) -> Optional[dict]:
     """Pick the best CC1200-compatible UHF transmitter from a list.
 
-    Prefers CC1200-compatible modes, then picks closest to 435 MHz
-    (center of amateur UHF sat band). Returns None if list is empty.
+    Selection priority:
+      1. CC1200-compatible modes preferred
+      2. Entries with specific descriptions over generic "Transmitter"
+      3. Entries with IARU citation over uncited
+      4. Most recently updated entry wins ties
+    Returns None if list is empty.
     """
     if not tx_list:
         return None
@@ -68,12 +72,24 @@ def pick_best_uhf_transmitter(tx_list: list) -> Optional[dict]:
     cc_ok = [tx for tx in tx_list if tx.get("cc1200_format")]
     pool = cc_ok if cc_ok else tx_list
 
-    # Pick closest to 435 MHz (center of 430-440 amateur UHF allocation)
-    def dist(tx):
-        f = tx.get("freq_mhz", 0)
-        return abs(f - 435.0)
+    def score(tx):
+        """Lower score = better. Tuple sorts lexicographically."""
+        desc = (tx.get("description") or "").strip()
+        # Penalize generic/empty descriptions
+        generic = desc.lower() in ("", "transmitter", "unknown")
+        # Prefer entries with real citations
+        cite = tx.get("citation", "")
+        has_cite = bool(cite) and "CITATION NEEDED" not in cite
+        # Prefer more recently updated (negate ISO date for min sorting)
+        updated = tx.get("updated", "0")
+        return (
+            0 if not generic else 1,     # specific desc first
+            0 if has_cite else 1,         # cited first
+        )
 
-    return min(pool, key=dist)
+    # Among equal scores, pick the most recently updated
+    pool_sorted = sorted(pool, key=lambda tx: tx.get("updated", ""), reverse=True)
+    return min(pool_sorted, key=score)
 
 
 @dataclass
@@ -94,6 +110,8 @@ class SatProfile:
     smartrf_profile: Optional[str] = None
     description: str = ""
     cc1200_compatible: bool = True
+    protocol: str = ""  # "ax25_g3ruh", "ax100_mode5", "native_cc1200", "usp", etc.
+    use_serial_mode: bool = False  # True for protocols needing raw bit stream (G3RUH)
 
 
 # SatNOGS DB transmitter API cache
@@ -162,12 +180,15 @@ class SatLibrary:
                 sync_word=m.get("sync_word"),
             )
 
+        proto = sat.get("protocol", "")
         return SatProfile(
             freq_mhz=sat.get("freq_mhz", 433.0),
             modulation=mod,
             smartrf_profile=sat.get("smartrf_profile"),
             description=sat.get("description", ""),
             cc1200_compatible=sat.get("cc1200_compatible", True),
+            protocol=proto,
+            use_serial_mode=proto in ("ax25_g3ruh", "usp"),
         )
 
     def fetch_satnogs_transmitters(self, norad_id: int) -> list:

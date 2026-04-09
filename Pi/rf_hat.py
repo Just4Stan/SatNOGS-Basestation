@@ -787,9 +787,16 @@ class CC1200Link:
         if fmt_bits is None:
             return False
 
-        # Put radio in IDLE
+        # Put radio in IDLE and flush FIFO before reconfiguring
         self.set_state(STATE_IDLE)
         time.sleep(0.02)
+        # Confirm IDLE (poll MARCSTATE up to 50ms)
+        for _ in range(10):
+            marc = self.read_ext(0x73)
+            if marc is not None and (marc & 0x1F) == 1:  # IDLE
+                break
+            time.sleep(0.005)
+        self.strobe(0x3A)  # SFRX — flush RX FIFO
 
         ok = True
 
@@ -838,6 +845,20 @@ class CC1200Link:
                 if sync_cfg1 is not None:
                     sync_cfg1 = (sync_cfg1 & 0xE3) | (0x06 << 2)
                     ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
+        else:
+            # No sync word known — use moderate sync tolerance (11 bit errors
+            # in 32-bit sync word). This lets real frames through while not
+            # flooding the FIFO with noise like SYNC_THR=0x1F did.
+            sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
+            if sync_cfg1 is not None:
+                sync_cfg1 = (sync_cfg1 & 0xE0) | 0x0B  # 11 bit errors allowed
+                ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
+            # RFEND_CFG0: return to RX after bad CRC (not IDLE)
+            # bits [5:4] = 0b11 → RX after RX timeout/bad CRC
+            rfend0 = self.read_reg(0x2A)  # RFEND_CFG0
+            if rfend0 is not None:
+                rfend0 = (rfend0 & 0xCF) | 0x30  # RXOFF_MODE = 11 → RX
+                ok = ok and self.write_reg(0x2A, rfend0)
 
         # Frequency (if specified)
         if freq_hz is not None:

@@ -49,6 +49,7 @@ import datetime
 import threading
 import subprocess
 from pathlib import Path
+from sat_library import pick_best_uhf_transmitter
 
 # ---------------------------------------------------------------------------
 # RAM protection — Pi 3A+ has only 416MB
@@ -99,6 +100,62 @@ ROTCTLD_PORT = 4533
 STATUS_FILE = os.path.expanduser("~/.station_status.json")
 STATION_CONF = os.path.expanduser("~/station.conf")
 DASHBOARD_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Lock for station.conf read-modify-write (ThreadingHTTPServer = concurrent handlers)
+import tempfile
+_conf_lock = threading.Lock()
+
+
+def _read_conf() -> dict:
+    """Read station.conf under lock. Returns {} on error."""
+    with _conf_lock:
+        try:
+            if os.path.exists(STATION_CONF):
+                with open(STATION_CONF, "r") as f:
+                    return json.load(f)
+        except Exception:
+            pass
+    return {}
+
+
+def _write_conf(data: dict):
+    """Atomic write station.conf under lock (tempfile + rename)."""
+    with _conf_lock:
+        try:
+            dir_name = os.path.dirname(STATION_CONF)
+            fd, tmp = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+            with os.fdopen(fd, "w") as f:
+                json.dump(data, f, indent=4)
+            os.rename(tmp, STATION_CONF)
+        except Exception:
+            try:
+                os.unlink(tmp)
+            except Exception:
+                pass
+
+
+def _update_conf(**kwargs):
+    """Read-modify-write station.conf atomically. Pass key=value pairs."""
+    with _conf_lock:
+        existing = {}
+        try:
+            if os.path.exists(STATION_CONF):
+                with open(STATION_CONF, "r") as f:
+                    existing = json.load(f)
+        except Exception:
+            pass
+        existing.update(kwargs)
+        try:
+            dir_name = os.path.dirname(STATION_CONF)
+            fd, tmp = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+            with os.fdopen(fd, "w") as f:
+                json.dump(existing, f, indent=4)
+            os.rename(tmp, STATION_CONF)
+        except Exception:
+            try:
+                os.unlink(tmp)
+            except Exception:
+                pass
 
 # Default station location (Geel, Belgium) — used when ~/station.conf not set
 DEFAULT_LAT = 51.1
@@ -401,13 +458,9 @@ def read_station_status():
 
 def read_station_conf():
     """Read ~/station.conf. Returns (lat, lon, elev) or (None, None, None)."""
-    try:
-        if os.path.exists(STATION_CONF):
-            with open(STATION_CONF, "r") as f:
-                cfg = json.load(f)
-            return cfg.get("lat"), cfg.get("lon"), cfg.get("elev")
-    except Exception:
-        pass
+    cfg = _read_conf()
+    if cfg:
+        return cfg.get("lat"), cfg.get("lon"), cfg.get("elev")
     return None, None, None
 
 
@@ -489,17 +542,20 @@ def polling_loop():
                 if rf_data and "satnogs" in rf_data:
                     satnogs_status = rf_data["satnogs"]
 
-                # Read current rf_mode and auto_track from station.conf
-                rf_mode = "auto"
-                auto_track = True
-                try:
-                    if os.path.exists(STATION_CONF):
-                        with open(STATION_CONF, "r") as f:
-                            _conf = json.load(f)
-                        rf_mode = _conf.get("rf_mode", "auto")
-                        auto_track = _conf.get("auto_track", True)
-                except Exception:
-                    pass
+                # Read all settings from station.conf in one go
+                _conf = _read_conf()
+                rf_mode = _conf.get("rf_mode", "auto")
+                auto_track = _conf.get("auto_track", True)
+                auto_mode = "track"
+                _am = _conf.get("auto_mode")
+                if _am in ("off", "track", "scan"):
+                    auto_mode = _am
+                elif auto_track is False:
+                    auto_mode = "off"
+                _scan_s = {}
+                for k in ("scan_min_el", "scan_dwell", "scan_hours"):
+                    if k in _conf:
+                        _scan_s[k] = _conf[k]
 
                 with status_lock:
                     status["rotator"] = {
@@ -509,6 +565,8 @@ def polling_loop():
                     status["rf"] = rf_status
                     status["rf_mode"] = rf_mode
                     status["auto_track"] = auto_track
+                    status["auto_mode"] = auto_mode
+                    status["scan_settings"] = _scan_s
                     status["system"] = sys_stats
                     status["location"] = {
                         "lat": lat, "lon": lon, "elev": elev,
@@ -657,6 +715,28 @@ def fetch_tles():
     for url in SATELLITE_GROUPS:
         tles = _fetch_tles_from_url(url)
         combined.update(tles)
+
+    # Fetch individual NORAD IDs from sat_profiles.json (MEO/non-standard orbits)
+    try:
+        prof_path = os.path.join(os.path.dirname(__file__), "sat_profiles.json")
+        with open(prof_path, "r") as f:
+            prof_data = json.load(f)
+        existing_norads = set()
+        for _, (l1, _l2) in combined.items():
+            try:
+                existing_norads.add(int(l1[2:7].strip()))
+            except Exception:
+                pass
+        missing = [s["norad_id"] for s in prof_data.get("satellites", [])
+                   if isinstance(s.get("norad_id"), int)
+                   and s["norad_id"] not in existing_norads]
+        if missing:
+            ids_str = ",".join(str(n) for n in missing)
+            url = f"https://celestrak.org/NORAD/elements/gp.php?CATNR={ids_str}&FORMAT=TLE"
+            extra = _fetch_tles_from_url(url)
+            combined.update(extra)
+    except Exception:
+        pass
 
     if combined:
         _tle_cache = combined
@@ -1194,11 +1274,8 @@ def get_cached_passes():
             norad = p.get("norad_id", 0)
             if norad and "freq_mhz" not in p:
                 tx_list = get_transmitter_info(norad)
-                best_tx = None
-                for tx in tx_list:
-                    if 400e6 <= (tx.get("freq_hz") or 0) <= 470e6:
-                        if best_tx is None or abs(tx["freq_hz"] - 433e6) < abs(best_tx["freq_hz"] - 433e6):
-                            best_tx = tx
+                uhf_txs = [tx for tx in tx_list if 400e6 <= (tx.get("freq_hz") or 0) <= 470e6]
+                best_tx = pick_best_uhf_transmitter(uhf_txs) if uhf_txs else None
                 if not best_tx and tx_list:
                     best_tx = tx_list[0]
                 if best_tx:
@@ -1208,6 +1285,12 @@ def get_cached_passes():
                     p["band"] = best_tx.get("band", "")
                     p["cc1200_ok"] = best_tx.get("cc1200_ok", False)
                     p["rtlsdr_ok"] = True
+                    if "data_source" not in p:
+                        p["data_source"] = "satnogs_db"
+                    if "tx_description" not in p:
+                        p["tx_description"] = best_tx.get("description", "")
+                    if "tx_count" not in p:
+                        p["tx_count"] = len(tx_list)
             # Always add category
             if "category" not in p:
                 p["category"] = _classify_satellite(p.get("name", ""))
@@ -1319,11 +1402,9 @@ def compute_passes(lat, lon, elev, hours=2, max_passes=25):
 
                 # Enrich with transmitter info from SatNOGS DB
                 tx_list = get_transmitter_info(norad_id)
-                # Pick the best UHF transmitter: prefer CC1200-compatible, closest to 435 MHz
+                # Pick the best UHF transmitter using shared selection logic
                 uhf_txs = [tx for tx in tx_list if 420e6 <= (tx.get("freq_hz") or 0) <= 450e6]
-                cc_txs = [tx for tx in uhf_txs if tx.get("cc1200_ok")]
-                pool = cc_txs if cc_txs else uhf_txs if uhf_txs else tx_list
-                best_tx = min(pool, key=lambda t: abs((t.get("freq_hz") or 0) - 435e6)) if pool else None
+                best_tx = pick_best_uhf_transmitter(uhf_txs) if uhf_txs else None
 
                 pass_entry = {
                     "name": name,
@@ -1343,9 +1424,21 @@ def compute_passes(lat, lon, elev, hours=2, max_passes=25):
                     pass_entry["band"] = best_tx.get("band", "")
                     pass_entry["cc1200_ok"] = best_tx.get("cc1200_ok", False)
                     pass_entry["rtlsdr_ok"] = True
+                    pass_entry["tx_description"] = best_tx.get("description", "")
+                    pass_entry["tx_type"] = best_tx.get("type", "")
+                    pass_entry["tx_count"] = len(tx_list)
+                    pass_entry["data_source"] = "satnogs_db"
                 else:
-                    # No transmitter data — skip, we can't configure the radio
-                    continue
+                    # No transmitter data — still show but mark as unknown
+                    pass_entry["freq_mhz"] = 0
+                    pass_entry["mode"] = ""
+                    pass_entry["baud"] = 0
+                    pass_entry["band"] = ""
+                    pass_entry["cc1200_ok"] = False
+                    pass_entry["rtlsdr_ok"] = False
+                    pass_entry["tx_description"] = ""
+                    pass_entry["tx_count"] = 0
+                    pass_entry["data_source"] = "none"
 
                 passes.append(pass_entry)
 
@@ -1366,18 +1459,7 @@ def compute_passes(lat, lon, elev, hours=2, max_passes=25):
 def save_location(lat, lon, elev):
     """Save GPS coordinates to ~/station.conf, preserving existing fields."""
     # Read any existing conf so we don't overwrite tokens/callsign/etc.
-    existing = {}
-    try:
-        if os.path.exists(STATION_CONF):
-            with open(STATION_CONF, "r") as f:
-                existing = json.load(f)
-    except Exception:
-        pass
-    existing["lat"]  = round(lat, 6)
-    existing["lon"]  = round(lon, 6)
-    existing["elev"] = round(elev, 1)
-    with open(STATION_CONF, "w") as f:
-        json.dump(existing, f, indent=4)
+    _update_conf(lat=round(lat, 6), lon=round(lon, 6), elev=round(elev, 1))
 
 
 def send_park():
@@ -1496,28 +1578,12 @@ def detect_hardware():
 
 def save_setup_complete():
     """Mark setup wizard as complete in station.conf."""
-    existing = {}
-    try:
-        if os.path.exists(STATION_CONF):
-            with open(STATION_CONF, "r") as f:
-                existing = json.load(f)
-    except Exception:
-        pass
-    existing["setup_complete"] = True
-    with open(STATION_CONF, "w") as f:
-        json.dump(existing, f, indent=4)
+    _update_conf(setup_complete=True)
 
 
 def is_setup_complete():
     """Check if setup wizard has been completed."""
-    try:
-        if os.path.exists(STATION_CONF):
-            with open(STATION_CONF, "r") as f:
-                cfg = json.load(f)
-            return cfg.get("setup_complete", False)
-    except Exception:
-        pass
-    return False
+    return _read_conf().get("setup_complete", False)
 
 
 # ---------------------------------------------------------------------------
@@ -1651,21 +1717,40 @@ class DashboardHandler(BaseHTTPRequestHandler):
             try:
                 length = int(self.headers.get("Content-Length", 0))
                 body = json.loads(self.rfile.read(length))
-                enabled = body.get("enabled", True)
-                existing = {}
-                try:
-                    if os.path.exists(STATION_CONF):
-                        with open(STATION_CONF, "r") as f:
-                            existing = json.load(f)
-                except Exception:
-                    pass
-                existing["auto_track"] = bool(enabled)
-                if enabled:
-                    existing["track_mode"] = "auto"
-                    existing["track_satellite"] = ""
-                with open(STATION_CONF, "w") as f:
-                    json.dump(existing, f, indent=4)
-                self._json_response(200, json.dumps({"ok": True, "auto_track": bool(enabled)}))
+                # New 3-state: {mode: "off"|"track"|"scan"}
+                # Backward-compat: {enabled: bool} → "off"/"track"
+                mode = body.get("mode")
+                if mode is None:
+                    enabled = body.get("enabled", True)
+                    mode = "track" if enabled else "off"
+                if mode not in ("off", "track", "scan"):
+                    mode = "track"
+                updates = {
+                    "auto_mode": mode,
+                    "auto_track": mode != "off",
+                }
+                if mode != "off":
+                    updates["track_mode"] = "auto"
+                    updates["track_satellite"] = ""
+                _update_conf(**updates)
+                self._json_response(200, json.dumps({
+                    "ok": True, "auto_mode": mode,
+                    "auto_track": mode != "off",
+                }))
+            except Exception as e:
+                self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
+
+        elif path == "/api/scan-settings":
+            try:
+                length = int(self.headers.get("Content-Length", 0))
+                body = json.loads(self.rfile.read(length))
+                updates = {}
+                for key in ("scan_min_el", "scan_dwell", "scan_hours"):
+                    if key in body:
+                        updates[key] = int(body[key])
+                if updates:
+                    _update_conf(**updates)
+                self._json_response(200, json.dumps({"ok": True}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
 
@@ -1698,16 +1783,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                         {"ok": False, "error": f"Invalid rf_mode: {mode}"}))
                     return
                 # Save to station.conf so station.py picks it up next cycle
-                existing = {}
-                try:
-                    if os.path.exists(STATION_CONF):
-                        with open(STATION_CONF, "r") as f:
-                            existing = json.load(f)
-                except Exception:
-                    pass
-                existing["rf_mode"] = mode
-                with open(STATION_CONF, "w") as f:
-                    json.dump(existing, f, indent=4)
+                _update_conf(rf_mode=mode)
                 self._json_response(200, json.dumps({"ok": True, "mode": mode}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
@@ -1738,16 +1814,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 # Optionally save RF mode from the setup wizard
                 rf_mode = body.get("rf_mode")
                 if rf_mode and rf_mode in ("none", "cc1200", "rtlsdr", "auto"):
-                    existing = {}
-                    try:
-                        if os.path.exists(STATION_CONF):
-                            with open(STATION_CONF, "r") as f:
-                                existing = json.load(f)
-                    except Exception:
-                        pass
-                    existing["rf_mode"] = rf_mode
-                    with open(STATION_CONF, "w") as f:
-                        json.dump(existing, f, indent=4)
+                    _update_conf(rf_mode=rf_mode)
                 save_setup_complete()
                 try:
                     from buzzer_util import beep, SETUP_DONE
@@ -1760,13 +1827,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
         elif path == "/api/reset-setup":
             try:
-                existing = {}
-                if os.path.exists(STATION_CONF):
-                    with open(STATION_CONF, "r") as f:
-                        existing = json.load(f)
-                existing["setup_complete"] = False
-                with open(STATION_CONF, "w") as f:
-                    json.dump(existing, f, indent=4)
+                _update_conf(setup_complete=False)
                 self._json_response(200, json.dumps({"ok": True}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))

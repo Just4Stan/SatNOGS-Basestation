@@ -484,7 +484,8 @@ static void maybe_stream_serial(void)
     // Drain PIO FIFO → ring buffer (non-blocking)
     while (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm)) {
         uint32_t word = pio_sm_get(g_serial_pio, g_serial_sm);
-        uint8_t byte_val = (uint8_t)(word & 0xFF);
+        // Data is in upper byte: left-shift autopush at 8 bits → bits [31:24]
+        uint8_t byte_val = (uint8_t)(word >> 24);
         uint16_t next_head = (g_serial_head + 1) & SERIAL_BUF_MASK;
         if (next_head != g_serial_tail) {
             g_serial_buf[g_serial_head] = byte_val;
@@ -767,6 +768,12 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
             if (len < 1) { send_error(0x01, seq); break; }
             uint8_t idx = body[0];
             if (idx >= g_radio_count) { send_error(0x02, seq); break; }
+            // If same radio already selected, just ACK — don't reset state
+            if (idx == g_active) {
+                uint8_t b[1] = { g_active };
+                send_frame(rsp_type, seq, b, 1);
+                break;
+            }
             g_active = idx;
             g_streaming = false;
             g_desired_state = STATE_IDLE;

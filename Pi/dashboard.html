@@ -894,21 +894,32 @@
     }
     .passes-header .card-title { margin-bottom: 0; }
 
-    .auto-track-label {
+    .auto-mode-seg {
       display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      font-size: 0.65rem;
-      color: var(--muted);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 0.60rem;
       font-family: var(--font-mono);
       letter-spacing: 0.04em;
     }
-    .auto-track-label input[type="checkbox"] {
-      width: 30px;
-      height: 16px;
-      accent-color: var(--accent);
+    .auto-mode-seg button {
+      background: none;
+      border: none;
+      color: var(--muted);
+      padding: 3px 8px;
       cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      border-right: 1px solid var(--card-border);
+    }
+    .auto-mode-seg button:last-child { border-right: none; }
+    .auto-mode-seg button.active {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+    }
+    .auto-mode-seg button:hover:not(.active) {
+      background: rgba(255,255,255,0.06);
     }
 
     .pass-list {
@@ -2005,10 +2016,11 @@
                   <button class="filter-btn" id="filter-toggle-btn" onclick="toggleFilterPanel()"
                           title="Filter satellites by frequency, modulation, compatibility"
                           style="background:none;border:1px solid var(--card-border);border-radius:6px;color:var(--muted);padding:3px 8px;font-size:0.65rem;cursor:pointer;font-family:var(--font-mono)">Filter</button>
-                  <label class="auto-track-label" title="Auto mode: automatically tracks the next best satellite pass. Turn off to manually select which satellite to track.">
-                    Auto
-                    <input type="checkbox" id="auto-track-toggle" onchange="toggleAutoTrack(this.checked)">
-                  </label>
+                  <div class="auto-mode-seg" id="auto-mode-seg" title="Off: manual only. Track: auto-track best pass. Scan: 30s dwell, cycle all visible.">
+                    <button data-mode="off" onclick="setAutoMode('off')">Off</button>
+                    <button data-mode="track" onclick="setAutoMode('track')">Track</button>
+                    <button data-mode="scan" onclick="setAutoMode('scan')">Scan</button>
+                  </div>
                 </div>
               </div>
 
@@ -2485,6 +2497,49 @@
             <option value="cc1200">CC1200</option>
             <option value="rtlsdr">RTL-SDR</option>
             <option value="none">None</option>
+          </select>
+        </div>
+      </article>
+
+      <!-- Scan / Auto-Track Settings -->
+      <article class="card settings-section" aria-label="Scan settings">
+        <div class="card-title">Auto-Track / Scan</div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Min Elevation</div>
+            <div class="setting-sublabel">Skip passes below this peak elevation</div>
+          </div>
+          <select id="scan-min-el" onchange="saveScanSettings()" aria-label="Minimum elevation">
+            <option value="5">5&deg;</option>
+            <option value="10" selected>10&deg;</option>
+            <option value="15">15&deg;</option>
+            <option value="20">20&deg;</option>
+            <option value="30">30&deg;</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Scan Dwell</div>
+            <div class="setting-sublabel">Seconds to listen at each satellite peak</div>
+          </div>
+          <select id="scan-dwell" onchange="saveScanSettings()" aria-label="Scan dwell time">
+            <option value="15">15s</option>
+            <option value="30" selected>30s</option>
+            <option value="60">60s</option>
+            <option value="90">90s</option>
+            <option value="120">2 min</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Prediction Window</div>
+            <div class="setting-sublabel">How far ahead to schedule passes</div>
+          </div>
+          <select id="scan-hours" onchange="saveScanSettings()" aria-label="Prediction window">
+            <option value="2">2h</option>
+            <option value="4" selected>4h</option>
+            <option value="8">8h</option>
+            <option value="12">12h</option>
           </select>
         </div>
       </article>
@@ -2980,9 +3035,11 @@
     const _labelQueue = []; // collect labels for non-overlapping placement
     _passes.forEach((pass, idx) => {
       if (!pass.trajectory || pass.trajectory.length < 2) return;
+      // Only draw passes that survive the active filter (sync list with sky plot)
+      if (_filteredPassIndices.size > 0 && !_filteredPassIndices.has(idx)) return;
       const isActive   = (idx === _activePassIdx);
       const isSelected = (idx === _selectedPass);
-      const isAutoNext = (idx === _nextPassIdx) && document.getElementById('auto-track-toggle')?.checked;
+      const isAutoNext = (idx === _nextPassIdx) && _autoTrack;
       const color      = SKY_COLORS[idx % SKY_COLORS.length];
 
       // Draw smooth spline through trajectory points
@@ -3249,9 +3306,9 @@
       }
     }
 
-    // ── Live trajectory fallback (built from cmd_az/cmd_el when pass data unavailable) ──
-    // Only draw if the pass-data SAT marker wasn't already drawn (avoid duplicate SAT labels)
-    if (document.body.classList.contains('focus-mode') && _liveTrajectory.length >= 2 && !window._lastSatPos) {
+    // ── Live trajectory (built from cmd_az/cmd_el during tracking) ──
+    // Draw the accumulated track line even when SAT marker is drawn from cmd_az/cmd_el
+    if (document.body.classList.contains('focus-mode') && _liveTrajectory.length >= 2) {
       ctx.beginPath();
       const livePts = _liveTrajectory.map(pt => polarToXY(pt.az, pt.el, cx, cy, maxR));
       ctx.moveTo(livePts[0].x, livePts[0].y);
@@ -3261,20 +3318,7 @@
       ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 3;
       ctx.stroke();
-      // SAT marker at last point
-      const lastPt = livePts[livePts.length - 1];
-      ctx.beginPath();
-      ctx.arc(lastPt.x, lastPt.y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = '#4ade80';
-      ctx.shadowColor = '#4ade80';
-      ctx.shadowBlur = 8;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.font = `bold ${clamp(size * 0.022, 7, 10)}px var(--font-mono, monospace)`;
-      ctx.fillStyle = '#4ade80';
-      ctx.textAlign = 'left';
-      ctx.fillText('SAT', lastPt.x + 8, lastPt.y + 3);
-      window._lastSatPos = lastPt; // for ANT label overlap check
+      // Skip SAT marker here — the cmd_az/cmd_el marker above already draws it
     }
 
     // ── Antenna pointing position (always shown when connected) ──
@@ -3588,9 +3632,12 @@
         stateEl.textContent = 'want:' + desiredStr + ' got:' + marcStr;
         stateEl.style.color = '#f87171';
       }
-      // Streaming flag
+      // Streaming flag + serial mode
       const streaming = !!(cc.flags & 0x01);
-      if (!streaming && cc.desired_state === 1) {
+      const serialMode = !!(cc.flags & 0x10);
+      if (serialMode) {
+        stateEl.textContent += ' [SERIAL]'; stateEl.style.color = '#a78bfa';
+      } else if (!streaming && cc.desired_state === 1) {
         stateEl.textContent += ' (no stream!)'; stateEl.style.color = '#f87171';
       }
 
@@ -3729,27 +3776,33 @@
       stateDetail.textContent = 'Check USB connection';
     } else if (isTracking) {
       stateBar.classList.add('tracking');
-      stateLabel.textContent = 'TRACKING — ' + rf.satellite;
+      // Determine if this is a scan visit or regular tracking
+      const isScanMode = rf.auto_mode === 'scan' || d.auto_mode === 'scan';
+      if (isScanMode) {
+        const scanPos = rf.scan_pos;
+        stateLabel.textContent = 'SCAN — ' + rf.satellite + (scanPos ? ' [' + scanPos + ']' : '');
+      } else {
+        stateLabel.textContent = 'TRACKING — ' + rf.satellite;
+      }
       const pct = Math.round(rf.pass_progress);
       const satLower = rf.satellite.toLowerCase();
       const matchPass = _passes.find(p => p.name.toLowerCase() === satLower || p.name.toLowerCase().includes(satLower) || satLower.includes(p.name.toLowerCase()));
       const countdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.set_time))) : 0;
       stateDetail.textContent = pct + '% complete \u00B7 LOS in ' + fmtDuration(countdown);
-    } else if (state === 'parked') {
-      stateBar.classList.add('parked');
-      stateLabel.textContent = 'Parked';
-      stateDetail.textContent = 'AZ 0\u00B0 EL 0\u00B0';
     } else {
-      // Check auto-track state for messaging
-      const autoOn = document.getElementById('auto-track-toggle');
-      const isAutoEnabled = autoOn && autoOn.checked;
+      // Not tracking — show idle/waiting/parked state
+      const curAutoMode = d.auto_mode || (d.auto_track ? 'track' : 'off');
       const nextPass = _passes.find(p => secsUntil(p.rise_time) > 0);
 
       if (state === 'parked') {
         stateBar.classList.add('parked');
         stateLabel.textContent = 'Parked';
-        stateDetail.textContent = isAutoEnabled ? 'Auto-tracking enabled' : 'Select a satellite to track';
-      } else if (nextPass && isAutoEnabled) {
+        stateDetail.textContent = curAutoMode !== 'off' ? 'Auto mode: ' + curAutoMode : 'Select a satellite to track';
+      } else if (curAutoMode === 'scan') {
+        stateBar.classList.add('waiting');
+        stateLabel.textContent = 'SCAN — Building schedule...';
+        stateDetail.textContent = nextPass ? nextPass.name + ' next' : 'Computing passes';
+      } else if (nextPass && curAutoMode === 'track') {
         const secs = Math.max(0, Math.round(secsUntil(nextPass.rise_time)));
         stateBar.classList.add('waiting');
         stateLabel.textContent = 'AUTO — Waiting';
@@ -3909,6 +3962,9 @@
         linkEl.style.color = 'var(--amber)';
       } else if (pctF > 0 && rf.rssi != null) {
         linkEl.textContent = 'Listening — ' + rf.rssi.toFixed(0) + ' dBm noise floor';
+        linkEl.style.color = 'var(--muted)';
+      } else if (rf.streaming || pctF > 5) {
+        linkEl.textContent = 'Listening — awaiting signal';
         linkEl.style.color = 'var(--muted)';
       } else {
         linkEl.textContent = 'Slewing to AOS position';
@@ -4075,12 +4131,16 @@
       }
     }
 
-    // ── Auto-track toggle sync ──
-    const atToggle = document.getElementById('auto-track-toggle');
-    if (atToggle && d.auto_track !== undefined) {
-      _autoTrack = d.auto_track;
-      atToggle.checked = d.auto_track;
+    // ── Auto-mode segmented control sync ──
+    if (d.auto_mode) {
+      _updateAutoModeUI(d.auto_mode, true);
+    } else if (d.auto_track !== undefined) {
+      // Backward compat: bool auto_track
+      _updateAutoModeUI(d.auto_track ? 'track' : 'off', true);
     }
+
+    // ── Scan settings sync (only on first load to avoid overwriting user edits) ──
+    if (_statusFirstLoad) _syncScanSettings(d);
 
     // ── Simulation badge ──
     const simBadge = document.getElementById('sim-badge');
@@ -4179,6 +4239,10 @@
         return ok;
       });
     }
+
+    // Update filtered index set for sky plot sync
+    _filteredPassIndices = new Set(filtered.map(p => _passes.indexOf(p)));
+    _skyNeedsRedraw = true;
 
     const listEl = document.getElementById('pass-list');
 
@@ -4285,7 +4349,8 @@
 
       // Transmitter metadata
       const freqStr = pass.freq_mhz ? pass.freq_mhz.toFixed(1) + ' MHz' : '';
-      const modeStr = pass.mode || '';
+      const baudStr = pass.baud ? (pass.baud >= 1000 ? (pass.baud/1000).toFixed(1).replace(/\.0$/,'') + 'k' : pass.baud) : '';
+      const modeStr = pass.mode ? (pass.mode + (baudStr ? ' ' + baudStr : '')) : '';
 
       // Activity badge — green <7d, yellow <30d, grey = never heard
       let activityDot = '';
@@ -5065,20 +5130,13 @@
     _skyNeedsRedraw = true;
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Stopping...';
-    // Also disable auto-track so it doesn't immediately start the next pass
-    fetch('/api/auto-track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ enabled: false }),
-    }).catch(() => {});
-    // Update the toggle UI
-    const atToggle = document.getElementById('auto-track-toggle');
-    if (atToggle) atToggle.checked = false;
-    // Send stop
+    // Only send stop — don't change auto_mode.
+    // User can set Off explicitly via the segmented control.
+    // In track/scan mode, station.py will pause then resume with next pass.
     fetch('/api/stop', { method: 'POST' })
       .then(r => r.json())
       .then(d => {
-        if (d.ok && sl) sl.textContent = 'Stopped — auto-track off';
+        if (d.ok && sl) sl.textContent = 'Stopped — skipping to next';
         else if (sl) sl.textContent = 'Stop failed';
       })
       .catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
@@ -5092,27 +5150,94 @@
     const details = document.getElementById('popup-sat-details');
     const freq = pass.freq_mhz ? pass.freq_mhz.toFixed(3) + ' MHz' : 'Unknown';
     const mode = pass.mode || 'Unknown';
-    const compat = pass.cc1200_ok ? 'CC1200 (hardware modem)' : 'RTL-SDR (software defined)';
-    const cat = pass.category || 'Unknown';
-    const maxEl = pass.max_el ? pass.max_el.toFixed(1) + '\u00B0' : '--';
+    const baud = pass.baud ? (pass.baud >= 1000 ? (pass.baud/1000).toFixed(1).replace(/\.0$/,'') + 'k bps' : pass.baud + ' bps') : '--';
     const norad = pass.norad_id || '--';
     const dur = pass.duration ? fmtDuration(pass.duration) : '--';
+    const maxEl = pass.max_el ? pass.max_el.toFixed(1) + '\u00B0' : '--';
     const riseAz = pass.rise_az ? pass.rise_az.toFixed(0) + '\u00B0' : '--';
     const setAz = pass.set_az ? pass.set_az.toFixed(0) + '\u00B0' : '--';
+    const cat = pass.category || 'Unknown';
+
+    // Data provenance
+    const src = pass.data_source || 'unknown';
+    const srcLabel = src === 'satnogs_db' ? 'SatNOGS DB API'
+                   : src === 'local' ? 'Local profile (sat_profiles.json)'
+                   : src === 'none' ? 'No transmitter data' : src;
+    const srcColor = src === 'satnogs_db' ? '#38bdf8'
+                   : src === 'local' ? '#4ade80'
+                   : '#ef4444';
+    const txDesc = pass.tx_description || '--';
+    const txCount = pass.tx_count != null ? pass.tx_count : '?';
+
+    // CC1200 compatibility reasoning
+    let compatStr, compatColor;
+    if (pass.cc1200_ok) {
+      compatStr = 'YES \u2014 CC1200 hardware modem';
+      compatColor = '#4ade80';
+    } else if (pass.mode && pass.mode.toUpperCase().includes('AFSK') && pass.baud <= 1200) {
+      compatStr = 'NO \u2014 AFSK 1200 (Bell 202 audio, not baseband FSK)';
+      compatColor = '#ef4444';
+    } else if (pass.mode && pass.mode.toUpperCase().includes('BPSK')) {
+      compatStr = 'NO \u2014 BPSK not supported by CC1200';
+      compatColor = '#ef4444';
+    } else if (!pass.mode) {
+      compatStr = 'UNKNOWN \u2014 no modulation data';
+      compatColor = '#f59e0b';
+    } else {
+      compatStr = 'NO \u2014 ' + pass.mode + ' not in CC1200 mode set';
+      compatColor = '#ef4444';
+    }
+
+    // Config tier prediction
+    let tierStr;
+    if (!pass.freq_mhz) {
+      tierStr = 'Cannot configure \u2014 no frequency';
+    } else if (pass.baud && pass.mode) {
+      tierStr = 'Tier B \u2014 modulation override (~15 registers)';
+    } else {
+      tierStr = 'Tier A \u2014 frequency only (keeps default 2.4k GFSK)';
+    }
+
+    // Protocol warning
+    let protoWarn = '';
+    const modeUp = (pass.mode || '').toUpperCase();
+    if (modeUp.includes('USP')) {
+      protoWarn = '<div style="margin-top:8px;padding:6px 8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:6px;font-size:0.65rem;color:#f59e0b">USP protocol \u2014 CC1200 packet engine cannot decode. Needs --serial-mode + USP decoder.</div>';
+    } else if (modeUp.includes('AX.100')) {
+      protoWarn = '<div style="margin-top:8px;padding:6px 8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:6px;font-size:0.65rem;color:#f59e0b">AX.100 protocol \u2014 CC1200 packet engine cannot decode. Needs --serial-mode + AX.100 decoder.</div>';
+    } else if (modeUp.includes('DOKA')) {
+      protoWarn = '<div style="margin-top:8px;padding:6px 8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:6px;font-size:0.65rem;color:#f59e0b">DOKA protocol \u2014 proprietary, no decoder available.</div>';
+    }
 
     details.innerHTML = `
-      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:0.75rem">
         <span style="color:var(--muted)">NORAD ID</span><span>${norad}</span>
         <span style="color:var(--muted)">Category</span><span style="text-transform:capitalize">${cat.replace('-',' ')}</span>
-        <span style="color:var(--muted)">Frequency</span><span>${freq}</span>
-        <span style="color:var(--muted)">Modulation</span><span>${mode}</span>
-        <span style="color:var(--muted)">Receiver</span><span>${compat}</span>
         <span style="color:var(--muted)">Max Elevation</span><span>${maxEl}</span>
         <span style="color:var(--muted)">Duration</span><span>${dur}</span>
-        <span style="color:var(--muted)">Rise &rarr; Set</span><span>AZ ${riseAz} &rarr; ${setAz}</span>
+        <span style="color:var(--muted)">Rise \u2192 Set</span><span>AZ ${riseAz} \u2192 ${setAz}</span>
         <span style="color:var(--muted)">Rise Time</span><span>${pass.rise_time ? fmtTime(pass.rise_time) : '--'}</span>
       </div>
-      ${norad !== '--' ? '<div style="margin-top:12px"><a href="https://db.satnogs.org/satellite/' + norad + '/" target="_blank" rel="noopener" style="color:var(--accent);font-size:0.72rem;text-decoration:none">View on SatNOGS DB &rarr;</a></div>' : ''}
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--card-border)">
+        <div style="font-size:0.65rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:0.06em">RADIO CONFIG</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 16px;font-size:0.72rem">
+          <span style="color:var(--muted)">Frequency</span><span>${freq}</span>
+          <span style="color:var(--muted)">Modulation</span><span>${mode}</span>
+          <span style="color:var(--muted)">Baud Rate</span><span>${baud}</span>
+          <span style="color:var(--muted)">CC1200</span><span style="color:${compatColor}">${compatStr}</span>
+          <span style="color:var(--muted)">Config</span><span>${tierStr}</span>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--card-border)">
+        <div style="font-size:0.65rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:0.06em">DATA SOURCE</div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 16px;font-size:0.72rem">
+          <span style="color:var(--muted)">Source</span><span style="color:${srcColor}">${srcLabel}</span>
+          <span style="color:var(--muted)">TX Description</span><span>${txDesc}</span>
+          <span style="color:var(--muted)">Transmitters</span><span>${txCount} found in DB</span>
+        </div>
+      </div>
+      ${protoWarn}
+      ${norad !== '--' ? '<div style="margin-top:10px"><a href="https://db.satnogs.org/satellite/' + norad + '/" target="_blank" rel="noopener" style="color:var(--accent);font-size:0.7rem;text-decoration:none">View on SatNOGS DB \u2192</a></div>' : ''}
     `;
     document.getElementById('sat-popup').style.display = 'flex';
   }
@@ -5131,6 +5256,7 @@
 
   /** Toggle filter panel visibility */
   let _activeFilters = new Set(['cc1200']); // default: CC1200-compatible only
+  let _filteredPassIndices = new Set(); // indices into _passes that survive filtering
   function toggleFilterPanel() {
     const panel = document.getElementById('filter-panel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
@@ -5155,13 +5281,56 @@
   // Keep old name for compat
   function setFilter(f) { toggleFilter(f); }
 
-  /** Toggle auto-track mode */
-  function toggleAutoTrack(enabled) {
+  /** Set auto-track mode: "off", "track", or "scan" */
+  let _autoModeLocalUntil = 0; // timestamp: ignore server sync until this time
+  function setAutoMode(mode) {
+    _autoModeLocalUntil = Date.now() + 5000; // 5s grace — don't let poll override
+    _updateAutoModeUI(mode);
     fetch('/api/auto-track', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ enabled }),
+      body: JSON.stringify({ mode }),
+    }).then(r => r.json()).then(d => {
+      if (!d.ok) console.error('auto-track POST failed:', d);
+    }).catch(e => {
+      console.error('auto-track POST error:', e);
+      // Revert UI on failure
+      _autoModeLocalUntil = 0;
     });
+  }
+
+  function _updateAutoModeUI(mode, fromServer) {
+    // Skip server-driven updates during grace period after local click
+    if (fromServer && Date.now() < _autoModeLocalUntil) return;
+    const seg = document.getElementById('auto-mode-seg');
+    if (!seg) return;
+    seg.querySelectorAll('button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+    _autoTrack = mode !== 'off';
+  }
+
+  /** Save scan settings to station.conf via API */
+  function saveScanSettings() {
+    const minEl = parseInt(document.getElementById('scan-min-el')?.value || '10');
+    const dwell = parseInt(document.getElementById('scan-dwell')?.value || '30');
+    const hours = parseInt(document.getElementById('scan-hours')?.value || '4');
+    fetch('/api/scan-settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scan_min_el: minEl, scan_dwell: dwell, scan_hours: hours }),
+    });
+  }
+
+  /** Sync scan settings selects from server state */
+  function _syncScanSettings(d) {
+    const conf = d.scan_settings || {};
+    const elSel = document.getElementById('scan-min-el');
+    const dwSel = document.getElementById('scan-dwell');
+    const hrSel = document.getElementById('scan-hours');
+    if (elSel && conf.scan_min_el != null) elSel.value = String(conf.scan_min_el);
+    if (dwSel && conf.scan_dwell != null) dwSel.value = String(conf.scan_dwell);
+    if (hrSel && conf.scan_hours != null) hrSel.value = String(conf.scan_hours);
   }
 
   /** Track a specific satellite — called from pass list */
@@ -5185,13 +5354,13 @@
     const sb = document.getElementById('station-state');
     if (sb) { sb.className = ''; sb.classList.add('waiting'); }
 
-    // Stop current tracking first, then request new
-    fetch('/api/stop', { method: 'POST' }).then(() => {
-      return fetch('/api/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ satellite: satName, mode: 'manual' }),
-      });
+    // Write track file — station.py checks for this in its tracking loop
+    // and aborts the current pass to pick up the new target.
+    // /api/track also clears stop/pause flags for clean handoff.
+    fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ satellite: satName, mode: 'manual' }),
     }).then(r => r.json()).then(d => {
       if (d.ok) {
         if (sl) sl.textContent = 'Tracking: ' + satName;
@@ -5222,7 +5391,8 @@
   window.doPhoneCompassCal = doPhoneCompassCal;
   window.doTrackSat        = doTrackSat;
   window.doStop            = doStop;
-  window.toggleAutoTrack   = toggleAutoTrack;
+  window.setAutoMode       = setAutoMode;
+  window.saveScanSettings  = saveScanSettings;
   window.toggleFilterPanel = toggleFilterPanel;
   window.showSatPopup      = showSatPopup;
   window.closeSatPopup     = closeSatPopup;

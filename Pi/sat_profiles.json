@@ -1,28 +1,156 @@
 {
     "default_profile": "configs/smartrf_uhf_435.txt",
+    "_notes": [
+        "CC1200 packet mode needs exact sync word match to detect frames.",
+        "AX.25 G3RUH satellites: sync 0x7E is scrambled on air -> CC1200 CANNOT detect.",
+        "AX.100 Mode 5: sync 0x930B51DE is NOT scrambled -> CC1200 CAN detect.",
+        "USP: needs Viterbi decode -> CC1200 serial mode only.",
+        "protocol field: 'ax100_mode5' | 'ax25_g3ruh' | 'usp' | 'csp' | 'native_cc1200'",
+        "Most 9600 GFSK sats use G3RUH scrambling which defeats CC1200 packet engine."
+    ],
     "satellites": [
         {
             "name_match": "AETHERSPACE",
             "norad_id": null,
             "freq_mhz": 433.0,
-            "description": "AetherSpace CubeSat \u2014 2-GFSK 2.4 kbps (default profile)"
+            "protocol": "native_cc1200",
+            "description": "AetherSpace CubeSat — CC1200 native packet mode, 2-GFSK 2.4 kbps"
+        },
+
+        {
+            "_section": "=== AX.100 MODE 5 — CC1200 CAN detect sync 0x930B51DE in packet mode ===",
+            "_note": "Golay(24,12) header decode needed in software after FIFO read"
+        },
+        {
+            "name_match": "GREENCUBE",
+            "norad_id": 53106,
+            "freq_mhz": 435.310,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 1200,
+                "deviation_hz": 600,
+                "rx_bw_khz": 12.5,
+                "sync_word": "930B51DE"
+            },
+            "protocol": "ax100_mode5",
+            "description": "GREENCUBE (IO-117) — 1200 GMSK, AX.100 Mode 5, MEO orbit (long passes)"
+        },
+        {
+            "name_match": "AISTECHSAT",
+            "norad_id": 43768,
+            "freq_mhz": 436.730,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 4800,
+                "deviation_hz": 2400,
+                "rx_bw_khz": 25,
+                "sync_word": "930B51DE"
+            },
+            "protocol": "ax100_mode5",
+            "description": "AISTECHSAT-2 — 4800 GFSK, AX.100 Mode 5"
+        },
+        {
+            "name_match": "ION-MK01",
+            "norad_id": 46274,
+            "freq_mhz": 437.515,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 1200,
+                "deviation_hz": 600,
+                "rx_bw_khz": 12.5,
+                "sync_word": "930B51DE"
+            },
+            "protocol": "ax100_mode5",
+            "description": "ION-MK01 — 1200 FSK, AX.100 Mode 5"
+        },
+        {
+            "name_match": "CATSAT",
+            "norad_id": 60246,
+            "freq_mhz": 437.185,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 2400,
+                "deviation_hz": 1200,
+                "rx_bw_khz": 12.5,
+                "sync_word": "930B51DE"
+            },
+            "protocol": "ax100_mode5",
+            "description": "CatSat — 2400 FSK, AX.100 Mode 5"
+        },
+        {
+            "name_match": "VELOX-AM",
+            "norad_id": 57482,
+            "freq_mhz": 437.125,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 4800,
+                "deviation_hz": 2400,
+                "rx_bw_khz": 25,
+                "sync_word": "930B51DE"
+            },
+            "protocol": "ax100_mode5",
+            "description": "VELOX-AM — 4800 FSK, AX.100 Mode 5"
+        },
+        {
+            "name_match": "MIMAN",
+            "norad_id": 52900,
+            "freq_mhz": 436.500,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 2400,
+                "deviation_hz": 1200,
+                "rx_bw_khz": 12.5,
+                "sync_word": "930B51DE"
+            },
+            "protocol": "ax100_mode5",
+            "description": "MIMAN — 2400 FSK, AX.100 Mode 5"
+        },
+
+        {
+            "_section": "=== AX.25 G3RUH — CC1200 serial mode required (G3RUH scrambles sync) ==="
         },
         {
             "name_match": "ISS",
             "norad_id": 25544,
-            "freq_mhz": 437.525,
+            "freq_mhz": 437.800,
             "modulation": {
                 "format": "2-GFSK",
                 "symbol_rate_bps": 9600,
                 "deviation_hz": 4800,
-                "rx_bw_khz": 50,
-                "sync_word": "7E7E"
+                "rx_bw_khz": 50
             },
-            "description": "ISS packet digipeater \u2014 9600 GFSK"
+            "protocol": "ax25_g3ruh",
+            "description": "ISS — 9600 GFSK, AX.25 G3RUH (needs serial mode for real decode)"
         },
         {
-            "name_match": "CAS-5A",
-            "norad_id": 54684,
+            "name_match": "SONATE-2",
+            "norad_id": 59112,
+            "freq_mhz": 437.025,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50
+            },
+            "protocol": "ax25_g3ruh",
+            "description": "SONATE-2 — 9600 GMSK, AX.25 G3RUH, active digipeater (2024 launch)"
+        },
+        {
+            "name_match": "ROBUSTA-3A",
+            "norad_id": 60243,
+            "freq_mhz": 436.750,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50
+            },
+            "protocol": "ax25_g3ruh",
+            "description": "ROBUSTA-3A — 9600 GMSK, AX.25 G3RUH, 3W TX (2024 launch)"
+        },
+        {
+            "name_match": "CAS-11",
+            "norad_id": 98533,
             "freq_mhz": 435.650,
             "modulation": {
                 "format": "2-GFSK",
@@ -30,87 +158,28 @@
                 "deviation_hz": 2400,
                 "rx_bw_khz": 25
             },
-            "description": "CAS-5A \u2014 GMSK 4800 bps"
+            "protocol": "ax25_g3ruh",
+            "description": "CAS-11 — 4800 GMSK, AX.25 G3RUH (2025 launch)"
         },
+
         {
-            "name_match": "JY1SAT",
-            "norad_id": 43803,
-            "freq_mhz": 436.250,
-            "modulation": {
-                "format": "2-FSK",
-                "symbol_rate_bps": 1200,
-                "deviation_hz": 600,
-                "rx_bw_khz": 12.5
-            },
-            "description": "JY1SAT \u2014 1200 bps 2-FSK"
-        },
-        {
-            "name_match": "FOX-1",
-            "norad_id": 43017,
-            "freq_mhz": 435.050,
-            "description": "Fox-1Cliff \u2014 200 bps DUV (freq-only override)"
+            "_section": "=== NOT CC1200 COMPATIBLE ==="
         },
         {
             "name_match": "FUNCUBE",
             "norad_id": 39444,
             "freq_mhz": 435.150,
-            "description": "FUNcube-1 \u2014 1200 bps BPSK (freq-only, BPSK not CC1200-native)",
-            "cc1200_compatible": false
+            "cc1200_compatible": false,
+            "protocol": "bpsk",
+            "description": "FUNcube-1 — 1200 bps BPSK (not CC1200-compatible)"
         },
         {
             "name_match": "TEVEL",
             "norad_id": null,
             "freq_mhz": 436.400,
-            "description": "TEVEL series \u2014 9600 bps BPSK (not CC1200-compatible)",
-            "cc1200_compatible": false
-        },
-        {
-            "name_match": "UVSQ-SAT",
-            "norad_id": 47438,
-            "freq_mhz": 437.020,
-            "modulation": {
-                "format": "2-GFSK",
-                "symbol_rate_bps": 9600,
-                "deviation_hz": 4800,
-                "rx_bw_khz": 50
-            },
-            "description": "UVSQ-SAT \u2014 9600 GFSK"
-        },
-        {
-            "name_match": "LUCKY-7",
-            "norad_id": 44406,
-            "freq_mhz": 437.525,
-            "modulation": {
-                "format": "2-GFSK",
-                "symbol_rate_bps": 4800,
-                "deviation_hz": 2400,
-                "rx_bw_khz": 25
-            },
-            "description": "Lucky-7 \u2014 4800 GFSK"
-        },
-        {
-            "name_match": "MEZNSAT",
-            "norad_id": 46489,
-            "freq_mhz": 436.600,
-            "modulation": {
-                "format": "2-GFSK",
-                "symbol_rate_bps": 9600,
-                "deviation_hz": 4800,
-                "rx_bw_khz": 50
-            },
-            "description": "MeznSat \u2014 9600 GFSK"
-        },
-        {
-            "name_match": "SPACEMOBILE",
-            "norad_id": 61047,
-            "freq_mhz": 439.500,
-            "modulation": {
-                "format": "2-GFSK",
-                "symbol_rate_bps": 2400,
-                "deviation_hz": 1200,
-                "rx_bw_khz": 12.5
-            },
-            "description": "SpaceMobile BV1 \u2014 2400 bps GFSK"
+            "cc1200_compatible": false,
+            "protocol": "bpsk",
+            "description": "TEVEL series — 9600 bps BPSK (not CC1200-compatible)"
         }
     ]
 }

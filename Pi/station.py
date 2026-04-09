@@ -111,17 +111,36 @@ def lookup_with_satnogs_fallback(sat_library: SatLibrary, norad_id: int,
         else:
             deviation = int(baud * 0.35)  # h~0.7 typical amateur FSK
         rx_bw = max(12.5, (baud + 2 * deviation) * 1.2 / 1000)
+
+        # Infer sync word and protocol from mode when possible
+        sync_word = None
+        protocol = ""
+        use_serial = False
+        if "AX.100" in mode_str or "AX100" in mode_str:
+            sync_word = "930B51DE"  # GOMspace AX.100 Mode 5/6
+            protocol = "ax100_mode5"
+        elif "G3RUH" in mode_str or "AX.25" in mode_str or "AX25" in mode_str:
+            # G3RUH scrambles sync word — needs serial mode
+            protocol = "ax25_g3ruh"
+            use_serial = True
+        elif "USP" in mode_str:
+            protocol = "usp"
+            use_serial = True
+
         mod = ModulationConfig(
             format=cc_fmt,
             symbol_rate_bps=int(baud),
             deviation_hz=deviation,
             rx_bw_khz=round(rx_bw, 1),
+            sync_word=sync_word,
         )
 
     return SatProfile(
         freq_mhz=tx["freq_mhz"],
         modulation=mod,
         description=f"SatNOGS DB: {tx.get('description', tx.get('mode', ''))}",
+        protocol=protocol,
+        use_serial_mode=use_serial,
     )
 
 
@@ -160,6 +179,17 @@ TLE_URLS = [
     ("https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=TLE", "Weather"),
     ("https://celestrak.org/NORAD/elements/gp.php?GROUP=noaa&FORMAT=TLE", "NOAA"),
 ]
+
+def _load_extra_norad_ids():
+    """Extract NORAD IDs from sat_profiles.json for individual TLE fetch."""
+    try:
+        p = Path(__file__).parent / "sat_profiles.json"
+        with open(p, "r") as f:
+            data = json.load(f)
+        return [s["norad_id"] for s in data.get("satellites", [])
+                if isinstance(s.get("norad_id"), int)]
+    except Exception:
+        return []
 
 
 # ---------------------------------------------------------------------------
@@ -217,17 +247,33 @@ def clear_dashboard_status():
 
 
 def record_pass_history(name, pass_info, packets=0, total_bytes=0, peak_rssi=None):
-    """Append a completed pass to the history file (keeps last 20)."""
+    """Append a completed pass to the history file (keeps last 20).
+    Deduplicates by name + max_el within 60s to prevent scan mode from
+    recording the same visit multiple times."""
     try:
         history = []
         if os.path.exists(HISTORY_FILE):
             with open(HISTORY_FILE, "r") as f:
                 history = json.load(f)
+        now_str = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        max_el = round(pass_info.get("max_el", 0), 1)
+        # Dedup: skip if same satellite + similar max_el recorded in last 60s
+        if history:
+            last = history[-1]
+            if (last.get("name") == name and
+                abs(last.get("max_el", 0) - max_el) < 1.0):
+                try:
+                    last_t = datetime.datetime.strptime(last["time"], "%Y-%m-%dT%H:%M:%SZ")
+                    now_t = datetime.datetime.strptime(now_str, "%Y-%m-%dT%H:%M:%SZ")
+                    if (now_t - last_t).total_seconds() < 60:
+                        return  # duplicate — skip
+                except Exception:
+                    pass
         entry = {
             "name": name,
-            "time": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "time": now_str,
             "duration": round(pass_info.get("duration", 0)),
-            "max_el": round(pass_info.get("max_el", 0), 1),
+            "max_el": max_el,
             "packets": packets,
             "bytes": total_bytes,
             "peak_rssi": peak_rssi,
@@ -303,6 +349,36 @@ def fetch_tles():
                 log(f"  TLE: +{added} sats from {group}")
         except Exception as e:
             log(f"  TLE WARNING: failed to fetch {group}: {e}")
+    # Fetch individual satellites by NORAD ID (MEO, non-standard orbits)
+    existing_norads = set()
+    for _, l1, _ in tles:
+        try:
+            existing_norads.add(int(l1[2:7].strip()))
+        except Exception:
+            pass
+    missing = [n for n in _load_extra_norad_ids() if n not in existing_norads]
+    if missing:
+        ids_str = ",".join(str(n) for n in missing)
+        try:
+            url = f"https://celestrak.org/NORAD/elements/gp.php?CATNR={ids_str}&FORMAT=TLE"
+            req = urllib.request.Request(url, headers={"User-Agent": "SatNOGS-Basestation/1.0"})
+            resp = urllib.request.urlopen(req, timeout=10)
+            lines = resp.read().decode().strip().split("\n")
+            lines = [l.strip() for l in lines if l.strip()]
+            added = 0
+            for i in range(0, len(lines) - 2, 3):
+                name = lines[i].strip()
+                l1 = lines[i+1].strip()
+                l2 = lines[i+2].strip()
+                if l1.startswith("1 ") and l2.startswith("2 ") and name not in seen:
+                    tles.append((name, l1, l2))
+                    seen.add(name)
+                    added += 1
+            if added:
+                log(f"  TLE: +{added} sats from individual NORAD IDs")
+        except Exception as e:
+            log(f"  TLE WARNING: individual NORAD fetch failed: {e}")
+
     if tles:
         _tle_cache_station = tles
         _tle_cache_station_time = time.time()
@@ -451,6 +527,10 @@ class RfHatManager(RfBackend):
             "symbol_rate_bps": 2400,
             "profile": "default",
         }
+        # Raw data dump
+        self._raw_file = None
+        self._raw_bytes = 0
+        self._use_serial_mode = False
         # RSSI tracking for pass statistics
         self.rssi_min: Optional[float] = None
         self.rssi_max: Optional[float] = None
@@ -495,7 +575,8 @@ class RfHatManager(RfBackend):
         return self.update_uhf_doppler(freq_hz)
 
     def get_metrics(self) -> RfMetrics:
-        self.link.select_radio(RADIO_UHF)
+        # Don't call select_radio() here — it resets streaming and desired_state
+        # in the firmware. UHF is already selected during tracking.
         m = self.link.get_metrics()
         rssi = m.rssi_dbm if m else None
         return RfMetrics(
@@ -612,6 +693,7 @@ class RfHatManager(RfBackend):
           2. Modulation override → configure_modulation() + set_frequency()
           3. Frequency-only → just set_frequency()
         """
+        self._use_serial_mode = getattr(profile, 'use_serial_mode', False)
         self.link.select_radio(RADIO_UHF)
 
         if profile.smartrf_profile:
@@ -634,8 +716,9 @@ class RfHatManager(RfBackend):
         elif profile.modulation:
             # Tier B: modulation register override
             m = profile.modulation
+            sync_str = f", sync={m.sync_word}" if m.sync_word else ", sync=default"
             log(f"RF HAT: Configuring {m.format} {m.symbol_rate_bps} bps, "
-                f"dev={m.deviation_hz} Hz, BW={m.rx_bw_khz} kHz")
+                f"dev={m.deviation_hz} Hz, BW={m.rx_bw_khz} kHz{sync_str}")
             ok = self.link.configure_modulation(
                 mod_format=m.format,
                 symbol_rate_bps=m.symbol_rate_bps,
@@ -728,12 +811,23 @@ class RfHatManager(RfBackend):
         return ok
 
     def poll_packets(self, logfile=None) -> int:
-        """Process pending RX events. Returns number of new packets."""
+        """Process pending RX events. Returns number of new packets.
+
+        ALL RX data is written to self._raw_file (if open) for post-processing.
+        Packets >= 4 bytes are counted and logged separately.
+        """
+        MIN_PACKET_BYTES = 4  # minimum real frame size
         count = 0
         for evt_type, body in self.link.pop_events():
             if evt_type == EVT_RX_DATA and body:
                 n = body[0]
                 data = body[1:1 + n]
+                # Write ALL raw data to binary dump file (including noise)
+                if self._raw_file and data:
+                    self._raw_file.write(data)
+                    self._raw_bytes += len(data)
+                if n < MIN_PACKET_BYTES:
+                    continue
                 self.pkt_count += 1
                 self.total_bytes += n
                 count += 1
@@ -745,8 +839,53 @@ class RfHatManager(RfBackend):
                 log(f"RF HAT: EVT_ERROR 0x{code:02X}", logfile)
         return count
 
+    def open_raw_dump(self, path: str, metadata: dict = None):
+        """Open a binary file to capture ALL raw RX data for post-processing.
+        Also writes a .json metadata file alongside the .raw file."""
+        self._raw_file = open(path, "wb")
+        self._raw_bytes = 0
+        self._raw_path = path
+        log(f"RF HAT: Raw dump → {path}")
+        # Write metadata JSON alongside the raw file
+        if metadata:
+            meta_path = path.replace('.raw', '.json')
+            try:
+                import json as _json
+                with open(meta_path, "w") as mf:
+                    _json.dump(metadata, mf, indent=2)
+            except Exception:
+                pass
+
+    def close_raw_dump(self) -> int:
+        """Close raw dump file. Returns total bytes written.
+        Updates .json metadata with final capture stats."""
+        n = self._raw_bytes
+        if self._raw_file:
+            self._raw_file.close()
+            self._raw_file = None
+        if n > 0:
+            log(f"RF HAT: Raw dump closed — {n} bytes")
+            # Update metadata with final stats
+            meta_path = getattr(self, '_raw_path', '').replace('.raw', '.json')
+            if meta_path and os.path.exists(meta_path):
+                try:
+                    import json as _json
+                    with open(meta_path, "r") as mf:
+                        meta = _json.load(mf)
+                    meta["capture_bytes"] = n
+                    meta["packets"] = self.pkt_count
+                    meta["rssi_min"] = self.rssi_min
+                    meta["rssi_max"] = self.rssi_max
+                    meta["rssi_avg"] = round(self.rssi_sum / self.rssi_count, 1) if self.rssi_count > 0 else None
+                    meta["end_time"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                    with open(meta_path, "w") as mf:
+                        _json.dump(meta, mf, indent=2)
+                except Exception:
+                    pass
+        return n
+
     def get_metrics_str(self) -> str:
-        self.link.select_radio(RADIO_UHF)
+        # Don't call select_radio() — it kills streaming
         m = self.link.get_metrics()
         if not m:
             return "no metrics"
@@ -880,10 +1019,13 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     rotctl.set_position(rise_az, 0)
 
     # Write status during pre-AOS slew so dashboard knows we're active
+    _rc = getattr(rf, 'radio_config', None) if rf else None
+    _rf_name = rf.name() if rf and hasattr(rf, 'name') else "none"
     write_dashboard_status({
         "satellite": name, "pass_progress": 0,
         "freq_mhz": (getattr(rf, 'uhf_base_freq_hz', 0) or 0) / 1e6 or args.uhf_freq,
-        "streaming": False, "rssi": None, "packets": 0, "rf_backend": "none",
+        "streaming": False, "rssi": None, "packets": 0,
+        "rf_backend": _rf_name, "radio_config": _rc,
         "cmd_az": round(rise_az, 2), "cmd_el": 0.0,
         "max_el": round(pass_info["max_el"], 1),
         "rise_az": round(pass_info["rise_az"], 1),
@@ -917,7 +1059,7 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
                 "satellite": name, "pass_progress": 0,
                 "freq_mhz": (getattr(rf, 'uhf_base_freq_hz', 0) or 0) / 1e6 or args.uhf_freq,
                 "streaming": False, "rssi": None, "packets": 0,
-                "rf_backend": "none",
+                "rf_backend": _rf_name, "radio_config": _rc,
                 "cmd_az": round(pass_info["rise_az"], 2), "cmd_el": 0.0,
                 "max_el": round(pass_info["max_el"], 1),
                 "rise_az": round(pass_info["rise_az"], 1),
@@ -959,10 +1101,34 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     except Exception as e:
         log(f"Pass log failed: {e}", logfile)
 
+    # Open raw binary dump for all RX data (post-processing)
+    if rf and isinstance(rf, RfHatManager):
+        raw_path = os.path.join(log_dir, f"{ts}_{safe_name}.raw")
+        _rc = getattr(rf, 'radio_config', {})
+        rf.open_raw_dump(raw_path, metadata={
+            "satellite": name,
+            "norad_id": pass_info.get("norad_id"),
+            "start_time": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "freq_mhz": _rc.get("freq_mhz", 0),
+            "modulation": _rc.get("modulation", ""),
+            "symbol_rate_bps": _rc.get("symbol_rate_bps", 0),
+            "profile": _rc.get("profile", ""),
+            "max_el": round(pass_info.get("max_el", 0), 1),
+            "rise_az": round(pass_info.get("rise_az", 0), 1),
+            "set_az": round(pass_info.get("set_az", 0), 1),
+            "duration_s": round(pass_info.get("duration", 0), 0),
+            "doppler_enabled": getattr(args, 'doppler', False),
+            "serial_mode": getattr(rf, '_use_serial_mode', False),
+            "station_lat": sta_lat if 'sta_lat' in dir() else None,
+            "station_lon": sta_lon if 'sta_lon' in dir() else None,
+        })
+
     # Start RX if RF is available
     serial_decoder = None
     if rf:
-        use_serial = getattr(args, 'serial_mode', False) and isinstance(rf, RfHatManager)
+        # Use serial mode if: CLI flag set, OR profile says this sat needs it (G3RUH/USP)
+        _profile_serial = getattr(rf, '_use_serial_mode', False)
+        use_serial = (getattr(args, 'serial_mode', False) or _profile_serial) and isinstance(rf, RfHatManager)
         if use_serial:
             rf.start_serial_rx()
             # Initialize bitstream decoder
@@ -1169,6 +1335,11 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             except Exception:
                 pass
         log("** LOS — pass complete **", logfile)
+        # Close raw binary dump
+        if rf and isinstance(rf, RfHatManager):
+            raw_bytes = rf.close_raw_dump()
+            if raw_bytes > 0:
+                log(f"Raw capture: {raw_bytes} bytes saved", logfile)
         if buzzer:
             buzzer.beep_los()
         pkts, nbytes, peak_rssi = 0, 0, None
@@ -1219,6 +1390,29 @@ signal.signal(signal.SIGINT, on_signal)
 signal.signal(signal.SIGTERM, on_signal)
 
 
+def _read_auto_mode():
+    """Read auto_mode from station.conf.  Returns "off", "track", or "scan".
+
+    Backward-compat: if only bool auto_track exists, maps True→"track", False→"off".
+    """
+    try:
+        if os.path.exists(STATION_CONF):
+            with open(STATION_CONF, "r") as f:
+                cfg = json.load(f)
+            # New 3-state field takes priority
+            mode = cfg.get("auto_mode")
+            if mode in ("off", "track", "scan"):
+                return mode
+            # Backward compat: bool auto_track
+            at = cfg.get("auto_track")
+            if at is False:
+                return "off"
+            return "track"
+    except Exception:
+        pass
+    return "track"
+
+
 def _run_daemon(args, logfile):
     """Daemon mode: wait for location, loop passes continuously.
 
@@ -1226,7 +1420,7 @@ def _run_daemon(args, logfile):
       1. Wait for ~/station.conf (set from phone GPS via dashboard)
       2. Connect to rotctld
       3. Fetch TLEs, find upcoming passes
-      4. Track all passes in sequence
+      4. Branch on auto_mode: off → idle, track → pass-by-pass, scan → scan cycle
       5. Sleep, then repeat from step 2
     """
     log("==========================================", logfile)
@@ -1304,26 +1498,20 @@ def _run_daemon(args, logfile):
                 sta_lat, sta_lon = new_lat, new_lon
                 sta_elev = new_elev or sta_elev
 
-            # Check auto_track + manual track before doing anything expensive
+            # Check auto_mode + manual track before doing anything expensive
+            auto_mode = _read_auto_mode()
             _has_manual = False
             track_file = os.path.expanduser("~/.station_track")
             if os.path.exists(track_file):
                 _has_manual = True
-            if not args.sat and not _has_manual:
-                try:
-                    if os.path.exists(STATION_CONF):
-                        with open(STATION_CONF, "r") as f:
-                            _at_conf = json.load(f)
-                        if _at_conf.get("auto_track") is False:
-                            write_dashboard_status({
-                                "streaming": False, "rssi": None, "packets": 0,
-                                "freq_mhz": 0, "satellite": "", "pass_progress": 0,
-                                "rf_backend": "none",
-                            })
-                            time.sleep(3)
-                            continue
-                except Exception:
-                    pass
+            if not args.sat and not _has_manual and auto_mode == "off":
+                write_dashboard_status({
+                    "streaming": False, "rssi": None, "packets": 0,
+                    "freq_mhz": 0, "satellite": "", "pass_progress": 0,
+                    "rf_backend": "none", "auto_mode": "off",
+                })
+                time.sleep(3)
+                continue
 
             # Connect to rotctld
             rotctl = RotctlClient(args.rot_host, args.rot_port)
@@ -1362,6 +1550,116 @@ def _run_daemon(args, logfile):
                 if rf:
                     rf.close()
                 time.sleep(60)
+                continue
+
+            # ── SCAN MODE BRANCH ──
+            # Re-read auto_mode (may have changed since loop start)
+            auto_mode = _read_auto_mode()
+            _scan_manual = os.path.exists(os.path.expanduser("~/.station_track"))
+            if auto_mode == "scan" and not args.sat and not _scan_manual:
+                # Clear any stale paused file from previous stop
+                try:
+                    os.remove(os.path.expanduser("~/.station_paused"))
+                except FileNotFoundError:
+                    pass
+                log("SCAN mode — starting scan cycle", logfile)
+                try:
+                    from auto_tracker import run_scan_cycle
+
+                    def _scan_check_abort():
+                        """Check for mode change, stop, or manual track override."""
+                        # Manual track file takes priority (doTrackSat writes
+                        # track file only — no stop file)
+                        tf = os.path.expanduser("~/.station_track")
+                        if os.path.exists(tf):
+                            return "track"
+                        # Stop file = skip current visit, pause
+                        stop_file = os.path.expanduser("~/.station_stop")
+                        if os.path.exists(stop_file):
+                            try:
+                                os.remove(stop_file)
+                            except Exception:
+                                pass
+                            # Create paused file (consistent with track_pass behavior)
+                            try:
+                                with open(os.path.expanduser("~/.station_paused"), "w") as _pf:
+                                    _pf.write("paused")
+                            except Exception:
+                                pass
+                            return "stop"
+                        # Mode changed away from scan
+                        new_mode = _read_auto_mode()
+                        if new_mode != "scan":
+                            return "mode_change"
+                        return None
+
+                    # Read scan settings from station.conf (dashboard configurable)
+                    _scan_hours = PREDICT_HOURS
+                    _scan_min_el = MIN_ELEV
+                    _scan_dwell = 30
+                    try:
+                        with open(STATION_CONF, "r") as f:
+                            _sc = json.load(f)
+                        _scan_hours = int(_sc.get("scan_hours", _scan_hours))
+                        _scan_min_el = float(_sc.get("scan_min_el", _scan_min_el))
+                        _scan_dwell = int(_sc.get("scan_dwell", _scan_dwell))
+                    except Exception:
+                        pass
+
+                    visited, pkts, abort_reason = run_scan_cycle(
+                        rotctl, rf, sat_library, buzzer, tles,
+                        lat=sta_lat, lon=sta_lon, elev=sta_elev,
+                        hours=_scan_hours, min_el=_scan_min_el,
+                        dwell_s=_scan_dwell,
+                        uhf_freq=args.uhf_freq, doppler=args.doppler,
+                        check_abort=_scan_check_abort,
+                        write_status=write_dashboard_status,
+                        logfile=logfile)
+                    log(f"SCAN cycle done: {visited} visited, {pkts} pkts, "
+                        f"abort={abort_reason}", logfile)
+                except Exception as e:
+                    log(f"SCAN cycle error: {e}", logfile)
+
+                # After scan cycle, cleanup and loop (will re-check mode)
+                rotctl.close()
+                if rf:
+                    rf.close()
+                # If aborted for manual track, skip the sleep
+                if abort_reason == "track":
+                    continue
+                # If stopped by user, wait until paused file is cleared
+                # (user must click a mode button or track a sat to resume)
+                if abort_reason == "stop":
+                    log("SCAN paused by user — waiting for resume...", logfile)
+                    write_dashboard_status({
+                        "streaming": False, "rssi": None, "packets": 0,
+                        "freq_mhz": 0, "satellite": "", "pass_progress": 0,
+                        "rf_backend": "none", "auto_mode": "scan",
+                    })
+                    paused = os.path.expanduser("~/.station_paused")
+                    while running and os.path.exists(paused):
+                        if os.path.exists(os.path.expanduser("~/.station_track")):
+                            try: os.remove(paused)
+                            except: pass
+                            break
+                        if _read_auto_mode() != "scan":
+                            try: os.remove(paused)
+                            except: pass
+                            break
+                        time.sleep(2)
+                    continue
+                # Normal end or mode change — short sleep then re-check
+                if not running:
+                    break
+                log("Waiting for next scan cycle...", logfile)
+                _cycle_delay = 60
+                wait_end = time.time() + _cycle_delay
+                while running and time.time() < wait_end:
+                    if os.path.exists(os.path.expanduser("~/.station_track")):
+                        break
+                    if _read_auto_mode() != "scan":
+                        break
+                    time.sleep(3)
                 continue
 
             # Read tracking preference — check track file first (most reliable)
@@ -1422,14 +1720,13 @@ def _run_daemon(args, logfile):
                     # Check if paused (user pressed Stop)
                     paused_file = os.path.expanduser("~/.station_paused")
                     if os.path.exists(paused_file):
-                        # Check if auto_track was re-enabled or a manual track was requested
-                        _auto = True
+                        # Check if auto mode was re-enabled or a manual track was requested
+                        _cur_mode = _read_auto_mode()
                         _new_track = None
                         try:
                             if os.path.exists(STATION_CONF):
                                 with open(STATION_CONF, "r") as f:
                                     _pc = json.load(f)
-                                _auto = _pc.get("auto_track", True)
                                 if _pc.get("track_mode") == "manual" and _pc.get("track_satellite"):
                                     _new_track = _pc["track_satellite"]
                         except Exception:
@@ -1441,12 +1738,17 @@ def _run_daemon(args, logfile):
                             log(f"Resuming: manual track {_new_track}", logfile)
                             _skip_park = True
                             break  # re-enter outer loop with new target
-                        elif not _auto:
-                            # Auto-track off, stay paused
+                        elif _cur_mode == "off":
+                            # Auto mode off, stay paused
                             time.sleep(2)
                             continue
+                        elif _cur_mode == "scan":
+                            # Switched to scan mode — break to outer loop
+                            os.remove(paused_file)
+                            _skip_park = True
+                            break
                         else:
-                            # Auto-track on — user pressed stop but auto is enabled, resume
+                            # Auto mode track — user pressed stop but track is enabled, resume
                             os.remove(paused_file)
 
                     # Check for manual track request (file-based, always honored)
@@ -1463,21 +1765,19 @@ def _run_daemon(args, logfile):
                         except Exception:
                             pass
 
-                    # If auto-track is off and no manual request, stay idle
-                    try:
-                        if os.path.exists(STATION_CONF):
-                            with open(STATION_CONF, "r") as f:
-                                _ac = json.load(f)
-                            if _ac.get("auto_track") is False and not bool(track_sat):
-                                write_dashboard_status({
-                                    "streaming": False, "rssi": None, "packets": 0,
-                                    "freq_mhz": 0, "satellite": "", "pass_progress": 0,
-                                    "rf_backend": "none",
-                                })
-                                time.sleep(5)
-                                break  # break to outer loop, re-check
-                    except Exception:
-                        pass
+                    # If auto mode is off and no manual request, stay idle
+                    if _read_auto_mode() == "off" and not bool(track_sat):
+                        write_dashboard_status({
+                            "streaming": False, "rssi": None, "packets": 0,
+                            "freq_mhz": 0, "satellite": "", "pass_progress": 0,
+                            "rf_backend": "none", "auto_mode": "off",
+                        })
+                        time.sleep(5)
+                        break  # break to outer loop, re-check
+                    # If mode switched to scan, break to outer loop
+                    if _read_auto_mode() == "scan" and not bool(track_sat):
+                        _skip_park = True
+                        break
 
                     # Skip passes already ended
                     now_utc = datetime.datetime.now(datetime.timezone.utc)
@@ -1485,12 +1785,13 @@ def _run_daemon(args, logfile):
                     set_utc = p["set_time"].replace(tzinfo=datetime.timezone.utc)
                     if now_utc >= set_utc:
                         continue  # pass already ended
-                    # In auto mode, skip first 10% (too close to horizon)
-                    # In manual mode (user selected), allow joining mid-pass
+                    # In auto mode, skip if more than 50% of pass elapsed
+                    # (still worth joining mid-pass for higher-EL portion)
+                    # In manual mode (user selected), allow joining at any point
                     is_manual = bool(track_sat)
                     if now_utc > rise_utc and not is_manual:
                         elapsed = (now_utc - rise_utc).total_seconds()
-                        if elapsed > p["duration"] * 0.1:
+                        if elapsed > p["duration"] * 0.5:
                             log(f"Skipping {p['name']} — already {elapsed:.0f}s in", logfile)
                             continue
 
@@ -1504,7 +1805,15 @@ def _run_daemon(args, logfile):
                         pass_norad = norad_id_from_tle(p["tle"][1])
                         profile = lookup_with_satnogs_fallback(sat_library, pass_norad, pass_name)
                         if profile:
-                            log(f"Radio config: {profile.freq_mhz:.3f} MHz — {profile.description}", logfile)
+                            tier = "C (SmartRF)" if profile.smartrf_profile else \
+                                   "B (modulation)" if profile.modulation else "A (freq-only)"
+                            mod_info = ""
+                            if profile.modulation:
+                                m = profile.modulation
+                                mod_info = f" {m.format} {m.symbol_rate_bps}bps dev={m.deviation_hz}Hz BW={m.rx_bw_khz}kHz"
+                                if m.sync_word:
+                                    mod_info += f" sync=0x{m.sync_word}"
+                            log(f"Radio config: {profile.freq_mhz:.3f} MHz — Tier {tier}{mod_info} — {profile.description}", logfile)
                             rf.configure_for_satellite(profile, sat_library.default_profile or "")
                         else:
                             log(f"No profile for {pass_name} — using default {args.uhf_freq:.3f} MHz", logfile)
@@ -1539,12 +1848,17 @@ def _run_daemon(args, logfile):
                                 log(f"New track request: {_c2['track_satellite']}", logfile)
                                 _skip_park = True
                                 break  # break inner loop to re-enter outer loop with new target
-                            # Check auto-track toggle
-                            if _c2.get("auto_track") is False:
-                                log("Auto-track disabled — waiting", logfile)
-                                break
                     except Exception:
                         pass
+                    # Check auto mode between passes
+                    _between_mode = _read_auto_mode()
+                    if _between_mode == "off":
+                        log("Auto mode off — waiting", logfile)
+                        break
+                    if _between_mode == "scan":
+                        log("Switched to scan mode — restarting", logfile)
+                        _skip_park = True
+                        break
 
                     if i < len(passes) - 1 and running:
                         rotctl.park()
@@ -1583,14 +1897,22 @@ def _run_daemon(args, logfile):
             if not running:
                 break
 
-            # Short sleep between cycles — check for manual track requests every 3s
-            log(f"Waiting for next cycle (checking every 3s)...", logfile)
-            wait_end = time.time() + args.loop_delay
+            # Sleep between cycles — check for manual track/mode change every 3s
+            # Use shorter delay (60s) if all passes were skipped (frequent recheck)
+            _cycle_delay = 60 if not passes or _skip_park else args.loop_delay
+            log(f"Waiting {_cycle_delay}s for next cycle...", logfile)
+            wait_end = time.time() + _cycle_delay
             track_file = os.path.expanduser("~/.station_track")
+            _prev_mode = _read_auto_mode()
             while running and time.time() < wait_end:
-                # Check for manual track request during sleep
+                # Check for manual track request
                 if os.path.exists(track_file):
                     log("Track request received — waking up", logfile)
+                    break
+                # Check for mode change (user toggled Off/Track/Scan)
+                _cur = _read_auto_mode()
+                if _cur != _prev_mode:
+                    log(f"Mode changed: {_prev_mode} → {_cur} — waking up", logfile)
                     break
                 time.sleep(3)
 
@@ -1813,7 +2135,15 @@ def main():
                 pass_norad = norad_id_from_tle(p['tle'][1])
                 profile = lookup_with_satnogs_fallback(sat_library, pass_norad, pass_name)
                 if profile:
-                    log(f"Radio config: {profile.freq_mhz:.3f} MHz — {profile.description}", logfile)
+                    tier = "C (SmartRF)" if profile.smartrf_profile else \
+                           "B (modulation)" if profile.modulation else "A (freq-only)"
+                    mod_info = ""
+                    if profile.modulation:
+                        m = profile.modulation
+                        mod_info = f" {m.format} {m.symbol_rate_bps}bps dev={m.deviation_hz}Hz BW={m.rx_bw_khz}kHz"
+                        if m.sync_word:
+                            mod_info += f" sync=0x{m.sync_word}"
+                    log(f"Radio config: {profile.freq_mhz:.3f} MHz — Tier {tier}{mod_info} — {profile.description}", logfile)
                     rf.configure_for_satellite(profile, sat_library.default_profile or "")
                 else:
                     log(f"No profile for {pass_name} — using default {args.uhf_freq:.3f} MHz", logfile)
