@@ -1,0 +1,14 @@
+[Unit]
+Description=Hamlib rotctld for SatNOGS Rotator (EasyComm)
+After=dev-ttyACM0.device
+BindsTo=dev-ttyACM0.device
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rotctld -m 204 -r /dev/ttyACM0 -s 115200 -T 0.0.0.0
+Restart=always
+RestartSec=5
+User=pi
+
+[Install]
+WantedBy=multi-user.target

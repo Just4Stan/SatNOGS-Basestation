@@ -45,11 +45,11 @@
 // PIN_LED already defined by Arduino-Pico variant (pin 25)
 
 // ---- WS2812B NeoPixel status LEDs ----
-#define PIN_NEOPIXEL         5   // GP5 — WS2812B data-in (chain of 4)
-#define NEOPIXEL_COUNT       4   // 4 LEDs on GP5 (driven as 1 for now)
+#define PIN_NEOPIXEL         4   // GP4 — WS2812B data-in (chain of 4)
+#define NEOPIXEL_COUNT       4
 
 // ---- Passive buzzer (on Pico, via switching transistor) ----
-#define PIN_BUZZER           4   // GP4 — PWM to NPN/MOSFET gate driving buzzer
+#define PIN_BUZZER           5   // GP5 — PWM to NPN/MOSFET gate driving buzzer
 
 // ---- Radio selection ----
 #define RADIO_UHF   0

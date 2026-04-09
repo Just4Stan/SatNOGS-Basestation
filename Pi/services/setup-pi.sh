@@ -27,7 +27,7 @@ echo ""
 # ------------------------------------------------------------------
 # 1. WiFi rfkill fix (Trixie blocks WiFi without regulatory domain)
 # ------------------------------------------------------------------
-echo "[1/9] WiFi rfkill fix..."
+echo "[1/11] WiFi rfkill fix..."
 
 # Kill systemd-rfkill permanently — it re-blocks WiFi on NM restart
 systemctl mask systemd-rfkill.service systemd-rfkill.socket 2>/dev/null || true
@@ -90,7 +90,7 @@ ip link set wlan0 up 2>/dev/null || true
 # ------------------------------------------------------------------
 # 2. WiFi network configuration
 # ------------------------------------------------------------------
-echo "[2/9] WiFi network..."
+echo "[2/11] WiFi network..."
 
 # Add WiFi network via NetworkManager if nmcli is available
 if command -v nmcli &>/dev/null; then
@@ -125,9 +125,27 @@ WPA_EOF
 fi
 
 # ------------------------------------------------------------------
-# 3. UART setup (for RF HAT communication)
+# 3. Hostname + mDNS (satnogs.local)
 # ------------------------------------------------------------------
-echo "[3/9] UART setup..."
+echo "[3/11] Hostname + mDNS..."
+
+hostnamectl set-hostname satnogs 2>/dev/null || true
+apt-get install -y -qq avahi-daemon 2>/dev/null
+systemctl enable avahi-daemon 2>/dev/null || true
+systemctl start avahi-daemon 2>/dev/null || true
+echo "  Hostname: satnogs, mDNS: satnogs.local"
+
+# Disable WiFi power saving (keeps hotspot connection reliable)
+cat > /etc/NetworkManager/conf.d/wifi-powersave.conf << 'POWERSAVE_EOF'
+[connection]
+wifi.powersave = 2
+POWERSAVE_EOF
+echo "  WiFi power saving disabled"
+
+# ------------------------------------------------------------------
+# 4. UART setup (for RF HAT communication)
+# ------------------------------------------------------------------
+echo "[4/11] UART setup..."
 
 if [ -f "$BOOT_CONFIG" ]; then
     # Enable UART
@@ -152,27 +170,27 @@ systemctl disable serial-getty@ttyAMA0.service 2>/dev/null || true
 systemctl stop serial-getty@ttyAMA0.service 2>/dev/null || true
 
 # ------------------------------------------------------------------
-# 4. Install system packages
+# 5. Install system packages
 # ------------------------------------------------------------------
-echo "[4/9] System packages..."
+echo "[5/11] System packages..."
 
 apt-get update -qq
 apt-get install -y -qq python3-pip hamlib-utils git 2>/dev/null
 echo "  hamlib-utils (rotctld), python3-pip installed"
 
 # ------------------------------------------------------------------
-# 5. Install Python dependencies
+# 6. Install Python dependencies
 # ------------------------------------------------------------------
-echo "[5/9] Python dependencies..."
+echo "[6/11] Python dependencies..."
 
 pip install --break-system-packages pyserial ephem 2>/dev/null || \
 pip install pyserial ephem
 echo "  pyserial, ephem installed"
 
 # ------------------------------------------------------------------
-# 6. Install rotctld service
+# 7. Install rotctld service
 # ------------------------------------------------------------------
-echo "[6/9] rotctld service..."
+echo "[7/11] rotctld service..."
 
 cat > /etc/systemd/system/rotctld.service << 'ROTCTLD_EOF'
 [Unit]
@@ -196,9 +214,9 @@ systemctl enable rotctld.service
 echo "  rotctld.service installed (auto-starts when USB plugged in)"
 
 # ------------------------------------------------------------------
-# 7. Install station services
+# 8. Install WiFi provisioning service
 # ------------------------------------------------------------------
-echo "[7/9] WiFi provisioning service..."
+echo "[8/11] WiFi provisioning service..."
 
 cp "$SERVICES_DIR/wifi-provision.service" /etc/systemd/system/
 # Install dnsmasq for captive portal DNS redirect
@@ -212,9 +230,9 @@ systemctl enable wifi-provision.service
 echo "  wifi-provision.service installed and enabled"
 
 # ------------------------------------------------------------------
-# 8. Install station services
+# 9. Install station services
 # ------------------------------------------------------------------
-echo "[8/9] Station services..."
+echo "[9/11] Station services..."
 
 cp "$SERVICES_DIR/dashboard.service" /etc/systemd/system/
 cp "$SERVICES_DIR/station.service"   /etc/systemd/system/
@@ -225,9 +243,9 @@ systemctl enable station.service
 echo "  dashboard.service + station.service installed and enabled"
 
 # ------------------------------------------------------------------
-# 9. SSH key persistence + user setup
+# 10. SSH key persistence + user setup
 # ------------------------------------------------------------------
-echo "[9/9] SSH setup..."
+echo "[10/11] SSH setup..."
 
 # Ensure SSH is enabled
 systemctl enable ssh 2>/dev/null || systemctl enable sshd 2>/dev/null || true
@@ -253,6 +271,13 @@ chmod 440 /etc/sudoers.d/satnogs
 echo "  SSH enabled, pi user in dialout group, sudoers configured"
 
 # ------------------------------------------------------------------
+# 11. Verify services
+# ------------------------------------------------------------------
+echo "[11/11] Verifying..."
+systemctl daemon-reload
+echo "  All services installed"
+
+# ------------------------------------------------------------------
 # Done
 # ------------------------------------------------------------------
 echo ""
@@ -264,7 +289,7 @@ echo "After reboot:"
 echo "  1. Plug in MotorPCB USB → rotctld starts automatically"
 echo "  2. If no known WiFi: connect phone to 'SatNOGS-Setup' AP"
 echo "  3. Enter your hotspot/WiFi credentials in the captive portal"
-echo "  4. Open https://<pi-ip>:5000 on your phone"
+echo "  4. Open https://satnogs.local:5000 (or https://<pi-ip>:5000)"
 echo "  5. Follow the setup wizard (GPS, North, antenna, receiver)"
 echo ""
 echo "Quick checks after reboot:"

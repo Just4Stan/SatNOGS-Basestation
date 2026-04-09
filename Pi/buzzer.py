@@ -26,11 +26,14 @@ from typing import Optional
 
 class Buzzer:
     # Pattern IDs — must match firmware (main.cpp buzzer_start)
-    READY  = 0x01
-    AOS    = 0x02
-    LOS    = 0x03
-    PACKET = 0x04
-    ERROR  = 0x05
+    READY      = 0x01
+    AOS        = 0x02
+    LOS        = 0x03
+    PACKET     = 0x04
+    ERROR      = 0x05
+    WIFI_OK    = 0x06
+    GPS_OK     = 0x07
+    SETUP_DONE = 0x08
 
     def __init__(self, link=None):
         """Create a buzzer driver.
@@ -67,6 +70,18 @@ class Buzzer:
     def beep_error(self):
         """Error — low tone 0.5s (400 Hz)."""
         self._beep(self.ERROR)
+
+    def beep_wifi_ok(self):
+        """WiFi connected — ascending C5→E5→G5."""
+        self._beep(self.WIFI_OK)
+
+    def beep_gps_ok(self):
+        """GPS location set — 2 high beeps (2000 Hz)."""
+        self._beep(self.GPS_OK)
+
+    def beep_setup_done(self):
+        """Setup wizard complete — triumphant C5→E5→G5→C6→G5."""
+        self._beep(self.SETUP_DONE)
 
     def cleanup(self):
         """No-op — kept for API compatibility."""

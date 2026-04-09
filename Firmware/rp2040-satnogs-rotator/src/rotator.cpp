@@ -164,6 +164,21 @@ void Rotator::stop_all() {
   stop_el();
 }
 
+void Rotator::halt_motors() {
+  // Stop motors and reset PID state, but preserve targets so tracking
+  // resumes seamlessly when commands arrive again.
+  az_motor_.stop();
+  el_motor_.stop();
+  az_integral_ = 0.0f;
+  el_integral_ = 0.0f;
+  az_prev_error_ = 0.0f;
+  el_prev_error_ = 0.0f;
+  az_d_filtered_ = 0.0f;
+  el_d_filtered_ = 0.0f;
+  az_duty_smooth_ = 0.0f;
+  el_duty_smooth_ = 0.0f;
+}
+
 void Rotator::park() {
   // Park bypasses choose_wrapped_target so the rotator physically unwinds
   // back to true 0° instead of taking the shortest path to a ±360° equivalent.
@@ -259,7 +274,6 @@ void Rotator::update_control() {
   if (config::kElInvert) el_raw = -el_raw;
 
   // Smooth the duty output to prevent start-stop twitching during continuous tracking.
-  // At 100 Hz with alpha=0.05, time constant ~0.2s → smooth ramp-up/down.
   az_duty_smooth_ += config::kDutyFilterAlpha * (az_raw - az_duty_smooth_);
   el_duty_smooth_ += config::kDutyFilterAlpha * (el_raw - el_duty_smooth_);
 
@@ -288,12 +302,23 @@ float Rotator::compute_pid(float error_deg, float* integral, float* prev_error, 
   *d_filtered = *d_filtered + config::kDFilterAlpha * (raw_deriv - *d_filtered);
   *prev_error = error_deg;
 
-  // Integrate (only outside deadband to prevent limit-cycle wind-up)
-  *integral += error_deg * config::kDtSeconds;
-  *integral = std::clamp(*integral, -config::kIntegralMaxDeg, config::kIntegralMaxDeg);
-
-  // PID output
+  // Compute provisional PID output to check for saturation.
   float duty = kp_ * error_deg + ki_ * (*integral) + kd_ * (*d_filtered);
+
+  // Saturation-based anti-windup: only accumulate integral when output is NOT
+  // saturated, or when the error would reduce the integral (opposite sign).
+  // This prevents post-zenith oscillation where wound-up integral fights
+  // the proportional term after a fast AZ crossing.
+  const bool saturated = std::abs(duty) >= config::kMaxDuty;
+  const bool error_would_increase = (error_deg > 0.0f && *integral > 0.0f) ||
+                                    (error_deg < 0.0f && *integral < 0.0f);
+  if (!saturated || !error_would_increase) {
+    *integral += error_deg * config::kDtSeconds;
+    *integral = std::clamp(*integral, -config::kIntegralMaxDeg, config::kIntegralMaxDeg);
+  }
+
+  // Recompute with updated integral.
+  duty = kp_ * error_deg + ki_ * (*integral) + kd_ * (*d_filtered);
 
   // Clamp to max duty. No minimum floor — the I-term handles stiction naturally.
   duty = std::clamp(duty, -config::kMaxDuty, config::kMaxDuty);

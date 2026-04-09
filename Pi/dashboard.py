@@ -82,7 +82,7 @@ def _check_ram(context=""):
         if used > RAM_LIMIT_MB:
             return False  # still too high after GC
     return True
-from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler, ThreadingHTTPServer
 
 # Optional: ephem for real pass prediction
 try:
@@ -455,13 +455,7 @@ def _rotator_state(connected, rf_data):
 
 def polling_loop():
     """Background thread: updates the shared status dict every 0.25 second."""
-    # Failsafe: park rotator on dashboard startup if not actively tracking
-    try:
-        st = read_station_status()
-        if not st or not st.get("satellite"):
-            _rotctl_cmd("P 0.0 0.0")
-    except Exception:
-        pass
+    # Don't park on startup — station.py may be actively tracking a pass
     while True:
         try:
             if SIMULATE:
@@ -527,13 +521,20 @@ def polling_loop():
         except Exception:
             pass
 
-        # Recompute passes in the background (every 2 min, non-blocking)
-        try:
-            if not SIMULATE:
-                _recompute_passes_if_stale()
-                _fetch_transmitters()  # enrich with freq/modulation data
-        except Exception:
-            pass
+        # Kick off pass recomputation in a separate thread so polling never blocks
+        if not SIMULATE and not getattr(polling_loop, '_bg_running', False):
+            now_t = time.time()
+            if (now_t - _pass_cache_time) >= PASS_CACHE_SECONDS:
+                polling_loop._bg_running = True
+                def _bg_recompute():
+                    try:
+                        _recompute_passes_if_stale()
+                        _fetch_transmitters()
+                    except Exception:
+                        pass
+                    finally:
+                        polling_loop._bg_running = False
+                threading.Thread(target=_bg_recompute, daemon=True).start()
 
         time.sleep(0.5)  # 2Hz polling — 4Hz caused OOM on Pi 3A+
 
@@ -672,7 +673,10 @@ TRANSMITTER_CACHE_SECONDS = 7200  # 2 hours
 
 # CC1200-compatible modulations
 CC1200_MODES = {'GFSK', 'GMSK', 'FSK', 'MSK', 'OOK', 'ASK', '2FSK', '2GFSK', '4FSK', '4GFSK',
-                'AFSK', 'FM'}  # AFSK/FM are borderline but listed for display
+                'FFSK', 'FSK AX.25 G3RUH', 'FSK AX.100 MODE 5', 'FSK AX.100 MODE 6',
+                'MSK AX.100 MODE 5', 'MSK AX.100 MODE 6', 'GMSK USP', 'DOKA',
+                'AFSK TUBIX10', 'GFSK RKTR', 'GFSK PKST'}
+# Note: AFSK 1200 baud (Bell 202) is NOT compatible — filtered by baud rate below
 # Modulations that need RTL-SDR
 RTLSDR_ONLY_MODES = {'BPSK', 'DBPSK', 'QPSK', 'OQPSK', 'DQPSK', 'LoRa', 'SSTV', 'CW', 'USB', 'LSB'}
 
@@ -700,9 +704,12 @@ def _fetch_transmitters():
             norad = tx.get("norad_cat_id")
             if not norad:
                 continue
-            freq = tx.get("downlink_low") or tx.get("uplink_low") or 0
+            # Only include actual transmitters (not Receivers/uplink-only)
+            if tx.get("type") not in ("Transmitter", "Transceiver"):
+                continue
+            freq = tx.get("downlink_low") or 0
             # Only cache UHF/VHF transmitters to save RAM
-            if not ((430e6 <= freq <= 440e6) or (130e6 <= freq <= 175e6)):
+            if not ((420e6 <= freq <= 450e6) or (130e6 <= freq <= 175e6)):
                 continue
             if norad not in tx_map:
                 tx_map[norad] = []
@@ -716,8 +723,9 @@ def _fetch_transmitters():
                 "description": tx.get("description", ""),
                 "type": tx.get("type", ""),
                 "band": _freq_to_band(freq),
-                "cc1200_ok": mode.upper().replace("-", "").replace(" ", "") in
-                             {m.upper().replace("-", "") for m in CC1200_MODES},
+                "cc1200_ok": (mode.upper().replace("-", "").replace(" ", "") in
+                             {m.upper().replace("-", "").replace(" ", "") for m in CC1200_MODES}
+                             and not (mode.upper() == "AFSK" and baud <= 1200)),
                 "rtlsdr_ok": True,  # RTL-SDR can capture anything
             })
 
@@ -727,6 +735,156 @@ def _fetch_transmitters():
         gc.collect()
     except Exception:
         pass  # silently fail — passes work without enrichment
+
+    # Refresh recently-heard cache in background (don't block pass computation)
+    threading.Thread(target=_fetch_recently_heard, daemon=True).start()
+
+
+# ---------------------------------------------------------------------------
+# SatNOGS Network "recently heard" cache — filters dead satellites
+# ---------------------------------------------------------------------------
+_recently_heard_cache = {}       # norad_id -> {"last_heard": iso, "obs_count": int}
+_recently_heard_cache_time = 0.0
+RECENTLY_HEARD_CACHE_SECONDS = 3600  # 1 hour
+_RECENTLY_HEARD_DISK = os.path.expanduser("~/.satnogs_cache/recently_heard.json")
+
+
+def _fetch_recently_heard():
+    """Fetch recent good UHF observations from SatNOGS Network API.
+
+    Builds a dict of {norad_id: {last_heard, obs_count}} for satellites
+    observed in the last 30 days with vetted_status=good on UHF.
+    """
+    global _recently_heard_cache, _recently_heard_cache_time
+
+    now = time.time()
+    if _recently_heard_cache and (now - _recently_heard_cache_time) < RECENTLY_HEARD_CACHE_SECONDS:
+        return
+
+    # Try disk cache first (survives restarts)
+    if not _recently_heard_cache:
+        try:
+            if os.path.exists(_RECENTLY_HEARD_DISK):
+                with open(_RECENTLY_HEARD_DISK, "r") as f:
+                    disk = json.load(f)
+                if disk.get("_ts", 0) > now - RECENTLY_HEARD_CACHE_SECONDS:
+                    _recently_heard_cache = {int(k): v for k, v in disk.items() if k != "_ts"}
+                    _recently_heard_cache_time = disk["_ts"]
+                    return
+        except Exception:
+            pass
+
+    if not _check_ram("recently_heard_fetch"):
+        return
+
+    import urllib.request
+
+    cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=30)
+    cutoff_iso = cutoff.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    heard = {}  # norad_id -> {"last_heard": iso, "obs_count": int}
+    base_url = (
+        "https://network.satnogs.org/api/observations/"
+        "?vetted_status=good"
+        "&observation_frequency__gte=420000000"
+        "&observation_frequency__lte=450000000"
+        "&start__gt=" + cutoff_iso +
+        "&ordering=-start"
+        "&format=json"
+    )
+
+    try:
+        next_url = base_url
+        for _page in range(10):  # max 10 pages (~250 observations)
+            if not next_url:
+                break
+            req = urllib.request.Request(next_url, headers={
+                "User-Agent": "SatNOGS-Basestation/1.0"
+            })
+            resp = urllib.request.urlopen(req, timeout=8)
+
+            # Handle pagination — DRF uses Link header or next in JSON
+            data = json.loads(resp.read().decode())
+
+            # SatNOGS Network API returns a JSON object with results + next
+            if isinstance(data, dict):
+                results = data.get("results", [])
+                next_url = data.get("next")
+            else:
+                # Fallback: plain list (no pagination wrapper)
+                results = data
+                next_url = None
+
+            if not results:
+                break
+
+            for obs in results:
+                norad = obs.get("norad_cat_id")
+                if not norad:
+                    continue
+                start = obs.get("start", "")
+                has_data = obs.get("demoddata") not in (None, [], "")
+
+                if norad not in heard:
+                    heard[norad] = {
+                        "last_heard": start,
+                        "obs_count": 1,
+                        "has_data": bool(has_data),
+                    }
+                else:
+                    heard[norad]["obs_count"] += 1
+                    if has_data:
+                        heard[norad]["has_data"] = True
+
+            del results
+            time.sleep(0.1)  # be polite to the API
+
+        _recently_heard_cache = heard
+        _recently_heard_cache_time = now
+
+        # Write disk cache
+        try:
+            os.makedirs(os.path.dirname(_RECENTLY_HEARD_DISK), exist_ok=True)
+            disk = {str(k): v for k, v in heard.items()}
+            disk["_ts"] = now
+            with open(_RECENTLY_HEARD_DISK, "w") as f:
+                json.dump(disk, f)
+        except Exception:
+            pass
+
+        gc.collect()
+    except Exception:
+        pass  # silently fail — filtering works without this data
+
+
+def _compute_activity_score(norad_id):
+    """Compute activity score (0-100+) for a satellite based on recent observations."""
+    info = _recently_heard_cache.get(norad_id)
+    if not info:
+        return 0
+
+    score = 0
+    last = info.get("last_heard", "")
+    obs_count = info.get("obs_count", 0)
+    has_data = info.get("has_data", False)
+
+    if last:
+        try:
+            last_dt = datetime.datetime.fromisoformat(last.replace("Z", "+00:00"))
+            days_ago = (datetime.datetime.now(datetime.timezone.utc) - last_dt).days
+            if days_ago <= 7:
+                score += 50
+            elif days_ago <= 30:
+                score += 30
+        except Exception:
+            pass
+
+    if has_data:
+        score += 20
+
+    score += min(20, obs_count * 2)
+
+    return score
 
 
 def _classify_satellite(name):
@@ -858,6 +1016,7 @@ def _recompute_passes_if_stale():
         with _pass_cache_lock:
             _pass_cache = all_passes[:25]
         gc.collect()
+        time.sleep(0.05)  # yield GIL between batches
 
     with _pass_cache_lock:
         all_passes.sort(key=lambda p: p.get("rise_time", ""))
@@ -887,11 +1046,17 @@ def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
     observer.pressure = 0
 
     now_utc = datetime.datetime.now(datetime.timezone.utc)
-    start_ephem = ephem.Date(now_utc.strftime("%Y/%m/%d %H:%M:%S"))
-    end_ephem = start_ephem + hours / 24.0
+    # Search 20 min in the past to catch passes already overhead
+    search_start = now_utc - datetime.timedelta(minutes=20)
+    start_ephem = ephem.Date(search_start.strftime("%Y/%m/%d %H:%M:%S"))
+    now_ephem = ephem.Date(now_utc.strftime("%Y/%m/%d %H:%M:%S"))
+    end_ephem = now_ephem + hours / 24.0
 
     passes = []
-    for name, (l1, l2) in tle_items:
+    for _sat_idx, (name, (l1, l2)) in enumerate(tle_items):
+        # Yield GIL every satellite so HTTP server stays responsive
+        if _sat_idx % 5 == 0:
+            time.sleep(0.01)
         try:
             sat = ephem.readtle(name, l1, l2)
             observer.date = start_ephem
@@ -914,6 +1079,10 @@ def _compute_passes_batch(tle_items, lat, lon, elev, hours=2):
 
                 max_el_deg = math.degrees(float(max_el))
                 if max_el_deg < 5.0:
+                    observer.date = set_t + ephem.minute
+                    continue
+                # Skip passes that already ended
+                if set_t < now_ephem:
                     observer.date = set_t + ephem.minute
                     continue
 
@@ -1043,6 +1212,28 @@ def get_cached_passes():
             if "category" not in p:
                 p["category"] = _classify_satellite(p.get("name", ""))
 
+    # Enrich with "recently heard" activity data
+    if _recently_heard_cache:
+        now_utc = datetime.datetime.now(datetime.timezone.utc)
+        for p in passes:
+            norad = p.get("norad_id", 0)
+            info = _recently_heard_cache.get(norad)
+            if info:
+                p["recently_heard"] = True
+                p["obs_count_30d"] = info.get("obs_count", 0)
+                try:
+                    last_dt = datetime.datetime.fromisoformat(
+                        info["last_heard"].replace("Z", "+00:00"))
+                    p["last_heard_days"] = (now_utc - last_dt).days
+                except Exception:
+                    p["last_heard_days"] = None
+                p["activity_score"] = _compute_activity_score(norad)
+            else:
+                p["recently_heard"] = False
+                p["last_heard_days"] = None
+                p["obs_count_30d"] = 0
+                p["activity_score"] = 0
+
     return passes
 
 
@@ -1128,14 +1319,11 @@ def compute_passes(lat, lon, elev, hours=2, max_passes=25):
 
                 # Enrich with transmitter info from SatNOGS DB
                 tx_list = get_transmitter_info(norad_id)
-                # Pick the best UHF transmitter (closest to 433 MHz)
-                best_tx = None
-                for tx in tx_list:
-                    if 400e6 <= (tx.get("freq_hz") or 0) <= 470e6:
-                        if best_tx is None or abs(tx["freq_hz"] - 433e6) < abs(best_tx["freq_hz"] - 433e6):
-                            best_tx = tx
-                if not best_tx and tx_list:
-                    best_tx = tx_list[0]  # fallback to first transmitter
+                # Pick the best UHF transmitter: prefer CC1200-compatible, closest to 435 MHz
+                uhf_txs = [tx for tx in tx_list if 420e6 <= (tx.get("freq_hz") or 0) <= 450e6]
+                cc_txs = [tx for tx in uhf_txs if tx.get("cc1200_ok")]
+                pool = cc_txs if cc_txs else uhf_txs if uhf_txs else tx_list
+                best_tx = min(pool, key=lambda t: abs((t.get("freq_hz") or 0) - 435e6)) if pool else None
 
                 pass_entry = {
                     "name": name,
@@ -1155,6 +1343,9 @@ def compute_passes(lat, lon, elev, hours=2, max_passes=25):
                     pass_entry["band"] = best_tx.get("band", "")
                     pass_entry["cc1200_ok"] = best_tx.get("cc1200_ok", False)
                     pass_entry["rtlsdr_ok"] = True
+                else:
+                    # No transmitter data — skip, we can't configure the radio
+                    continue
 
                 passes.append(pass_entry)
 
@@ -1414,6 +1605,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 lon = float(body["lon"])
                 elev = float(body.get("elev", 0))
                 save_location(lat, lon, elev)
+                try:
+                    from buzzer_util import beep, GPS_OK
+                    beep(GPS_OK)
+                except Exception:
+                    pass
                 self._json_response(200, json.dumps({"ok": True}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
@@ -1553,6 +1749,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     with open(STATION_CONF, "w") as f:
                         json.dump(existing, f, indent=4)
                 save_setup_complete()
+                try:
+                    from buzzer_util import beep, SETUP_DONE
+                    beep(SETUP_DONE)
+                except Exception:
+                    pass
                 self._json_response(200, json.dumps({"ok": True}))
             except Exception as e:
                 self._json_response(400, json.dumps({"ok": False, "error": str(e)}))
@@ -1758,8 +1959,8 @@ def main():
     poller = threading.Thread(target=polling_loop, daemon=True)
     poller.start()
 
-    HTTPServer.allow_reuse_address = True
-    server = HTTPServer((args.bind, args.port), DashboardHandler)
+    ThreadingHTTPServer.allow_reuse_address = True
+    server = ThreadingHTTPServer((args.bind, args.port), DashboardHandler)
 
     if not args.no_ssl:
         try:

@@ -10,6 +10,7 @@
 #include "hardware/uart.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
+#include "hardware/watchdog.h"
 
 extern "C" {
 #include "config.h"
@@ -33,12 +34,15 @@ static bool vhf_ok_flag = false;
 // ---------------------------------------------------------------------------
 // Buzzer — non-blocking PWM tone sequencer on GP2
 // ---------------------------------------------------------------------------
-// Pattern IDs (match Pi-side buzzer.py):
-//   0x01 = ready    (triple beep 1000 Hz)
-//   0x02 = AOS      (rising 800 → 1200 Hz)
-//   0x03 = LOS      (falling 1200 → 800 Hz)
-//   0x04 = packet   (short 1500 Hz)
-//   0x05 = error    (low 400 Hz)
+// Pattern IDs (match Pi-side buzzer.py / buzzer_util.py):
+//   0x01 = ready      (triple beep 1000 Hz)
+//   0x02 = AOS        (rising 800 → 1200 Hz)
+//   0x03 = LOS        (falling 1200 → 800 Hz)
+//   0x04 = packet     (short 1500 Hz)
+//   0x05 = error      (low 400 Hz)
+//   0x06 = wifi_ok    (ascending C5→E5→G5)
+//   0x07 = gps_ok     (2 high beeps 2000 Hz)
+//   0x08 = setup_done (triumphant C5→E5→G5→C6→G5)
 
 struct BuzzerStep { uint16_t freq_hz; uint16_t dur_ms; };
 
@@ -56,6 +60,16 @@ static const BuzzerStep SEQ_PACKET[] = {
 };
 static const BuzzerStep SEQ_ERROR[] = {
     {400, 500}, {0, 0}
+};
+static const BuzzerStep SEQ_WIFI_OK[] = {
+    {523, 80}, {0, 30}, {659, 80}, {0, 30}, {784, 80}, {0, 0}
+};
+static const BuzzerStep SEQ_GPS_OK[] = {
+    {2000, 60}, {0, 40}, {2000, 60}, {0, 0}
+};
+static const BuzzerStep SEQ_SETUP_DONE[] = {
+    {523, 80}, {0, 30}, {659, 80}, {0, 30}, {784, 80}, {0, 30},
+    {1047, 80}, {0, 30}, {784, 80}, {0, 0}
 };
 
 static const BuzzerStep* bz_seq = nullptr;
@@ -90,7 +104,10 @@ static void buzzer_start(uint8_t pattern)
         case 0x02: bz_seq = SEQ_AOS;    break;
         case 0x03: bz_seq = SEQ_LOS;    break;
         case 0x04: bz_seq = SEQ_PACKET; break;
-        case 0x05: bz_seq = SEQ_ERROR;  break;
+        case 0x05: bz_seq = SEQ_ERROR;      break;
+        case 0x06: bz_seq = SEQ_WIFI_OK;    break;
+        case 0x07: bz_seq = SEQ_GPS_OK;     break;
+        case 0x08: bz_seq = SEQ_SETUP_DONE; break;
         default:   return;
     }
     bz_step = 0;
@@ -177,16 +194,34 @@ void setup()
     // USB serial for debug output
     Serial.begin(115200);
 
-    // Onboard LED
+    // Onboard LED — turn on immediately as power indicator
     pinMode(PIN_LED, OUTPUT);
-    digitalWrite(PIN_LED, LOW);
+    digitalWrite(PIN_LED, HIGH);
 
-    // NeoPixel — white during init
+    // Wait for USB serial (up to 3s, then continue anyway)
+    uint32_t usb_wait_start = millis();
+    while (!Serial && (millis() - usb_wait_start < 3000)) {
+        delay(10);
+    }
+
+    Serial.println("\n=== RF HAT Firmware (bring-up) ===");
+    Serial.printf("PIN_LED=%d PIN_NEOPIXEL=%d PIN_BUZZER=%d\n", PIN_LED, PIN_NEOPIXEL, PIN_BUZZER);
+    Serial.flush();
+
+    // NeoPixel init (GP4 — won't light at 3.3V, needs 5V bodge)
     neopixel.begin();
     neo_set_all(LED_BR, LED_BR, LED_BR);
 
-    // Buzzer
+    // Buzzer init (GP5)
     buzzer_init();
+
+    // Boot chime — C5 E5 G5 C6 ascending (major chord arpeggio)
+    static const uint16_t chime[] = {523, 659, 784, 1047};
+    for (int i = 0; i < 4; i++) {
+        buzzer_tone(chime[i]);
+        delay(80);
+    }
+    buzzer_tone(0);
 
     // Initialize UART0 for Pi communication (GP0 TX, GP1 RX)
     uart_init(uart0, UART_BAUD);
@@ -194,42 +229,58 @@ void setup()
     gpio_set_function(PIN_UART_RX, GPIO_FUNC_UART);
     uart_set_format(uart0, 8, 1, UART_PARITY_NONE);
     uart_set_fifo_enabled(uart0, true);
-
-    delay(500);  // Let USB enumerate
-    Serial.println("=== RF HAT Firmware ===");
-    Serial.println("Dual CC1200 controller for SatNOGS");
     Serial.printf("UART0: %d baud (GP%d TX, GP%d RX)\n", UART_BAUD, PIN_UART_TX, PIN_UART_RX);
-    Serial.printf("NeoPixel: %d LEDs on GP%d\n", NEOPIXEL_COUNT, PIN_NEOPIXEL);
-    Serial.printf("Buzzer: GP%d (PWM)\n", PIN_BUZZER);
+    Serial.flush();
 
     // Init UHF CC1200 (SPI1)
+    Serial.println("Init UHF CC1200 on SPI1...");
+    Serial.flush();
     uhf_ok_flag = init_radio(RADIO_UHF, UHF_SPI_INST, UHF_SPI_BAUD_HZ,
                               UHF_PIN_SCK, UHF_PIN_MOSI, UHF_PIN_MISO, UHF_PIN_CSN,
                               UHF_PIN_RESET, "UHF");
 
-    // Init VHF CC1200 (SPI0)
+    // Init VHF CC1200 (SPI0) — not populated, will fail
+    Serial.println("Init VHF CC1200 on SPI0...");
+    Serial.flush();
     vhf_ok_flag = init_radio(RADIO_VHF, VHF_SPI_INST, VHF_SPI_BAUD_HZ,
                               VHF_PIN_SCK, VHF_PIN_MOSI, VHF_PIN_MISO, VHF_PIN_CSN,
                               VHF_PIN_RESET, "VHF");
 
     Serial.printf("UHF: %s  VHF: %s\n", uhf_ok_flag ? "OK" : "FAIL", vhf_ok_flag ? "OK" : "FAIL");
+    Serial.flush();
 
     // Init protocol handler with both radios + buzzer callback
     proto_init(radios, RADIO_COUNT);
     proto_set_buzzer_cb(on_buzzer_cmd);
 
-    // NeoPixel → green if both radios OK, red if either failed
-    if (uhf_ok_flag && vhf_ok_flag) {
-        neo_set_all(0, LED_BR, 0);  // green = ready
-        buzzer_start(0x01);         // triple beep = ready
-    } else {
-        neo_set_all(LED_BR, 0, 0);  // red = init fault
-        buzzer_start(0x05);         // error beep
-    }
+    // Register USB Serial as protocol channel 1 (for bench testing)
+    proto_set_write_fn(1, [](const uint8_t* data, size_t len) {
+        Serial.write(data, len);
+        Serial.flush();
+    });
 
-    Serial.println("Ready — listening on UART0 for commands");
+    // NeoPixel → green if UHF OK (VHF not populated — that's expected)
+    if (uhf_ok_flag) {
+        neo_set_all(0, LED_BR, 0);  // green = UHF ready
+        buzzer_start(0x01);         // triple beep = ready
+        Serial.println("STATUS: UHF OK — NeoPixel GREEN, buzzer READY");
+    } else {
+        neo_set_all(LED_BR, 0, 0);  // red = UHF init fault
+        buzzer_start(0x05);         // error beep
+        Serial.println("STATUS: UHF FAIL — NeoPixel RED, buzzer ERROR");
+    }
+    Serial.flush();
+
+    Serial.println("Ready — UART0 + USB protocol active");
+    Serial.flush();
+    // After this point, USB Serial is shared between debug prints and COBS protocol.
+    // Debug prints during boot are OK since the host hasn't connected yet.
+    // Once the host sends COBS commands, responses go back as COBS.
 
     hb_next = millis() + 500;
+
+    // Hardware watchdog — 8 second timeout, auto-reboot on hang
+    watchdog_enable(8000, true);
 }
 
 void loop()
@@ -241,8 +292,10 @@ void loop()
         hb_next = millis() + 500;
 
         // Update NeoPixel based on protocol state
-        if (!uhf_ok_flag || !vhf_ok_flag) {
-            neo_set_all(LED_BR, 0, 0);   // red = init fault
+        if (!uhf_ok_flag) {
+            neo_set_all(LED_BR, 0, 0);   // red = UHF fault
+        } else if (proto_is_serial_mode()) {
+            neo_set_all(LED_BR, 0, LED_BR);  // purple = serial/raw bit mode
         } else if (proto_is_streaming()) {
             neo_set_all(0, 0, LED_BR);   // blue = RX streaming
         } else {
@@ -250,12 +303,24 @@ void loop()
         }
     }
 
+    watchdog_update();
+
     // Advance buzzer tone sequencer
     buzzer_tick();
 
-    // Process protocol commands from Pi (UART)
+    // Process protocol commands from Pi (UART) and USB (bench testing)
     proto_poll();
 
-    // Small yield
-    delay(1);
+    // Feed USB Serial bytes into protocol handler (channel 1)
+    int avail = Serial.available();
+    if (avail > 0) {
+        uint8_t usb_buf[64];
+        int n = Serial.readBytes(usb_buf, (avail > 64) ? 64 : avail);
+        if (n > 0)
+            proto_feed_bytes(usb_buf, (size_t)n, 1);
+    }
+
+    // Yield briefly — tight_loop_contents() hints to the compiler this is
+    // a busy-wait loop, allowing low-power idle between iterations.
+    tight_loop_contents();
 }

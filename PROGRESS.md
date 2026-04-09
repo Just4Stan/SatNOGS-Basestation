@@ -2,30 +2,31 @@
 
 SatNOGS ground station for AetherSpace CubeSat — Stan's Master's thesis, KU Leuven Campus Geel.
 
-Last updated: 2026-03-03
+Last updated: 2026-04-01
 
 ---
 
 ## Mechanical Design
 
 - [x] Rotator designed in Onshape (AZ + EL, 2-axis)
-- [x] Fully 3D-printable — all parts printed and assembled
-- [x] 1/4"-20 camera tripod mount
+- [x] Fully 3D-printable in ASA — all parts printed and assembled
+- [x] 1/4"-20 UNC camera tripod mount
 - [x] FAPG36-555-EN motors installed (24V, 16 RPM, 516:1 gearbox, 6mm shaft)
-- [x] External gearing: AZ 15:40 (2.67:1), EL 40:55 (1.375:1)
+- [x] External gearing: AZ 15:40 (2.67:1), EL 40:55 (1.375:1), double helical (15° helix, 1.333mm module, 8mm face)
+- [x] 3D-printed deep groove ball bearings (press-in retainers, steel balls)
+- [x] PVC pipe elevation axis with integrated screw clamps
 - [x] Yagi antenna mounted (LPRS YAGI-434A, 434 MHz, 10 dBi)
 - [x] EL motor stripped gear — repaired
 
 ## Motor Control PCB (MotorPCB/)
 
 - [x] KiCad 9.0 schematic (13 hierarchical sub-sheets)
-- [x] PCB routed and fabricated
-- [x] RP2040 Pico footprint + power
-- [x] 2x TB6642FG H-bridge motor drivers
-- [x] Quadrature encoder inputs (Hall, 64 CPR)
-- [x] ADXL345 IMU on SPI0
+- [x] 4-layer PCB routed and fabricated (JLCPCB)
+- [x] RP2040 Pico footprint + power (TPS560430XFDBVT 24V-to-5V buck)
+- [x] 2x TB6642FG H-bridge motor drivers (UVLO/ISD/TSD protection)
+- [x] Quadrature encoder inputs (single Hall sensor IC, 64 CPR)
+- [x] ADXL345 accelerometer module on SPI0
 - [x] Endstop switch inputs (1 per axis, active-low with pull-up)
-- [x] NeoPixel status LED on GP16
 - [x] Board assembled and tested
 - [x] EL driver bodge wire fix (U2 TB6642FG missing traces to OUT1/OUT2 — patched via NC pins 6/11)
 - [x] RC filter caps (C1-C4) on encoder inputs removed (destroyed signal)
@@ -46,9 +47,10 @@ Last updated: 2026-03-03
 - [x] BOM with Farnell + LCSC part numbers
 - [x] 89 components, clean netlist
 - [x] Pi HAT 40-pin header footprint
-- [ ] **PCB not yet ordered** — ready to order
-- [ ] **VHF matching network needs VNA tuning after board arrives**
-- [ ] Board assembly + bring-up
+- [x] PCB ordered and assembled (JLCPCB)
+- [x] UHF CC1200 verified (part 0x20, v1.1)
+- [x] LMR51420 buck replaced after blowout — working
+- [ ] **VHF matching network needs VNA tuning**
 
 ## Rotator Firmware (Firmware/rp2040-satnogs-rotator/)
 
@@ -72,8 +74,8 @@ Last updated: 2026-03-03
 - [x] Runaway detection (emergency stop if position > soft limits + 50°)
 - [x] Soft limits: AZ ±360°, EL 0-180°
 - [x] Endstop safety gates (stop motor if driving into pressed endstop)
-- [x] TB6642FG ALERT pin fault monitoring
-- [x] NeoPixel status LED (idle=green, tracking=blue, on-target=cyan, fault=red)
+- [x] TB6642FG ALERT pin fault monitoring (UVLO/ISD/TSD)
+- [x] GP25 heartbeat LED (1 Hz, Pico onboard)
 - [x] Post-build script copies firmware.uf2 to repo root
 - [x] Firmware builds clean, flashed and running
 - [ ] Endstop homing routine implemented but disabled (`kUseEndstopHoming = false`) — needs hardware testing
@@ -99,7 +101,7 @@ Last updated: 2026-03-03
 - [x] Bug fixes from Robbe's code: send_frame buffer overflow, profile_apply IDLE confirm, burst delay margin, strobe range validation, register address check
 - [x] Post-build script copies rf_hat_firmware.uf2 to repo root
 - [x] Firmware builds clean (3.7% flash, 5.3% RAM)
-- [ ] **Not yet tested on actual RF HAT hardware** (PCB not ordered yet)
+- [x] Tested on actual RF HAT hardware — UART comms verified, PING/PONG working
 
 ## Pi Software Stack (Pi/)
 
@@ -180,11 +182,11 @@ Last updated: 2026-03-03
 - [x] rotctld.service running (model 204, /dev/ttyACM0, 115200, port 4533)
 - [x] Python 3 + pip installed
 - [x] SatNOGS client framework installed (Docker + Ansible)
-- [ ] **UART not yet enabled** — needs enable_uart=1 + dtoverlay=disable-bt in config.txt
-- [ ] **RF HAT not yet tested over /dev/serial0**
+- [x] UART enabled (enable_uart=1 + dtoverlay=disable-bt)
+- [x] RF HAT tested over /dev/serial0 — COBS/CRC-16 verified
+- [x] SatNOGS station registered (station ID 4712, "Aether-Basestation")
+- [x] SiDS telemetry submission verified (201 OK)
 - [ ] **udev rules not yet created** (persistent /dev/satnogs-rotator symlink)
-- [ ] **SatNOGS station not registered** at network.satnogs.org
-- [ ] **SatNOGS client not configured** (needs API token + station ID from registration)
 
 ## Python Tracking Scripts (repo root)
 
@@ -243,7 +245,9 @@ Last updated: 2026-03-03
 - [x] 5 appendices created (pinout, protocol, PID, SmartRF, speed test)
 - [x] Custom LaTeX commands (\EUR, \degree, \code, \file, \SI, \degC)
 - [x] Samenvatting (Dutch) + Abstract (English) + Abbreviations
-- [ ] **Chapter prose not yet written** — only headings + TODO comments exist
+- [x] Chapter 1 (Introduction) written in LaTeX
+- [x] Chapter 2 (Background and Literature Review) written in LaTeX
+- [ ] **Chapters 3-12 prose not yet written** — headings + TODO comments exist
 - [ ] **Figures not yet added** (images/figures/ and images/photos/ directories exist but empty)
 - [ ] **Thesis not yet compiled to PDF**
 
@@ -254,38 +258,43 @@ Last updated: 2026-03-03
 - [x] Phone GPS → ~/station.conf → automatic station location
 - [x] Dashboard HTTPS for browser Geolocation API
 - [x] Park + Shutdown buttons on dashboard
-- [x] NeoPixel status on both Picos
+- [x] NeoPixel status on RF HAT Pico (4x WS2812B)
 - [x] Buzzer audio cues (ready, AOS, LOS, packet, error)
-- [ ] **Not yet tested end-to-end in the field**
+- [x] First outdoor field test completed (2026-04-01) — EL tracking <0.5° error, AZ issues at zenith
+- [ ] **Full field test with packet reception pending** (per-sat freq/mod config needed)
 
 ---
 
 ## Summary of Remaining Work
 
-### Hardware (blocking)
-1. [ ] **Order RF HAT PCBs** (design is ready)
-2. [ ] Assemble RF HAT PCB
+### Hardware
+1. [x] ~~Order RF HAT PCBs~~ — assembled and working
+2. [x] ~~Assemble RF HAT PCB~~ — UHF verified, LMR51420 replaced
 3. [ ] VHF matching network VNA tuning
 
 ### Pi Integration
-4. [ ] Enable UART on Pi (config.txt changes)
-5. [ ] Test RF HAT Pico over /dev/serial0
+4. [x] ~~Enable UART on Pi~~ — done
+5. [x] ~~Test RF HAT Pico over /dev/serial0~~ — COBS/CRC-16 verified
 6. [ ] Create udev rules for persistent device names
 7. [ ] Test endstop homing (kUseEndstopHoming → true)
 
 ### SatNOGS Network
-8. [ ] Register station at network.satnogs.org
-9. [ ] Configure satnogs-client (API token + station ID)
-10. [ ] Submit decoded packets to SatNOGS DB via SiDS API
+8. [x] ~~Register station~~ — ID 4712 "Aether-Basestation"
+9. [x] ~~SiDS telemetry submission~~ — verified (201 OK)
+10. [ ] RTL-SDR integration for network heartbeat (optional)
 
-### RF
-11. [ ] VHF SmartRF profile tuning (SmartRF Studio or VNA)
-12. [ ] RTL-SDR integration (optional — for SatNOGS waterfall/audio artifacts)
+### RF & Tracking (field test blockers — FIXED 2026-04-01)
+11. [x] ~~AZ timeout resets target~~ — halt_motors() preserves targets
+12. [x] ~~PID integral anti-windup~~ — saturation-based clamping
+13. [x] ~~Duty smoothing too sluggish~~ — alpha 0.05 → 0.15
+14. [x] ~~RotctlClient socket leak~~ — close() before reconnect
+15. [x] ~~Packets list unbounded growth~~ — clear between passes
 
-### Validation & Thesis
-13. [ ] Full end-to-end field test (rotator + RF + dashboard)
-14. [ ] Pointing accuracy measurements (step response, backlash, wind load)
-15. [ ] Capture thesis plots/logs (encoder ticks, duty, AZ/EL error vs time)
-16. [ ] Write thesis chapter prose (12 chapters + 5 appendices)
-17. [ ] Add thesis figures (photos, plots, screenshots, diagrams)
-18. [ ] Compile thesis PDF
+### Remaining
+16. [ ] VHF SmartRF profile tuning (SmartRF Studio or VNA)
+17. [ ] Full field test with packet reception (per-sat CC1200 reconfig)
+18. [ ] Pointing accuracy measurements (step response, backlash, wind load)
+19. [ ] Capture thesis plots/logs (encoder ticks, duty, AZ/EL error vs time)
+20. [ ] Write thesis chapter prose (ch03-12 + 5 appendices)
+21. [ ] Add thesis figures (photos, plots, screenshots, diagrams)
+22. [ ] Compile thesis PDF

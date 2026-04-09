@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include "hardware/gpio.h"
+#include "hardware/watchdog.h"
 #include "pico/stdlib.h"
 
 #include "adxl345.h"
@@ -99,6 +100,7 @@ void setup() {
       // Drive toward 0°.  Negative duty decreases physical EL.
       const float duty = (el > 0) ? -kElHomingDuty : kElHomingDuty;
       el_motor.set(duty);
+      watchdog_update();
       sleep_ms(50);
     }
 
@@ -130,12 +132,18 @@ void setup() {
   absolute_time_t last_monitor = get_absolute_time();
   bool led_state = true;
 
+  // Hardware watchdog — 8 second timeout
+  watchdog_enable(8000, true);
+
   for (;;) {
+    watchdog_update();
+
     // Control loop tick ~100 Hz.
     if (absolute_time_diff_us(last_tick, get_absolute_time()) >= 10000) {
       rotator.tick();
       last_tick = get_absolute_time();
     }
+
 
     // Heartbeat LED toggle ~1 Hz (500ms on, 500ms off).
     if (absolute_time_diff_us(last_blink, get_absolute_time()) >= 500000) {

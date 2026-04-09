@@ -2017,25 +2017,23 @@
                 <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Band</div>
                 <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
                   <button class="filter-chip" data-filter="all" onclick="toggleFilter('all')">All</button>
-                  <button class="filter-chip active" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (433)</button>
-                  <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (144)</button>
+                  <button class="filter-chip" data-filter="uhf" onclick="toggleFilter('uhf')">UHF (420-450)</button>
+                  <button class="filter-chip" data-filter="vhf" onclick="toggleFilter('vhf')">VHF (130-175)</button>
                 </div>
                 <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Receiver</div>
                 <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                  <button class="filter-chip" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
-                  <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR only</button>
+                  <button class="filter-chip active" data-filter="cc1200" onclick="toggleFilter('cc1200')">CC1200</button>
+                  <button class="filter-chip" data-filter="rtlsdr" onclick="toggleFilter('rtlsdr')">SDR</button>
                 </div>
-                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Category</div>
+                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Elevation</div>
                 <div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:6px">
-                  <button class="filter-chip" data-filter="amateur" onclick="toggleFilter('amateur')">Amateur</button>
-                  <button class="filter-chip" data-filter="cubesat" onclick="toggleFilter('cubesat')">CubeSat</button>
-                  <button class="filter-chip" data-filter="weather" onclick="toggleFilter('weather')">Weather</button>
-                  <button class="filter-chip" data-filter="space-station" onclick="toggleFilter('space-station')">Station</button>
-                </div>
-                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Quality</div>
-                <div style="display:flex;flex-wrap:wrap;gap:3px">
                   <button class="filter-chip" data-filter="high" onclick="toggleFilter('high')">&gt;45&deg;</button>
                   <button class="filter-chip" data-filter="medium" onclick="toggleFilter('medium')">&gt;20&deg;</button>
+                </div>
+                <div style="font-size:0.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:3px">Activity</div>
+                <div style="display:flex;flex-wrap:wrap;gap:3px">
+                  <button class="filter-chip" data-filter="heard" onclick="toggleFilter('heard')">Heard &lt;30d</button>
+                  <button class="filter-chip" data-filter="heard7" onclick="toggleFilter('heard7')">Heard &lt;7d</button>
                 </div>
               </div>
               <div class="pass-list" id="pass-list" role="list">
@@ -2253,6 +2251,17 @@
                 <span class="stream-dot" id="stream-dot"></span>
                 <span id="stream-label">Idle</span>
               </span>
+            </div>
+
+            <!-- CC1200 debug panel (only visible when CC1200 connected) -->
+            <div id="cc1200-debug" style="display:none;margin-top:6px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.58rem;font-family:var(--font-mono);color:var(--muted);line-height:1.7">
+              <div style="color:var(--text);font-size:0.62rem;font-weight:600;margin-bottom:3px">CC1200</div>
+              <div>MARC <span id="cc-marc" style="color:var(--text)">---</span> &nbsp; <span id="cc-state-match" style="font-size:0.5rem">---</span></div>
+              <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--card-border)">FREQ ERR <span id="cc-freqoff-est" style="color:var(--text)">---</span> &nbsp; LQI <span id="cc-lqi" style="color:var(--text)">---</span></div>
+              <div>RSSI <span id="cc-rssi-stats" style="color:var(--text)">---</span></div>
+              <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--card-border)">RX data <span id="cc-rx-total" style="color:var(--text)">0</span> &nbsp; <span id="cc-rx-rate" style="color:var(--text)">0 B/s</span></div>
+              <div>Errors <span id="cc-errors" style="color:var(--text)">none</span></div>
+              <div>Uptime <span id="cc-uptime" style="color:var(--text)">---</span></div>
             </div>
 
             <div class="waterfall-preview" id="waterfall-preview">
@@ -2614,8 +2623,12 @@
   let _selectedPass   = null;    // index into _passes, tapped by user
   let _activePassIdx  = null;    // index of pass that is currently in progress
   let _nextPassIdx    = null;    // index of next upcoming pass
-  let _rafHandle      = null;    // requestAnimationFrame handle for polar plot
+  let _rafHandle      = null;    // requestAnimationFrame handle / setTimeout id for polar plot
   let _skyNeedsRedraw = true;    // dirty flag for polar canvas
+  let _skyGridCanvas  = null;    // offscreen canvas caching static grid/labels
+  let _skyGridSize    = 0;       // size used when _skyGridCanvas was last drawn
+  let _skyLastSize    = 0;       // last canvas CSS size (skip resize when unchanged)
+  let _skyLastDpr     = 0;       // last devicePixelRatio
   let _currentAz      = null;    // latest azimuth (degrees)
   let _currentEl      = null;    // latest elevation (degrees)
   let _rotConnected   = false;   // rotator connected?
@@ -2624,11 +2637,13 @@
   let _vantaEffect    = null;    // Vanta instance (null if CDN offline)
   let _locSet         = false;   // is location currently set?
   let _wasTracking    = false;   // previous poll tracking state (for LOS detection)
+  let _currentStatus  = null;    // last full status object (for sky plot cmd_az/cmd_el access)
   let _isTracking     = false;   // currently tracking a satellite (from status API)
   let _trackedSatName = '';      // satellite name from station.py rf.satellite
   let _trackedPassCache = null;  // cached pass data for tracked satellite (survives pass list rebuilds)
   let _liveTrajectory = [];      // built from cmd_az/cmd_el during tracking (fallback when no pass data)
   let _hoveredPass    = null;    // index into _passes, hovered in pass list
+  let _autoTrack      = false;   // auto-track enabled (from station.conf via API)
   let _pendingTrack   = '';      // satellite name of pending track request
   let _pendingTrackTime = 0;    // when the pending track was set
   try {
@@ -2868,31 +2883,27 @@
     };
   }
 
-  function drawSkyPlot() {
-    window._lastSatPos = null; // reset SAT position for ANT label overlap check
-    const canvas = document.getElementById('sky-canvas');
-    const wrap   = document.getElementById('sky-canvas-wrap');
-    const wrapRect = wrap.getBoundingClientRect();
-    const size   = Math.min(wrapRect.width, wrapRect.height) || 280;
-    const dpr    = window.devicePixelRatio || 1;
+  /** Draw the static grid (rings, spokes, labels) onto an offscreen canvas.
+   *  Only regenerated when canvas size changes. */
+  function _drawSkyGrid(size) {
+    const dpr = window.devicePixelRatio || 1;
+    if (!_skyGridCanvas) _skyGridCanvas = document.createElement('canvas');
+    _skyGridCanvas.width  = size * dpr;
+    _skyGridCanvas.height = size * dpr;
+    _skyGridSize = size;
 
-    canvas.width  = size * dpr;
-    canvas.height = size * dpr;
-    canvas.style.width  = size + 'px';
-    canvas.style.height = size + 'px';
-
-    const ctx = canvas.getContext('2d');
+    const ctx = _skyGridCanvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    const W  = size, H = size;
+    const W = size, H = size;
     const cx = W / 2, cy = H / 2;
     const maxR = cx * 0.88;
 
-    // ── Background ──
+    // Background
     ctx.fillStyle = 'rgba(10, 14, 26, 0.80)';
     ctx.fillRect(0, 0, W, H);
 
-    // ── Concentric elevation rings ──
+    // Concentric elevation rings
     [90, 60, 30, 0].forEach(el => {
       const r = maxR * (1 - el / 90);
       ctx.beginPath();
@@ -2902,7 +2913,6 @@
         : 'rgba(255,255,255,0.08)';
       ctx.lineWidth = 1;
       ctx.stroke();
-      // Label
       if (el > 0) {
         ctx.font = `${clamp(size * 0.028, 8, 12)}px var(--font-mono, monospace)`;
         ctx.fillStyle = 'rgba(148,163,184,0.65)';
@@ -2911,7 +2921,7 @@
       }
     });
 
-    // ── Azimuth spokes every 45° with labels ──
+    // Azimuth spokes every 45° with labels
     const dirLabels = ['N','NE','E','SE','S','SW','W','NW'];
     for (let i = 0; i < 8; i++) {
       const az    = i * 45;
@@ -2925,7 +2935,6 @@
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Direction label just outside the horizon ring
       const lx = cx + (maxR + 14) * Math.cos(angle);
       const ly = cy + (maxR + 14) * Math.sin(angle);
       ctx.font = `bold ${clamp(size * 0.032, 9, 13)}px var(--font-head, sans-serif)`;
@@ -2934,6 +2943,37 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(dirLabels[i], lx, ly);
     }
+  }
+
+  function drawSkyPlot() {
+    window._lastSatPos = null; // reset SAT position for ANT label overlap check
+    const canvas = document.getElementById('sky-canvas');
+    const wrap   = document.getElementById('sky-canvas-wrap');
+    const wrapRect = wrap.getBoundingClientRect();
+    const size   = Math.min(wrapRect.width, wrapRect.height) || 280;
+    const dpr    = window.devicePixelRatio || 1;
+
+    // Only resize the canvas when dimensions actually change (avoids GPU realloc)
+    if (size !== _skyLastSize || dpr !== _skyLastDpr) {
+      canvas.width  = size * dpr;
+      canvas.height = size * dpr;
+      canvas.style.width  = size + 'px';
+      canvas.style.height = size + 'px';
+      _skyLastSize = size;
+      _skyLastDpr  = dpr;
+    }
+
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // reset + scale in one call
+
+    const W  = size, H = size;
+    const cx = W / 2, cy = H / 2;
+    const maxR = cx * 0.88;
+
+    // ── Blit cached static grid (regenerate only on resize) ──
+    if (_skyGridSize !== size) _drawSkyGrid(size);
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(_skyGridCanvas, 0, 0, W, H);
     ctx.textBaseline = 'alphabetic';
 
     // ── Draw pass trajectories ──
@@ -3184,6 +3224,31 @@
       }
     }
 
+    // ── Direct SAT marker from cmd_az/cmd_el (always show when tracking, even without pass data) ──
+    if (_isTracking && !window._lastSatPos && _currentStatus && _currentStatus.rf) {
+      const _rf = _currentStatus.rf;
+      if (_rf.cmd_az != null && _rf.cmd_el != null && _rf.cmd_el >= 0) {
+        const cmdPos = polarToXY(_rf.cmd_az, _rf.cmd_el, cx, cy, maxR);
+        const ds = 6;
+        ctx.beginPath();
+        ctx.moveTo(cmdPos.x, cmdPos.y - ds);
+        ctx.lineTo(cmdPos.x + ds, cmdPos.y);
+        ctx.lineTo(cmdPos.x, cmdPos.y + ds);
+        ctx.lineTo(cmdPos.x - ds, cmdPos.y);
+        ctx.closePath();
+        ctx.fillStyle = '#4ade80';
+        ctx.shadowColor = '#4ade80';
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.font = `bold ${clamp(size * 0.022, 7, 10)}px var(--font-mono, monospace)`;
+        ctx.fillStyle = '#4ade80';
+        ctx.textAlign = 'left';
+        ctx.fillText('SAT', cmdPos.x + 8, cmdPos.y + 3);
+        window._lastSatPos = cmdPos;
+      }
+    }
+
     // ── Live trajectory fallback (built from cmd_az/cmd_el when pass data unavailable) ──
     // Only draw if the pass-data SAT marker wasn't already drawn (avoid duplicate SAT labels)
     if (document.body.classList.contains('focus-mode') && _liveTrajectory.length >= 2 && !window._lastSatPos) {
@@ -3217,7 +3282,8 @@
       // Normalize AZ to 0-360 (rotator uses negative AZ for wrapping)
       const antAz = ((_currentAz % 360) + 360) % 360;
       const pos  = polarToXY(antAz, _currentEl, cx, cy, maxR);
-      const beat = 0.5 + 0.5 * Math.sin(Date.now() / 400);
+      // Only animate pulse during active tracking (saves GPU when idle)
+      const beat = _isTracking ? 0.5 + 0.5 * Math.sin(Date.now() / 400) : 0.5;
 
       // Outer glow ring
       ctx.beginPath();
@@ -3249,17 +3315,54 @@
     _skyNeedsRedraw = false;
   }
 
-  /** Animation loop — only redraws when data changes or pulsing dot needs update */
+  /** Animation loop — adapts strategy based on tracking state.
+   *  - Tracking/connected: requestAnimationFrame throttled to ~4 fps (250ms)
+   *  - Idle: setTimeout at 1 fps (1000ms), only redraws on dirty flag
+   *  This avoids burning GPU/CPU when the sky plot is static. */
   let _lastSkyDraw = 0;
+  let _skyUsingRAF = false;   // true when using rAF, false when using setTimeout
+
+  function _cancelSkyRender() {
+    if (_rafHandle !== null) {
+      if (_skyUsingRAF) cancelAnimationFrame(_rafHandle);
+      else clearTimeout(_rafHandle);
+      _rafHandle = null;
+    }
+  }
+
+  function _scheduleSkyRender() {
+    _cancelSkyRender();
+    if (_isTracking) {
+      // Tracking: rAF for smooth 4 fps antenna pulse + satellite marker
+      _skyUsingRAF = true;
+      _rafHandle = requestAnimationFrame(skyRenderLoop);
+    } else {
+      // Idle/connected-but-parked: setTimeout 1 fps, only redraw on dirty
+      _skyUsingRAF = false;
+      _rafHandle = setTimeout(skyRenderLoop, _skyNeedsRedraw ? 0 : 1000);
+    }
+  }
+
   function skyRenderLoop() {
     const now = Date.now();
-    // Throttle to ~4 fps (250ms) unless data changed, then draw immediately
-    if (_skyNeedsRedraw || ((_rotConnected || _isTracking) && now - _lastSkyDraw > 250)) {
-      drawSkyPlot();
-      _skyNeedsRedraw = false;
-      _lastSkyDraw = now;
+
+    if (_isTracking) {
+      // Active tracking: throttle rAF to ~4 fps (250ms)
+      if (_skyNeedsRedraw || now - _lastSkyDraw > 250) {
+        drawSkyPlot();
+        _skyNeedsRedraw = false;
+        _lastSkyDraw = now;
+      }
+    } else {
+      // Idle: only redraw when dirty flag is set
+      if (_skyNeedsRedraw) {
+        drawSkyPlot();
+        _skyNeedsRedraw = false;
+        _lastSkyDraw = now;
+      }
     }
-    _rafHandle = requestAnimationFrame(skyRenderLoop);
+
+    _scheduleSkyRender();
   }
 
   /* =========================================================================
@@ -3323,12 +3426,17 @@
      STATUS API POLLING (/api/status — every 1s)
      ========================================================================= */
   function applyStatus(d) {
+    _currentStatus = d;
     // ── Rotator ──
     const rot = d.rotator || {};
-    _rotConnected = !!rot.connected;
-    _currentAz    = rot.az != null ? rot.az : null;
-    _currentEl    = rot.el != null ? rot.el : null;
-    _skyNeedsRedraw = true;
+    const newConn = !!rot.connected;
+    const newAz   = rot.az != null ? rot.az : null;
+    const newEl   = rot.el != null ? rot.el : null;
+    if (newConn !== _rotConnected || newAz !== _currentAz || newEl !== _currentEl)
+      _skyNeedsRedraw = true;
+    _rotConnected = newConn;
+    _currentAz    = newAz;
+    _currentEl    = newEl;
 
     updateCompass(_currentAz);
     document.getElementById('el-val').textContent =
@@ -3446,13 +3554,99 @@
 
     // Streaming dot
     const streaming = !!rf.streaming;
+    const _hasTarget = !!rf.satellite;  // auto_tracker has a target (even if not streaming yet)
     const dot  = document.getElementById('stream-dot');
     const lbl  = document.getElementById('stream-label');
-    dot.classList.toggle('active', streaming);
-    if (rfBackend === 'rtlsdr') {
-      lbl.textContent = streaming ? 'IQ Capture' : 'Idle';
+    dot.classList.toggle('active', streaming || _hasTarget);
+    if (streaming) {
+      lbl.textContent = rfBackend === 'rtlsdr' ? 'IQ Capture' : 'RX Active';
+    } else if (_hasTarget) {
+      lbl.textContent = 'Slewing';
     } else {
-      lbl.textContent = streaming ? 'RX Active' : 'Idle';
+      lbl.textContent = 'Idle';
+    }
+
+    // CC1200 debug panel
+    const ccDbg = document.getElementById('cc1200-debug');
+    const cc = rf.cc1200;
+    if (cc && ccDbg) {
+      ccDbg.style.display = '';
+      const marcNames = {0x00:'SETTLING',0x01:'IDLE',0x02:'XOFF',0x03:'BIAS_SETTLE_MC',0x04:'REG_SETTLE_MC',0x05:'MANCAL',0x06:'BIAS_SETTLE',0x07:'REG_SETTLE',0x08:'RC_CAL',0x09:'BWBOOST',0x0A:'FS_LOCK',0x0B:'IFADCON',0x0C:'ENDCAL',0x0D:'RX',0x0E:'RX_END',0x0F:'RXDCM',0x10:'TXRX_SWITCH',0x11:'RX_FIFO_ERR',0x12:'FSTXON',0x13:'TX',0x14:'TX_END',0x15:'RXTX_SWITCH',0x16:'TX_FIFO_ERR',0x17:'IFADCON_TXRX'};
+      const desiredNames = {0:'IDLE',1:'RX',2:'TX'};
+      const marcStr = marcNames[cc.marc] || ('0x'+cc.marc.toString(16).toUpperCase());
+      document.getElementById('cc-marc').textContent = marcStr;
+      // State match indicator: green if MARC matches desired, red if mismatch
+      const desiredStr = desiredNames[cc.desired_state] || '?';
+      const stateEl = document.getElementById('cc-state-match');
+      if (cc.marc === 0x0D && cc.desired_state === 1) {
+        stateEl.textContent = 'RX OK'; stateEl.style.color = '#4ade80';
+      } else if (cc.marc === 0x13 && cc.desired_state === 2) {
+        stateEl.textContent = 'TX OK'; stateEl.style.color = '#4ade80';
+      } else if (cc.marc === 0x01 && cc.desired_state === 0) {
+        stateEl.textContent = 'IDLE'; stateEl.style.color = 'var(--muted)';
+      } else {
+        stateEl.textContent = 'want:' + desiredStr + ' got:' + marcStr;
+        stateEl.style.color = '#f87171';
+      }
+      // Streaming flag
+      const streaming = !!(cc.flags & 0x01);
+      if (!streaming && cc.desired_state === 1) {
+        stateEl.textContent += ' (no stream!)'; stateEl.style.color = '#f87171';
+      }
+
+      // Frequency error estimate
+      const feEl = document.getElementById('cc-freqoff-est');
+      if (cc.freqoff_est_hz != null) {
+        const feAbs = Math.abs(cc.freqoff_est_hz);
+        const feStr = (feAbs >= 1000) ? (cc.freqoff_est_hz/1000).toFixed(1) + ' kHz' : cc.freqoff_est_hz + ' Hz';
+        feEl.textContent = (cc.freqoff_est_hz >= 0 ? '+' : '') + feStr;
+        feEl.style.color = feAbs > 5000 ? '#f87171' : feAbs > 2000 ? '#fbbf24' : '#4ade80';
+      } else {
+        feEl.textContent = '---'; feEl.style.color = 'var(--text)';
+      }
+
+      // LQI (lower = better, CC1200 range 0-127)
+      const lqiEl = document.getElementById('cc-lqi');
+      if (cc.lqi != null) {
+        const lqiVal = cc.lqi & 0x7F;  // bits [6:0]
+        lqiEl.textContent = lqiVal;
+        lqiEl.style.color = lqiVal < 20 ? '#4ade80' : lqiVal < 50 ? '#fbbf24' : '#f87171';
+      } else {
+        lqiEl.textContent = '---'; lqiEl.style.color = 'var(--text)';
+      }
+
+      // RSSI statistics
+      const rssiEl = document.getElementById('cc-rssi-stats');
+      if (cc.rssi_min != null) {
+        rssiEl.textContent = 'min ' + cc.rssi_min.toFixed(1) + '  max ' + (cc.rssi_max||0).toFixed(1) + '  avg ' + (cc.rssi_avg||0).toFixed(1) + ' dBm';
+      } else {
+        rssiEl.textContent = '---';
+      }
+
+      // RX data total + rate
+      const rxTotal = cc.rx_total_bytes || 0;
+      const rxTotalStr = rxTotal > 1048576 ? (rxTotal/1048576).toFixed(1)+'M' : rxTotal > 1024 ? (rxTotal/1024).toFixed(1)+'K' : rxTotal + 'B';
+      document.getElementById('cc-rx-total').textContent = rxTotalStr;
+      const rxRate = cc.rx_rate_bps || 0;
+      const rateEl = document.getElementById('cc-rx-rate');
+      if (rxRate >= 1024) rateEl.textContent = (rxRate/1024).toFixed(1) + ' KB/s';
+      else rateEl.textContent = rxRate.toFixed(0) + ' B/s';
+      rateEl.style.color = rxRate > 0 ? '#4ade80' : 'var(--text)';
+
+      // Errors (compact)
+      const errParts = [];
+      if (cc.rx_overflow > 0) errParts.push('OVF:' + cc.rx_overflow);
+      if (cc.rx_fifo_err > 0) errParts.push('RX_ERR:' + cc.rx_fifo_err);
+      if (cc.tx_fifo_err > 0) errParts.push('TX_ERR:' + cc.tx_fifo_err);
+      const errEl = document.getElementById('cc-errors');
+      errEl.textContent = errParts.length ? errParts.join(' ') : 'none';
+      errEl.style.color = errParts.length ? '#f87171' : '#4ade80';
+
+      // Uptime
+      const up = cc.uptime_ms;
+      document.getElementById('cc-uptime').textContent = up > 3600000 ? (up/3600000).toFixed(1)+'h' : up > 60000 ? (up/60000).toFixed(0)+'m' : (up/1000).toFixed(0)+'s';
+    } else if (ccDbg) {
+      ccDbg.style.display = 'none';
     }
 
     // Waterfall preview (RTL-SDR only)
@@ -3472,6 +3666,7 @@
     const stateDetail = document.getElementById('state-detail');
     // Tracking = station.py has a satellite name in status (covers pre-AOS slew + active tracking)
     const isTracking = !!(rf.satellite && rf.pass_progress != null && rf.pass_progress < 100);
+    if (isTracking !== _isTracking) _skyNeedsRedraw = true; // force redraw on state change
     _isTracking = isTracking;
     // Store tracked satellite name for sky plot focus matching
     _trackedSatName = rf.satellite || _pendingTrack || '';
@@ -3496,7 +3691,11 @@
       try { localStorage.removeItem('pendingTrack'); } catch(e) {}
     }
     // Re-send track command if station.py hasn't picked it up (e.g. after service restart)
-    if (_pendingTrack && !isTracking && !rf.satellite &&
+    // Don't re-send if station.py is already showing this satellite (even with progress=0,
+    // which happens during cycle restarts while fetching TLEs)
+    const _stationHasSat = rf.satellite && _pendingTrack &&
+        rf.satellite.toLowerCase().includes(_pendingTrack.toLowerCase().substring(0, 6));
+    if (_pendingTrack && !isTracking && !_stationHasSat &&
         Date.now() - _pendingTrackTime > 10000) { // 10s grace period
       // Check every 15s if we need to re-write the track file
       if (!window._lastTrackResend || Date.now() - window._lastTrackResend > 15000) {
@@ -3628,7 +3827,7 @@
       if (pctF > 0) {
         if (!window._rssiHistory) window._rssiHistory = [];
         window._rssiHistory.push(rf.rssi != null ? rf.rssi : -130);
-        if (window._rssiHistory.length > 120) window._rssiHistory.shift();
+        if (window._rssiHistory.length > 20) window._rssiHistory.shift();  // ~10s at 2Hz
         _drawRssiSparkline(window._rssiHistory);
       }
 
@@ -3705,11 +3904,11 @@
       if (rf.packets > 0) {
         linkEl.textContent = 'Receiving — ' + rf.packets + ' packets';
         linkEl.style.color = 'var(--green)';
-      } else if (rf.rssi != null && rf.rssi > -110) {
+      } else if (rf.rssi != null && rf.rssi > -85) {
         linkEl.textContent = 'Signal detected, decoding...';
         linkEl.style.color = 'var(--amber)';
-      } else if (pctF > 0) {
-        linkEl.textContent = 'Tracking — awaiting signal';
+      } else if (pctF > 0 && rf.rssi != null) {
+        linkEl.textContent = 'Listening — ' + rf.rssi.toFixed(0) + ' dBm noise floor';
         linkEl.style.color = 'var(--muted)';
       } else {
         linkEl.textContent = 'Slewing to AOS position';
@@ -3879,6 +4078,7 @@
     // ── Auto-track toggle sync ──
     const atToggle = document.getElementById('auto-track-toggle');
     if (atToggle && d.auto_track !== undefined) {
+      _autoTrack = d.auto_track;
       atToggle.checked = d.auto_track;
     }
 
@@ -3960,23 +4160,22 @@
     if (!_activeFilters.has('all')) {
       filtered = _passes.filter(p => {
         let ok = true;
-        if (_activeFilters.has('uhf')) {
+        const hasUhf = _activeFilters.has('uhf');
+        const hasVhf = _activeFilters.has('vhf');
+        if (hasUhf || hasVhf) {
           const f = p.freq_mhz || 0;
-          if (!(f >= 430 && f <= 440) && f > 0) ok = false;
-        }
-        if (_activeFilters.has('vhf')) {
-          const f = p.freq_mhz || 0;
-          if (!(f >= 130 && f <= 175) && f > 0) ok = false;
+          if (f > 0) {
+            const inUhf = f >= 420 && f <= 450;
+            const inVhf = f >= 130 && f <= 175;
+            if (!(( hasUhf && inUhf) || (hasVhf && inVhf))) ok = false;
+          }
         }
         if (_activeFilters.has('cc1200') && !p.cc1200_ok) ok = false;
-        if (_activeFilters.has('rtlsdr') && p.cc1200_ok) ok = false;
+        if (_activeFilters.has('rtlsdr') && !p.rtlsdr_ok) ok = false;
         if (_activeFilters.has('high') && p.max_el < 45) ok = false;
         if (_activeFilters.has('medium') && p.max_el < 20) ok = false;
-        // Category filters
-        if (_activeFilters.has('amateur') && p.category !== 'amateur') ok = false;
-        if (_activeFilters.has('cubesat') && p.category !== 'cubesat') ok = false;
-        if (_activeFilters.has('weather') && p.category !== 'weather') ok = false;
-        if (_activeFilters.has('space-station') && p.category !== 'space-station') ok = false;
+        if (_activeFilters.has('heard') && !p.recently_heard) ok = false;
+        if (_activeFilters.has('heard7') && (p.last_heard_days == null || p.last_heard_days > 7)) ok = false;
         return ok;
       });
     }
@@ -4088,16 +4287,34 @@
       const freqStr = pass.freq_mhz ? pass.freq_mhz.toFixed(1) + ' MHz' : '';
       const modeStr = pass.mode || '';
 
+      // Activity badge — green <7d, yellow <30d, grey = never heard
+      let activityDot = '';
+      if (pass.recently_heard) {
+        if (pass.last_heard_days != null && pass.last_heard_days <= 7) {
+          activityDot = '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#4ade80;margin-right:3px;vertical-align:middle" title="Heard ' + pass.last_heard_days + 'd ago"></span>';
+        } else {
+          activityDot = '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#f59e0b;margin-right:3px;vertical-align:middle" title="Heard ' + (pass.last_heard_days || '?') + 'd ago"></span>';
+        }
+      } else if (pass.recently_heard === false) {
+        activityDot = '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--muted-dim);margin-right:3px;vertical-align:middle" title="Not heard in 30d"></span>';
+      }
+
+      // "Last heard" subtitle snippet
+      let heardStr = '';
+      if (pass.recently_heard && pass.last_heard_days != null) {
+        heardStr = pass.last_heard_days === 0 ? 'heard today' : 'heard ' + pass.last_heard_days + 'd ago';
+      }
+
       const isPending = _pendingTrack && pass.name.toLowerCase().includes(_pendingTrack.toLowerCase());
       const pendingBadge = isPending ? ' <span style="font-size:0.55rem;color:#f59e0b;font-family:var(--font-mono);letter-spacing:0.08em">TRACKING</span>' : '';
-      const nextBadge = isNext && !_pendingTrack && !_isTracking ? ' next-label' : '';
+      const nextBadge = isNext && !_pendingTrack && !_isTracking && _autoTrack ? ' next-label' : '';
 
       item.innerHTML = `
         <div class="pass-dot ${dotClass}"></div>
-        <div class="pass-item-name${nextBadge}">${pass.name}${pendingBadge}</div>
+        <div class="pass-item-name${nextBadge}">${activityDot}${pass.name}${pendingBadge}</div>
         <div class="max-el-badge">${pass.max_el.toFixed(0)}&deg;</div>
         <button class="btn btn-accent pass-track-btn" onclick="event.stopPropagation();doTrackSat('${pass.name.replace(/'/g, "\\'")}')">&#9654;</button>
-        <div class="pass-meta-bot" style="grid-column:2/5">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}</div>
+        <div class="pass-meta-bot" style="grid-column:2/5">${timeStr} &middot; ${subStr}${freqStr ? ' &middot; ' + freqStr : ''}${modeStr ? ' ' + modeStr : ''}${heardStr ? ' &middot; ' + heardStr : ''}</div>
       `;
 
       // Click to open satellite info popup
@@ -4913,7 +5130,7 @@
   }
 
   /** Toggle filter panel visibility */
-  let _activeFilters = new Set(['uhf']); // default: only show UHF (our frequency)
+  let _activeFilters = new Set(['cc1200']); // default: CC1200-compatible only
   function toggleFilterPanel() {
     const panel = document.getElementById('filter-panel');
     panel.style.display = panel.style.display === 'none' ? 'block' : 'none';

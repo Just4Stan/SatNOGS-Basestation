@@ -17,14 +17,14 @@ RF_SETTINGS code rfSettings = {
     0xBA,  // PREAMBLE_CFG0         Preamble Detection Configuration Reg. 0
     0xC8,  // IQIC                  Digital Image Channel Compensation Configuration
     0x8E,  // CHAN_BW               Channel Filter Configuration
-    0x40,  // MDMCFG1               General Modem Parameter Configuration Reg. 1
+    0x40,  // MDMCFG1               General Modem Parameter Configuration Reg. 1 (bit6 FIFO_EN=1)
     0x05,  // MDMCFG0               General Modem Parameter Configuration Reg. 0
     0x4F,  // SYMBOL_RATE2          Symbol Rate Configuration Exponent and Mantissa [1..
     0x75,  // SYMBOL_RATE1          Symbol Rate Configuration Mantissa [15:8]
     0x10,  // SYMBOL_RATE0          Symbol Rate Configuration Mantissa [7:0]
     0x33,  // AGC_REF               AGC Reference Level Configuration
     0xF1,  // AGC_CS_THR            Carrier Sense Threshold Configuration
-    0x00,  // AGC_GAIN_ADJUST       RSSI Offset Configuration
+    0x9D,  // AGC_GAIN_ADJUST       RSSI Offset Configuration (-99 dB per CC120X UG Table 8)
     0xB1,  // AGC_CFG3              Automatic Gain Control Configuration Reg. 3
     0x20,  // AGC_CFG2              Automatic Gain Control Configuration Reg. 2
     0x11,  // AGC_CFG1              Automatic Gain Control Configuration Reg. 1
@@ -48,7 +48,7 @@ RF_SETTINGS code rfSettings = {
     0x0F,  // ASK_CFG               ASK Configuration
     0xFF,  // PKT_LEN               Packet Length Configuration
     0x18,  // IF_MIX_CFG            IF Mix Configuration
-    0x20,  // FREQOFF_CFG           Frequency Offset Correction Configuration
+    0x34,  // FREQOFF_CFG           FOC enabled + FB2PLL (real-time FREQOFF→PLL tracking)
     0x03,  // TOC_CFG               Timing Offset Correction Configuration
     0x00,  // MARC_SPARE            MARC Spare
     0x00,  // ECG_CFG               External Clock Frequency Configuration

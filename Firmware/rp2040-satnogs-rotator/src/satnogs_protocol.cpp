@@ -163,8 +163,9 @@ void SatnogsProtocol::handle_token(const char* token) {
   }
 
   if (std::strcmp(upper, "ZERO") == 0 || std::strcmp(upper, "Z") == 0) {
-    rotator_.zero_encoders();
-    std::printf("Encoders zeroed\n");
+    rotator_.calibrate_az_zero();
+    rotator_.calibrate_el(0.0f);
+    std::printf("AZ/EL zeroed at current position\n");
     return;
   }
 

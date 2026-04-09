@@ -42,7 +42,7 @@ constexpr float kKd = 0.02f;
 constexpr float kIntegralMaxDeg = 5.0f;  // anti-windup clamp (degrees·seconds)
 constexpr float kDtSeconds = 0.01f;      // 100 Hz tick rate
 constexpr float kDFilterAlpha = 0.15f;   // D-term low-pass filter (0..1, lower = more filtering)
-constexpr float kDutyFilterAlpha = 0.05f; // duty output smoothing (0..1, lower = smoother)
+constexpr float kDutyFilterAlpha = 0.15f; // duty output smoothing (0..1, lower = smoother)
 
 // PWM
 constexpr uint32_t kPwmHz = 20000;

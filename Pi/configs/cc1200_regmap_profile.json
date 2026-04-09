@@ -4,6 +4,7 @@
     "AGC_CFG2": 26,
     "AGC_CFG3": 25,
     "AGC_CS_THR": 23,
+    "AGC_GAIN_ADJUST": 24,
     "AGC_REF": 22,
     "ANALOG_SPARE": 12088,
     "ASK_CFG": 45,

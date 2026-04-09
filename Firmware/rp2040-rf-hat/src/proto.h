@@ -35,6 +35,8 @@ typedef enum {
     MSG_PROFILE_BEGIN   = 0x31,
     MSG_PROFILE_CHUNK   = 0x32,
     MSG_PROFILE_APPLY   = 0x33,
+    MSG_SET_FREQ_WORD   = 0x34,
+    MSG_SET_SERIAL_MODE = 0x35,
 
     // Dual-radio extension: select which CC1200 to talk to
     MSG_SELECT_RADIO    = 0x40,
@@ -54,14 +56,26 @@ typedef enum {
     STATE_TX   = 2,
 } proto_state_t;
 
-// Initialize protocol with array of radios and the UART serial port
+// Write function callback — allows routing responses to UART or USB
+typedef void (*proto_write_fn_t)(const uint8_t* data, size_t len);
+
+// Initialize protocol with array of radios
 void proto_init(cc1200_t radios[], uint8_t radio_count);
+
+// Set the write function for a given transport channel
+// Channel 0 = UART (default), Channel 1 = USB
+void proto_set_write_fn(uint8_t channel, proto_write_fn_t fn);
 
 // Call frequently from main loop — reads UART, handles commands, streams RX
 void proto_poll(void);
 
+// Feed raw bytes from an external source (e.g. USB Serial)
+// Responses will be routed via channel 1 write function
+void proto_feed_bytes(const uint8_t* data, size_t len, uint8_t channel);
+
 // State accessors for status LED
 bool proto_is_streaming(void);
+bool proto_is_serial_mode(void);
 uint8_t proto_active_radio(void);
 
 // Buzzer callback — set by main.cpp, called by proto when MSG_BUZZER arrives

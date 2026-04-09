@@ -49,6 +49,7 @@ import signal
 import socket
 import argparse
 import datetime
+import tempfile
 import urllib.request
 from pathlib import Path
 from typing import Optional, Tuple, List
@@ -64,12 +65,65 @@ from rf_hat import (
     CC1200Link, RADIO_UHF, RADIO_VHF,
     STATE_RX, STATE_IDLE,
     EVT_RX_DATA, EVT_ERROR,
+    EXT_FREQOFF_EST1, EXT_FREQOFF_EST0, EXT_LQI_VAL,
     doppler_shift, freq_to_regs,
 )
 from rf_backend import RfBackend, RfMetrics
 from buzzer import Buzzer
 from satnogs import SatNOGSClient
-from sat_library import SatLibrary, SatProfile
+from sat_library import SatLibrary, SatProfile, ModulationConfig, pick_best_uhf_transmitter
+
+
+def lookup_with_satnogs_fallback(sat_library: SatLibrary, norad_id: int,
+                                  name: str) -> Optional[SatProfile]:
+    """Look up satellite profile locally, then fall back to SatNOGS DB API.
+
+    If the local profile DB has no entry, queries db.satnogs.org for the
+    satellite's transmitter info and builds a SatProfile on the fly.
+    """
+    profile = sat_library.lookup(norad_id=norad_id, name=name)
+    if profile:
+        return profile
+
+    # Local lookup failed — try SatNOGS DB API
+    if not norad_id:
+        return None
+
+    try:
+        txs = sat_library.fetch_satnogs_transmitters(norad_id)
+    except Exception:
+        return None
+
+    if not txs:
+        return None
+
+    # Pick the best CC1200-compatible UHF transmitter (closest to 435 MHz)
+    tx = pick_best_uhf_transmitter(txs)
+    if not tx:
+        return None
+    mod = None
+    baud = tx.get("baud")
+    cc_fmt = tx.get("cc1200_format", "2-GFSK")
+    if baud and baud > 0:
+        mode_str = tx.get("mode", "").upper()
+        if mode_str in ("GMSK", "MSK", "MSK AX.100 MODE 5", "MSK AX.100 MODE 6"):
+            deviation = int(baud / 4)  # h=0.5
+        else:
+            deviation = int(baud * 0.35)  # h~0.7 typical amateur FSK
+        rx_bw = max(12.5, (baud + 2 * deviation) * 1.2 / 1000)
+        mod = ModulationConfig(
+            format=cc_fmt,
+            symbol_rate_bps=int(baud),
+            deviation_hz=deviation,
+            rx_bw_khz=round(rx_bw, 1),
+        )
+
+    return SatProfile(
+        freq_mhz=tx["freq_mhz"],
+        modulation=mod,
+        description=f"SatNOGS DB: {tx.get('description', tx.get('mode', ''))}",
+    )
+
 
 # ---------------------------------------------------------------------------
 # Station config (defaults — override with --lat/--lon/--elev or ~/station.conf)
@@ -94,7 +148,7 @@ MIN_ELEV      = 5.0          # minimum pass elevation
 STATUS_FILE   = os.path.expanduser("~/.station_status.json")  # read by dashboard.py
 HISTORY_FILE  = os.path.expanduser("~/.station_pass_history.json")  # recent pass log
 PREDICT_HOURS = 12
-METRICS_INTERVAL_S = 10.0
+METRICS_INTERVAL_S = 1.0
 
 # TLE sources
 TLE_URLS = [
@@ -134,10 +188,21 @@ def norad_id_from_tle(l1: str) -> int:
 
 
 def write_dashboard_status(data: dict):
-    """Write status JSON for dashboard.py to read."""
+    """Write status JSON atomically for dashboard.py to read."""
     try:
-        with open(STATUS_FILE, "w") as f:
-            json.dump(data, f)
+        dir_name = os.path.dirname(STATUS_FILE)
+        fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w") as f:
+                json.dump(data, f)
+            os.rename(tmp_path, STATUS_FILE)
+        except Exception:
+            # Clean up temp file on failure
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
     except Exception:
         pass
 
@@ -241,6 +306,14 @@ def fetch_tles():
     if tles:
         _tle_cache_station = tles
         _tle_cache_station_time = time.time()
+        # Save to disk so next startup is instant
+        try:
+            tle_file = os.path.expanduser("~/.station_tles.json")
+            data = {name: [l1, l2] for name, l1, l2 in tles}
+            with open(tle_file, "w") as f:
+                json.dump(data, f)
+        except Exception:
+            pass
     return tles
 
 
@@ -254,15 +327,17 @@ def make_observer(lat=None, lon=None, elev=None):
 
 
 def find_passes(tles, hours=12, max_results=20, lat=None, lon=None, elev=None):
-    """Find upcoming passes sorted by start time."""
+    """Find upcoming passes sorted by start time. Includes currently overhead passes."""
     obs = make_observer(lat, lon, elev)
     now = ephem.now()
+    # Start search 20 min in the past to catch passes already overhead
+    search_start = now - 20.0 / (24 * 60)
     passes = []
 
     for name, l1, l2 in tles:
         try:
             sat = ephem.readtle(name, l1, l2)
-            obs.date = now
+            obs.date = search_start
             for _ in range(3):
                 try:
                     info = obs.next_pass(sat)
@@ -274,6 +349,10 @@ def find_passes(tles, hours=12, max_results=20, lat=None, lon=None, elev=None):
                     duration = (set_t - rise_t) * 24 * 3600
 
                     if max_el >= MIN_ELEV and duration > 10:
+                        # Skip passes that already ended
+                        if set_t < now:
+                            obs.date = set_t + ephem.minute
+                            continue
                         hours_away = (rise_t - now) * 24
                         if hours_away <= hours:
                             passes.append({
@@ -309,8 +388,10 @@ class RotctlClient:
         self.sock: Optional[socket.socket] = None
 
     def connect(self):
+        self.close()  # clean up any previous socket before reconnecting
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.settimeout(5)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.settimeout(0.5)
         self.sock.connect((self.host, self.port))
 
     def close(self):
@@ -325,7 +406,6 @@ class RotctlClient:
         if not self.sock:
             return ""
         self.sock.sendall((cmd + "\n").encode())
-        time.sleep(0.05)
         try:
             return self.sock.recv(1024).decode().strip()
         except socket.timeout:
@@ -360,6 +440,7 @@ class RfHatManager(RfBackend):
         self.port = port
         self.link = CC1200Link()
         self.uhf_freq_hz = 0.0
+        self.uhf_base_freq_hz = 0.0  # satellite's nominal freq (before Doppler)
         self.vhf_freq_hz = 0.0
         self.pkt_count = 0
         self.total_bytes = 0
@@ -370,6 +451,14 @@ class RfHatManager(RfBackend):
             "symbol_rate_bps": 2400,
             "profile": "default",
         }
+        # RSSI tracking for pass statistics
+        self.rssi_min: Optional[float] = None
+        self.rssi_max: Optional[float] = None
+        self.rssi_sum: float = 0.0
+        self.rssi_count: int = 0
+        self._prev_rx_total: int = 0
+        self._prev_rx_time: float = 0.0
+        self._rx_rate_bps: float = 0.0
 
     def name(self) -> str:
         return "CC1200"
@@ -423,14 +512,71 @@ class RfHatManager(RfBackend):
     def get_status_dict(self) -> dict:
         m = self.link.get_metrics()
         rssi = m.rssi_dbm if m else None
-        return {
-            "streaming": True,
+
+        # Track RSSI min/max/avg over the pass
+        if rssi is not None:
+            if self.rssi_min is None or rssi < self.rssi_min:
+                self.rssi_min = rssi
+            if self.rssi_max is None or rssi > self.rssi_max:
+                self.rssi_max = rssi
+            self.rssi_sum += rssi
+            self.rssi_count += 1
+
+        # Compute RX data rate (bytes/sec)
+        now = time.time()
+        if m and self._prev_rx_time > 0:
+            dt = now - self._prev_rx_time
+            if dt > 0.1:
+                dbytes = m.rx_total_bytes - self._prev_rx_total
+                self._rx_rate_bps = max(0.0, dbytes / dt)
+                self._prev_rx_total = m.rx_total_bytes
+                self._prev_rx_time = now
+        elif m:
+            self._prev_rx_total = m.rx_total_bytes
+            self._prev_rx_time = now
+
+        # Read FREQOFF_EST (CC1200's measured freq error — 16-bit signed)
+        freqoff_est = None
+        fo1 = self.link.read_ext(EXT_FREQOFF_EST1)
+        fo0 = self.link.read_ext(EXT_FREQOFF_EST0)
+        if fo1 is not None and fo0 is not None:
+            raw = (fo1 << 8) | fo0
+            if raw & 0x8000:
+                raw -= 0x10000
+            # Convert to Hz: FREQOFF_EST has same resolution as FREQOFF
+            # LSB = f_xosc / (2^18 * LO_DIV) = 40e6 / (262144 * 8) ≈ 19.07 Hz
+            freqoff_est_hz = round(raw * 19.07, 0)
+            freqoff_est = int(freqoff_est_hz)
+
+        # Read LQI (link quality indicator — lower = better)
+        lqi = self.link.read_ext(EXT_LQI_VAL)
+
+        d = {
+            "streaming": bool(m.streaming) if m else False,
             "rssi": rssi,
             "packets": self.pkt_count,
             "freq_mhz": self.uhf_freq_hz / 1e6 if self.uhf_freq_hz else 0,
             "radio_config": self.radio_config,
             "rf_backend": "cc1200",
         }
+        if m:
+            d["cc1200"] = {
+                "marc": m.marc,
+                "desired_state": m.desired_state,
+                "flags": m.flags,
+                "rx_overflow": m.rx_overflow_count,
+                "rx_fifo_err": m.rx_fifo_err_count,
+                "tx_fifo_err": m.tx_fifo_err_count,
+                "rx_total_bytes": m.rx_total_bytes,
+                "uptime_ms": m.uptime_ms,
+                "rx_rate_bps": round(self._rx_rate_bps, 0),
+                "freqoff_est_hz": freqoff_est,
+                "lqi": lqi,
+                "rssi_min": self.rssi_min,
+                "rssi_max": self.rssi_max,
+                "rssi_avg": round(self.rssi_sum / self.rssi_count, 1) if self.rssi_count > 0 else None,
+            }
+        return d
 
     def setup_uhf_rx(self, freq_mhz: float, profile_path: str) -> bool:
         """Configure UHF radio for RX at the given frequency."""
@@ -447,7 +593,8 @@ class RfHatManager(RfBackend):
         log(f"RF HAT: {msg}")
 
         self.uhf_freq_hz = freq_mhz * 1e6
-        if not self.link.set_frequency(self.uhf_freq_hz):
+        self.uhf_base_freq_hz = self.uhf_freq_hz
+        if not self.link.set_frequency(self.uhf_freq_hz, force_cal=True):
             log("RF HAT: Failed to set UHF frequency")
             return False
 
@@ -520,6 +667,7 @@ class RfHatManager(RfBackend):
 
         if ok:
             self.uhf_freq_hz = profile.freq_mhz * 1e6
+            self.uhf_base_freq_hz = self.uhf_freq_hz
             actual = self.link.get_frequency()
             if actual:
                 log(f"RF HAT: UHF freq = {actual/1e6:.6f} MHz")
@@ -529,6 +677,9 @@ class RfHatManager(RfBackend):
         """Enter RX mode and enable streaming on the currently selected radio."""
         # Make sure UHF is selected
         self.link.select_radio(RADIO_UHF)
+        # Flush RX FIFO before entering RX (prevents stale data / FIFO errors)
+        self.link.set_state(STATE_IDLE)
+        self.link.strobe(0x3A)  # SFRX — flush RX FIFO
         if not self.link.set_state(STATE_RX):
             log("RF HAT: Failed to enter RX")
             return False
@@ -542,14 +693,36 @@ class RfHatManager(RfBackend):
         self.link.select_radio(RADIO_UHF)
         self.link.set_streaming(False)
         self.link.set_state(STATE_IDLE)
+        self.link.strobe(0x3A)  # SFRX — flush RX FIFO
         log("RF HAT: UHF RX stopped")
 
+    def start_serial_rx(self) -> bool:
+        """Enable CC1200 synchronous serial mode + PIO raw bit streaming."""
+        self.link.select_radio(RADIO_UHF)
+        if not self.link.set_serial_mode(True):
+            log("RF HAT: Failed to enable serial mode")
+            return False
+        log("RF HAT: Serial mode enabled (raw bit streaming via PIO)")
+        return True
+
+    def stop_serial_rx(self):
+        """Disable serial mode, return to FIFO/IDLE."""
+        self.link.select_radio(RADIO_UHF)
+        self.link.set_serial_mode(False)
+        log("RF HAT: Serial mode disabled")
+
     def update_uhf_doppler(self, freq_hz: float) -> bool:
-        """Update UHF RX frequency for Doppler correction."""
+        """Update UHF RX frequency for Doppler correction.
+
+        Uses set_frequency_word() directly for minimal latency — avoids
+        redundant select_radio() (which kills streaming) and FS_CFG writes
+        (band doesn't change during Doppler updates).
+        """
         if abs(freq_hz - self.uhf_freq_hz) < 50:  # skip if < 50 Hz change
             return True
-        self.link.select_radio(RADIO_UHF)
-        ok = self.link.set_frequency(freq_hz)
+        _, freq2, freq1, freq0 = freq_to_regs(freq_hz)
+        word = (freq2 << 16) | (freq1 << 8) | freq0
+        ok = self.link.set_frequency_word(word)
         if ok:
             self.uhf_freq_hz = freq_hz
         return ok
@@ -696,7 +869,8 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     log(f"  Rise AZ: {pass_info['rise_az']:.1f} → Set AZ: {pass_info['set_az']:.1f}", logfile)
     if rf:
         log(f"  RF backend: {rf.name()}", logfile)
-        log(f"  UHF RX: {args.uhf_freq:.3f} MHz", logfile)
+        _actual_mhz = (getattr(rf, 'uhf_base_freq_hz', 0) or 0) / 1e6 or args.uhf_freq
+        log(f"  UHF RX: {_actual_mhz:.3f} MHz", logfile)
         if args.doppler:
             log(f"  Doppler correction: ENABLED", logfile)
 
@@ -707,7 +881,8 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
 
     # Write status during pre-AOS slew so dashboard knows we're active
     write_dashboard_status({
-        "satellite": name, "pass_progress": 0, "freq_mhz": args.uhf_freq,
+        "satellite": name, "pass_progress": 0,
+        "freq_mhz": (getattr(rf, 'uhf_base_freq_hz', 0) or 0) / 1e6 or args.uhf_freq,
         "streaming": False, "rssi": None, "packets": 0, "rf_backend": "none",
         "cmd_az": round(rise_az, 2), "cmd_el": 0.0,
         "max_el": round(pass_info["max_el"], 1),
@@ -725,10 +900,31 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
         log(f"Waiting {wait:.0f}s for AOS...", logfile)
         stop_file = os.path.expanduser("~/.station_stop")
         track_file_check = os.path.expanduser("~/.station_track")
+        _last_keepalive = time.monotonic()
         while wait > 0.5:
             time.sleep(min(wait, 3.0))
             now_utc = datetime.datetime.now(datetime.timezone.utc)
             wait = (rise_utc - now_utc).total_seconds()
+            # Re-send position periodically during AOS wait (keeps rotctld alive)
+            if time.monotonic() - _last_keepalive >= 15.0:
+                try:
+                    rotctl.set_position(rise_az, 0)
+                except Exception:
+                    pass
+                _last_keepalive = time.monotonic()
+            # Keep status file fresh so dashboard shows pre-AOS state
+            write_dashboard_status({
+                "satellite": name, "pass_progress": 0,
+                "freq_mhz": (getattr(rf, 'uhf_base_freq_hz', 0) or 0) / 1e6 or args.uhf_freq,
+                "streaming": False, "rssi": None, "packets": 0,
+                "rf_backend": "none",
+                "cmd_az": round(pass_info["rise_az"], 2), "cmd_el": 0.0,
+                "max_el": round(pass_info["max_el"], 1),
+                "rise_az": round(pass_info["rise_az"], 1),
+                "set_az": round(pass_info["set_az"], 1),
+                "los_seconds": round(wait + pass_info["duration"], 0),
+                "duration": round(pass_info["duration"], 0),
+            })
             if not running:
                 return
             # Check for stop or new track during AOS wait
@@ -749,13 +945,52 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
     if buzzer:
         buzzer.beep_aos()
 
+    # Open CSV pass log for post-analysis
+    pass_csv = None
+    try:
+        log_dir = os.path.expanduser("~/pass_logs")
+        os.makedirs(log_dir, exist_ok=True)
+        ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = name.replace(" ", "_").replace("/", "-")
+        csv_path = os.path.join(log_dir, f"{ts}_{safe_name}.csv")
+        pass_csv = open(csv_path, "w")
+        pass_csv.write("t,az_cmd,el_cmd,az_act,el_act,rssi,freq_hz,doppler_hz,range_km,range_rate,packets\n")
+        log(f"Pass log: {csv_path}", logfile)
+    except Exception as e:
+        log(f"Pass log failed: {e}", logfile)
+
     # Start RX if RF is available
+    serial_decoder = None
     if rf:
-        rf.start_rx()
+        use_serial = getattr(args, 'serial_mode', False) and isinstance(rf, RfHatManager)
+        if use_serial:
+            rf.start_serial_rx()
+            # Initialize bitstream decoder
+            decoder_name = getattr(args, 'decoder', 'usp')
+            if decoder_name == 'usp':
+                from usp_decoder import USPDecoder
+                serial_decoder = USPDecoder()
+                log("Serial mode: USP decoder active", logfile)
+            elif decoder_name == 'ax100':
+                from ax100_decoder import AX100Decoder
+                serial_decoder = AX100Decoder()
+                log("Serial mode: AX.100 decoder active", logfile)
+            else:
+                log("Serial mode: raw capture (no decoder)", logfile)
+        else:
+            rf.start_rx()
         # Reset packet counters (CC1200 only — RTL-SDR doesn't decode packets)
         if isinstance(rf, RfHatManager):
             rf.pkt_count = 0
             rf.total_bytes = 0
+            rf.packets.clear()
+            rf.rssi_min = None
+            rf.rssi_max = None
+            rf.rssi_sum = 0.0
+            rf.rssi_count = 0
+            rf._prev_rx_total = 0
+            rf._prev_rx_time = 0.0
+            rf._rx_rate_bps = 0.0
 
     set_utc = pass_info["set_time"].replace(tzinfo=datetime.timezone.utc)
     dt = 1.0 / UPDATE_HZ
@@ -818,12 +1053,30 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             if rf and args.doppler and (now_mono - last_doppler) >= doppler_dt:
                 last_doppler = now_mono
                 range_rate = float(sat.range_velocity)
-                uhf_doppler = doppler_shift(args.uhf_freq * 1e6, range_rate)
+                # Use the satellite's nominal base frequency (not Doppler-shifted)
+                _base_hz = getattr(rf, 'uhf_base_freq_hz', 0) or args.uhf_freq * 1e6
+                uhf_doppler = doppler_shift(_base_hz, range_rate)
                 rf.set_frequency(uhf_doppler)
 
-            # Poll RF packets
+            # Poll RF packets (or raw bitstream in serial mode)
             if rf:
-                new_pkts = rf.poll_packets(logfile)
+                if serial_decoder and isinstance(rf, RfHatManager):
+                    # Serial mode: feed raw bytes to decoder
+                    new_pkts = 0
+                    for evt_type, body in rf.link.pop_events():
+                        if evt_type == EVT_RX_DATA and body:
+                            n = body[0]
+                            raw = body[1:1 + n]
+                            rf.total_bytes += n
+                            decoded_frames = serial_decoder.feed(raw)
+                            for frame in decoded_frames:
+                                rf.pkt_count += 1
+                                new_pkts += 1
+                                rf.packets.append((datetime.datetime.now(), frame))
+                                log(f"DECODED [{rf.pkt_count}] {len(frame)} bytes: "
+                                    f"{frame[:32].hex()}", logfile)
+                else:
+                    new_pkts = rf.poll_packets(logfile)
                 if new_pkts > 0:
                     if buzzer:
                         buzzer.beep_packet()
@@ -859,8 +1112,8 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
             print(f"\r  AZ{az:>7.1f} EL{el:>5.1f} {bar} {rf_info:<12s} T-{remaining:>5.0f}s",
                   end="", flush=True)
 
-            # Update dashboard status file (~1 Hz, not every tick)
-            if tick % UPDATE_HZ == 0:
+            # Update dashboard status file (~5 Hz for responsive GUI)
+            if tick % 2 == 0:
                 if rf:
                     status_data = rf.get_status_dict()
                 else:
@@ -868,7 +1121,7 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
                                    "freq_mhz": 0, "rf_backend": "none"}
                 status_data["satellite"] = name
                 status_data["pass_progress"] = round(progress, 1)
-                status_data["freq_mhz"] = args.uhf_freq
+                # freq_mhz already set by get_status_dict() with Doppler-corrected value
                 # Telemetry for focus panel
                 status_data["cmd_az"] = round(az, 2)
                 status_data["cmd_el"] = round(el, 2)
@@ -880,11 +1133,27 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
                 status_data["los_seconds"] = round(remaining, 0)
                 status_data["duration"] = round(pass_info["duration"], 0)
                 # Doppler: compute from range_velocity even if not correcting RF
-                _dop_hz = doppler_shift(args.uhf_freq * 1e6, float(sat.range_velocity)) - args.uhf_freq * 1e6
+                _base_hz2 = getattr(rf, 'uhf_base_freq_hz', 0) or args.uhf_freq * 1e6
+                _dop_hz = doppler_shift(_base_hz2, float(sat.range_velocity)) - _base_hz2
                 status_data["doppler_hz"] = round(_dop_hz, 1)
                 if satnogs:
                     status_data["satnogs"] = satnogs.get_stats()
                 write_dashboard_status(status_data)
+
+                # Append to CSV pass log
+                if pass_csv:
+                    try:
+                        _t = datetime.datetime.now(datetime.timezone.utc).isoformat()
+                        _rssi = status_data.get("rssi", "")
+                        _freq = status_data.get("freq_mhz", 0) * 1e6 if status_data.get("freq_mhz") else ""
+                        _dop = status_data.get("doppler_hz", "")
+                        _rng = status_data.get("range_km", "")
+                        _rr = status_data.get("range_rate", "")
+                        _pkts = status_data.get("packets", 0)
+                        pass_csv.write(f"{_t},{az:.2f},{el:.2f},{status_data.get('cmd_az','')},{status_data.get('cmd_el','')},{_rssi},{_freq},{_dop},{_rng},{_rr},{_pkts}\n")
+                        pass_csv.flush()
+                    except Exception:
+                        pass
 
             tick += 1
             next_tick = time.time() + dt
@@ -894,12 +1163,24 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
 
     finally:
         print()
+        if pass_csv:
+            try:
+                pass_csv.close()
+            except Exception:
+                pass
         log("** LOS — pass complete **", logfile)
         if buzzer:
             buzzer.beep_los()
         pkts, nbytes, peak_rssi = 0, 0, None
         if rf:
-            rf.stop_rx()
+            use_serial = getattr(args, 'serial_mode', False) and isinstance(rf, RfHatManager)
+            if use_serial:
+                rf.stop_serial_rx()
+                if serial_decoder:
+                    log(f"Serial decoder: {serial_decoder.sync_found} syncs, "
+                        f"{serial_decoder.frames_decoded} frames decoded", logfile)
+            else:
+                rf.stop_rx()
             m = rf.get_metrics()
             pkts, nbytes = m.packets, m.total_bytes
             peak_rssi = getattr(m, 'peak_rssi', None)
@@ -952,6 +1233,16 @@ def _run_daemon(args, logfile):
     log(" SatNOGS Station — DAEMON MODE", logfile)
     log("==========================================", logfile)
 
+    # Try to open RF HAT early just for buzzer feedback during setup
+    early_buzzer = None
+    try:
+        from buzzer_util import beep as _early_beep, READY as _BZ_READY, SETUP_DONE as _BZ_SETUP_DONE
+        _early_beep(_BZ_READY)
+        log("RF HAT buzzer: READY beep (hardware alive)", logfile)
+        early_buzzer = _early_beep
+    except Exception:
+        pass
+
     # Wait for setup wizard completion (GPS, north cal, antenna, RF mode)
     log("Waiting for setup wizard completion (open dashboard on phone)...", logfile)
     while running:
@@ -968,6 +1259,11 @@ def _run_daemon(args, logfile):
     if not running:
         return
     log("Setup wizard complete", logfile)
+    if early_buzzer:
+        try:
+            early_buzzer(_BZ_SETUP_DONE)
+        except Exception:
+            pass
 
     # Wait for station.conf (set via phone GPS on dashboard)
     log("Waiting for station location (set GPS via dashboard)...", logfile)
@@ -1007,6 +1303,27 @@ def _run_daemon(args, logfile):
             if new_lat is not None:
                 sta_lat, sta_lon = new_lat, new_lon
                 sta_elev = new_elev or sta_elev
+
+            # Check auto_track + manual track before doing anything expensive
+            _has_manual = False
+            track_file = os.path.expanduser("~/.station_track")
+            if os.path.exists(track_file):
+                _has_manual = True
+            if not args.sat and not _has_manual:
+                try:
+                    if os.path.exists(STATION_CONF):
+                        with open(STATION_CONF, "r") as f:
+                            _at_conf = json.load(f)
+                        if _at_conf.get("auto_track") is False:
+                            write_dashboard_status({
+                                "streaming": False, "rssi": None, "packets": 0,
+                                "freq_mhz": 0, "satellite": "", "pass_progress": 0,
+                                "rf_backend": "none",
+                            })
+                            time.sleep(3)
+                            continue
+                except Exception:
+                    pass
 
             # Connect to rotctld
             rotctl = RotctlClient(args.rot_host, args.rot_port)
@@ -1095,6 +1412,7 @@ def _run_daemon(args, logfile):
             passes = find_passes(tles_to_search, hours=PREDICT_HOURS,
                                  lat=sta_lat, lon=sta_lon, elev=sta_elev)
 
+            _skip_park = False  # set True when breaking for new track request
             if passes:
                 log(f"Found {len(passes)} passes", logfile)
                 for i, p in enumerate(passes):
@@ -1121,6 +1439,7 @@ def _run_daemon(args, logfile):
                             # User selected a new satellite — resume
                             os.remove(paused_file)
                             log(f"Resuming: manual track {_new_track}", logfile)
+                            _skip_park = True
                             break  # re-enter outer loop with new target
                         elif not _auto:
                             # Auto-track off, stay paused
@@ -1139,6 +1458,7 @@ def _run_daemon(args, logfile):
                             os.remove(track_file)
                             if new_target:
                                 log(f"New track request: {new_target}", logfile)
+                                _skip_park = True
                                 break  # break inner loop to re-enter outer with new target
                         except Exception:
                             pass
@@ -1182,7 +1502,7 @@ def _run_daemon(args, logfile):
                     if rf:
                         pass_name = p["name"]
                         pass_norad = norad_id_from_tle(p["tle"][1])
-                        profile = sat_library.lookup(norad_id=pass_norad, name=pass_name)
+                        profile = lookup_with_satnogs_fallback(sat_library, pass_norad, pass_name)
                         if profile:
                             log(f"Radio config: {profile.freq_mhz:.3f} MHz — {profile.description}", logfile)
                             rf.configure_for_satellite(profile, sat_library.default_profile or "")
@@ -1197,10 +1517,15 @@ def _run_daemon(args, logfile):
                                     "profile": "default",
                                 }
 
-                    track_pass(rotctl, rf, p["tle"], p, args, logfile,
-                               buzzer=buzzer,
-                               lat=sta_lat, lon=sta_lon, elev=sta_elev,
-                               satnogs=satnogs)
+                    try:
+                        track_pass(rotctl, rf, p["tle"], p, args, logfile,
+                                   buzzer=buzzer,
+                                   lat=sta_lat, lon=sta_lon, elev=sta_elev,
+                                   satnogs=satnogs)
+                    except Exception as e:
+                        log(f"ERROR: pass tracking failed for {p['name']}: {e}", logfile)
+                        log("Skipping to next pass", logfile)
+                        continue
 
                     # Check for new manual track request between passes
                     stop_file = os.path.expanduser("~/.station_stop")
@@ -1212,6 +1537,7 @@ def _run_daemon(args, logfile):
                                 _c2 = json.load(f)
                             if _c2.get("track_mode") == "manual" and _c2.get("track_satellite"):
                                 log(f"New track request: {_c2['track_satellite']}", logfile)
+                                _skip_park = True
                                 break  # break inner loop to re-enter outer loop with new target
                             # Check auto-track toggle
                             if _c2.get("auto_track") is False:
@@ -1238,11 +1564,21 @@ def _run_daemon(args, logfile):
                 log("No passes found in prediction window", logfile)
 
             # Cleanup this cycle
-            rotctl.park()
+            if _skip_park:
+                log("Skipping park — new track pending", logfile)
+                # Write a transitional status so dashboard knows we're still active
+                # (prevents dashboard from re-sending track command during cycle restart)
+                write_dashboard_status({
+                    "satellite": track_sat or "", "pass_progress": 0,
+                    "streaming": False, "rssi": None, "packets": 0,
+                    "freq_mhz": 0, "rf_backend": "none",
+                })
+            else:
+                rotctl.park()
+                clear_dashboard_status()
             rotctl.close()
             if rf:
                 rf.close()
-            clear_dashboard_status()
 
             if not running:
                 break
@@ -1292,8 +1628,10 @@ def main():
                         help="UHF RX frequency in MHz (default: 433.0)")
     parser.add_argument("--uhf-profile", default=UHF_PROFILE,
                         help="UHF SmartRF profile path")
-    parser.add_argument("--doppler", action="store_true",
-                        help="Enable real-time Doppler correction")
+    parser.add_argument("--doppler", action="store_true", default=True,
+                        help="Enable real-time Doppler correction (default: on)")
+    parser.add_argument("--no-doppler", dest="doppler", action="store_false",
+                        help="Disable Doppler correction")
 
     # RTL-SDR options
     parser.add_argument("--rtlsdr-device", type=int, default=0,
@@ -1328,6 +1666,14 @@ def main():
     # SatNOGS DB
     parser.add_argument("--no-satnogs", action="store_true",
                         help="Disable SatNOGS DB frame submission")
+
+    # Serial mode (raw bit streaming for USP/AX.100 protocols)
+    parser.add_argument("--serial-mode", action="store_true",
+                        help="Use CC1200 synchronous serial mode + PIO for raw "
+                             "bitstream capture (required for USP/AX.100 decoding)")
+    parser.add_argument("--decoder", default="usp",
+                        choices=["usp", "ax100", "none"],
+                        help="Bitstream decoder for --serial-mode (default: usp)")
 
     # Output
     parser.add_argument("--log", default=None,
@@ -1465,7 +1811,7 @@ def main():
             if rf:
                 pass_name = p['name']
                 pass_norad = norad_id_from_tle(p['tle'][1])
-                profile = sat_library.lookup(norad_id=pass_norad, name=pass_name)
+                profile = lookup_with_satnogs_fallback(sat_library, pass_norad, pass_name)
                 if profile:
                     log(f"Radio config: {profile.freq_mhz:.3f} MHz — {profile.description}", logfile)
                     rf.configure_for_satellite(profile, sat_library.default_profile or "")

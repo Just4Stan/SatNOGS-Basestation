@@ -99,6 +99,18 @@
                 "rx_bw_khz": 50
             },
             "description": "MeznSat \u2014 9600 GFSK"
+        },
+        {
+            "name_match": "SPACEMOBILE",
+            "norad_id": 61047,
+            "freq_mhz": 439.500,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 2400,
+                "deviation_hz": 1200,
+                "rx_bw_khz": 12.5
+            },
+            "description": "SpaceMobile BV1 \u2014 2400 bps GFSK"
         }
     ]
 }

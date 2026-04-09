@@ -8,7 +8,7 @@
 namespace pins {
 
 // Azimuth motor driver
-constexpr uint kAzIn1 = 15;   // /Azimuth/AZ_EN/IN1
+constexpr uint kAzIn1 = 16;   // GP16 — bodge wire from GP15 (dead pin, can't drive high)
 constexpr uint kAzIn2 = 14;   // /Azimuth/AZ_PH/IN2
 constexpr uint kAzPwm = 22;   // /Azimuth/AZ_PWM
 constexpr uint kAzAlert = 19; // /Azimuth/AZ_ALERT
@@ -41,6 +41,6 @@ constexpr uint kLed = 25;
 // WS2812B NeoPixel status LED (optional — requires bodge wire on v1 PCB)
 // Not populated on the current motor PCB. Firmware supports it if a
 // WS2812B is wired to GP16 + 3V3 + GND.  Harmless if unconnected.
-constexpr uint kNeoPixel = 16;  // GP16
+constexpr uint kNeoPixel = 2;   // GP2 (moved — GP16 reassigned to AZ_IN1 bodge)
 
 } // namespace pins

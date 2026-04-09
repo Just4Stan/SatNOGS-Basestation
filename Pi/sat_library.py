@@ -32,16 +32,48 @@ CC1200_MODES = {"2-FSK", "2-GFSK", "4-FSK", "4-GFSK", "ASK", "OOK"}
 
 # SatNOGS DB mode strings that map to CC1200 formats
 SATNOGS_MODE_MAP = {
-    "FSK":    "2-FSK",
-    "AFSK":   "2-FSK",
-    "GFSK":   "2-GFSK",
-    "GMSK":   "2-GFSK",
-    "MSK":    "2-GFSK",
-    "4FSK":   "4-FSK",
-    "4GFSK":  "4-GFSK",
-    "OOK":    "OOK",
-    "ASK":    "ASK",
+    "FSK":                "2-FSK",
+    "AFSK":               "2-FSK",     # 9600+ baud only; 1200 baud Bell 202 not compatible
+    "GFSK":               "2-GFSK",
+    "GMSK":               "2-GFSK",    # GMSK = GFSK with BT=0.5, h=0.5
+    "MSK":                "2-GFSK",    # MSK = FSK with h=0.5
+    "FFSK":               "2-FSK",
+    "4FSK":               "4-FSK",
+    "4GFSK":              "4-GFSK",
+    "OOK":                "OOK",
+    "ASK":                "ASK",
+    "FSK AX.25 G3RUH":   "2-FSK",     # needs SW deframing (HDLC + G3RUH descrambler)
+    "FSK AX.100 Mode 5": "2-GFSK",    # GOMspace/Syrlinks AX.100 protocol
+    "FSK AX.100 Mode 6": "2-GFSK",
+    "MSK AX.100 Mode 5": "2-GFSK",
+    "MSK AX.100 Mode 6": "2-GFSK",
+    "GMSK USP":           "2-GFSK",    # Uppsala Space Protocol framing
+    "DOKA":               "2-GFSK",    # Russian DOKA protocol
+    "AFSK TUBiX10":       "2-FSK",
+    "GFSK Rktr":          "2-GFSK",
+    "GFSK Pkst":          "2-GFSK",
 }
+
+
+def pick_best_uhf_transmitter(tx_list: list) -> Optional[dict]:
+    """Pick the best CC1200-compatible UHF transmitter from a list.
+
+    Prefers CC1200-compatible modes, then picks closest to 435 MHz
+    (center of amateur UHF sat band). Returns None if list is empty.
+    """
+    if not tx_list:
+        return None
+
+    # Prefer CC1200-compatible entries
+    cc_ok = [tx for tx in tx_list if tx.get("cc1200_format")]
+    pool = cc_ok if cc_ok else tx_list
+
+    # Pick closest to 435 MHz (center of 430-440 amateur UHF allocation)
+    def dist(tx):
+        f = tx.get("freq_mhz", 0)
+        return abs(f - 435.0)
+
+    return min(pool, key=dist)
 
 
 @dataclass
@@ -237,11 +269,18 @@ class SatLibrary:
                 continue
 
             mode = tx.get("mode", "")
-            cc_fmt = SATNOGS_MODE_MAP.get(mode.upper())
+            cc_fmt = SATNOGS_MODE_MAP.get(mode)
+            if cc_fmt is None:
+                # Try uppercase match
+                cc_fmt = SATNOGS_MODE_MAP.get(mode.upper())
             if cc_fmt is None:
                 continue
 
-            baud = tx.get("baud")
+            # Skip 1200 baud AFSK — Bell 202 audio tones, not baseband FSK
+            baud = tx.get("baud") or 0
+            if mode.upper() == "AFSK" and baud <= 1200:
+                continue
+
             if norad_id not in new_sats:
                 entry = {
                     "name_match": "",
@@ -250,8 +289,14 @@ class SatLibrary:
                     "description": f"SatNOGS DB: {tx.get('description', mode)}",
                 }
                 if baud and baud > 0:
-                    deviation = int(baud * 0.5)
-                    rx_bw = max(12.5, baud * 1.5 / 1000)
+                    # Deviation estimation based on modulation type
+                    if mode.upper() in ("GMSK", "MSK", "MSK AX.100 MODE 5",
+                                         "MSK AX.100 MODE 6"):
+                        deviation = int(baud / 4)  # h=0.5
+                    else:
+                        deviation = int(baud * 0.35)  # h~0.7 typical amateur FSK
+                    # Carson's rule + 20% margin
+                    rx_bw = max(12.5, (baud + 2 * deviation) * 1.2 / 1000)
                     entry["modulation"] = {
                         "format": cc_fmt,
                         "symbol_rate_bps": int(baud),

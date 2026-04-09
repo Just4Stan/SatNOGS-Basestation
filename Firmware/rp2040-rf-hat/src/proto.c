@@ -6,14 +6,23 @@
 #include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
+#include "hardware/pio.h"
+#include "hardware/gpio.h"
 
 #include "cobs.h"
 #include "crc16.h"
+#include "serial_rx.pio.h"
 
 // CC1200 EXT status registers (SWRU346B)
+#define CC1200_EXTADDR_FREQOFF1     0x0A
+#define CC1200_EXTADDR_FREQOFF0     0x0B
+#define CC1200_EXTADDR_FREQ2        0x0C
+#define CC1200_EXTADDR_FREQ1        0x0D
+#define CC1200_EXTADDR_FREQ0        0x0E
 #define CC1200_EXTADDR_RSSI1        0x71
 #define CC1200_EXTADDR_RSSI0        0x72
 #define CC1200_EXTADDR_MARCSTATE    0x73
+#define CC1200_EXTADDR_NUM_TXBYTES  0xD6
 #define CC1200_EXTADDR_NUM_RXBYTES  0xD7
 
 // Framing buffers
@@ -26,18 +35,75 @@ static uint8_t   g_radio_count = 0;
 static uint8_t   g_active   = 0;        // currently selected radio index
 
 static bool g_streaming = false;
+static uint8_t g_streaming_channel = 0;  // channel that enabled streaming
 
 static buzzer_cb_t g_buzzer_cb = NULL;
+
+// Radio FSM — auto-recovers from FIFO errors, keeps radio in desired state
+static proto_state_t g_desired_state = STATE_IDLE;
+
+typedef enum {
+    RADIO_FSM_IDLE = 0,
+    RADIO_FSM_RX,
+    RADIO_FSM_TX,
+    RADIO_FSM_DOPPLER_RETUNE,
+} radio_fsm_state_t;
+
+static radio_fsm_state_t g_radio_fsm = RADIO_FSM_IDLE;
+
+// Doppler retune state
+static volatile bool     g_freq_retune_pending = false;
+static volatile bool     g_freq_retune_need_cal = false;
+static volatile uint32_t g_pending_freq_word = 0;
+static uint32_t          g_last_applied_freq_word = 0;
+
+// Cumulative counters
+static uint32_t g_rx_total_bytes = 0;
+static uint32_t g_tx_total_bytes = 0;
+static uint16_t g_rx_overflow_count = 0;
+static uint16_t g_rx_fifo_err_count = 0;
+static uint16_t g_tx_fifo_err_count = 0;
+static bool     g_rx_overflow_seen = false;
+static bool     g_rx_fifo_err_seen = false;
+static bool     g_tx_fifo_err_seen = false;
+static uint8_t  g_last_rx_chunk = 0;
+
+// ---- Serial mode (CC1200 synchronous serial + PIO bit sampling) ----
+static bool     g_serial_mode = false;
+static PIO      g_serial_pio = pio0;
+static uint     g_serial_sm = 0;
+static int      g_serial_pio_offset = -1;
+
+// Ring buffer for PIO → UART streaming
+#define SERIAL_BUF_SIZE  256
+#define SERIAL_BUF_MASK  (SERIAL_BUF_SIZE - 1)
+static uint8_t  g_serial_buf[SERIAL_BUF_SIZE];
+static volatile uint16_t g_serial_head = 0;
+static volatile uint16_t g_serial_tail = 0;
+static uint32_t g_serial_last_send_ms = 0;
+
+// Saved CC1200 register values for restore on serial mode disable
+static uint8_t g_saved_iocfg2 = 0;
+static uint8_t g_saved_iocfg0 = 0;
+static uint8_t g_saved_pkt_cfg2 = 0;
+static uint8_t g_saved_mdmcfg1 = 0;
+static uint8_t g_saved_sync_cfg1 = 0;
+static uint8_t g_saved_preamble_cfg1 = 0;
 
 void proto_set_buzzer_cb(buzzer_cb_t cb) {
     g_buzzer_cb = cb;
 }
 
-// RX accumulator for COBS frames (from UART)
-static uint8_t g_rx_enc[RX_ENC_MAX];
-static size_t  g_rx_enc_len = 0;
+// Transport write functions (channel 0 = UART, channel 1 = USB)
+#define PROTO_NUM_CHANNELS 2
+static proto_write_fn_t g_write_fn[PROTO_NUM_CHANNELS] = { NULL, NULL };
+static uint8_t g_active_channel = 0;  // which channel is currently being replied to
 
-// Working buffers
+// RX accumulators for COBS frames — one per channel
+static uint8_t g_rx_enc[PROTO_NUM_CHANNELS][RX_ENC_MAX];
+static size_t  g_rx_enc_len[PROTO_NUM_CHANNELS] = { 0, 0 };
+
+// Working buffers (shared — only one command processed at a time)
 static uint8_t g_rx_dec[RX_DEC_MAX];
 static uint8_t g_tx_payload[RX_DEC_MAX];
 static uint8_t g_tx_enc[TX_ENC_MAX];
@@ -48,8 +114,122 @@ static inline cc1200_t* active_radio(void) {
     return &g_radios[g_active];
 }
 
-// ---- UART I/O ----
-static void uart_write_bytes(const uint8_t* data, size_t len)
+// Helpers
+static inline uint32_t uptime_ms_now(void) {
+    return to_ms_since_boot(get_absolute_time());
+}
+
+static inline uint32_t abs_u32_diff(uint32_t a, uint32_t b) {
+    return (a >= b) ? (a - b) : (b - a);
+}
+
+// Radio FSM — auto-recover from FIFO errors, keep radio in desired state
+static inline void set_desired_state(proto_state_t st) {
+    g_desired_state = st;
+}
+
+static void ensure_radio_state(void) {
+    cc1200_t* radio = active_radio();
+    if (!radio) return;
+
+    cc1200_status_t st = cc1200_strobe(radio, CC1200_CMD_SNOP);
+
+    if (st.state == CC1200_STATE_RX_FIFO_ERR) {
+        g_rx_fifo_err_seen = true;
+        g_rx_fifo_err_count++;
+        (void)cc1200_strobe(radio, CC1200_CMD_SFRX);
+        if (g_desired_state == STATE_RX)
+            (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+        else
+            (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+        return;
+    }
+    if (st.state == CC1200_STATE_TX_FIFO_ERR) {
+        g_tx_fifo_err_seen = true;
+        g_tx_fifo_err_count++;
+        (void)cc1200_strobe(radio, CC1200_CMD_SFTX);
+        if (g_desired_state == STATE_RX)
+            (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+        else if (g_desired_state == STATE_TX)
+            (void)cc1200_strobe(radio, CC1200_CMD_STX);
+        else
+            (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+        return;
+    }
+
+    if (g_desired_state == STATE_RX) {
+        if (st.state != CC1200_STATE_RX)
+            (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+    } else if (g_desired_state == STATE_TX) {
+        // TX is explicit — do not auto-restart
+    } else {
+        if (st.state != CC1200_STATE_IDLE)
+            (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+    }
+}
+
+// Doppler retune — two paths:
+//   Small shift (<254 kHz): write FREQOFF1/0 while staying in RX (no packet loss)
+//   Large shift or forced:  IDLE → write FREQ2/1/0 → SCAL → SRX (per CC1200 §9.13)
+static bool perform_freq_retune(void) {
+    cc1200_t* radio = active_radio();
+    if (!radio) return false;
+
+    uint32_t w = g_pending_freq_word & 0x00FFFFFFu;
+    uint8_t freq_bytes[3];
+    freq_bytes[0] = (uint8_t)((w >> 16) & 0xFFu);
+    freq_bytes[1] = (uint8_t)((w >>  8) & 0xFFu);
+    freq_bytes[2] = (uint8_t)( w        & 0xFFu);
+
+    if (g_freq_retune_need_cal) {
+        /* Large frequency change or forced cal — go through IDLE + SCAL */
+        (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+        bool ok = cc1200_write_ext_burst(radio, CC1200_EXTADDR_FREQ2, freq_bytes, 3);
+        if (!ok) return false;
+        /* Reset FREQOFF to 0 when setting a new base frequency */
+        uint8_t zero[2] = {0, 0};
+        (void)cc1200_write_ext_burst(radio, CC1200_EXTADDR_FREQOFF1, zero, 2);
+        (void)cc1200_strobe(radio, CC1200_CMD_SCAL);
+        g_freq_retune_need_cal = false;
+        /* Store base freq word so subsequent Doppler updates use FREQOFF path */
+        g_last_applied_freq_word = w;
+        if (g_desired_state == STATE_RX)
+            (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+        else if (g_desired_state == STATE_TX)
+            (void)cc1200_strobe(radio, CC1200_CMD_STX);
+        sleep_us(500);  /* AGC settle */
+    } else {
+        /* Small Doppler correction — compute FREQOFF delta from base FREQ.
+         * FREQOFF is applied by the PLL without leaving RX — no packet loss.
+         * FREQOFF = (new_freq_word - base_freq_word) scaled to FREQOFF units.
+         * FREQOFF_LSB = f_xosc / (2^18 * LO_div), FREQ_LSB = f_xosc / (2^16 * LO_div)
+         * So FREQOFF = (new - base) * 4  (2^18/2^16 = 4) */
+        int32_t delta = (int32_t)w - (int32_t)(g_last_applied_freq_word & 0x00FFFFFFu);
+        int32_t freqoff = delta * 4;
+        /* Clamp to 16-bit signed */
+        if (freqoff > 32767) freqoff = 32767;
+        if (freqoff < -32768) freqoff = -32768;
+        uint8_t fo[2];
+        fo[0] = (uint8_t)((freqoff >> 8) & 0xFF);  /* FREQOFF1 (MSB) */
+        fo[1] = (uint8_t)(freqoff & 0xFF);          /* FREQOFF0 (LSB) */
+        bool ok = cc1200_write_ext_burst(radio, CC1200_EXTADDR_FREQOFF1, fo, 2);
+        if (!ok) return false;
+        /* Don't update g_last_applied_freq_word — keep base for FREQOFF delta calc */
+    }
+
+    g_freq_retune_pending = false;
+    return true;
+}
+
+// ---- Transport I/O ----
+static void write_to_active_channel(const uint8_t* data, size_t len)
+{
+    if (g_write_fn[g_active_channel])
+        g_write_fn[g_active_channel](data, len);
+}
+
+// Default UART write (used if no write_fn set for channel 0)
+static void default_uart_write(const uint8_t* data, size_t len)
 {
     uart_write_blocking(uart0, data, len);
 }
@@ -75,9 +255,9 @@ static void send_frame(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
     size_t enc_len = cobs_encode(g_tx_enc, sizeof(g_tx_enc), g_tx_payload, payload_len);
     if (enc_len == 0) return;
 
-    uart_write_bytes(g_tx_enc, enc_len);
+    write_to_active_channel(g_tx_enc, enc_len);
     uint8_t delim = 0x00;
-    uart_write_bytes(&delim, 1);
+    write_to_active_channel(&delim, 1);
 }
 
 static void send_error(uint8_t code, uint8_t seq)
@@ -148,27 +328,45 @@ static bool profile_apply(cc1200_t* dev)
     (void)cc1200_strobe(dev, CC1200_CMD_SIDLE);
 
     // Wait for IDLE state (poll MARCSTATE, max ~5ms)
+    bool idle_ok = false;
     for (int w = 0; w < 50; w++) {
         uint8_t marc = 0;
-        if (cc1200_read_ext(dev, CC1200_EXTADDR_MARCSTATE, &marc) && (marc & 0x1F) == 0x01)
-            break;  // IDLE
+        if (cc1200_read_ext(dev, CC1200_EXTADDR_MARCSTATE, &marc) && (marc & 0x1F) == 0x01) {
+            idle_ok = true;
+            break;
+        }
         sleep_us(100);
     }
+    if (!idle_ok) return false;
+
+    uint8_t freq2 = 0, freq1 = 0, freq0 = 0;
+    bool have_freq = false;
 
     for (uint16_t i = 0; i < g_prof_count; i++)
     {
         bool ok = false;
-        if (g_prof[i].is_ext)
+        if (g_prof[i].is_ext) {
             ok = cc1200_write_ext(dev, g_prof[i].addr, g_prof[i].val);
-        else
+            // Capture FREQ registers so we can set g_last_applied_freq_word
+            if (g_prof[i].addr == CC1200_EXTADDR_FREQ2) { freq2 = g_prof[i].val; have_freq = true; }
+            else if (g_prof[i].addr == CC1200_EXTADDR_FREQ1) { freq1 = g_prof[i].val; }
+            else if (g_prof[i].addr == CC1200_EXTADDR_FREQ0) { freq0 = g_prof[i].val; }
+        } else {
             ok = cc1200_write_reg(dev, g_prof[i].addr, g_prof[i].val);
+        }
 
         if (!ok) return false;
     }
+
+    // Update Doppler base so first FREQOFF correction uses the right reference
+    if (have_freq) {
+        g_last_applied_freq_word = ((uint32_t)freq2 << 16) | ((uint32_t)freq1 << 8) | (uint32_t)freq0;
+    }
+
     return true;
 }
 
-// ---- Metrics ----
+// ---- Metrics v2 (28 bytes) ----
 static inline int16_t sign_extend_12(uint16_t v12)
 {
     v12 &= 0x0FFFu;
@@ -176,53 +374,297 @@ static inline int16_t sign_extend_12(uint16_t v12)
     return (int16_t)v12;
 }
 
-static bool read_metrics(uint8_t* out, uint16_t* out_len)
+static bool build_metrics(uint8_t* out, uint16_t* out_len)
 {
     cc1200_t* radio = active_radio();
     if (!radio) return false;
 
-    uint8_t marc = 0, rxbytes = 0, rssi1 = 0, rssi0 = 0;
+    cc1200_status_t chip_st = cc1200_strobe(radio, CC1200_CMD_SNOP);
 
-    if (!cc1200_read_ext(radio, CC1200_EXTADDR_MARCSTATE, &marc)) return false;
+    uint8_t marc_raw = 0, rxbytes = 0, txbytes = 0, rssi1 = 0, rssi0 = 0;
+    (void)cc1200_read_ext(radio, CC1200_EXTADDR_MARCSTATE, &marc_raw);
+    uint8_t marc = marc_raw & 0x1Fu;  // MARCSTATE is bits [4:0] only
     (void)cc1200_read_ext(radio, CC1200_EXTADDR_NUM_RXBYTES, &rxbytes);
+    (void)cc1200_read_ext(radio, CC1200_EXTADDR_NUM_TXBYTES, &txbytes);
     (void)cc1200_read_ext(radio, CC1200_EXTADDR_RSSI1, &rssi1);
     (void)cc1200_read_ext(radio, CC1200_EXTADDR_RSSI0, &rssi0);
 
-    uint16_t rssi12_u = ((uint16_t)rssi1 << 4) | (uint16_t)(rssi0 & 0x0Fu);
-    int16_t  rssi12   = sign_extend_12(rssi12_u);
-
-    int16_t rssi_dbm_x10 = (int16_t)-32768;
-    int8_t  rssi_raw_1db = 0;
-
-    if (rssi12 != (int16_t)-2048)
-    {
-        rssi_dbm_x10 = (int16_t)((rssi12 * 10) / 16);
-        int16_t approx_dbm = (int16_t)(rssi_dbm_x10 / 10);
-        if (approx_dbm < -128) approx_dbm = -128;
-        if (approx_dbm >  127) approx_dbm =  127;
-        rssi_raw_1db = (int8_t)approx_dbm;
+    int16_t rssi_dbm_x10;
+    if (!(rssi0 & 0x01u)) {
+        /* RSSI_VALID flag not set — value is stale/invalid */
+        rssi_dbm_x10 = (int16_t)-32768;
+    } else {
+        uint16_t rssi12_u = ((uint16_t)rssi1 << 4) | (uint16_t)((rssi0 >> 4) & 0x0Fu);
+        int16_t  rssi12   = sign_extend_12(rssi12_u);
+        /* CC1200 RSSI already includes AGC_GAIN_ADJUST internally.
+         * Report raw: RSSI [dBm] = RSSI_12bit * 0.0625 */
+        rssi_dbm_x10 = (rssi12 != (int16_t)-2048)
+                        ? (int16_t)((rssi12 * 10) / 16)
+                        : (int16_t)-32768;
     }
 
-    out[0] = marc;
-    out[1] = (uint8_t)(rxbytes & 0x7Fu);
-    out[2] = (uint8_t)rssi_raw_1db;
-    out[3] = (uint8_t)(rssi_dbm_x10 & 0xFF);
-    out[4] = (uint8_t)((rssi_dbm_x10 >> 8) & 0xFF);
+    uint8_t flags = 0;
+    if (g_streaming)        flags |= 0x01;
+    if (g_rx_overflow_seen) flags |= 0x02;
+    if (g_rx_fifo_err_seen) flags |= 0x04;
+    if (g_tx_fifo_err_seen) flags |= 0x08;
+    if (g_serial_mode)      flags |= 0x10;
+    // Clear one-shot flags after reading
+    g_rx_overflow_seen = false;
+    g_rx_fifo_err_seen = false;
+    g_tx_fifo_err_seen = false;
 
-    *out_len = 5;
+    uint32_t uptime = uptime_ms_now();
+
+    memset(out, 0, 28);
+    out[0] = 2;                                      // version
+    out[1] = flags;
+    out[2] = (uint8_t)g_desired_state;
+    out[3] = chip_st.raw;
+    out[4] = marc;
+    out[5] = (uint8_t)(rxbytes & 0x7Fu);
+    out[6] = txbytes;
+    out[7] = g_last_rx_chunk;
+    out[8] = (uint8_t)(rssi_dbm_x10 & 0xFF);
+    out[9] = (uint8_t)((rssi_dbm_x10 >> 8) & 0xFF);
+    // [10-13] rx_total_bytes LE
+    out[10] = (uint8_t)(g_rx_total_bytes & 0xFF);
+    out[11] = (uint8_t)((g_rx_total_bytes >> 8) & 0xFF);
+    out[12] = (uint8_t)((g_rx_total_bytes >> 16) & 0xFF);
+    out[13] = (uint8_t)((g_rx_total_bytes >> 24) & 0xFF);
+    // [14-17] tx_total_bytes LE
+    out[14] = (uint8_t)(g_tx_total_bytes & 0xFF);
+    out[15] = (uint8_t)((g_tx_total_bytes >> 8) & 0xFF);
+    out[16] = (uint8_t)((g_tx_total_bytes >> 16) & 0xFF);
+    out[17] = (uint8_t)((g_tx_total_bytes >> 24) & 0xFF);
+    // [18-19] rx_overflow_count LE
+    out[18] = (uint8_t)(g_rx_overflow_count & 0xFF);
+    out[19] = (uint8_t)((g_rx_overflow_count >> 8) & 0xFF);
+    // [20-21] rx_fifo_err_count LE
+    out[20] = (uint8_t)(g_rx_fifo_err_count & 0xFF);
+    out[21] = (uint8_t)((g_rx_fifo_err_count >> 8) & 0xFF);
+    // [22-23] tx_fifo_err_count LE
+    out[22] = (uint8_t)(g_tx_fifo_err_count & 0xFF);
+    out[23] = (uint8_t)((g_tx_fifo_err_count >> 8) & 0xFF);
+    // [24-27] uptime_ms LE
+    out[24] = (uint8_t)(uptime & 0xFF);
+    out[25] = (uint8_t)((uptime >> 8) & 0xFF);
+    out[26] = (uint8_t)((uptime >> 16) & 0xFF);
+    out[27] = (uint8_t)((uptime >> 24) & 0xFF);
+
+    *out_len = 28;
     return true;
+}
+
+// ---- Serial mode (PIO-based synchronous serial RX) ----
+
+// CC1200 register addresses used for serial mode config
+#define REG_IOCFG2         0x01
+#define REG_IOCFG0         0x03
+#define REG_SYNC_CFG1      0x08
+#define REG_PREAMBLE_CFG1  0x0D
+#define REG_MDMCFG1        0x11
+#define REG_MDMCFG0        0x12
+#define REG_PKT_CFG2       0x26
+
+// Pin mapping: CC1200 GPIO0 → Pico GP7 (SERIAL_RX), CC1200 GPIO2 → Pico GP9 (SERIAL_CLK)
+#define SERIAL_RX_PIN   UHF_PIN_GPIO0   // GP7
+#define SERIAL_CLK_PIN  UHF_PIN_GPIO2   // GP9
+
+// Drain PIO RX FIFO into ring buffer, send accumulated bytes as EVT_RX_DATA
+static void maybe_stream_serial(void)
+{
+    if (!g_serial_mode) return;
+
+    // Handle pending Doppler retune
+    if (g_freq_retune_pending) {
+        perform_freq_retune();
+    }
+
+    // Drain PIO FIFO → ring buffer (non-blocking)
+    while (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm)) {
+        uint32_t word = pio_sm_get(g_serial_pio, g_serial_sm);
+        uint8_t byte_val = (uint8_t)(word & 0xFF);
+        uint16_t next_head = (g_serial_head + 1) & SERIAL_BUF_MASK;
+        if (next_head != g_serial_tail) {
+            g_serial_buf[g_serial_head] = byte_val;
+            g_serial_head = next_head;
+        }
+        // else: ring buffer full, drop byte (shouldn't happen at <10 kbaud)
+    }
+
+    // Count bytes available in ring buffer
+    uint16_t avail = (g_serial_head - g_serial_tail) & SERIAL_BUF_MASK;
+    uint32_t now = uptime_ms_now();
+    bool timeout = (now - g_serial_last_send_ms) >= 50;
+
+    // Send when ≥32 bytes accumulated or timeout with any data
+    if (avail >= 32 || (avail > 0 && timeout)) {
+        uint8_t chunk = (avail > 64) ? 64 : (uint8_t)avail;
+        uint8_t body[1 + 64];
+        body[0] = chunk;
+        for (uint8_t i = 0; i < chunk; i++) {
+            body[1 + i] = g_serial_buf[g_serial_tail];
+            g_serial_tail = (g_serial_tail + 1) & SERIAL_BUF_MASK;
+        }
+
+        g_rx_total_bytes += chunk;
+        g_last_rx_chunk = chunk;
+        send_frame(EVT_RX_DATA, 0, body, (uint16_t)(1u + chunk));
+        g_serial_last_send_ms = now;
+    }
+}
+
+static bool serial_mode_enable(cc1200_t* radio)
+{
+    if (!radio) return false;
+
+    // Save current register values for restore
+    cc1200_read_reg(radio, REG_IOCFG2, &g_saved_iocfg2);
+    cc1200_read_reg(radio, REG_IOCFG0, &g_saved_iocfg0);
+    cc1200_read_reg(radio, REG_PKT_CFG2, &g_saved_pkt_cfg2);
+    cc1200_read_reg(radio, REG_MDMCFG1, &g_saved_mdmcfg1);
+    cc1200_read_reg(radio, REG_SYNC_CFG1, &g_saved_sync_cfg1);
+    cc1200_read_reg(radio, REG_PREAMBLE_CFG1, &g_saved_preamble_cfg1);
+
+    // 1. Go IDLE
+    (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+    sleep_us(500);
+
+    // 2. Configure CC1200 for synchronous serial output
+    //    IOCFG2 = 0x08 → GPIO2 = SERIAL_CLK
+    //    IOCFG0 = 0x09 → GPIO0 = SERIAL_RX
+    //    PKT_CFG2 bits[1:0] = 01 → synchronous serial mode
+    //    MDMCFG1 bit 6 = 0 → FIFO_EN = 0
+    //    SYNC_CFG1 bits[7:5] = 000 → no sync word matching (blind)
+    //    PREAMBLE_CFG1 bits[5:2] = 0000 → no preamble
+    bool ok = true;
+    ok = ok && cc1200_write_reg(radio, REG_IOCFG2, 0x08);
+    ok = ok && cc1200_write_reg(radio, REG_IOCFG0, 0x09);
+
+    uint8_t pkt_cfg2 = g_saved_pkt_cfg2;
+    pkt_cfg2 = (pkt_cfg2 & 0xFC) | 0x01;  // PKT_FORMAT = 01
+    ok = ok && cc1200_write_reg(radio, REG_PKT_CFG2, pkt_cfg2);
+
+    uint8_t mdmcfg1 = g_saved_mdmcfg1;
+    mdmcfg1 &= ~(1u << 6);  // FIFO_EN = 0
+    ok = ok && cc1200_write_reg(radio, REG_MDMCFG1, mdmcfg1);
+
+    uint8_t sync_cfg1 = g_saved_sync_cfg1;
+    sync_cfg1 &= 0x1F;  // SYNC_MODE bits[7:5] = 000
+    ok = ok && cc1200_write_reg(radio, REG_SYNC_CFG1, sync_cfg1);
+
+    uint8_t preamble_cfg1 = g_saved_preamble_cfg1;
+    preamble_cfg1 &= ~(0x0F << 2);  // NUM_PREAMBLE bits[5:2] = 0000
+    ok = ok && cc1200_write_reg(radio, REG_PREAMBLE_CFG1, preamble_cfg1);
+
+    if (!ok) return false;
+
+    // 3. Configure Pico GPIO as inputs with pull-down
+    gpio_init(SERIAL_RX_PIN);
+    gpio_set_dir(SERIAL_RX_PIN, GPIO_IN);
+    gpio_pull_down(SERIAL_RX_PIN);
+
+    gpio_init(SERIAL_CLK_PIN);
+    gpio_set_dir(SERIAL_CLK_PIN, GPIO_IN);
+    gpio_pull_down(SERIAL_CLK_PIN);
+
+    // 4. Load and init PIO state machine
+    // Use pio1 to avoid conflicts with NeoPixel (which may use pio0)
+    g_serial_pio = pio1;
+    if (!pio_can_add_program(g_serial_pio, &serial_rx_program)) {
+        // Try pio0 as fallback
+        g_serial_pio = pio0;
+        if (!pio_can_add_program(g_serial_pio, &serial_rx_program))
+            return false;
+    }
+
+    g_serial_pio_offset = pio_add_program(g_serial_pio, &serial_rx_program);
+    g_serial_sm = pio_claim_unused_sm(g_serial_pio, false);
+    if (g_serial_sm == (uint)-1) {
+        pio_remove_program(g_serial_pio, &serial_rx_program, g_serial_pio_offset);
+        g_serial_pio_offset = -1;
+        return false;
+    }
+
+    serial_rx_program_init(g_serial_pio, g_serial_sm, g_serial_pio_offset,
+                            SERIAL_RX_PIN, SERIAL_CLK_PIN);
+
+    // Reset ring buffer
+    g_serial_head = 0;
+    g_serial_tail = 0;
+    g_serial_last_send_ms = uptime_ms_now();
+
+    // 5. Start PIO + radio RX
+    pio_sm_set_enabled(g_serial_pio, g_serial_sm, true);
+    (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+
+    g_serial_mode = true;
+    return true;
+}
+
+static void serial_mode_disable(cc1200_t* radio)
+{
+    if (!g_serial_mode) return;
+
+    // 1. Stop PIO
+    pio_sm_set_enabled(g_serial_pio, g_serial_sm, false);
+    pio_sm_unclaim(g_serial_pio, g_serial_sm);
+    if (g_serial_pio_offset >= 0) {
+        pio_remove_program(g_serial_pio, &serial_rx_program, g_serial_pio_offset);
+        g_serial_pio_offset = -1;
+    }
+
+    // 2. Restore CC1200 registers
+    if (radio) {
+        (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+        sleep_us(500);
+        (void)cc1200_write_reg(radio, REG_IOCFG2, g_saved_iocfg2);
+        (void)cc1200_write_reg(radio, REG_IOCFG0, g_saved_iocfg0);
+        (void)cc1200_write_reg(radio, REG_PKT_CFG2, g_saved_pkt_cfg2);
+        (void)cc1200_write_reg(radio, REG_MDMCFG1, g_saved_mdmcfg1);
+        (void)cc1200_write_reg(radio, REG_SYNC_CFG1, g_saved_sync_cfg1);
+        (void)cc1200_write_reg(radio, REG_PREAMBLE_CFG1, g_saved_preamble_cfg1);
+    }
+
+    g_serial_mode = false;
 }
 
 // ---- Streaming RX ----
 static void maybe_stream_rx(void)
 {
     if (!g_streaming) return;
+
+    // Serial mode: PIO path (no FIFO access)
+    if (g_serial_mode) {
+        maybe_stream_serial();
+        return;
+    }
+
     cc1200_t* radio = active_radio();
     if (!radio) return;
+
+    // Handle pending Doppler retune before reading FIFO
+    if (g_freq_retune_pending) {
+        perform_freq_retune();
+    }
+
+    // Ensure radio is in desired state (auto-recover from FIFO errors)
+    ensure_radio_state();
 
     uint8_t rxbytes = 0;
     if (!cc1200_read_ext(radio, CC1200_EXTADDR_NUM_RXBYTES, &rxbytes))
         return;
+
+    // Check overflow bit (bit 7)
+    if (rxbytes & 0x80u) {
+        g_rx_overflow_seen = true;
+        g_rx_overflow_count++;
+        (void)cc1200_strobe(radio, CC1200_CMD_SFRX);
+        if (g_desired_state == STATE_RX)
+            (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+        return;
+    }
 
     uint8_t n = (uint8_t)(rxbytes & 0x7Fu);
     if (n == 0) return;
@@ -235,14 +677,30 @@ static void maybe_stream_rx(void)
         if (!cc1200_fifo_read(radio, buf, chunk))
             break;
 
+        g_rx_total_bytes += chunk;
+        g_last_rx_chunk = chunk;
+
         uint8_t body[1 + 64];
         body[0] = chunk;
         memcpy(&body[1], buf, chunk);
 
         send_frame(EVT_RX_DATA, 0, body, (uint16_t)(1u + chunk));
 
+        // Break out if a new Doppler retune arrived mid-drain
+        if (g_freq_retune_pending)
+            break;
+
         if (!cc1200_read_ext(radio, CC1200_EXTADDR_NUM_RXBYTES, &rxbytes))
             break;
+
+        if (rxbytes & 0x80u) {
+            g_rx_overflow_seen = true;
+            g_rx_overflow_count++;
+            (void)cc1200_strobe(radio, CC1200_CMD_SFRX);
+            if (g_desired_state == STATE_RX)
+                (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+            break;
+        }
         n = (uint8_t)(rxbytes & 0x7Fu);
     }
 }
@@ -310,7 +768,10 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
             uint8_t idx = body[0];
             if (idx >= g_radio_count) { send_error(0x02, seq); break; }
             g_active = idx;
-            g_streaming = false;  // reset streaming on radio switch
+            g_streaming = false;
+            g_desired_state = STATE_IDLE;
+            g_radio_fsm = RADIO_FSM_IDLE;
+            g_freq_retune_pending = false;
             profile_clear();
             uint8_t b[1] = { g_active };
             send_frame(rsp_type, seq, b, 1);
@@ -319,12 +780,19 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
         case MSG_SET_STATE:
         {
             if (len < 1 || !radio) { send_error(0x01, seq); break; }
-            if (body[0] == STATE_RX)
+            if (body[0] == STATE_RX) {
+                set_desired_state(STATE_RX);
+                g_radio_fsm = RADIO_FSM_RX;
                 (void)cc1200_strobe(radio, CC1200_CMD_SRX);
-            else if (body[0] == STATE_TX)
+            } else if (body[0] == STATE_TX) {
+                set_desired_state(STATE_TX);
+                g_radio_fsm = RADIO_FSM_TX;
                 (void)cc1200_strobe(radio, CC1200_CMD_STX);
-            else
+            } else {
+                set_desired_state(STATE_IDLE);
+                g_radio_fsm = RADIO_FSM_IDLE;
                 (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+            }
             uint8_t ok = 1;
             send_frame(rsp_type, seq, &ok, 1);
         } break;
@@ -333,15 +801,21 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
         {
             if (len < 1) { send_error(0x01, seq); break; }
             g_streaming = (body[0] != 0);
+            if (g_streaming) g_streaming_channel = g_active_channel;
+            if (g_streaming && radio) {
+                set_desired_state(STATE_RX);
+                g_radio_fsm = RADIO_FSM_RX;
+                (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+            }
             uint8_t b[1] = { (uint8_t)(g_streaming ? 1 : 0) };
             send_frame(rsp_type, seq, b, 1);
         } break;
 
         case MSG_GET_METRICS:
         {
-            uint8_t b[16];
+            uint8_t b[32];
             uint16_t out_len = 0;
-            if (!read_metrics(b, &out_len)) { send_error(0x02, seq); break; }
+            if (!build_metrics(b, &out_len)) { send_error(0x02, seq); break; }
             send_frame(rsp_type, seq, b, out_len);
         } break;
 
@@ -384,6 +858,16 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
             if (len < 1 || !radio) { send_error(0x01, seq); break; }
             uint8_t rxbytes = 0;
             if (!cc1200_read_ext(radio, CC1200_EXTADDR_NUM_RXBYTES, &rxbytes)) { send_error(0x02, seq); break; }
+            if (rxbytes & 0x80u) {
+                /* RX FIFO overflow — flush and restart */
+                g_rx_overflow_seen = true;
+                g_rx_overflow_count++;
+                (void)cc1200_strobe(radio, CC1200_CMD_SFRX);
+                if (g_desired_state == STATE_RX)
+                    (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+                send_error(0x04, seq);
+                break;
+            }
             uint8_t n = (uint8_t)(rxbytes & 0x7Fu);
             uint8_t maxn = body[0];
             if (n > maxn) n = maxn;
@@ -421,6 +905,7 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
             if ((uint16_t)(2u + (uint16_t)count) != len) { send_error(0x02, seq); break; }
             const uint8_t* data = &body[2];
             bool ok = tx_write_fifo(flags, data, count);
+            if (ok) g_tx_total_bytes += count;
             uint8_t out[2];
             out[0] = ok ? 1u : 0u;
             out[1] = ok ? count : 0u;
@@ -476,6 +961,60 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
             send_frame(rsp_type, seq, &rsp, 1);
         } break;
 
+        case MSG_SET_FREQ_WORD:
+        {
+            if (len < 3 || !radio) { send_error(0x01, seq); break; }
+            uint32_t new_word = ((uint32_t)body[0] << 16) |
+                                ((uint32_t)body[1] << 8)  |
+                                ((uint32_t)body[2]);
+            bool force_cal = (len >= 4 && (body[3] & 0x01u));
+
+            // Auto-cal if frequency jump > ~200 kHz (empirical threshold)
+            uint32_t diff = abs_u32_diff(new_word, g_last_applied_freq_word);
+            bool need_cal = force_cal || (diff > 0x0D00u);
+
+            g_pending_freq_word = new_word;
+            g_freq_retune_need_cal = need_cal;
+            g_freq_retune_pending = true;
+
+            // If not streaming, apply immediately
+            if (!g_streaming) {
+                perform_freq_retune();
+            }
+            // If streaming, retune is deferred to maybe_stream_rx()
+
+            uint8_t ok = 1;
+            send_frame(rsp_type, seq, &ok, 1);
+        } break;
+
+        case MSG_SET_SERIAL_MODE:
+        {
+            if (len < 1 || !radio) { send_error(0x01, seq); break; }
+            uint8_t enable = body[0];
+            bool ok_s = false;
+            if (enable) {
+                g_streaming = true;
+                g_streaming_channel = g_active_channel;
+                set_desired_state(STATE_RX);
+                g_radio_fsm = RADIO_FSM_RX;
+                ok_s = serial_mode_enable(radio);
+                if (!ok_s) {
+                    g_streaming = false;
+                    set_desired_state(STATE_IDLE);
+                    g_radio_fsm = RADIO_FSM_IDLE;
+                }
+            } else {
+                serial_mode_disable(radio);
+                g_streaming = false;
+                set_desired_state(STATE_IDLE);
+                g_radio_fsm = RADIO_FSM_IDLE;
+                (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
+                ok_s = true;
+            }
+            uint8_t rsp_b = ok_s ? 1u : 0u;
+            send_frame(rsp_type, seq, &rsp_b, 1);
+        } break;
+
         case MSG_BUZZER:
         {
             if (len < 1) { send_error(0x01, seq); break; }
@@ -491,72 +1030,115 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
     }
 }
 
+void proto_set_write_fn(uint8_t channel, proto_write_fn_t fn)
+{
+    if (channel < PROTO_NUM_CHANNELS)
+        g_write_fn[channel] = fn;
+}
+
 void proto_init(cc1200_t radios[], uint8_t radio_count)
 {
     g_radios = radios;
     g_radio_count = radio_count;
     g_active = 0;
     g_streaming = false;
-    g_rx_enc_len = 0;
+    g_rx_enc_len[0] = 0;
+    g_rx_enc_len[1] = 0;
+    g_active_channel = 0;
+    g_write_fn[0] = default_uart_write;
+    g_write_fn[1] = NULL;
+    g_desired_state = STATE_IDLE;
+    g_radio_fsm = RADIO_FSM_IDLE;
+    g_freq_retune_pending = false;
+    g_freq_retune_need_cal = false;
+    g_pending_freq_word = 0;
+    g_last_applied_freq_word = 0;
+    g_rx_total_bytes = 0;
+    g_tx_total_bytes = 0;
+    g_rx_overflow_count = 0;
+    g_rx_fifo_err_count = 0;
+    g_tx_fifo_err_count = 0;
+    g_rx_overflow_seen = false;
+    g_rx_fifo_err_seen = false;
+    g_tx_fifo_err_seen = false;
+    g_last_rx_chunk = 0;
+    g_serial_mode = false;
+    g_serial_pio_offset = -1;
+    g_serial_head = 0;
+    g_serial_tail = 0;
     profile_clear();
+}
+
+// Process one incoming byte on a given channel
+static void process_byte(uint8_t b, uint8_t channel)
+{
+    if (channel >= PROTO_NUM_CHANNELS) return;
+
+    if (b == 0x00)
+    {
+        if (g_rx_enc_len[channel] > 0)
+        {
+            size_t dec_len = cobs_decode(g_rx_dec, sizeof(g_rx_dec),
+                                          g_rx_enc[channel], g_rx_enc_len[channel]);
+            g_rx_enc_len[channel] = 0;
+
+            // Route responses back to the channel that sent the command
+            g_active_channel = channel;
+
+            if (dec_len >= 6)
+            {
+                uint8_t type = g_rx_dec[0];
+                uint8_t seq  = g_rx_dec[1];
+                uint16_t plen = (uint16_t)g_rx_dec[2] | ((uint16_t)g_rx_dec[3] << 8);
+
+                if ((size_t)(4 + plen + 2) == dec_len)
+                {
+                    uint16_t rx_crc = (uint16_t)g_rx_dec[4 + plen] | ((uint16_t)g_rx_dec[4 + plen + 1] << 8);
+                    uint16_t calc   = crc16_ccitt_false(g_rx_dec, 4 + plen);
+                    if (rx_crc == calc)
+                        handle_cmd(type, seq, &g_rx_dec[4], plen);
+                    else
+                        send_error(0xEE, seq);
+                }
+                else
+                {
+                    send_error(0xED, 0);
+                }
+            }
+        }
+    }
+    else
+    {
+        if (g_rx_enc_len[channel] < RX_ENC_MAX)
+            g_rx_enc[channel][g_rx_enc_len[channel]++] = b;
+        else
+            g_rx_enc_len[channel] = 0;
+    }
+}
+
+void proto_feed_bytes(const uint8_t* data, size_t len, uint8_t channel)
+{
+    for (size_t i = 0; i < len; i++)
+        process_byte(data[i], channel);
 }
 
 void proto_poll(void)
 {
-    // Read bytes from UART
+    // Read bytes from UART (channel 0)
     while (uart_is_readable(uart0))
-    {
-        uint8_t b = uart_getc(uart0);
+        process_byte(uart_getc(uart0), 0);
 
-        if (b == 0x00)
-        {
-            // end-of-frame
-            if (g_rx_enc_len > 0)
-            {
-                size_t dec_len = cobs_decode(g_rx_dec, sizeof(g_rx_dec), g_rx_enc, g_rx_enc_len);
-                g_rx_enc_len = 0;
-
-                if (dec_len >= 6)
-                {
-                    uint8_t type = g_rx_dec[0];
-                    uint8_t seq  = g_rx_dec[1];
-                    uint16_t plen = (uint16_t)g_rx_dec[2] | ((uint16_t)g_rx_dec[3] << 8);
-
-                    if ((size_t)(4 + plen + 2) == dec_len)
-                    {
-                        uint16_t rx_crc = (uint16_t)g_rx_dec[4 + plen] | ((uint16_t)g_rx_dec[4 + plen + 1] << 8);
-                        uint16_t calc   = crc16_ccitt_false(g_rx_dec, 4 + plen);
-                        if (rx_crc == calc)
-                        {
-                            handle_cmd(type, seq, &g_rx_dec[4], plen);
-                        }
-                        else
-                        {
-                            send_error(0xEE, seq);
-                        }
-                    }
-                    else
-                    {
-                        send_error(0xED, 0);
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (g_rx_enc_len < sizeof(g_rx_enc))
-                g_rx_enc[g_rx_enc_len++] = b;
-            else
-                g_rx_enc_len = 0;  // overflow, reset
-        }
-    }
-
-    // Stream RX data if enabled
+    // Stream RX data — events go to whichever channel enabled streaming
+    g_active_channel = g_streaming_channel;
     maybe_stream_rx();
 }
 
 bool proto_is_streaming(void) {
     return g_streaming;
+}
+
+bool proto_is_serial_mode(void) {
+    return g_serial_mode;
 }
 
 uint8_t proto_active_radio(void) {

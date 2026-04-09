@@ -190,7 +190,7 @@ A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. 
         Alfa Radio RAS & Commercial & 500--700 & $\sim$1\degree & Similar to SPID \\
         SatNOGS v3 & Open-source & 150--300 & $\sim$1\degree & 3D-printed, NEMA17 steppers, belt drive \\
         SQ3SWF & Open-source & $\sim$100 & $\sim$2\degree & Compact 3D-printed stepper design \\
-        \textbf{This work} & \textbf{Open-source} & \textbf{$<$50} & \textbf{$<$0.1\degree} & \textbf{ASA 3D-printed, geared DC motors, EasyComm} \\
+        \textbf{This work} & \textbf{Open-source} & \textbf{$<$50} & \textbf{$<$0.3\degree} & \textbf{ASA 3D-printed, geared DC motors, EasyComm} \\
         \bottomrule
     \end{tabularx}
     \caption{Cost comparison of satellite tracking rotator systems.}
@@ -213,7 +213,7 @@ Most university ground stations (UPSat/Patras, TU Delft/Delfi-C3, AraMiS/Politec
 
 \subsection{Comparison with Hanssens (2023)}
 
-This thesis builds on Hanssens' 2023 study, which surveyed SatNOGS, assessed antenna options, and tested a Stepperdrive MSD-50-5.6D stepper motor. His finding: the stepper could not deliver enough torque for reliable azimuth rotation under wind loading. This motivated our switch to high-torque geared DC motors.
+This thesis builds on Hanssens' 2023 study, which surveyed SatNOGS, assessed antenna options, and tested a Stepperdrive MSD-50-5.6D stepper motor. His work identified that the stepper-and-belt approach required more torque than available for reliable azimuth rotation under wind loading. This informed our choice of high-torque geared DC motors with a higher gear ratio.
 
 \begin{table}[H]
     \centering
@@ -235,4 +235,4 @@ This thesis builds on Hanssens' 2023 study, which surveyed SatNOGS, assessed ant
     \label{tab:hanssens-comparison}
 \end{table}
 
-Our design combines: (a) ASA 3D-printed journal bearings with no purchased bearing components, (b) 516:1 internally geared DC motors with zero idle current, and (c) full SatNOGS compatibility via EasyComm, verified with live satellite passes.
+Our design combines: (a) 3D-printed deep groove ball bearings integrated into the chassis, (b) 516:1 internally geared DC motors with zero idle current, and (c) full SatNOGS compatibility via EasyComm, verified with live satellite passes.

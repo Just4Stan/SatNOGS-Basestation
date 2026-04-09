@@ -241,21 +241,21 @@
 	}
 
 	\printFrontCover{\@campus}
-	\vspace{2em}
+	\vspace{6em}
 	\begin{flushright}
 	\ifx \@embargo \@empty
 	\else
 	\begingroup
 	\fontsize{14pt}{8pt}\selectfont EMBARGO: \\
 	\vspace{0.2em}
-	\endgroup	
+	\endgroup
 	\begingroup
-	\fontsize{10pt}{7pt}\selectfont 
+	\fontsize{10pt}{7pt}\selectfont
 	Deze masterproefscriptie staat onder embargo tot \@embargo \\
-	\endgroup	
+	\endgroup
 	\fi
 	\end{flushright}
-	\vskip0.3in
+	\vspace{4cm}
  % GC: nicer title rendering for large titels
  \begingroup
 	    {\fontsize{21pt}{24pt}\selectfont%
@@ -277,10 +277,10 @@
 	    \textsf{\LARGE\textbf{\@forenameB~\MakeUppercase{\@surnameB}}}
 	    \fi
 	    \end{flushright}
-	    \vspace{10em}
-	    \begin{Parallel}{0.55\textwidth}{0.40\textwidth}
-	    \ParallelLText{\noindent
-	    \begin{list}{label}{\setlength{\leftmargin}{8em}\setlength{\labelsep}{1.5em}\setlength{\labelwidth}{8em}\setlength{\itemsep}{-.5ex}}
+	    \vfill
+	    \noindent
+	    \begin{minipage}[t]{0.52\textwidth}
+	    \begin{list}{label}{\setlength{\leftmargin}{7.5em}\setlength{\labelsep}{1em}\setlength{\labelwidth}{7.5em}\setlength{\itemsep}{-.5ex}}
 	    \ifx \@promotorAname \@empty
 	    \else
 	    \large\item[\@promotorAtype:\hfill] \@promotorAname
@@ -291,25 +291,22 @@
 	    \item[\@promotorBtype:\hfill] \@promotorBname
 	    \fi
 	    \ifx \@promotorCname \@empty
-	    \else 
+	    \else
 	    \item[\@promotorCtype:\hfill] \@promotorCname
 	    \fi
 	    \end{list}
-	    }
-	    \ParallelRText{}
-	    \end{Parallel}
-
-	    \vspace{2em}
+	    \end{minipage}%
+	    \hfill
+	    \begin{minipage}[t]{0.44\textwidth}
 	    \begin{flushright}
-	    \large\printDegree\\
+	    \large\printDegree{}%
 	    \end{flushright}
-
-	    \setlength{\TPHorizModule}{1cm}
-	    \setlength{\TPVertModule}{0.75cm}
+	    \end{minipage}
+	    \vspace{1.5em}
 	    \begin{flushright}
-        \printAcademicYear\\
-	    %Academiejaar \@academicyear
+	    \printAcademicYear{}%
 	    \end{flushright}
+	    \enlargethispage{2cm}
 	    \cleardoublepage
 	    \thispagestyle{empty}
 	    \null

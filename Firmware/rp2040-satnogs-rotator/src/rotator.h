@@ -29,6 +29,7 @@ public:
   void stop_az();
   void stop_el();
   void stop_all();
+  void halt_motors();  // stop motors only, preserve PID targets
 
   void park();
   void reset_home();

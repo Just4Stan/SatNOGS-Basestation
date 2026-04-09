@@ -54,6 +54,9 @@ MSG_PROFILE_CLEAR = 0x30
 MSG_PROFILE_BEGIN = 0x31
 MSG_PROFILE_CHUNK = 0x32
 MSG_PROFILE_APPLY = 0x33
+MSG_SET_FREQ_WORD = 0x34
+
+MSG_SET_SERIAL_MODE = 0x35
 
 MSG_SELECT_RADIO  = 0x40
 
@@ -75,6 +78,9 @@ RADIO_VHF = 1  # CC1200 #1 on SPI0 (144 MHz)
 EXT_RSSI1       = 0x71
 EXT_RSSI0       = 0x72
 EXT_MARCSTATE   = 0x73
+EXT_LQI_VAL     = 0x74
+EXT_FREQOFF_EST1 = 0x77
+EXT_FREQOFF_EST0 = 0x78
 EXT_NUM_RXBYTES = 0xD7
 
 # CC1200 frequency registers (extended)
@@ -412,12 +418,33 @@ class Metrics:
     rxbytes: int = 0
     rssi_raw_1db: int = 0
     rssi_dbm_x10: int = -32768  # -32768 = invalid
+    # Extended fields (28-byte response)
+    version: int = 0
+    flags: int = 0
+    desired_state: int = 0
+    chip_state_raw: int = 0
+    txbytes: int = 0
+    last_rx_chunk: int = 0
+    rx_total_bytes: int = 0
+    tx_total_bytes: int = 0
+    rx_overflow_count: int = 0
+    rx_fifo_err_count: int = 0
+    tx_fifo_err_count: int = 0
+    uptime_ms: int = 0
 
     @property
     def rssi_dbm(self) -> Optional[float]:
         if self.rssi_dbm_x10 == -32768:
             return None
         return self.rssi_dbm_x10 / 10.0
+
+    @property
+    def streaming(self) -> bool:
+        return bool(self.flags & 0x01)
+
+    @property
+    def serial_mode(self) -> bool:
+        return bool(self.flags & 0x10)
 
 
 @dataclass
@@ -565,16 +592,33 @@ class CC1200Link:
         b = self.send_cmd(MSG_GET_METRICS)
         if not b:
             return None
-        if len(b) >= 5:
+        if len(b) >= 28 and b[0] == 2:
+            # 28-byte extended response
+            m = Metrics(
+                version=b[0],
+                flags=b[1],
+                desired_state=b[2],
+                chip_state_raw=b[3],
+                marc=b[4],
+                rxbytes=b[5],
+                txbytes=b[6],
+                last_rx_chunk=b[7],
+                rssi_dbm_x10=struct.unpack_from("<h", b, 8)[0],
+                rx_total_bytes=struct.unpack_from("<I", b, 10)[0],
+                tx_total_bytes=struct.unpack_from("<I", b, 14)[0],
+                rx_overflow_count=struct.unpack_from("<H", b, 18)[0],
+                rx_fifo_err_count=struct.unpack_from("<H", b, 20)[0],
+                tx_fifo_err_count=struct.unpack_from("<H", b, 22)[0],
+                uptime_ms=struct.unpack_from("<I", b, 24)[0],
+            )
+            if m.rssi_dbm_x10 != -32768:
+                m.rssi_raw_1db = max(-128, min(127, m.rssi_dbm_x10 // 10))
+        elif len(b) >= 5:
+            # Legacy 5-byte response (fallback)
             m = Metrics(
                 marc=b[0], rxbytes=b[1],
                 rssi_raw_1db=struct.unpack_from("<b", b, 2)[0],
                 rssi_dbm_x10=struct.unpack_from("<h", b, 3)[0],
-            )
-        elif len(b) >= 3:
-            m = Metrics(
-                marc=b[0], rxbytes=b[1],
-                rssi_raw_1db=struct.unpack_from("<b", b, 2)[0],
             )
         else:
             return None
@@ -663,20 +707,46 @@ class CC1200Link:
         b = self.send_cmd(MSG_BUZZER, bytes([pattern & 0xFF]))
         return bool(b and len(b) >= 1 and b[0] == 1)
 
+    # ----- Serial mode (raw bit streaming via PIO) -----
+
+    def set_serial_mode(self, enable: bool) -> bool:
+        """Enable/disable CC1200 synchronous serial mode + PIO bit streaming.
+
+        When enabled, the CC1200 demodulates FSK/GFSK and outputs raw bits
+        via GPIO, the RP2040 PIO captures them, and they arrive as EVT_RX_DATA
+        events — same as normal FIFO streaming but with raw demodulated bits
+        instead of decoded packets.
+
+        This is used for protocols (USP, AX.100) that the CC1200 hardware
+        packet engine cannot decode natively.
+
+        Args:
+            enable: True to enter serial mode, False to return to FIFO mode.
+        Returns:
+            True if firmware confirmed the mode switch.
+        """
+        b = self.send_cmd(MSG_SET_SERIAL_MODE, bytes([1 if enable else 0]))
+        return bool(b and len(b) >= 1 and b[0] == 1)
+
     # ----- Frequency control -----
 
-    def set_frequency(self, freq_hz: float) -> bool:
-        """Set the CC1200 carrier frequency. Puts radio in IDLE first."""
-        self.set_state(STATE_IDLE)
-        time.sleep(0.01)
+    def set_frequency_word(self, word: int, force_cal: bool = False) -> bool:
+        """Atomic FREQ register update via firmware. Doppler-safe."""
+        word &= 0xFFFFFF
+        f2 = (word >> 16) & 0xFF
+        f1 = (word >> 8) & 0xFF
+        f0 = word & 0xFF
+        flags = 0x01 if force_cal else 0x00
+        b = self.send_cmd(MSG_SET_FREQ_WORD, bytes([f2, f1, f0, flags]))
+        return bool(b and len(b) >= 1 and b[0] == 1)
 
+    def set_frequency(self, freq_hz: float, force_cal: bool = False) -> bool:
+        """Set CC1200 carrier frequency. Uses atomic freq word command."""
         fs_cfg, freq2, freq1, freq0 = freq_to_regs(freq_hz)
-
-        ok = self.write_reg(0x21, fs_cfg)  # FS_CFG is normal reg 0x21
-        ok = ok and self.write_ext(EXT_FREQ2, freq2)
-        ok = ok and self.write_ext(EXT_FREQ1, freq1)
-        ok = ok and self.write_ext(EXT_FREQ0, freq0)
-        return ok
+        # FS_CFG only changes when LO divider changes (band switch) — write separately
+        self.write_reg(0x21, fs_cfg)
+        word = (freq2 << 16) | (freq1 << 8) | freq0
+        return self.set_frequency_word(word, force_cal=force_cal)
 
     def get_frequency(self) -> Optional[float]:
         """Read back the current CC1200 frequency."""
