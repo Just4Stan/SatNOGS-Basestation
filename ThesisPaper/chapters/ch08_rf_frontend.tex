@@ -5,58 +5,73 @@
 \section{RF PCB Layout Considerations}
 \label{sec:rf_layout}
 
-The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are relatively low in frequency compared to microwave systems, careful RF design practices are still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
+The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are sub GHz and thus relatively low in frequency compared to microwave systems, careful RF design is still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
 
-Originally, a 4-layer stackup was considered sufficient. However, to achieve a more compact design within the form factor of a Raspberry Pi shield, a 6-layer stackup was adopted. This allows improved separation of RF, power, and digital domains while maintaining a continuous ground reference.
+On the first RF front-end prototype, a 4-layer stackup was considered sufficient because it had no size constraints. However, to achieve a more compact design within the form factor of a Raspberry Pi shield, a 6-layer stackup was adopted. This enables improved separation of RF, power, and digital domains while maintaining a continuous ground reference.
 
 \subsection{6-Layer Stackup Strategy}
 
-The PCB stackup is organized as follows:
+The PCB is implemented using JLCPCB's \texttt{JLC0612IH-3313} 6-layer stackup with a nominal thickness of 1.2\,mm. The layer arrangement is selected to ensure that RF traces on the top layer have a well-defined impedance with a continuous ground reference directly beneath them, while also providing adequate separation between RF, power, and digital domains.
 
-\begin{itemize}
-    \item \textbf{L1 (Top):} RF signal routing using microstrip or grounded coplanar waveguide (GCPW), including matching networks and connectors.
-    \item \textbf{L2:} Continuous ground plane serving as the primary RF return path.
-    \item \textbf{L3:} Power distribution plane (3.3\,V, 5\,V), with localized islands where necessary.
-    \item \textbf{L4:} Secondary ground plane to improve shielding and reduce coupling between layers.
-    \item \textbf{L5:} Digital and control signal routing.
-    \item \textbf{L6 (Bottom):} Auxiliary signals and optional low-frequency routing.
-\end{itemize}
+\begin{table}[H]
+    \centering
+    \caption{6-layer PCB stackup with electrical function and material properties.}
+    \label{tab:rf_stackup_functional}
+    \small
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{l l l l c X}
+        \toprule
+        \textbf{Layer} & \textbf{Type} & \textbf{Thickness} & \textbf{Material} & \textbf{$\varepsilon_r$} & \textbf{Function} \\
+        \midrule
+        F.Cu   & Copper       & 0.035\,mm (1\,oz)   & ---     & ---  & RF routing, matching networks, SMA feedlines \\
+        Dielectric 1 & Prepreg 3313 & 0.0994\,mm & NP-155F & 4.1  &  \\
+        In1.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Primary ground plane (RF return path) \\
+        Dielectric 2 & Core   & 0.35\,mm            & NP-155F & 4.36 &  \\
+        In2.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Power distribution (3.3\,V, 5\,V) \\
+        Dielectric 3 & Prepreg 2116 & 0.1164\,mm & NP-155F & 4.16 &  \\
+        In3.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Secondary ground plane (coupling reduction) \\
+        Dielectric 4 & Core   & 0.35\,mm            & NP-155F & 4.36 &  \\
+        In4.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Digital and control signal routing \\
+        Dielectric 5 & Prepreg 3313 & 0.0994\,mm & NP-155F & 4.1  &  \\
+        B.Cu   & Copper       & 0.035\,mm (1\,oz)   & ---     & ---  & Auxiliary signals and component placement \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 
-The key principle is that all RF traces on L1 must have an uninterrupted ground reference directly beneath them on L2. No splits or voids are allowed under RF lines.
+This stackup ensures that RF traces on the top layer (F.Cu) are implemented as controlled-impedance microstrip lines referenced to the continuous ground plane on In1.Cu. The relatively thin dielectric (0.0994\,mm) enables a compact 50\,$\Omega$ trace width (0.15\,mm), while the additional ground plane (In3.Cu) improves electromagnetic shielding and reduces coupling between the RF, power, and digital domains.
+
+The use of two ground planes (L2 and L4) improves electromagnetic shielding and reduces coupling between RF and digital layers. Additionally separating digital routing on L5 minimizes interference with sensitive RF signals on the top layer.
+
+The key rule is that no splits or voids in the groundplane are allowed under RF lines, as this would disrupt the current return path, increase loop area, and lead to additional radiation and impedance discontinuities.
 
 \subsection{Transmission Line Implementation}
 
-All RF signal paths are designed as controlled impedance transmission lines with a target impedance of 50\,$\Omega$.
+All RF signal paths are routed with controlled impedance considerations, targeting a characteristic impedance of 50\,$\Omega$, which is standard for RF systems and ensures proper matching with external components such as SMA connectors and measurement equipment.
 
-In theory, grounded coplanar waveguide (GCPW) is preferred for RF routing due to improved field confinement, reduced radiation, and better isolation. However, in this design, \textbf{microstrip routing was used for both the 144\,MHz and 433\,MHz front-ends}.
+In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact formfactor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
 
-This choice was primarily driven by \textbf{space constraints} imposed by the compact form factor (Raspberry Pi shield size). GCPW requires additional lateral clearance for ground pours and via fences, which increases routing area. By using microstrip, a more compact layout could be achieved while still maintaining acceptable RF performance at the target frequencies.
+The RF traces are implemented as microstrip lines on the top layer (F.Cu), referenced to the continuous ground plane on In1.Cu. The characteristic impedance of a microstrip line can be approximated as:
 
-To compensate for the reduced field confinement of microstrip:
+\begin{equation}
+Z_0 = \frac{60}{\sqrt{\varepsilon_{\text{eff}}}} 
+\ln \left( \frac{8h}{w} + \frac{w}{4h} \right)
+\end{equation}
 
-\begin{itemize}
-    \item A continuous ground plane is maintained directly beneath all RF traces (L2).
-    \item Ground stitching vias are placed near RF components and along critical signal paths.
-    \item RF traces are kept short to minimize radiation and losses.
-\end{itemize}
+with the effective dielectric constant given by:
 
-Given the relatively low frequencies (VHF/UHF) and short trace lengths, microstrip provides a suitable trade-off between performance and layout density.\subsection{Transmission Line Implementation}
+\begin{equation}
+\varepsilon_{\text{eff}} = \frac{\varepsilon_r + 1}{2} 
++ \frac{\varepsilon_r - 1}{2} 
+\left( \frac{1}{\sqrt{1 + 12h/w}} \right)
+\end{equation}
 
-All RF signal paths are designed as controlled impedance transmission lines with a target impedance of 50\,$\Omega$.
+where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate.
 
-In theory, grounded coplanar waveguide (GCPW) is preferred for RF routing due to improved field confinement, reduced radiation, and better isolation. However, in this design, \textbf{microstrip routing was used for both the 144\,MHz and 433\,MHz front-ends}.
+Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.15\,mm. This width is used for all RF interconnects between the matching network and the SMA connectors.
 
-This choice was primarily driven by \textbf{space constraints} imposed by the compact form factor (Raspberry Pi shield size). GCPW requires additional lateral clearance for ground pours and via fences, which increases routing area. By using microstrip, a more compact layout could be achieved while still maintaining acceptable RF performance at the target frequencies.
+At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited. 
 
-To compensate for the reduced field confinement of microstrip:
-
-\begin{itemize}
-    \item A continuous ground plane is maintained directly beneath all RF traces (L2).
-    \item Ground stitching vias are placed near RF components and along critical signal paths.
-    \item RF traces are kept short to minimize radiation and losses.
-\end{itemize}
-
-Given the relatively low frequencies (VHF/UHF) and short trace lengths, microstrip provides a suitable trade-off between performance and layout density.
+Although GCPW would generally provide improved field confinement and isolation, microstrip routing offers a suitable trade-off between RF performance and compactness in this design. By maintaining a continuous ground reference, minimizing trace lengths, and applying sufficient ground stitching, the performance degradation is expected to remain limited while enabling a significantly more compact layout.
 
 \subsection{Frequency-Dependent Layout Considerations}
 
@@ -84,6 +99,8 @@ At 433\,MHz, the wavelength is shorter, and PCB parasitics significantly affect 
     \item Via stitching should be dense (e.g., 1--2\,mm spacing) to maintain a strong ground reference.
     \item Layout is highly sensitive to discontinuities, stubs, and parasitic effects.
 \end{itemize}
+
+Although the electrical behavior of the 144\,MHz (VHF) and 433\,MHz (UHF) bands differs, both frequency bands are routed using the same PCB design strategy. The layout is designed according to the more stringent requirements of the UHF band, ensuring that the VHF performance is inherently satisfied.
 
 \subsection{Summary}
 
