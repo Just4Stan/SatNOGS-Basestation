@@ -54,7 +54,7 @@ from sat_library import pick_best_uhf_transmitter
 # ---------------------------------------------------------------------------
 # RAM protection — Pi 3A+ has only 416MB
 # ---------------------------------------------------------------------------
-RAM_LIMIT_MB = 300  # abort computation if RAM exceeds this
+RAM_LIMIT_MB = 380  # Pi 3A+ has 416MB — allow up to 380
 
 
 def _get_ram_used_mb():

@@ -120,12 +120,13 @@ def lookup_with_satnogs_fallback(sat_library: SatLibrary, norad_id: int,
             sync_word = "930B51DE"  # GOMspace AX.100 Mode 5/6
             protocol = "ax100_mode5"
         elif "G3RUH" in mode_str or "AX.25" in mode_str or "AX25" in mode_str:
-            # G3RUH scrambles sync word — needs serial mode
             protocol = "ax25_g3ruh"
-            use_serial = True
+            # Serial mode disabled — PIO outputs zeros, breaks packet reception
+            # TODO: re-enable when serial mode is verified with real signal
+            use_serial = False
         elif "USP" in mode_str:
             protocol = "usp"
-            use_serial = True
+            use_serial = False  # disabled until PIO verified
 
         mod = ModulationConfig(
             format=cc_fmt,
@@ -693,6 +694,10 @@ class RfHatManager(RfBackend):
           2. Modulation override → configure_modulation() + set_frequency()
           3. Frequency-only → just set_frequency()
         """
+        # Always clear serial mode before reconfiguring (prevents stale flag
+        # from previous sat like SONATE-2 blocking FIFO reads)
+        if self.link.is_open():
+            self.link.set_serial_mode(False)
         self._use_serial_mode = getattr(profile, 'use_serial_mode', False)
         self.link.select_radio(RADIO_UHF)
 
@@ -758,6 +763,8 @@ class RfHatManager(RfBackend):
 
     def start_rx(self) -> bool:
         """Enter RX mode and enable streaming on the currently selected radio."""
+        # Clear serial mode if left over from previous sat
+        self.link.set_serial_mode(False)
         # Make sure UHF is selected
         self.link.select_radio(RADIO_UHF)
         # Flush RX FIFO before entering RX (prevents stale data / FIFO errors)
