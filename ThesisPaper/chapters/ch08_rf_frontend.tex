@@ -38,19 +38,14 @@ The PCB is implemented using JLCPCB's \texttt{JLC0612IH-3313} 6-layer stackup wi
     \end{tabularx}
 \end{table}
 
-This stackup ensures that RF traces on the top layer (F.Cu) are implemented as controlled-impedance microstrip lines referenced to the continuous ground plane on In1.Cu. The relatively thin dielectric (0.0994\,mm) enables a compact 50\,$\Omega$ trace width (0.15\,mm), while the additional ground plane (In3.Cu) improves electromagnetic shielding and reduces coupling between the RF, power, and digital domains.
-
+This stackup ensures that RF traces on the top layer (F.Cu) are implemented as controlled-impedance microstrip lines referenced to the continuous ground plane on In1.Cu. This keeps the current return path and loop area minimal, and prevents additional radiation and impedance discontinuities.
 The use of two ground planes (L2 and L4) improves electromagnetic shielding and reduces coupling between RF and digital layers. Additionally separating digital routing on L5 minimizes interference with sensitive RF signals on the top layer.
-
-The key rule is that no splits or voids in the groundplane are allowed under RF lines, as this would disrupt the current return path, increase loop area, and lead to additional radiation and impedance discontinuities.
 
 \subsection{Transmission Line Implementation}
 
-All RF signal paths are routed with controlled impedance considerations, targeting a characteristic impedance of 50\,$\Omega$, which is standard for RF systems and ensures proper matching with external components such as SMA connectors and measurement equipment.
+All RF signal paths are routed with controlled impedance considerations, targeting a characteristic impedance of 50\,$\Omega$, which is standard for RF systems and ensures proper matching with external components.
 
-In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact formfactor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
-
-The RF traces are implemented as microstrip lines on the top layer (F.Cu), referenced to the continuous ground plane on In1.Cu. The characteristic impedance of a microstrip line can be approximated as:
+The characteristic impedance of a microstrip line can be approximated as:
 
 \begin{equation}
 Z_0 = \frac{60}{\sqrt{\varepsilon_{\text{eff}}}} 
@@ -67,41 +62,214 @@ with the effective dielectric constant given by:
 
 where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate.
 
-Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.15\,mm. This width is used for all RF interconnects between the matching network and the SMA connectors.
+Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.2\,mm. 
 
 At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited. 
 
-Although GCPW would generally provide improved field confinement and isolation, microstrip routing offers a suitable trade-off between RF performance and compactness in this design. By maintaining a continuous ground reference, minimizing trace lengths, and applying sufficient ground stitching, the performance degradation is expected to remain limited while enabling a significantly more compact layout.
+In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact formfactor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
+
+By maintaining a continuous ground reference, minimizing trace lengths, and applying sufficient ground stitching, the performance degradation is expected to remain limited.
 
 \subsection{Frequency-Dependent Layout Considerations}
 
-Although both frequency bands share the same layout principles, their sensitivity to PCB effects differs.
+Although both frequency bands share the same PCB layout strategy, their sensitivity to layout effects differs significantly.
 
-\subsubsection{144\,MHz (VHF)}
+At 144\,MHz, the wavelength is relatively large, and PCB interconnects behave predominantly as lumped elements. As a result, the layout is relatively tolerant to small discontinuities and parasitic effects.
 
-At 144\,MHz, the wavelength is relatively large, and PCB traces exhibit more lumped behavior.
+At 433\,MHz, however, the shorter wavelength makes PCB parasitics more significant. RF traces must therefore be treated as transmission lines, requiring controlled impedance routing, short interconnects, and dense via stitching to maintain a stable ground reference.
 
-\begin{itemize}
-    \item Transmission line effects are moderate but still considered for all RF paths.
-    \item Microstrip routing is generally sufficient for most connections.
-    \item Layout is relatively tolerant to small discontinuities.
-    \item Via stitching density can be moderate (e.g., 3--5\,mm spacing).
-\end{itemize}
-
-\subsubsection{433\,MHz (UHF)}
-
-At 433\,MHz, the wavelength is shorter, and PCB parasitics significantly affect performance.
-
-\begin{itemize}
-    \item All RF traces must be treated as transmission lines.
-    \item GCPW is preferred for improved impedance control and isolation.
-    \item RF traces must be kept short, straight, and continuous.
-    \item Via stitching should be dense (e.g., 1--2\,mm spacing) to maintain a strong ground reference.
-    \item Layout is highly sensitive to discontinuities, stubs, and parasitic effects.
-\end{itemize}
-
-Although the electrical behavior of the 144\,MHz (VHF) and 433\,MHz (UHF) bands differs, both frequency bands are routed using the same PCB design strategy. The layout is designed according to the more stringent requirements of the UHF band, ensuring that the VHF performance is inherently satisfied.
+To ensure reliable operation across both bands, the PCB layout is designed according to the more stringent requirements of the 433\,MHz band. This guarantees that performance at 144\,MHz is inherently satisfied.
 
 \subsection{Summary}
 
-The transition to a 6-layer stackup enables a compact RF front-end design while maintaining proper electromagnetic behavior. Although the 144\,MHz design is relatively tolerant, the 433\,MHz section requires stricter adherence to RF layout practices. Consequently, the layout is designed according to the more stringent UHF requirements to ensure consistent performance across both frequency bands.
+A 6-layer PCB stackup was selected to enable a compact RF front-end while maintaining controlled impedance routing and effective isolation between RF, power, and digital domains. The layout is designed according to the more stringent requirements of the 433\,MHz band, ensuring reliable operation across both frequency bands within the given form factor constraints.
+
+\section{RF Matching Network}
+\label{sec:rf_matching}
+
+\subsection{Overview of the RF Signal Path}
+
+The matching network fulfills multiple functions simultaneously:
+\begin{itemize}
+    \item Impedance transformation between the 50\,$\Omega$ antenna and the IC
+    \item Conversion from single-ended to differential signaling
+    \item Harmonic filtering and spectral shaping
+\end{itemize}
+
+For the validated 433\,MHz front-end, the implemented network follows the topology of the Texas Instruments CC1200 reference design for the 420--470\,MHz band. However, the schematic used in this work is the project's own implementation, derived from the reference design and adapted to the specific PCB layout and component availability.
+
+\subsection{CC1200 RF Interface Characteristics}
+\label{sec:cc1200_rf_characteristics}
+
+To properly design the matching network, it is necessary to consider the RF interface characteristics of the CC1200 as specified in the datasheet.
+
+\subsubsection{Operating Frequency Bands}
+
+There are TI designs for operation in the following frequency ranges:
+
+\begin{itemize}
+    \item 164--190\,MHz
+    \item 410--475\,MHz
+    \item 820--950\,MHz
+\end{itemize}
+
+These bands correspond to typical ISM and SRD applications. Operation outside these ranges may be possible but requires careful validation. \cite{cc1200_datasheet}
+
+\subsubsection{Differential RF Input Structure}
+
+The receiver input of the CC1200 consists of a differential low-noise amplifier (LNA) with input pins \texttt{LNA\_P} and \texttt{LNA\_N}. These pins require a DC path to ground and are intended to be driven by a differential RF signal. \cite{cc1200_datasheet}
+
+The transmitter output, in contrast, is single-ended at the \texttt{PA} pin and requires a DC path to the supply voltage.
+
+\subsubsection{Optimum Source Impedance (Receiver)}
+
+The CC1200 does not present a fixed 50\,$\Omega$ input impedance. Instead, the optimal source impedance is frequency-dependent and complex. For the relevant bands, the datasheet specifies:
+
+\begin{itemize}
+    \item 433\,MHz band: 
+    \begin{itemize}
+        \item Differential: $100 + j60\,\Omega$
+        \item Single-ended equivalent: $50 + j30\,\Omega$
+    \end{itemize}
+    \item 169\,MHz band:
+    \begin{itemize}
+        \item Differential: $140 + j40\,\Omega$
+        \item Single-ended equivalent: $70 + j20\,\Omega$
+    \end{itemize}
+\end{itemize}
+
+These values represent the optimum impedance for maximum receiver sensitivity and must be realized through the external matching network. \cite{cc1200_datasheet}
+
+\subsubsection{Optimum Load Impedance (Transmitter)}
+
+Similarly, the transmitter output requires impedance matching to a complex load. The datasheet specifies:
+
+\begin{itemize}
+    \item 433\,MHz band: $55 + j25\,\Omega$
+    \item 169\,MHz band: $80 + j0\,\Omega$
+\end{itemize}
+
+This further emphasizes that the RF interface is not inherently matched to 50\,$\Omega$, and external matching is mandatory. \cite{cc1200_datasheet}
+
+\subsubsection{Receiver Sensitivity and Matching Impact}
+
+The CC1200 achieves high sensitivity, for example:
+
+\begin{itemize}
+    \item Up to $-123$\,dBm at 1.2\,kbps in the 433\,MHz band
+\end{itemize}
+
+This performance is specified under optimal matching conditions at the antenna port. Any mismatch between the antenna and the IC will degrade sensitivity due to reduced power transfer and increased noise figure. \cite{cc1200_datasheet}
+
+\subsubsection{Output Power and Power Consumption}
+
+The transmitter is capable of delivering:
+
+\begin{itemize}
+    \item Up to +15\,dBm at 433\,MHz
+    \item Programmable output power with 0.4\,dB step size
+\end{itemize}
+
+At this output level, the current consumption is approximately:
+
+\begin{itemize}
+    \item 46--49\,mA in high-performance mode at 433\,MHz
+\end{itemize}
+
+These values highlight the importance of efficient matching to avoid unnecessary power loss. \cite{cc1200_datasheet}
+
+\subsubsection{Implications for Matching Network Design}
+
+The combination of:
+\begin{itemize}
+    \item Complex, frequency-dependent RF impedance
+    \item Differential receiver input
+    \item Single-ended transmitter output
+\end{itemize}
+
+necessitates the use of a multi-element matching network that performs both impedance transformation and single-ended to differential conversion.
+
+This justifies the use of the cascaded LC topology implemented in this work, rather than a simple L-section network.
+
+\subsection{Matching Network Topology}
+
+\subsubsection{433\,MHz Front-End (Validated Design)}
+
+The implemented 433\,MHz matching network is realized between SMA connector J1 and the CC1200 transceiver U1. The network consists of a multi-element LC structure using inductors L1, L3, L5, L7 and capacitors C2, C4, C8, C13.
+
+Unlike a simple L-section matching network, this design uses multiple reactive elements arranged in a cascaded structure. This approach provides:
+\begin{itemize}
+    \item Gradual impedance transformation
+    \item Improved bandwidth stability
+    \item Additional filtering capability
+\end{itemize}
+
+The topology is based on the TI reference design for the 420--470\,MHz band, but the schematic shown in this work is the project's own implementation. The reference design was used as a starting point for the matching strategy and topology selection.
+
+\subsubsection{144\,MHz Front-End (Optional, Not Populated)}
+
+In addition to the validated 433\,MHz front-end, the PCB includes an optional 144\,MHz RF path implemented as a separate schematic section. This front-end is realized between SMA connector J2 and transceiver U2, using inductors L10, L12, L14, L16 and capacitors C11, C32, C38, C44, C46.
+
+The component values for this network were derived specifically for operation at 144\,MHz, adapting the matching concept used at 433\,MHz to the lower frequency band.
+
+It is important to note that this 144\,MHz front-end was included as an additional design option but was \textbf{not populated on the final PCB}. Consequently, it was \textbf{not experimentally validated}, and its performance has not been verified in practice.
+
+\subsection{Signal Transformation from SMA to CC1200}
+
+The signal transformation through the matching network can be understood as a sequence of stages:
+
+\subsubsection{SMA Interface and Initial Matching}
+
+At the SMA connector (J1 for 433\,MHz), the signal is a 50\,$\Omega$ single-ended RF signal. The first stage of the network typically consists of a series inductive element followed by a shunt capacitive element.
+
+This stage initiates the impedance transformation while also contributing to low-pass filtering behavior.
+
+\subsubsection{Intermediate LC Network}
+
+Following the initial stage, the signal propagates through multiple LC sections. These sections progressively transform the impedance toward the desired value at the IC interface.
+
+Using multiple stages instead of a single matching section allows:
+\begin{itemize}
+    \item Reduced sensitivity to component tolerances
+    \item Smoother impedance transformation
+    \item Lower insertion loss
+\end{itemize}
+
+Each LC section can be interpreted as moving the impedance along the Smith chart toward the matched condition.
+
+\subsubsection{Single-Ended to Differential Conversion}
+
+A key function of the network is the conversion from single-ended to differential signaling. The CC1200 requires a differential RF input, meaning that two signals of equal amplitude but opposite phase must be generated.
+
+This is achieved through a symmetric arrangement of reactive components connected to the differential RF pins of the IC. As a result, the network effectively performs a passive balun function, splitting the incoming signal into differential components.
+
+\subsubsection{Final Matching to the IC}
+
+The final stage of the network fine-tunes the impedance presented to the CC1200. At this point, the reactive elements compensate for the internal capacitance and inductance of the IC, ensuring that the effective impedance seen by the chip is optimal.
+
+\subsection{Frequency-Selective Behavior}
+
+In addition to impedance matching, the network also exhibits low-pass filtering characteristics. This is particularly important at UHF frequencies such as 433\,MHz, where harmonic emissions can affect system performance and regulatory compliance.
+
+The cascaded LC structure attenuates higher-order harmonics, improving spectral purity.
+
+\subsection{Use of the Reference Design}
+
+The design of the 433\,MHz matching network is based on the Texas Instruments CC1200 reference design for the 420--470\,MHz band. This reference provides a validated topology and component selection strategy.
+
+In this work, the reference design is used as a guideline for:
+\begin{itemize}
+    \item Matching network topology
+    \item Impedance transformation strategy
+    \item Differential interface implementation
+\end{itemize}
+
+The final schematic and layout, however, are specific to this project and adapted to the chosen PCB stackup and form factor.
+
+\subsection{Summary}
+
+The RF matching network is a critical part of the front-end design, enabling efficient signal transfer between the 50\,$\Omega$ antenna interface and the differential RF input of the CC1200.
+
+The validated 433\,MHz implementation is based on a multi-element LC network derived from the TI reference design and adapted to the project-specific PCB. An additional 144\,MHz front-end was included as an optional extension but was not populated or experimentally verified.
+
+By combining a proven topology with careful PCB implementation, the design achieves effective impedance matching, harmonic suppression, and reliable RF performance.
