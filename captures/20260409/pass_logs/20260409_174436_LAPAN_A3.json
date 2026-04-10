@@ -1,0 +1,17 @@
+{
+  "satellite": "LAPAN A3",
+  "norad_id": null,
+  "start_time": "2026-04-09T15:44:36.068243+00:00",
+  "freq_mhz": 437.425,
+  "modulation": "2-FSK",
+  "symbol_rate_bps": 1200,
+  "profile": "SatNOGS DB: Mode 1200bps FFSK",
+  "max_el": 33.5,
+  "rise_az": 143.7,
+  "set_az": 354.2,
+  "duration_s": 664.0,
+  "doppler_enabled": true,
+  "serial_mode": false,
+  "station_lat": null,
+  "station_lon": null
+}

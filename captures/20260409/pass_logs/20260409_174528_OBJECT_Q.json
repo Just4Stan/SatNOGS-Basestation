@@ -1,0 +1,17 @@
+{
+  "satellite": "OBJECT Q",
+  "norad_id": null,
+  "start_time": "2026-04-09T15:45:28.324281+00:00",
+  "freq_mhz": 436.16,
+  "modulation": "2-GFSK",
+  "symbol_rate_bps": 9600,
+  "profile": "SatNOGS DB: Mode U - GFSK9k6 - AX.25 Beacon and Ham Payload (Geoscan framing)",
+  "max_el": 10.6,
+  "rise_az": 217.3,
+  "set_az": 327.8,
+  "duration_s": 560.0,
+  "doppler_enabled": true,
+  "serial_mode": false,
+  "station_lat": null,
+  "station_lon": null
+}

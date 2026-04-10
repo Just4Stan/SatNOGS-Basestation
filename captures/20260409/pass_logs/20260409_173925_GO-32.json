@@ -1,0 +1,23 @@
+{
+  "satellite": "GO-32",
+  "norad_id": null,
+  "start_time": "2026-04-09T15:39:25.540236+00:00",
+  "freq_mhz": 435.225,
+  "modulation": "2-FSK",
+  "symbol_rate_bps": 9600,
+  "profile": "SatNOGS DB: Mode U 9k6 FSK",
+  "max_el": 88.3,
+  "rise_az": 162.4,
+  "set_az": 344.7,
+  "duration_s": 937.0,
+  "doppler_enabled": true,
+  "serial_mode": false,
+  "station_lat": null,
+  "station_lon": null,
+  "capture_bytes": 9526,
+  "packets": 126,
+  "rssi_min": -107.7,
+  "rssi_max": -87.7,
+  "rssi_avg": -96.2,
+  "end_time": "2026-04-09T15:42:13.593871+00:00"
+}

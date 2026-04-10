@@ -1,0 +1,17 @@
+{
+  "satellite": "SNUGLITE-II",
+  "norad_id": null,
+  "start_time": "2026-04-09T15:42:51.309356+00:00",
+  "freq_mhz": 436.49,
+  "modulation": "2-GFSK",
+  "symbol_rate_bps": 9600,
+  "profile": "SatNOGS DB: Mode U -  9k6 GMSK AX25 G3RUH TLM",
+  "max_el": 70.8,
+  "rise_az": 12.5,
+  "set_az": 203.2,
+  "duration_s": 843.0,
+  "doppler_enabled": true,
+  "serial_mode": false,
+  "station_lat": null,
+  "station_lon": null
+}

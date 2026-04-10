@@ -1,0 +1,17 @@
+{
+  "satellite": "SMDC ONE 2.4",
+  "norad_id": null,
+  "start_time": "2026-04-09T16:10:00.680269+00:00",
+  "freq_mhz": 437.48,
+  "modulation": "2-FSK",
+  "symbol_rate_bps": 9600,
+  "profile": "SatNOGS DB: GMSK 9k6",
+  "max_el": 22.7,
+  "rise_az": 61.8,
+  "set_az": 204.3,
+  "duration_s": 573.0,
+  "doppler_enabled": true,
+  "serial_mode": false,
+  "station_lat": null,
+  "station_lon": null
+}

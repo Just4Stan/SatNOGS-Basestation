@@ -1,0 +1,17 @@
+{
+  "satellite": "DSAT",
+  "norad_id": null,
+  "start_time": "2026-04-09T16:26:12.138594+00:00",
+  "freq_mhz": 437.505,
+  "modulation": "2-FSK",
+  "symbol_rate_bps": 4800,
+  "profile": "SatNOGS DB: TLM 4k8 FSK",
+  "max_el": 10.4,
+  "rise_az": 217.5,
+  "set_az": 327.5,
+  "duration_s": 550.0,
+  "doppler_enabled": true,
+  "serial_mode": false,
+  "station_lat": null,
+  "station_lon": null
+}

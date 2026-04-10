@@ -1,0 +1,17 @@
+{
+  "satellite": "NETSAT-3",
+  "norad_id": null,
+  "start_time": "2026-04-09T15:42:26.476318+00:00",
+  "freq_mhz": 435.6,
+  "modulation": "2-FSK",
+  "symbol_rate_bps": 9600,
+  "profile": "SatNOGS DB: Telemetry",
+  "max_el": 25.7,
+  "rise_az": 136.5,
+  "set_az": 355.2,
+  "duration_s": 629.0,
+  "doppler_enabled": true,
+  "serial_mode": true,
+  "station_lat": null,
+  "station_lon": null
+}
