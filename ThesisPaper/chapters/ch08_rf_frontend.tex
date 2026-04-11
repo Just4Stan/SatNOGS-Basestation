@@ -7,11 +7,11 @@
 
 The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are sub GHz and thus relatively low in frequency compared to microwave systems, careful RF design is still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
 
-On the first RF front-end prototype, a 4-layer stackup was considered sufficient because it had no size constraints. However, to achieve a more compact design within the form factor of a Raspberry Pi shield, a 6-layer stackup was adopted. This enables improved separation of RF, power, and digital domains while maintaining a continuous ground reference.
+On the first RF front-end prototype, a 4-layer stackup was considered sufficient because it had no size constraints. However, to achieve a more compact design within the form factor of a Raspberry Pi shield, a 6-layer stackup was used.
 
 \subsection{6-Layer Stackup Strategy}
 
-The PCB is implemented using JLCPCB's \texttt{JLC0612IH-3313} 6-layer stackup with a nominal thickness of 1.2\,mm. The layer arrangement is selected to ensure that RF traces on the top layer have a well-defined impedance with a continuous ground reference directly beneath them, while also providing adequate separation between RF, power, and digital domains.
+The PCB is implemented using JLCPCB's \texttt{JLC0612IH-3313} 6-layer stackup with a nominal thickness of 1.2\,mm.
 
 \begin{table}[H]
     \centering
@@ -72,7 +72,7 @@ By maintaining a continuous ground reference, minimizing trace lengths, and appl
 
 \subsection{Frequency-Dependent Layout Considerations}
 
-Although both frequency bands share the same PCB layout strategy, their sensitivity to layout effects differs significantly.
+Although both frequency bands share the same PCB layout strategy, their sensitivity to layout effects differ.
 
 At 144\,MHz, the wavelength is relatively large, and PCB interconnects behave predominantly as lumped elements. As a result, the layout is relatively tolerant to small discontinuities and parasitic effects.
 
@@ -86,17 +86,6 @@ A 6-layer PCB stackup was selected to enable a compact RF front-end while mainta
 
 \section{RF Matching Network}
 \label{sec:rf_matching}
-
-\subsection{Overview of the RF Signal Path}
-
-The matching network fulfills multiple functions simultaneously:
-\begin{itemize}
-    \item Impedance transformation between the 50\,$\Omega$ antenna and the IC
-    \item Conversion from single-ended to differential signaling
-    \item Harmonic filtering and spectral shaping
-\end{itemize}
-
-For the validated 433\,MHz front-end, the implemented network follows the topology of the Texas Instruments CC1200 reference design for the 420--470\,MHz band. However, the schematic used in this work is the project's own implementation, derived from the reference design and adapted to the specific PCB layout and component availability.
 
 \subsection{CC1200 RF Interface Characteristics}
 \label{sec:cc1200_rf_characteristics}
@@ -115,7 +104,7 @@ There are TI designs for operation in the following frequency ranges:
 
 These bands correspond to typical ISM and SRD applications. Operation outside these ranges may be possible but requires careful validation. \cite{cc1200_datasheet}
 
-\subsubsection{Differential RF Input Structure}
+\subsubsection{CC1200 RF IO Structure}
 
 The receiver input of the CC1200 consists of a differential low-noise amplifier (LNA) with input pins \texttt{LNA\_P} and \texttt{LNA\_N}. These pins require a DC path to ground and are intended to be driven by a differential RF signal. \cite{cc1200_datasheet}
 
@@ -204,13 +193,11 @@ Unlike a simple L-section matching network, this design uses multiple reactive e
     \item Additional filtering capability
 \end{itemize}
 
-The topology is based on the TI reference design for the 420--470\,MHz band, but the schematic shown in this work is the project's own implementation. The reference design was used as a starting point for the matching strategy and topology selection.
-
 \subsubsection{144\,MHz Front-End (Optional, Not Populated)}
 
 In addition to the validated 433\,MHz front-end, the PCB includes an optional 144\,MHz RF path implemented as a separate schematic section. This front-end is realized between SMA connector J2 and transceiver U2, using inductors L10, L12, L14, L16 and capacitors C11, C32, C38, C44, C46.
 
-The component values for this network were derived specifically for operation at 144\,MHz, adapting the matching concept used at 433\,MHz to the lower frequency band.
+The component values for this network were derived specifically for operation at 144\,MHz, adapting the matching concept used by the 164--190\,MHz reference desing.
 
 It is important to note that this 144\,MHz front-end was included as an additional design option but was \textbf{not populated on the final PCB}. Consequently, it was \textbf{not experimentally validated}, and its performance has not been verified in practice.
 
