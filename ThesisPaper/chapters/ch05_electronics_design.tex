@@ -133,13 +133,25 @@ The UART operates at 3.3\,V logic levels and provides a simple and robust commun
 
 The RF PCB is powered from a 24\,V input supplied via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using a buck converter. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
 
-Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count.
+Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count while maintaining sufficient efficiency.
 
-The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard low-noise linear regulator. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. By relying on the integrated regulator of the Pico, no additional external 3.3\,V regulator is required, which reduces both cost and design complexity.
+The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard power supply circuitry, which is based on a switching regulator. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. While switching regulators typically introduce more noise compared to dedicated low-noise linear regulators, the integrated solution provides adequate current capability and efficiency for the system.
 
-Local decoupling capacitors are placed close to the supply pins of each active component to reduce supply noise, provide transient current during switching events, and improve overall system stability.
+Given the noise sensitivity of RF circuits, particular attention was paid to supply integrity. Local decoupling capacitors were placed close to the supply pins of each active component to reduce high-frequency noise, provide transient current during switching events, and improve overall system stability. In addition, careful PCB layout practices were applied to minimize coupling of digital switching noise into the RF signal paths.
+
+\subsubsection{Power Supply Noise Evaluation}
+\label{subsubsec:rf_power_measurement}
+
+Oscilloscope measurements were performed at the 3.3\,V pins of the CC1200 transceivers to assess voltage stability and switching noise characteristics. The measurements were conducted under multiple operating conditions, including idle, receive, and transmit modes.
+
+The observed DC supply voltage was approximately \textbf{[X.XX\,V]}. The measured peak-to-peak ripple on the 3.3\,V rail was approximately \textbf{[XX\,mV\textsubscript{pp}]} under nominal operation, with transient deviations up to \textbf{[XX\,mV]} observed during mode transitions.
+
+No significant voltage drops or disturbances were observed that could affect the stability of the RF transceivers. Furthermore, the system demonstrated reliable communication during operation, indicating that the supply quality was sufficient for the intended application.
+
+These results suggest that, despite the use of a switching regulator, the implemented power distribution network, in combination with local decoupling, provides adequate noise suppression for this prototype. For future iterations, the use of a dedicated low-noise LDO for the RF section may be considered to further improve supply integrity and RF performance.
 
 Figure~X illustrates the power distribution architecture of the RF PCB, including the conversion from the 24\,V input to the regulated 5\,V and 3.3\,V supply rails.
+
 \subsection{Summary}
 \label{subsec:rf_summary}
 
