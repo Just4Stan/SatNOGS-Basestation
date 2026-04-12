@@ -71,7 +71,7 @@ from rf_hat import (
 from rf_backend import RfBackend, RfMetrics
 from buzzer import Buzzer
 from satnogs import SatNOGSClient
-from sat_library import SatLibrary, SatProfile, ModulationConfig, pick_best_uhf_transmitter
+from sat_library import SatLibrary, SatProfile, ModulationConfig, PacketConfig, pick_best_uhf_transmitter
 
 
 def lookup_with_satnogs_fallback(sat_library: SatLibrary, norad_id: int,
@@ -112,21 +112,55 @@ def lookup_with_satnogs_fallback(sat_library: SatLibrary, norad_id: int,
             deviation = int(baud * 0.35)  # h~0.7 typical amateur FSK
         rx_bw = max(12.5, (baud + 2 * deviation) * 1.2 / 1000)
 
-        # Infer sync word and protocol from mode when possible
+        # Infer sync word, protocol and packet config from mode
         sync_word = None
         protocol = ""
-        use_serial = False
+        rx_mode = "packet"
+        pkt_config = None
         if "AX.100" in mode_str or "AX100" in mode_str:
             sync_word = "930B51DE"  # GOMspace AX.100 Mode 5/6
             protocol = "ax100_mode5"
+            pkt_config = PacketConfig(
+                sync_threshold=4,
+                variable_length=True,
+                pkt_length=255,
+            )
         elif "G3RUH" in mode_str or "AX.25" in mode_str or "AX25" in mode_str:
             protocol = "ax25_g3ruh"
-            # Serial mode disabled — PIO outputs zeros, breaks packet reception
-            # TODO: re-enable when serial mode is verified with real signal
-            use_serial = False
+            rx_mode = "serial_ax25"
         elif "USP" in mode_str:
             protocol = "usp"
-            use_serial = False  # disabled until PIO verified
+            rx_mode = "serial_ax25"
+        elif "CCSDS" in mode_str:
+            sync_word = "1ACFFC1D"  # CCSDS ASM
+            protocol = "ccsds"
+            pkt_config = PacketConfig(
+                sync_threshold=4,
+                variable_length=True,
+                pkt_length=255,
+            )
+        elif "DOKA" in mode_str or "GEOSCAN" in mode_str:
+            sync_word = "930B51DE"
+            protocol = "geoscan"
+            pkt_config = PacketConfig(
+                sync_threshold=4,
+                pkt_length=66,
+                enable_pn9=True,
+                enable_crc16=True,
+            )
+        else:
+            # Unknown protocol — safe defaults depend on baud rate.
+            # Nearly all 9600+ baud amateur FSK sats use G3RUH scrambling
+            # (SatNOGS DB doesn't tag this — "FSK 9600" is almost always G3RUH).
+            # Lower baud rates are more likely custom CC11xx protocols.
+            if baud >= 4800 and cc_fmt in ("2-FSK", "2-GFSK"):
+                protocol = "ax25_g3ruh_assumed"
+                rx_mode = "serial_ax25"
+            else:
+                # Low baud or unknown — try packet mode with strict sync.
+                # Won't decode, but won't produce noise either.
+                protocol = "unknown"
+                pkt_config = PacketConfig(sync_threshold=4)
 
         mod = ModulationConfig(
             format=cc_fmt,
@@ -136,12 +170,19 @@ def lookup_with_satnogs_fallback(sat_library: SatLibrary, norad_id: int,
             sync_word=sync_word,
         )
 
+    # Build description with protocol inference info
+    mode_desc = tx.get('description', tx.get('mode', ''))
+    if protocol.endswith("_assumed"):
+        mode_desc += f" [inferred {protocol}]"
+
     return SatProfile(
         freq_mhz=tx["freq_mhz"],
         modulation=mod,
-        description=f"SatNOGS DB: {tx.get('description', tx.get('mode', ''))}",
+        pkt_config=pkt_config,
+        description=f"SatNOGS DB: {mode_desc}",
         protocol=protocol,
-        use_serial_mode=use_serial,
+        rx_mode=rx_mode,
+        use_serial_mode=(rx_mode == "serial_ax25"),
     )
 
 
@@ -520,14 +561,18 @@ class RfHatManager(RfBackend):
         self.uhf_base_freq_hz = 0.0  # satellite's nominal freq (before Doppler)
         self.vhf_freq_hz = 0.0
         self.pkt_count = 0
+        self.valid_pkt_count = 0
         self.total_bytes = 0
         self.packets: List[Tuple] = []  # list of (timestamp, data_bytes)
+        self.recent_packets: List[dict] = []  # last 20 packets with metadata
         self.radio_config = {
             "freq_mhz": 0.0,
             "modulation": "2-GFSK",
             "symbol_rate_bps": 2400,
             "profile": "default",
         }
+        self._active_protocol = ""
+        self._active_rx_mode = "packet"
         # Raw data dump
         self._raw_file = None
         self._raw_bytes = 0
@@ -637,9 +682,18 @@ class RfHatManager(RfBackend):
             "streaming": bool(m.streaming) if m else False,
             "rssi": rssi,
             "packets": self.pkt_count,
+            "valid_packets": self.valid_pkt_count,
+            "total_bytes": self.total_bytes,
             "freq_mhz": self.uhf_freq_hz / 1e6 if self.uhf_freq_hz else 0,
+            "base_freq_mhz": self.uhf_base_freq_hz / 1e6 if self.uhf_base_freq_hz else 0,
             "radio_config": self.radio_config,
             "rf_backend": "cc1200",
+            "protocol": self._active_protocol,
+            "rx_mode": self._active_rx_mode,
+            "recent_packets": self.recent_packets[-5:],
+            "raw_dump_bytes": self._raw_bytes,
+            "raw_dump_path": getattr(self, '_raw_path', ''),
+            "serial_mode": bool(m.serial_mode) if m else False,
         }
         if m:
             d["cc1200"] = {
@@ -699,6 +753,8 @@ class RfHatManager(RfBackend):
         if self.link.is_open():
             self.link.set_serial_mode(False)
         self._use_serial_mode = getattr(profile, 'use_serial_mode', False)
+        self._active_protocol = getattr(profile, 'protocol', '')
+        self._active_rx_mode = getattr(profile, 'rx_mode', 'packet')
         self.link.select_radio(RADIO_UHF)
 
         if profile.smartrf_profile:
@@ -715,15 +771,37 @@ class RfHatManager(RfBackend):
                 "freq_mhz": profile.freq_mhz,
                 "modulation": "custom",
                 "symbol_rate_bps": 0,
+                "smartrf_file": profile.smartrf_profile,
+                "config_tier": "C (SmartRF)",
                 "profile": profile.description,
             }
 
         elif profile.modulation:
             # Tier B: modulation register override
             m = profile.modulation
+            p = profile.pkt_config
             sync_str = f", sync={m.sync_word}" if m.sync_word else ", sync=default"
+            pkt_str = ""
+            if p:
+                parts = []
+                if p.enable_pn9: parts.append("PN9")
+                if p.enable_crc16: parts.append("CRC16")
+                if p.variable_length: parts.append("var-len")
+                elif p.pkt_length: parts.append(f"fixed-{p.pkt_length}B")
+                pkt_str = f", pkt=[{'+'.join(parts) or 'default'}]"
             log(f"RF HAT: Configuring {m.format} {m.symbol_rate_bps} bps, "
-                f"dev={m.deviation_hz} Hz, BW={m.rx_bw_khz} kHz{sync_str}")
+                f"dev={m.deviation_hz} Hz, BW={m.rx_bw_khz} kHz{sync_str}{pkt_str}")
+
+            # Build pkt_config kwargs
+            pkt_kwargs = {}
+            if p:
+                pkt_kwargs["sync_threshold"] = p.sync_threshold
+                if p.pkt_length is not None:
+                    pkt_kwargs["pkt_length"] = p.pkt_length
+                pkt_kwargs["variable_length"] = p.variable_length
+                pkt_kwargs["enable_pn9"] = p.enable_pn9
+                pkt_kwargs["enable_crc16"] = p.enable_crc16
+
             ok = self.link.configure_modulation(
                 mod_format=m.format,
                 symbol_rate_bps=m.symbol_rate_bps,
@@ -731,6 +809,7 @@ class RfHatManager(RfBackend):
                 rx_bw_khz=m.rx_bw_khz,
                 sync_word=m.sync_word,
                 freq_hz=profile.freq_mhz * 1e6,
+                **pkt_kwargs,
             )
             if not ok:
                 log("RF HAT: Modulation reconfiguration failed")
@@ -739,6 +818,15 @@ class RfHatManager(RfBackend):
                 "freq_mhz": profile.freq_mhz,
                 "modulation": m.format,
                 "symbol_rate_bps": m.symbol_rate_bps,
+                "deviation_hz": m.deviation_hz,
+                "rx_bw_khz": m.rx_bw_khz,
+                "sync_word": m.sync_word or "default",
+                "sync_threshold": pkt_kwargs.get("sync_threshold", 4),
+                "pkt_length": pkt_kwargs.get("pkt_length"),
+                "variable_length": pkt_kwargs.get("variable_length", False),
+                "enable_pn9": pkt_kwargs.get("enable_pn9", False),
+                "enable_crc16": pkt_kwargs.get("enable_crc16", False),
+                "config_tier": "B (modulation)",
                 "profile": profile.description,
             }
 
@@ -750,6 +838,9 @@ class RfHatManager(RfBackend):
                 "freq_mhz": profile.freq_mhz,
                 "modulation": "2-GFSK",
                 "symbol_rate_bps": 2400,
+                "sync_word": "SmartRF default",
+                "sync_threshold": "SmartRF default",
+                "config_tier": "A (freq-only)",
                 "profile": profile.description,
             }
 
@@ -787,12 +878,22 @@ class RfHatManager(RfBackend):
         log("RF HAT: UHF RX stopped")
 
     def start_serial_rx(self) -> bool:
-        """Enable CC1200 synchronous serial mode + PIO raw bit streaming."""
+        """Enable CC1200 synchronous serial mode + PIO bit streaming.
+
+        Uses AX.25 G3RUH decode mode (mode=2) for ax25_g3ruh protocol,
+        raw mode (mode=1) for other serial protocols.
+        """
         self.link.select_radio(RADIO_UHF)
-        if not self.link.set_serial_mode(True):
+        if self._active_protocol == "ax25_g3ruh":
+            mode = 2  # NRZ-I + G3RUH descramble + HDLC deframe on RP2040
+            mode_name = "AX.25 G3RUH decode"
+        else:
+            mode = 1  # raw bitstream
+            mode_name = "raw"
+        if not self.link.set_serial_mode(True, mode=mode):
             log("RF HAT: Failed to enable serial mode")
             return False
-        log("RF HAT: Serial mode enabled (raw bit streaming via PIO)")
+        log(f"RF HAT: Serial mode enabled ({mode_name} via PIO)")
         return True
 
     def stop_serial_rx(self):
@@ -821,14 +922,28 @@ class RfHatManager(RfBackend):
         """Process pending RX events. Returns number of new packets.
 
         ALL RX data is written to self._raw_file (if open) for post-processing.
-        Packets >= 4 bytes are counted and logged separately.
+        Packets >= 4 bytes are counted. Validation checks structure.
+
+        EVT_RX_DATA format:
+          - Standard FIFO/raw serial: body[0]=length, body[1..]=data
+          - Decoded AX.25 (mode 2):   body[0]=length, body[1]=0x01 (type), body[2..]=frame
         """
         MIN_PACKET_BYTES = 4  # minimum real frame size
         count = 0
         for evt_type, body in self.link.pop_events():
             if evt_type == EVT_RX_DATA and body:
                 n = body[0]
-                data = body[1:1 + n]
+
+                # Check for decoded AX.25 frame (type byte = 0x01)
+                is_decoded_ax25 = False
+                if len(body) >= 3 and body[1] == 0x01 and self._active_rx_mode == "serial_ax25":
+                    # Decoded AX.25 frame from firmware
+                    data = body[2:2 + n]
+                    is_decoded_ax25 = True
+                else:
+                    # Standard FIFO data or raw serial
+                    data = body[1:1 + n]
+
                 # Write ALL raw data to binary dump file (including noise)
                 if self._raw_file and data:
                     self._raw_file.write(data)
@@ -838,13 +953,96 @@ class RfHatManager(RfBackend):
                 self.pkt_count += 1
                 self.total_bytes += n
                 count += 1
-                hex_str = data.hex(" ")
-                self.packets.append((datetime.datetime.now(), data))
-                log(f"RX [{self.pkt_count}] {n} bytes: {hex_str}", logfile)
+
+                # Validation: decoded AX.25 frames are already CRC-verified by firmware
+                if is_decoded_ax25:
+                    is_valid = True
+                else:
+                    is_valid = self._validate_packet(data, n)
+                if is_valid:
+                    self.valid_pkt_count += 1
+
+                hex_str = data[:64].hex(" ")
+                ts_now = datetime.datetime.now()
+                self.packets.append((ts_now, data))
+
+                # Store recent packet metadata (ring buffer of 20)
+                pkt_meta = {
+                    "timestamp": ts_now.isoformat(),
+                    "length": n,
+                    "valid": is_valid,
+                    "hex": data[:32].hex(),
+                    "protocol": self._active_protocol,
+                    "decoded": is_decoded_ax25,
+                }
+                self.recent_packets.append(pkt_meta)
+                if len(self.recent_packets) > 20:
+                    self.recent_packets = self.recent_packets[-20:]
+
+                status = "AX25" if is_decoded_ax25 else ("OK" if is_valid else "?")
+                log(f"RX [{self.pkt_count}] {n}B [{status}]: {hex_str}", logfile)
             elif evt_type == EVT_ERROR and body:
                 code = body[0]
                 log(f"RF HAT: EVT_ERROR 0x{code:02X}", logfile)
         return count
+
+    def _validate_packet(self, data: bytes, length: int) -> bool:
+        """Basic packet validation heuristics.
+
+        Returns True if the packet looks like a real satellite frame.
+        This is NOT cryptographic validation — just noise rejection.
+        """
+        if length < 4:
+            return False
+
+        # Check 1: Not all-zeros or all-FF (PN9 idle pattern)
+        if data == bytes(length) or data == bytes([0xFF] * length):
+            return False
+
+        # Check 2: For AX.100 Mode 5, first 4 bytes after sync should be
+        # Golay-encoded header — check for non-trivial content
+        if self._active_protocol in ("ax100_mode5",):
+            # AX.100 frames have a Golay(24,12) header in first 3 bytes
+            # Valid Golay codewords have specific Hamming distance properties
+            # For now: just check it's not all-zeros or all-ones
+            if len(data) >= 3:
+                header = data[:3]
+                if header == b'\x00\x00\x00' or header == b'\xff\xff\xff':
+                    return False
+
+        # Check 3: For Geoscan, verify CRC-16 if enabled
+        if self._active_protocol == "geoscan" and length >= 4:
+            # CRC-16 is the last 2 bytes
+            payload = data[:-2]
+            crc_recv = (data[-1] << 8) | data[-2]  # little-endian
+            crc_calc = 0xFFFF
+            for b in payload:
+                crc_calc ^= (b << 8)
+                for _ in range(8):
+                    if crc_calc & 0x8000:
+                        crc_calc = ((crc_calc << 1) ^ 0x1021) & 0xFFFF
+                    else:
+                        crc_calc = (crc_calc << 1) & 0xFFFF
+            if crc_recv == crc_calc:
+                return True
+            return False
+
+        # Check 4: Entropy check — real packets have structured data.
+        # Pure noise at 6.5+ bits/byte entropy. Real frames typically <6.
+        if length >= 16:
+            byte_counts = [0] * 256
+            for b in data:
+                byte_counts[b] += 1
+            import math as _math
+            entropy = 0.0
+            for c in byte_counts:
+                if c > 0:
+                    p = c / length
+                    entropy -= p * _math.log2(p)
+            if entropy > 7.0:
+                return False
+
+        return True
 
     def open_raw_dump(self, path: str, metadata: dict = None):
         """Open a binary file to capture ALL raw RX data for post-processing.
@@ -1155,8 +1353,10 @@ def track_pass(rotctl: RotctlClient, rf: Optional[RfBackend],
         # Reset packet counters (CC1200 only — RTL-SDR doesn't decode packets)
         if isinstance(rf, RfHatManager):
             rf.pkt_count = 0
+            rf.valid_pkt_count = 0
             rf.total_bytes = 0
             rf.packets.clear()
+            rf.recent_packets.clear()
             rf.rssi_min = None
             rf.rssi_max = None
             rf.rssi_sum = 0.0
@@ -1647,8 +1847,10 @@ def execute_visit(visit, rotctl, rf, args, sat_library, logfile=None,
             rf.start_rx()
         if isinstance(rf, RfHatManager):
             rf.pkt_count = 0
+            rf.valid_pkt_count = 0
             rf.total_bytes = 0
             rf.packets.clear()
+            rf.recent_packets.clear()
             rf.rssi_min = None
             rf.rssi_max = None
             rf.rssi_sum = 0.0

@@ -5,7 +5,9 @@
         "AX.25 G3RUH satellites: sync 0x7E is scrambled on air -> CC1200 CANNOT detect.",
         "AX.100 Mode 5: sync 0x930B51DE is NOT scrambled -> CC1200 CAN detect.",
         "USP: needs Viterbi decode -> CC1200 serial mode only.",
-        "protocol field: 'ax100_mode5' | 'ax25_g3ruh' | 'usp' | 'csp' | 'native_cc1200'",
+        "protocol field: 'ax100_mode5' | 'ax25_g3ruh' | 'usp' | 'csp' | 'native_cc1200' | 'geoscan'",
+        "rx_mode field: 'packet' (CC1200 FIFO) | 'serial_ax25' (PIO + G3RUH + HDLC)",
+        "pkt_config: sync_threshold, pkt_length, variable_length, enable_pn9, enable_crc16",
         "Most 9600 GFSK sats use G3RUH scrambling which defeats CC1200 packet engine."
     ],
     "satellites": [
@@ -14,6 +16,7 @@
             "norad_id": null,
             "freq_mhz": 433.0,
             "protocol": "native_cc1200",
+            "rx_mode": "packet",
             "description": "AetherSpace CubeSat — CC1200 native packet mode, 2-GFSK 2.4 kbps"
         },
 
@@ -32,7 +35,15 @@
                 "rx_bw_khz": 12.5,
                 "sync_word": "930B51DE"
             },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "enable_pn9": false,
+                "enable_crc16": false,
+                "pkt_length": 255
+            },
             "protocol": "ax100_mode5",
+            "rx_mode": "packet",
             "description": "GREENCUBE (IO-117) — 1200 GMSK, AX.100 Mode 5, MEO orbit (long passes)"
         },
         {
@@ -46,7 +57,15 @@
                 "rx_bw_khz": 25,
                 "sync_word": "930B51DE"
             },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "enable_pn9": false,
+                "enable_crc16": false,
+                "pkt_length": 255
+            },
             "protocol": "ax100_mode5",
+            "rx_mode": "packet",
             "description": "AISTECHSAT-2 — 4800 GFSK, AX.100 Mode 5"
         },
         {
@@ -60,7 +79,15 @@
                 "rx_bw_khz": 12.5,
                 "sync_word": "930B51DE"
             },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "enable_pn9": false,
+                "enable_crc16": false,
+                "pkt_length": 255
+            },
             "protocol": "ax100_mode5",
+            "rx_mode": "packet",
             "description": "ION-MK01 — 1200 FSK, AX.100 Mode 5"
         },
         {
@@ -74,7 +101,15 @@
                 "rx_bw_khz": 12.5,
                 "sync_word": "930B51DE"
             },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "enable_pn9": false,
+                "enable_crc16": false,
+                "pkt_length": 255
+            },
             "protocol": "ax100_mode5",
+            "rx_mode": "packet",
             "description": "CatSat — 2400 FSK, AX.100 Mode 5"
         },
         {
@@ -88,7 +123,15 @@
                 "rx_bw_khz": 25,
                 "sync_word": "930B51DE"
             },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "enable_pn9": false,
+                "enable_crc16": false,
+                "pkt_length": 255
+            },
             "protocol": "ax100_mode5",
+            "rx_mode": "packet",
             "description": "VELOX-AM — 4800 FSK, AX.100 Mode 5"
         },
         {
@@ -102,12 +145,98 @@
                 "rx_bw_khz": 12.5,
                 "sync_word": "930B51DE"
             },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "enable_pn9": false,
+                "enable_crc16": false,
+                "pkt_length": 255
+            },
             "protocol": "ax100_mode5",
+            "rx_mode": "packet",
             "description": "MIMAN — 2400 FSK, AX.100 Mode 5"
         },
 
         {
+            "_section": "=== GEOSCAN — CC1200 native with PN9 whitening + CRC16 ==="
+        },
+        {
+            "name_match": "GEOSCAN-EDELVEIS",
+            "norad_id": 53385,
+            "freq_mhz": 436.200,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50,
+                "sync_word": "930B51DE"
+            },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "pkt_length": 66,
+                "variable_length": false,
+                "enable_pn9": true,
+                "enable_crc16": true
+            },
+            "protocol": "geoscan",
+            "rx_mode": "packet",
+            "description": "Geoscan-Edelveis — 9600 GFSK, PN9+CRC16, 66-byte fixed frames"
+        },
+
+        {
+            "_section": "=== CCSDS — sync 0x1ACFFC1D, CC1200 packet mode ==="
+        },
+        {
+            "name_match": "DELFI-PQ",
+            "norad_id": 44880,
+            "freq_mhz": 436.420,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 2400,
+                "deviation_hz": 1200,
+                "rx_bw_khz": 12.5,
+                "sync_word": "1ACFFC1D"
+            },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": true,
+                "pkt_length": 255
+            },
+            "protocol": "ccsds",
+            "rx_mode": "packet",
+            "description": "Delfi-PQ — 2400 GFSK, CCSDS framing"
+        },
+
+        {
             "_section": "=== AX.25 G3RUH — CC1200 serial mode required (G3RUH scrambles sync) ==="
+        },
+        {
+            "name_match": "GO-32",
+            "norad_id": 25397,
+            "freq_mhz": 435.225,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50
+            },
+            "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
+            "description": "GO-32 (Techsat-1B) — 9600 GFSK, AX.25 G3RUH"
+        },
+        {
+            "name_match": "SNUGLITE",
+            "norad_id": 43783,
+            "freq_mhz": 437.275,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50
+            },
+            "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
+            "description": "SNUGLITE-II — 9600 GFSK, AX.25 G3RUH"
         },
         {
             "name_match": "ISS",
@@ -120,6 +249,7 @@
                 "rx_bw_khz": 50
             },
             "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
             "description": "ISS — 9600 GFSK, AX.25 G3RUH (needs serial mode for real decode)"
         },
         {
@@ -133,6 +263,7 @@
                 "rx_bw_khz": 50
             },
             "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
             "description": "SONATE-2 — 9600 GMSK, AX.25 G3RUH, active digipeater (2024 launch)"
         },
         {
@@ -146,6 +277,7 @@
                 "rx_bw_khz": 50
             },
             "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
             "description": "ROBUSTA-3A — 9600 GMSK, AX.25 G3RUH, 3W TX (2024 launch)"
         },
         {
@@ -159,6 +291,7 @@
                 "rx_bw_khz": 25
             },
             "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
             "description": "CAS-11 — 4800 GMSK, AX.25 G3RUH (2025 launch)"
         },
 

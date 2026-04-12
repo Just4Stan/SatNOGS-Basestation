@@ -103,14 +103,26 @@ class ModulationConfig:
 
 
 @dataclass
+class PacketConfig:
+    """CC1200 packet engine configuration for hardware-decoded protocols."""
+    sync_threshold: int = 4       # SYNC_THR — max bit errors = THR/2
+    pkt_length: Optional[int] = None  # fixed packet length, or None for default
+    variable_length: bool = False  # True for variable-length mode (length byte prefix)
+    enable_pn9: bool = False       # PN9 data whitening
+    enable_crc16: bool = False     # CRC-16 append/check
+
+
+@dataclass
 class SatProfile:
     """Radio configuration for a specific satellite."""
     freq_mhz: float
     modulation: Optional[ModulationConfig] = None
+    pkt_config: Optional[PacketConfig] = None
     smartrf_profile: Optional[str] = None
     description: str = ""
     cc1200_compatible: bool = True
     protocol: str = ""  # "ax25_g3ruh", "ax100_mode5", "native_cc1200", "usp", etc.
+    rx_mode: str = "packet"  # "packet" (FIFO) or "serial_ax25" (PIO + G3RUH decode)
     use_serial_mode: bool = False  # True for protocols needing raw bit stream (G3RUH)
 
 
@@ -180,15 +192,33 @@ class SatLibrary:
                 sync_word=m.get("sync_word"),
             )
 
+        pkt = None
+        if "pkt_config" in sat:
+            p = sat["pkt_config"]
+            pkt = PacketConfig(
+                sync_threshold=p.get("sync_threshold", 4),
+                pkt_length=p.get("pkt_length"),
+                variable_length=p.get("variable_length", False),
+                enable_pn9=p.get("enable_pn9", False),
+                enable_crc16=p.get("enable_crc16", False),
+            )
+
         proto = sat.get("protocol", "")
+        rx_mode = sat.get("rx_mode", "packet")
+        if not rx_mode or rx_mode == "packet":
+            # Infer rx_mode from protocol if not explicit
+            if proto in ("ax25_g3ruh", "usp"):
+                rx_mode = "serial_ax25"
         return SatProfile(
             freq_mhz=sat.get("freq_mhz", 433.0),
             modulation=mod,
+            pkt_config=pkt,
             smartrf_profile=sat.get("smartrf_profile"),
             description=sat.get("description", ""),
             cc1200_compatible=sat.get("cc1200_compatible", True),
             protocol=proto,
-            use_serial_mode=proto in ("ax25_g3ruh", "usp"),
+            rx_mode=rx_mode,
+            use_serial_mode=rx_mode == "serial_ax25",
         )
 
     def fetch_satnogs_transmitters(self, norad_id: int) -> list:

@@ -12,6 +12,7 @@
 #include "cobs.h"
 #include "crc16.h"
 #include "serial_rx.pio.h"
+#include "ax25_decode.h"
 
 // CC1200 EXT status registers (SWRU346B)
 #define CC1200_EXTADDR_FREQOFF1     0x0A
@@ -81,6 +82,13 @@ static uint8_t  g_serial_buf[SERIAL_BUF_SIZE];
 static volatile uint16_t g_serial_head = 0;
 static volatile uint16_t g_serial_tail = 0;
 static uint32_t g_serial_last_send_ms = 0;
+
+// Serial mode diagnostics
+static uint32_t g_serial_total_words = 0;  // PIO words drained (debug)
+
+// Serial decode mode: 0=off, 1=raw, 2=AX.25 G3RUH decode
+static uint8_t g_serial_decode_mode = 0;
+static ax25_decoder_t g_ax25_decoder;
 
 // Saved CC1200 register values for restore on serial mode disable
 static uint8_t g_saved_iocfg2 = 0;
@@ -484,6 +492,7 @@ static void maybe_stream_serial(void)
     // Drain PIO FIFO → ring buffer (non-blocking)
     while (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm)) {
         uint32_t word = pio_sm_get(g_serial_pio, g_serial_sm);
+        g_serial_total_words++;
         // Data is in upper byte: left-shift autopush at 8 bits → bits [31:24]
         uint8_t byte_val = (uint8_t)(word >> 24);
         uint16_t next_head = (g_serial_head + 1) & SERIAL_BUF_MASK;
@@ -494,7 +503,37 @@ static void maybe_stream_serial(void)
         // else: ring buffer full, drop byte (shouldn't happen at <10 kbaud)
     }
 
-    // Count bytes available in ring buffer
+    // AX.25 G3RUH decode mode: feed bits through decoder, send complete frames
+    if (g_serial_decode_mode == 2) {
+        // Process ring buffer through AX.25 decoder
+        while (g_serial_tail != g_serial_head) {
+            uint8_t byte_val = g_serial_buf[g_serial_tail];
+            g_serial_tail = (g_serial_tail + 1) & SERIAL_BUF_MASK;
+            g_rx_total_bytes++;
+
+            // Feed 8 bits (MSB first — CC1200 serial output is MSB first)
+            for (int b = 7; b >= 0; b--) {
+                uint8_t bit = (byte_val >> b) & 1;
+                if (ax25_decoder_feed_bit(&g_ax25_decoder, bit)) {
+                    // Complete frame available!
+                    uint16_t flen = g_ax25_decoder.frame_out_len;
+                    if (flen > 0 && flen <= AX25_MAX_FRAME) {
+                        // Send as EVT_RX_DATA with type byte 0x01 = decoded AX.25
+                        uint8_t body[2 + AX25_MAX_FRAME];
+                        body[0] = (uint8_t)(flen & 0xFF);  // length
+                        body[1] = 0x01;  // type: decoded AX.25 frame
+                        if (flen > sizeof(body) - 2) flen = sizeof(body) - 2;
+                        memcpy(&body[2], g_ax25_decoder.frame_buf, flen);
+                        g_last_rx_chunk = (uint8_t)(flen > 255 ? 255 : flen);
+                        send_frame(EVT_RX_DATA, 0, body, (uint16_t)(2u + flen));
+                    }
+                }
+            }
+        }
+        return;
+    }
+
+    // Raw mode (mode 1): stream bytes as-is
     uint16_t avail = (g_serial_head - g_serial_tail) & SERIAL_BUF_MASK;
     uint32_t now = uptime_ms_now();
     bool timeout = (now - g_serial_last_send_ms) >= 50;
@@ -561,6 +600,22 @@ static bool serial_mode_enable(cc1200_t* radio)
 
     if (!ok) return false;
 
+    // 2b. Readback verification of critical registers
+    {
+        uint8_t rb_iocfg2 = 0, rb_iocfg0 = 0, rb_pkt_cfg2 = 0;
+        cc1200_read_reg(radio, REG_IOCFG2, &rb_iocfg2);
+        cc1200_read_reg(radio, REG_IOCFG0, &rb_iocfg0);
+        cc1200_read_reg(radio, REG_PKT_CFG2, &rb_pkt_cfg2);
+        if (rb_iocfg2 != 0x08 || rb_iocfg0 != 0x09) {
+            // IOCFG didn't take — CC1200 may be in wrong state
+            return false;
+        }
+        if ((rb_pkt_cfg2 & 0x03) != 0x01) {
+            // PKT_FORMAT didn't take
+            return false;
+        }
+    }
+
     // 3. Configure Pico GPIO as inputs with pull-down
     gpio_init(SERIAL_RX_PIN);
     gpio_set_dir(SERIAL_RX_PIN, GPIO_IN);
@@ -591,14 +646,32 @@ static bool serial_mode_enable(cc1200_t* radio)
     serial_rx_program_init(g_serial_pio, g_serial_sm, g_serial_pio_offset,
                             SERIAL_RX_PIN, SERIAL_CLK_PIN);
 
-    // Reset ring buffer
+    // Reset ring buffer and diagnostics
     g_serial_head = 0;
     g_serial_tail = 0;
     g_serial_last_send_ms = uptime_ms_now();
+    g_serial_total_words = 0;
 
     // 5. Start PIO + radio RX
     pio_sm_set_enabled(g_serial_pio, g_serial_sm, true);
     (void)cc1200_strobe(radio, CC1200_CMD_SRX);
+    sleep_ms(10);  // Let CC1200 settle into RX
+
+    // 6. Check that CC1200 is actually producing clock on GP9
+    //    If clock is stuck low, PIO will never get data.
+    {
+        bool clk_seen = false;
+        for (int i = 0; i < 100; i++) {
+            if (gpio_get(SERIAL_CLK_PIN)) {
+                clk_seen = true;
+                break;
+            }
+            sleep_us(100);
+        }
+        // Don't fail — just note it. Clock may not toggle until data arrives
+        // on some CC1200 configs. Log via serial_total_words counter.
+        (void)clk_seen;
+    }
 
     g_serial_mode = true;
     return true;
@@ -996,10 +1069,15 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
 
         case MSG_SET_SERIAL_MODE:
         {
+            // body[0]: 0=off, 1=raw serial, 2=AX.25 G3RUH decode
             if (len < 1 || !radio) { send_error(0x01, seq); break; }
-            uint8_t enable = body[0];
+            uint8_t mode = body[0];
             bool ok_s = false;
-            if (enable) {
+            if (mode > 0) {
+                g_serial_decode_mode = mode;
+                if (mode == 2) {
+                    ax25_decoder_init(&g_ax25_decoder);
+                }
                 g_streaming = true;
                 g_streaming_channel = g_active_channel;
                 set_desired_state(STATE_RX);
@@ -1007,12 +1085,14 @@ static void handle_cmd(uint8_t type, uint8_t seq, const uint8_t* body, uint16_t 
                 ok_s = serial_mode_enable(radio);
                 if (!ok_s) {
                     g_streaming = false;
+                    g_serial_decode_mode = 0;
                     set_desired_state(STATE_IDLE);
                     g_radio_fsm = RADIO_FSM_IDLE;
                 }
             } else {
                 serial_mode_disable(radio);
                 g_streaming = false;
+                g_serial_decode_mode = 0;
                 set_desired_state(STATE_IDLE);
                 g_radio_fsm = RADIO_FSM_IDLE;
                 (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);

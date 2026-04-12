@@ -2255,7 +2255,11 @@
             </div>
             <div class="rf-row">
               <span class="rf-label">Packets</span>
-              <span id="packet-count" class="rf-val">0</span>
+              <span class="rf-val"><span id="packet-count">0</span> <span id="valid-packet-count" style="font-size:0.7em;color:var(--muted)"></span></span>
+            </div>
+            <div class="rf-row">
+              <span class="rf-label">Protocol</span>
+              <span class="rf-val" id="rf-protocol" style="font-size:0.72em">---</span>
             </div>
             <div class="rf-row">
               <span class="rf-label">Status</span>
@@ -2263,6 +2267,22 @@
                 <span class="stream-dot" id="stream-dot"></span>
                 <span id="stream-label">Idle</span>
               </span>
+            </div>
+            <!-- Recent packets (last 5) -->
+            <div id="recent-packets-panel" style="display:none;margin-top:6px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.52rem;font-family:var(--font-mono);color:var(--muted);line-height:1.5;max-height:120px;overflow-y:auto">
+              <div style="color:var(--text);font-size:0.56rem;font-weight:600;margin-bottom:3px">Recent Packets</div>
+              <div id="recent-packets-list"></div>
+            </div>
+
+            <!-- Radio config panel (shows what was configured and why) -->
+            <div id="radio-config-panel" style="display:none;margin-top:6px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.52rem;font-family:var(--font-mono);color:var(--muted);line-height:1.6">
+              <div style="color:var(--text);font-size:0.56rem;font-weight:600;margin-bottom:3px">Radio Config</div>
+              <div>Tier <span id="rc-tier" style="color:var(--text)">---</span></div>
+              <div>Sync <span id="rc-sync" style="color:var(--text)">---</span> &nbsp; THR <span id="rc-sync-thr" style="color:var(--text)">---</span></div>
+              <div>Dev <span id="rc-deviation" style="color:var(--text)">---</span> &nbsp; BW <span id="rc-bw" style="color:var(--text)">---</span></div>
+              <div>Pkt <span id="rc-pkt-config" style="color:var(--text)">---</span></div>
+              <div>Base freq <span id="rc-base-freq" style="color:var(--text)">---</span></div>
+              <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--card-border)">Raw dump <span id="rc-raw-dump" style="color:var(--text)">---</span></div>
             </div>
 
             <!-- CC1200 debug panel (only visible when CC1200 connected) -->
@@ -3586,8 +3606,9 @@
       modEl.textContent = '---';
     }
 
-    // Packet counter flash
+    // Packet counter flash + valid count
     const newPkts = rf.packets || 0;
+    const validPkts = rf.valid_packets || 0;
     const pktEl   = document.getElementById('packet-count');
     pktEl.textContent = newPkts;
     if (newPkts !== _lastPackets) {
@@ -3595,19 +3616,120 @@
       setTimeout(() => pktEl.classList.remove('flash'), 300);
       _lastPackets = newPkts;
     }
+    // Show valid/total with color
+    const validEl = document.getElementById('valid-packet-count');
+    if (newPkts > 0) {
+      const pct = validPkts === newPkts ? '100%' : Math.round(100 * validPkts / newPkts) + '%';
+      const clr = validPkts === newPkts ? 'var(--green)' : validPkts > 0 ? 'var(--yellow, #e0a000)' : 'var(--red, #e04040)';
+      validEl.innerHTML = '(<span style="color:' + clr + '">' + validPkts + ' valid</span> ' + pct + ')';
+    } else {
+      validEl.textContent = '';
+    }
 
-    // Streaming dot
+    // Protocol indicator
+    const protoEl = document.getElementById('rf-protocol');
+    const proto = rf.protocol || '';
+    const rxMode = rf.rx_mode || 'packet';
+    if (proto) {
+      let protoStr = proto.replace(/_/g, ' ');
+      if (rxMode === 'serial_ax25') protoStr += ' [serial]';
+      else protoStr += ' [pkt]';
+      protoEl.textContent = protoStr;
+      // Color code: green for known, yellow for assumed, red for unknown
+      if (proto.includes('assumed')) {
+        protoEl.style.color = '#fbbf24';  // yellow — inferred, not confirmed
+      } else if (proto === 'unknown') {
+        protoEl.style.color = '#f87171';  // red — no idea
+      } else {
+        protoEl.style.color = '#4ade80';  // green — known protocol
+      }
+    } else {
+      protoEl.textContent = '---';
+      protoEl.style.color = '';
+    }
+
+    // Recent packets panel
+    const recentPkts = rf.recent_packets || [];
+    const rpPanel = document.getElementById('recent-packets-panel');
+    const rpList = document.getElementById('recent-packets-list');
+    if (recentPkts.length > 0) {
+      rpPanel.style.display = '';
+      let html = '';
+      for (const p of recentPkts.slice(-5).reverse()) {
+        let badge;
+        if (p.decoded) {
+          badge = '<span style="color:#a78bfa;font-weight:700">AX25</span>';
+        } else if (p.valid) {
+          badge = '<span style="color:var(--green);font-weight:700">OK</span>';
+        } else {
+          badge = '<span style="color:var(--red, #e04040)">??</span>';
+        }
+        const ts = p.timestamp ? p.timestamp.split('T')[1].split('.')[0] : '';
+        const hexSnip = (p.hex || '').substring(0, 32);
+        const protoTag = p.protocol ? ' <span style="color:var(--muted-dim);font-size:0.9em">' + p.protocol + '</span>' : '';
+        html += '<div>' + badge + ' ' + ts + ' ' + p.length + 'B' + protoTag + '<br><span style="color:var(--muted-dim)">' + hexSnip + '</span></div>';
+      }
+      rpList.innerHTML = html;
+    } else {
+      rpPanel.style.display = 'none';
+    }
+
+    // Streaming dot + serial mode indicator
     const streaming = !!rf.streaming;
+    const serialActive = !!rf.serial_mode;
     const _hasTarget = !!rf.satellite;  // auto_tracker has a target (even if not streaming yet)
     const dot  = document.getElementById('stream-dot');
     const lbl  = document.getElementById('stream-label');
     dot.classList.toggle('active', streaming || _hasTarget);
-    if (streaming) {
+    if (serialActive) {
+      lbl.textContent = 'Serial RX';
+      lbl.style.color = '#a78bfa';  // purple for serial mode
+    } else if (streaming) {
       lbl.textContent = rfBackend === 'rtlsdr' ? 'IQ Capture' : 'RX Active';
+      lbl.style.color = '';
     } else if (_hasTarget) {
       lbl.textContent = 'Slewing';
+      lbl.style.color = '';
     } else {
       lbl.textContent = 'Idle';
+      lbl.style.color = '';
+    }
+
+    // Radio config debug panel
+    const rcPanel = document.getElementById('radio-config-panel');
+    const rc = rf.radio_config;
+    if (rc && rcPanel && rf.satellite) {
+      rcPanel.style.display = '';
+      document.getElementById('rc-tier').textContent = rc.config_tier || '---';
+      // Sync word
+      const sw = rc.sync_word || '---';
+      const swEl = document.getElementById('rc-sync');
+      swEl.textContent = sw;
+      swEl.style.color = (sw === 'default' || sw === 'SmartRF default') ? '#fbbf24' : '#4ade80';
+      // Sync threshold
+      const thr = rc.sync_threshold;
+      const thrEl = document.getElementById('rc-sync-thr');
+      thrEl.textContent = thr != null ? thr + ' (' + Math.floor(thr/2) + ' bit err max)' : '---';
+      // Deviation + BW
+      document.getElementById('rc-deviation').textContent = rc.deviation_hz != null ? (rc.deviation_hz/1000).toFixed(1) + ' kHz' : '---';
+      document.getElementById('rc-bw').textContent = rc.rx_bw_khz != null ? rc.rx_bw_khz + ' kHz' : '---';
+      // Packet config
+      const pktParts = [];
+      if (rc.enable_pn9) pktParts.push('PN9');
+      if (rc.enable_crc16) pktParts.push('CRC16');
+      if (rc.variable_length) pktParts.push('var-len');
+      else if (rc.pkt_length) pktParts.push('fixed ' + rc.pkt_length + 'B');
+      document.getElementById('rc-pkt-config').textContent = pktParts.length ? pktParts.join(' + ') : 'default';
+      // Base freq (before Doppler)
+      const baseF = rf.base_freq_mhz;
+      document.getElementById('rc-base-freq').textContent = baseF ? baseF.toFixed(3) + ' MHz' : '---';
+      // Raw dump
+      const rawB = rf.raw_dump_bytes || 0;
+      const rawStr = rawB > 1048576 ? (rawB/1048576).toFixed(1)+'M' : rawB > 1024 ? (rawB/1024).toFixed(1)+'K' : rawB + 'B';
+      document.getElementById('rc-raw-dump').textContent = rawB > 0 ? rawStr + ' captured' : 'not active';
+      document.getElementById('rc-raw-dump').style.color = rawB > 0 ? '#4ade80' : 'var(--muted)';
+    } else if (rcPanel) {
+      rcPanel.style.display = 'none';
     }
 
     // CC1200 debug panel
@@ -3925,8 +4047,14 @@
         errElEl.style.color = Math.abs(errEl) < 1 ? 'var(--green)' : Math.abs(errEl) < 3 ? 'var(--amber)' : 'var(--red)';
       }
 
-      // Packets
-      document.getElementById('focus-packets').textContent = rf.packets || 0;
+      // Packets — show valid/total
+      const focusPkts = rf.packets || 0;
+      const focusValid = rf.valid_packets || 0;
+      if (focusPkts > 0 && focusValid !== focusPkts) {
+        document.getElementById('focus-packets').textContent = focusValid + '/' + focusPkts;
+      } else {
+        document.getElementById('focus-packets').textContent = focusPkts;
+      }
       document.getElementById('focus-bytes').textContent = (rf.total_bytes || 0) + ' bytes';
 
       // Link margin: FSPL = 20*log10(d_km) + 20*log10(f_MHz) + 32.45

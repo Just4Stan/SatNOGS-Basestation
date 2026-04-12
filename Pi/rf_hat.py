@@ -104,6 +104,12 @@ REG_CHAN_BW        = 0x10
 REG_SYMBOL_RATE2   = 0x13
 REG_SYMBOL_RATE1   = 0x14
 REG_SYMBOL_RATE0   = 0x15
+REG_PKT_CFG2      = 0x26
+REG_PKT_CFG1      = 0x27
+REG_PKT_CFG0      = 0x28
+REG_RFEND_CFG1    = 0x29
+REG_RFEND_CFG0    = 0x2A
+REG_PKT_LEN       = 0x2E
 REG_FS_CFG        = 0x21
 
 # Modulation format encoding (CC1200 datasheet, MODCFG_DEV_E[5:3])
@@ -709,7 +715,7 @@ class CC1200Link:
 
     # ----- Serial mode (raw bit streaming via PIO) -----
 
-    def set_serial_mode(self, enable: bool) -> bool:
+    def set_serial_mode(self, enable: bool, mode: int = 1) -> bool:
         """Enable/disable CC1200 synchronous serial mode + PIO bit streaming.
 
         When enabled, the CC1200 demodulates FSK/GFSK and outputs raw bits
@@ -717,15 +723,19 @@ class CC1200Link:
         events — same as normal FIFO streaming but with raw demodulated bits
         instead of decoded packets.
 
-        This is used for protocols (USP, AX.100) that the CC1200 hardware
-        packet engine cannot decode natively.
+        This is used for protocols that the CC1200 hardware packet engine
+        cannot decode natively.
 
         Args:
             enable: True to enter serial mode, False to return to FIFO mode.
+            mode: 1=raw bitstream, 2=AX.25 G3RUH decode (NRZ-I + descramble + HDLC)
         Returns:
             True if firmware confirmed the mode switch.
         """
-        b = self.send_cmd(MSG_SET_SERIAL_MODE, bytes([1 if enable else 0]))
+        if enable:
+            b = self.send_cmd(MSG_SET_SERIAL_MODE, bytes([mode & 0xFF]))
+        else:
+            b = self.send_cmd(MSG_SET_SERIAL_MODE, bytes([0]))
         return bool(b and len(b) >= 1 and b[0] == 1)
 
     # ----- Frequency control -----
@@ -765,7 +775,12 @@ class CC1200Link:
                               deviation_hz: int = 5000,
                               rx_bw_khz: float = 25.0,
                               sync_word: Optional[str] = None,
-                              freq_hz: Optional[float] = None) -> bool:
+                              freq_hz: Optional[float] = None,
+                              sync_threshold: int = 4,
+                              pkt_length: Optional[int] = None,
+                              variable_length: bool = False,
+                              enable_pn9: bool = False,
+                              enable_crc16: bool = False) -> bool:
         """
         Reconfigure modulation-critical CC1200 registers without full profile reload.
 
@@ -779,6 +794,11 @@ class CC1200Link:
             rx_bw_khz: RX channel filter bandwidth in kHz
             sync_word: Hex string sync word (e.g. "7A0E" or "7E7E"), or None to keep current
             freq_hz: Carrier frequency in Hz, or None to keep current
+            sync_threshold: SYNC_THR value (max allowed bit errors = THR/2). Default 4.
+            pkt_length: Fixed packet length in bytes, or None to keep current
+            variable_length: If True, use variable-length packet mode (length byte prefix)
+            enable_pn9: If True, enable PN9 data whitening (PKT_CFG0 bit 6)
+            enable_crc16: If True, enable CRC-16 append/check (PKT_CFG1 bits [1:0]=01)
 
         Returns True if all writes succeeded.
         """
@@ -819,7 +839,7 @@ class CC1200Link:
         chan_bw = chan_bw_to_reg(rx_bw_khz)
         ok = ok and self.write_reg(REG_CHAN_BW, chan_bw)
 
-        # Sync word (up to 32 bits)
+        # Sync word (up to 32 bits) + SYNC_THR
         if sync_word is not None:
             sw_bytes = bytes.fromhex(sync_word)
             if len(sw_bytes) == 2:
@@ -828,11 +848,11 @@ class CC1200Link:
                 ok = ok and self.write_reg(REG_SYNC2, 0x00)
                 ok = ok and self.write_reg(REG_SYNC1, sw_bytes[0])
                 ok = ok and self.write_reg(REG_SYNC0, sw_bytes[1])
-                # SYNC_CFG1: 16-bit sync word mode
+                # SYNC_CFG1: 16-bit sync word mode + sync threshold
                 sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
                 if sync_cfg1 is not None:
-                    # bits [4:2] = sync word length: 0b100 = 16 bits
-                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x04 << 2)
+                    sync_cfg1 = (sync_cfg1 & 0xE0) | (sync_threshold & 0x1F)
+                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x04 << 2)  # 16-bit mode
                     ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
             elif len(sw_bytes) == 4:
                 # 32-bit sync word
@@ -840,25 +860,60 @@ class CC1200Link:
                 ok = ok and self.write_reg(REG_SYNC2, sw_bytes[1])
                 ok = ok and self.write_reg(REG_SYNC1, sw_bytes[2])
                 ok = ok and self.write_reg(REG_SYNC0, sw_bytes[3])
-                # SYNC_CFG1: 32-bit sync word mode
+                # SYNC_CFG1: 32-bit sync word mode + sync threshold
                 sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
                 if sync_cfg1 is not None:
-                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x06 << 2)
+                    sync_cfg1 = (sync_cfg1 & 0xE0) | (sync_threshold & 0x1F)
+                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x06 << 2)  # 32-bit mode
                     ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
         else:
-            # No sync word known — use moderate sync tolerance (11 bit errors
-            # in 32-bit sync word). This lets real frames through while not
-            # flooding the FIFO with noise like SYNC_THR=0x1F did.
+            # No sync word known — use caller-specified threshold (default 4).
+            # SYNC_THR=4 → max 2 bit errors in 32-bit sync (SYNC_ERROR < THR/2).
             sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
             if sync_cfg1 is not None:
-                sync_cfg1 = (sync_cfg1 & 0xE0) | 0x0B  # 11 bit errors allowed
+                sync_cfg1 = (sync_cfg1 & 0xE0) | (sync_threshold & 0x1F)
                 ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
-            # RFEND_CFG0: return to RX after bad CRC (not IDLE)
-            # bits [5:4] = 0b11 → RX after RX timeout/bad CRC
-            rfend0 = self.read_reg(0x2A)  # RFEND_CFG0
-            if rfend0 is not None:
-                rfend0 = (rfend0 & 0xCF) | 0x30  # RXOFF_MODE = 11 → RX
-                ok = ok and self.write_reg(0x2A, rfend0)
+
+        # Packet engine config (PKT_CFG0, PKT_CFG1, PKT_LEN)
+        # Only write when explicitly configured — otherwise keep SmartRF defaults
+        if pkt_length is not None or variable_length or enable_pn9 or enable_crc16:
+            # PKT_CFG0: [6] WHITE_DATA (PN9), [5] PKT_FORMAT=00 (FIFO),
+            #           [4:0] LENGTH_CONFIG: 00=fixed, 01=variable
+            pkt_cfg0 = self.read_reg(REG_PKT_CFG0) or 0x00
+            if enable_pn9:
+                pkt_cfg0 |= 0x40   # WHITE_DATA = 1
+            else:
+                pkt_cfg0 &= ~0x40  # WHITE_DATA = 0
+            if variable_length:
+                pkt_cfg0 = (pkt_cfg0 & 0xE0) | 0x20  # LENGTH_CONFIG = 01 (variable)
+            else:
+                pkt_cfg0 = (pkt_cfg0 & 0xE0) | 0x00  # LENGTH_CONFIG = 00 (fixed)
+            ok = ok and self.write_reg(REG_PKT_CFG0, pkt_cfg0)
+
+            # PKT_CFG1: [1:0] CRC_CFG: 00=off, 01=CRC16 (ITU-T)
+            pkt_cfg1 = self.read_reg(REG_PKT_CFG1) or 0x00
+            if enable_crc16:
+                pkt_cfg1 = (pkt_cfg1 & 0xFC) | 0x01  # CRC16
+            else:
+                pkt_cfg1 = (pkt_cfg1 & 0xFC) | 0x00  # CRC off
+            ok = ok and self.write_reg(REG_PKT_CFG1, pkt_cfg1)
+
+            # PKT_LEN: fixed packet length (or max for variable mode)
+            if pkt_length is not None:
+                ok = ok and self.write_reg(REG_PKT_LEN, pkt_length & 0xFF)
+
+        # RFEND_CFG1: RXOFF_MODE — stay in RX after good packet
+        # bits [5:4] = 0b11 → return to RX after packet
+        rfend1 = self.read_reg(REG_RFEND_CFG1)
+        if rfend1 is not None:
+            rfend1 = (rfend1 & 0xCF) | 0x30  # RXOFF_MODE = 11 → RX
+            ok = ok and self.write_reg(REG_RFEND_CFG1, rfend1)
+
+        # RFEND_CFG0: return to RX after bad CRC too
+        rfend0 = self.read_reg(REG_RFEND_CFG0)
+        if rfend0 is not None:
+            rfend0 = (rfend0 & 0xCF) | 0x30  # RXOFF_MODE = 11 → RX
+            ok = ok and self.write_reg(REG_RFEND_CFG0, rfend0)
 
         # Frequency (if specified)
         if freq_hz is not None:
