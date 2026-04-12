@@ -72,7 +72,7 @@ The **RF HAT Pico** sits on the RF HAT PCB (`RF_HAT/`) — a Pi 3A+ HAT carrying
 sub-GHz transceivers. The Pico controls both CC1200s over SPI and communicates with the Pi
 over **UART** (GP0/GP1, 115200 baud, wired to Pi GPIO14/15).
 
-This is the same architecture used by the [M17 CC1200 HAT reference design](RF_HAT/reference_designs/M17_CC1200_HAT/).
+This is the same architecture used by the M17 CC1200 HAT reference design (SP5WWP/DB9MAT).
 The binary protocol uses **COBS framing** with **CRC-16/CCITT-FALSE** integrity checks.
 
 The CC1200 is a hardware packet modem — it handles modulation/demodulation, sync word detection,
@@ -158,12 +158,7 @@ Firmware/
 │   │   ├── proto.c/h                  Binary protocol handler (COBS/UART)
 │   │   ├── cobs.c/h                   COBS framing codec
 │   │   └── crc16.c/h                  CRC-16/CCITT-FALSE
-│   └── tools/                         PC/Pi test tools (Python)
-│       ├── cc1200_gui.py              GUI for interactive CC1200 control
-│       ├── cc1200_diag.py             CLI diagnostic tool
-│       ├── generate_regmap.py         Register map generator
-│       ├── smartrf_config.txt         SmartRF Studio 435 MHz config
-│       ├── cc1200_regmap_all.json     Full register name→address map
+│   └── tools/
 │       └── cc1200_regmap_profile.json Profile-applicable registers
 ```
 

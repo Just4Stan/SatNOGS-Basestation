@@ -21,11 +21,7 @@ Pi 3A+ (40-pin header)
 |------|-------------|
 | `RF_HAT_out/` | KiCad project (open `RF_HAT.kicad_pro` in KiCad 9) |
 | `rf_hat_circuit.py` | Original circuit-synth source (reference only — board is now edited directly in KiCad) |
-| `add_farnell_fields.py` | Script to add Farnell order codes to schematic symbols |
-| `BOM_Farnell.md` | Bill of materials with Farnell part numbers |
 | `datasheets/` | CC1200 datasheet, CC120x user guide, TI reference designs |
-| `reference_designs/` | M17 CC1200_HAT (verified 433 MHz) + UPSat CC1120 (145/435 MHz) |
-| `old_schematics/` | Previous hand-placed schematics + Altium import (reference only) |
 
 ## RF Matching Network — 3-Path Topology
 

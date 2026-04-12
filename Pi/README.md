@@ -452,16 +452,16 @@ python3 station.py --sat "ISS" --doppler --log passes/iss.log
 
 ### Scenario B: Separate Tracking + Capture
 
-Run rotator tracking and RF capture in separate terminals:
+Run station controller and RF capture in separate terminals:
 
 ```bash
 # Terminal 1: rotctld is already running as a service
 sudo systemctl status rotctld
 
-# Terminal 2: satellite tracking (sends AZ/EL to rotctld)
-python3 ~/SatNOGS-Basestation/track_satellite.py --sat "ISS"
+# Terminal 2: satellite tracking + RF (all-in-one)
+python3 ~/SatNOGS-Basestation/Pi/station.py --sat "ISS" --doppler
 
-# Terminal 3: UHF packet capture (independent of rotator)
+# Terminal 3: (optional) standalone UHF packet capture
 python3 ~/SatNOGS-Basestation/Pi/capture.py --log packets.log
 ```
 
@@ -585,52 +585,38 @@ python3 station.py --sat "ISS" --doppler
 ```
 Pi/
 ├── README.md               ← this file (setup + technical reference)
-├── user_guide.md           ← field operation guide for AetherSpace team
 ├── requirements.txt        ← pip dependencies (pyserial, ephem)
 ├── rf_hat.py               ← CC1200 protocol library (shared)
+├── rf_backend.py           ← RF backend abstract base class
 ├── capture.py              ← UHF packet capture script
 ├── transmit.py             ← VHF packet transmit script
-├── station.py              ← full station pass controller (+ daemon mode)
+├── station.py              ← full station pass controller (+ daemon + scan mode)
 ├── dashboard.py            ← HTTPS web dashboard + field control center
 ├── buzzer.py               ← buzzer driver (sends patterns to RF HAT Pico GP4)
+├── sat_library.py          ← satellite profile database + SatNOGS DB API
+├── satnogs.py              ← SiDS telemetry submission client
+├── ax100_decoder.py        ← GOMspace AX100 packet decoder
+├── usp_decoder.py          ← USP packet decoder
+├── wifi_provision.py       ← WiFi captive portal for field setup
 ├── services/
 │   ├── install.sh              ← one-command service installer
+│   ├── setup-pi.sh             ← fresh Pi setup script
 │   ├── dashboard.service       ← systemd: dashboard on boot
 │   └── station.service         ← systemd: auto-tracker on boot (daemon mode)
-└── configs/
-    ├── cc1200_regmap_profile.json  ← register name → address map
-    ├── smartrf_uhf_435.txt         ← UHF SmartRF profile (verified)
-    └── smartrf_vhf_145.txt         ← VHF SmartRF profile (adapted, needs tuning)
+├── configs/
+│   ├── cc1200_regmap_profile.json  ← register name → address map
+│   ├── smartrf_uhf_435.txt         ← UHF SmartRF profile (verified)
+│   └── smartrf_vhf_145.txt         ← VHF SmartRF profile (adapted, needs tuning)
+└── docs/
+    ├── quickstart.md               ← 5-minute field quick start guide
+    ├── satnogs_integration.md      ← SatNOGS ecosystem documentation
+    └── satellite_pipeline.md       ← satellite data pipeline overview
 ```
 
-## What Still Needs to Be Done
+## Known Issues / TODO
 
-### Already Working
-- [x] Rotator Pico firmware (EasyComm, PID, encoders, IMU)
-- [x] RF HAT Pico firmware (dual CC1200, COBS protocol, profile loading)
-- [x] rotctld systemd service on Pi
-- [x] Satellite tracking script (`track_satellite.py`, direct USB serial + rotctld)
-- [x] RF HAT Python protocol library (`rf_hat.py`)
-- [x] UHF packet capture script (`capture.py`)
-- [x] VHF packet transmit script (`transmit.py`)
-- [x] Full station controller with Doppler (`station.py` + daemon mode)
-- [x] SmartRF profiles for UHF and VHF
-- [x] Web dashboard (`dashboard.py`) — HTTPS, phone GPS, park, shutdown
-- [x] Buzzer feedback (`buzzer.py`) — AOS/LOS/packet audio cues
-- [x] NeoPixel status LEDs on both Picos (rotator + RF HAT)
-- [x] Systemd services for auto-start (dashboard + station daemon)
-- [x] Phone GPS → `~/station.conf` → automatic station location
-- [x] Station location config (`~/station.conf`, CLI flags, or hardcoded defaults)
-
-### TODO
-- [ ] **Enable UART on the Pi** — add `enable_uart=1` and `dtoverlay=disable-bt` to config.txt
-- [ ] **Test RF HAT over Pi UART** — ping, register read, UHF RX test
-- [ ] **VHF SmartRF profile tuning** — run SmartRF Studio for 145 MHz, or verify on VNA
-- [ ] **SatNOGS station registration** — register at network.satnogs.org, get API token
-- [ ] **SiDS packet submission** — submit decoded packets to SatNOGS DB
-- [ ] **SatNOGS pre/post observation hooks** — auto-start/stop RF capture per scheduled pass
-- [ ] **udev rules** — persistent device names for both Picos
-- [ ] **RTL-SDR** (optional) — for standard SatNOGS waterfall alongside CC1200 capture
+- [ ] **VHF matching network** needs VNA tuning (SmartRF profile adapted from UHF, not optimized)
+- [ ] **udev rules** — persistent device names for both Picos (currently `/dev/ttyACM0` can shift)
 
 ## Troubleshooting
 

@@ -44,7 +44,7 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 | [`Firmware/`](Firmware/) | RP2040 firmware for both Picos (rotator + RF HAT) | [Firmware README](Firmware/README.md) |
 | [`MotorPCB/`](MotorPCB/) | KiCad 9 motor control PCB (RP2040 + TB6642FG drivers, 13 sub-sheets) | Open `motorPCB.kicad_pro` in KiCad |
 | [`RF_HAT/`](RF_HAT/) | Dual CC1200 transceiver HAT — UHF 432 MHz + VHF 144 MHz | [RF_HAT README](RF_HAT/README.md) |
-| [`Pi/`](Pi/) | Pi setup, RF data flow scripts, user guide | [Pi README](Pi/README.md) · [User Guide](Pi/user_guide.md) |
+| [`Pi/`](Pi/) | Pi setup, RF data flow scripts, station controller | [Pi README](Pi/README.md) |
 | [`Hardware/`](Hardware/) | Datasheets for motor, driver, encoder, antenna | [Hardware README](Hardware/README.md) |
 | [`Images/`](Images/) | Rotator photos and PID tuning plots | — |
 | [`Papers/`](Papers/) | Baseline thesis draft (Serge Hanssens, 2022-2023) | — |
@@ -54,8 +54,6 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 |------|-------------|
 | `firmware.uf2` | Pre-built rotator firmware (auto-copied on each build) |
 | `rf_hat_firmware.uf2` | Pre-built RF HAT firmware (auto-copied on each build) |
-| `demo_tracking.py` | Thesis demo (axis showcase + simulated passes). Use `--passes-only` to skip axis demo |
-| `track_satellite.py` | Live satellite tracker — direct USB serial or via rotctld (requires `ephem`, `pyserial`) |
 
 ## Hardware
 
@@ -150,44 +148,19 @@ echo "P 90.0 30.0" | nc <pi-ip> 4533  # move to AZ 90, EL 30
 
 ### Satellite tracking
 
-The tracker computes real-time AZ/EL from TLE orbital data (CelesTrak) using PyEphem and
-sends position commands to the Pico at 10 Hz. It displays target, actual (encoder readback),
-and pointing error in real-time.
+Satellite tracking is handled by `station.py` on the Pi. It computes real-time AZ/EL from
+TLE orbital data (CelesTrak) using PyEphem, sends position commands via rotctld at 10 Hz,
+and handles RF capture + Doppler correction simultaneously.
 
 ```sh
-pip install ephem pyserial
-
-# Direct USB serial (laptop → Pico, no Pi needed):
-python3 track_satellite.py --serial auto --list        # upcoming passes
-python3 track_satellite.py --serial auto --sat "ISS"   # track ISS
-python3 track_satellite.py --serial auto               # auto-pick next pass
-
-# Via rotctld on the Pi:
-python3 track_satellite.py --host 10.72.3.105 --sat "ISS"
-
-# Thesis demo (axis showcase, then simulated passes):
-python3 demo_tracking.py
-
-# Simulated passes only (no axis demo):
-python3 demo_tracking.py --passes-only
+# On the Pi:
+cd ~/SatNOGS-Basestation/Pi
+python3 station.py --list              # list upcoming passes
+python3 station.py --sat "ISS"         # track ISS with RF capture
+python3 station.py --daemon            # auto-track all passes (no SSH needed)
 ```
 
-**How it works:**
-
-```
-CelesTrak TLE data ──→ PyEphem orbit model ──→ AZ/EL at 10 Hz
-                                                     │
-                                               USB serial
-                                           (EasyComm: "AZ180.0 EL45.0")
-                                                     │
-                                                     ▼
-                                              Rotator Pico
-                                           PID controller (100 Hz)
-                                           encoder feedback
-                                                     │
-                                                     ▼
-                                             TB6642FG → motors
-```
+See [`Pi/README.md`](Pi/README.md) for full usage.
 
 ### SatNOGS client (optional)
 
