@@ -14,11 +14,11 @@ The RF PCB is based on a microcontroller-controlled dual-transceiver architectur
 The design consists of the following functional blocks:
 
 \begin{itemize}
-\item A microcontroller for system control and data handling
+\item A rp2040 based microcontroller for system control and data handling
 \item Two RF transceivers (VHF and UHF)
 \item Dedicated SPI communication interfaces
 \item A UART interface to the Raspberry Pi host
-\item Power distribution and filtering circuitry
+\item Power distribution
 \end{itemize}
 
 Figure~X illustrates the high-level architecture of the RF PCB and the interaction between these subsystems.
@@ -26,12 +26,12 @@ Figure~X illustrates the high-level architecture of the RF PCB and the interacti
 \subsection{Microcontroller Subsystem}
 \label{subsec:rf_microcontroller}
 
-The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040. This device acts as the central control unit of the system.
+The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040. This device acts as the central control unit of the RF system.
 
-Its primary responsibilities include:
+Its responsibilities include:
 
 \begin{itemize}
-\item Configuration of both RF transceivers via SPI
+\item Configuration of both RF transceivers using SPI
 \item Handling of transmit and receive data
 \item Communication with the host system via UART
 \item Control of auxiliary signals such as chip select and interrupt lines
@@ -40,8 +40,6 @@ Its primary responsibilities include:
 The RP2040 was selected due to its dual-core architecture and availability of multiple independent SPI peripherals, enabling parallel communication with both RF transceivers without bus arbitration. Compared to typical single-SPI microcontrollers, this reduces firmware complexity and improves timing determinism.
 
 Furthermore, the platform supports rapid firmware development and iteration through a well-established software ecosystem, enabling efficient testing and debugging during the development process.
-
-The GPIO assignment of the RP2040 was selected to utilize two independent SPI peripherals while maintaining a simple and deterministic interface to the host system.
 
 \begin{table}[H]
 \centering
@@ -53,15 +51,23 @@ The GPIO assignment of the RP2040 was selected to utilize two independent SPI pe
 GPIO0  & UART TX & Raspberry Pi RX (J3) \\
 GPIO1  & UART RX & Raspberry Pi TX (J3) \\
 \hline
-GPIO10 & SPI (UHF) MOSI & CC1200 UHF \\
-GPIO11 & SPI (UHF) MISO & CC1200 UHF \\
-GPIO12 & SPI (UHF) SCLK & CC1200 UHF \\
-GPIO13 & SPI (UHF) CS   & CC1200 UHF \\
+GPIO10 & SPI (UHF) MOSI & CC1200 UHF SI \\
+GPIO11 & SPI (UHF) MISO & CC1200 UHF SO \\
+GPIO12 & SPI (UHF) SCLK & CC1200 UHF SCLK \\
+GPIO13 & SPI (UHF) CS   & CC1200 UHF \texttt{\textasciitilde CS} \\
+GPIO8  & UHF reset      & CC1200 UHF \texttt{\textasciitilde RESET} \\
+GPIO7  & UHF GDO0       & CC1200 UHF GPIO0 \\
+GPIO9  & UHF GDO2       & CC1200 UHF GPIO2 \\
+GPIO6  & UHF GDO3       & CC1200 UHF GPIO3 \\
 \hline
-GPIO18 & SPI (VHF) MOSI & CC1200 VHF \\
-GPIO19 & SPI (VHF) MISO & CC1200 VHF \\
-GPIO16 & SPI (VHF) SCLK & CC1200 VHF \\
-GPIO17 & SPI (VHF) CS   & CC1200 VHF \\
+GPIO18 & SPI (VHF) SCLK & CC1200 VHF SCLK \\
+GPIO19 & SPI (VHF) MOSI & CC1200 VHF SI \\
+GPIO16 & SPI (VHF) MISO & CC1200 VHF SO \\
+GPIO17 & SPI (VHF) CS   & CC1200 VHF \texttt{\textasciitilde CS} \\
+GPIO20 & VHF reset      & CC1200 VHF \texttt{\textasciitilde RESET} \\
+GPIO22 & VHF GDO0       & CC1200 VHF GPIO0 \\
+GPIO21 & VHF GDO2       & CC1200 VHF GPIO2 \\
+GPIO26 & VHF GDO3       & CC1200 VHF GPIO3 \\
 \hline
 \end{tabular}
 \label{tab:rp2040_pinout}
@@ -70,18 +76,11 @@ GPIO17 & SPI (VHF) CS   & CC1200 VHF \\
 \subsection{RF Transceiver Subsystem}
 \label{subsec:rf_transceivers}
 
-The RF PCB employs two CC1200 transceivers to enable dual-band operation:
+The RF PCB employs two CC1200 transceivers to enable dual-band operation. Each transceiver can operate independently and includes its own supporting circuitry:
 
 \begin{itemize}
-\item One transceiver configured for the 144\,MHz VHF band
-\item One transceiver configured for the 433\,MHz UHF band
-\end{itemize}
-
-Each transceiver operates independently and includes its own supporting circuitry:
-
-\begin{itemize}
-\item A 40,MHz crystal oscillator for frequency reference
-\item External matching and filtering components
+\item A 40,MHz crystal oscillator
+\item External matching and filtering electronics
 \item Decoupling capacitors for supply stabilization
 \end{itemize}
 
@@ -91,13 +90,15 @@ Key control and interface signals include SPI communication lines, interrupt out
 
 This independent operation allows simultaneous configuration and rapid switching between frequency bands at the system level.
 
+The detailed design of the RF front-end is discussed separately in Chapter~\ref{ch:rf-frontend}.
+
 \subsection{Communication Interfaces}
 \label{subsec:rf_interfaces}
 
 \subsubsection{SPI Communication}
 \label{subsubsec:rf_spi}
 
-Each RF transceiver is connected to the microcontroller via a dedicated hardware SPI interface on the RP2040, allowing independent communication with both devices.
+Each RF transceiver is connected to the microcontroller via a dedicated hardware SPI interface on the RP2040.
 
 The SPI interfaces consist of the following signals:
 
@@ -125,15 +126,12 @@ This interface is used for:
 \item Debugging and diagnostic output
 \end{itemize}
 
-The UART operates at 3.3\,V logic levels and provides a simple and robust communication channel.
-
-
 \subsection{Power Distribution Network}
 \label{subsec:rf_power}
 
-The RF PCB is powered from a 24\,V input supplied via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using a buck converter. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
+The RF PCB is powered from a 24\,V battery supplied via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using a buck converter. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
 
-Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count while maintaining sufficient efficiency.
+Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count.
 
 The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard power supply circuitry, which is based on a switching regulator. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. While switching regulators typically introduce more noise compared to dedicated low-noise linear regulators, the integrated solution provides adequate current capability and efficiency for the system.
 
@@ -150,8 +148,6 @@ No significant voltage drops or disturbances were observed that could affect the
 
 These results suggest that, despite the use of a switching regulator, the implemented power distribution network, in combination with local decoupling, provides adequate noise suppression for this prototype. For future iterations, the use of a dedicated low-noise LDO for the RF section may be considered to further improve supply integrity and RF performance.
 
-Figure~X illustrates the power distribution architecture of the RF PCB, including the conversion from the 24\,V input to the regulated 5\,V and 3.3\,V supply rails.
-
 \subsection{Summary}
 \label{subsec:rf_summary}
 
@@ -167,15 +163,12 @@ The board integrates a Raspberry Pi Pico microcontroller, two dedicated motor dr
 \subsection{System Overview}
 \label{subsec:rotator_system_overview}
 
-The rotator PCB is based on a dual-axis control architecture supporting independent azimuth and elevation actuation.
-
 The design consists of the following functional blocks:
 
 \begin{itemize}
 \item A Raspberry Pi Pico microcontroller for real-time control and communication
-\item One H-bridge motor driver for the azimuth axis
-\item One H-bridge motor driver for the elevation axis
-\item Incremental encoder inputs for both axes
+\item Two H-bridge motor drivers for the azimuth and elevation axis
+\item Encoder inputs for both axes
 \item End-stop inputs for mechanical limit detection
 \item SPI output pads for connecting a IMU
 \item A UART interface to the Raspberry Pi host
@@ -192,8 +185,8 @@ The rotator PCB is also controlled by a Raspberry Pi Pico microcontroller based 
 Its primary responsibilities include:
 
 \begin{itemize}
-\item Generating PWM and direction control signals for both motor drivers
-\item Reading quadrature encoder feedback from the azimuth and elevation axes
+\item Producing PWM and direction control signals for both motor drivers
+\item Reading encoder feedback from the azimuth and elevation axes
 \item Monitoring end-stop signals
 \item Handling fault and alert signals from the motor drivers
 \item Communicating with the Raspberry Pi host via UART
@@ -270,21 +263,17 @@ In addition to the control inputs, each TB6642FG exposes an ALERT signal connect
 \subsection{Encoder and End-stop Interfaces}
 \label{subsec:rotator_feedback}
 
-Position feedback on the rotator PCB is implemented using a combination of encoder inputs, end-stop switches, and an auxiliary inertial measurement unit (IMU) for elevation sensing.
+Position feedback on the rotator PCB is done using a combination of encoder inputs, end-stop switches, and an auxiliary inertial measurement unit (IMU).
 
 \subsubsection{Encoder Inputs}
 
 Incremental encoder signals are used for both the azimuth and elevation axes. Each axis provides two channels A and B. These signals are connected directly to GPIO inputs on the RP2040, enabling quadrature decoding in firmware. This allows the microcontroller to determine both rotational position and direction of movement.
 
-To improve signal integrity, each encoder channel is conditioned using a simple RC filter consisting of a 100\,Omega series resistor and a 100\,nF capacitor.
-
-This filtering reduces high-frequency noise and prevents false triggering.
+To improve signal integrity, each encoder channel is conditioned using a simple RC filter consisting of a 100\,Omega series resistor and a 100\,nF capacitor. This filtering reduces high-frequency noise and prevents false triggering.
 
 \subsubsection{End-stop Detection}
 
-Each axis includes a dedicated end-stop input for both azimuth and elevation.
-
-These signals are connected to GPIO inputs configured with pull-up resistors, allowing direct interfacing with mechanical limit switches. The end-stops provide a reference for homing procedures and prevent mechanical overtravel.
+Each axis includes a dedicated end-stop input for both azimuth and elevation. These signals are connected to GPIO inputs configured with pull-up resistors, allowing direct interfacing with mechanical limit switches. The end-stops provide a reference for homing procedures and prevent mechanical overtravel.
 
 \subsubsection{Elevation Measurement using IMU}
 
@@ -294,9 +283,7 @@ The IMU is connected to the RP2040 via the available SPI interface, enabling per
 
 \subsubsection{Azimuth Reference via External System}
 
-For azimuth referencing, the system leverages an external compass source provided through a web-based interface. This allows the system to obtain a global orientation reference without requiring additional onboard magnetic sensing hardware.
-
-The details of this interface are handled at the system level and are therefore not further elaborated in this section.
+For azimuth referencing, the system leverages an external compass source provided through a web-based interface. This allows the system to obtain a global orientation reference without requiring additional onboard magnetic sensing hardware. The details of this interface are handled at the system level and are therefore not further elaborated in this section.
 
 \subsection{Axis Connectors and External Interfaces}
 \label{subsec:rotator_connectors}
@@ -324,9 +311,7 @@ Besides the actuator and sensor interfaces, the PCB also exposes additional test
 \subsubsection{UART Interface to Host}
 \label{subsubsec:rotator_uart}
 
-Communication between the rotator PCB and the Raspberry Pi host is done via UART.
-
-This interface is used for receiving movement commands, reporting axis status and position and fiagnostics.
+Communication between the rotator PCB and the Raspberry Pi host is done via UART. This interface is used for receiving movement commands, reporting axis status and position and fiagnostics.
 
 The UART operates at 3.3\,V logic levels and provides a simple and robust communication channel between the host and the local motor controller.
 
