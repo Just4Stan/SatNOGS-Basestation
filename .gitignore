@@ -73,9 +73,23 @@ station.conf
 # Keep only the latest compiled firmware at root
 firmware-*.uf2
 !firmware.uf2
-# Captures (raw IQ / packet logs — keep on disk, not in repo)
+# Captures, pass logs, and reception evidence — kept on disk only, never committed.
+# These are the outputs of station.py, analyze_passes.py, and per-pass dumps.
+# They can be large (~MB per pass) and contain potentially sensitive location data.
 captures/
+**/captures/
+**/pass_logs/
+**/evidence/
 *.raw
+*.iq
+pass_log_*.csv
+# Stray root-level dated capture files (pattern: YYYYMMDD_HHMMSS_NAME.{raw,csv,json})
+/20[0-9][0-9][0-9][0-9][0-9][0-9]_*.raw
+/20[0-9][0-9][0-9][0-9][0-9][0-9]_*.csv
+/20[0-9][0-9][0-9][0-9][0-9][0-9]_*.json
+/Pi/20[0-9][0-9][0-9][0-9][0-9][0-9]_*.raw
+/Pi/20[0-9][0-9][0-9][0-9][0-9][0-9]_*.csv
+/Pi/20[0-9][0-9][0-9][0-9][0-9][0-9]_*.json
 
 # VS Code / Local History extension snapshots (any directory)
 **/.history/
