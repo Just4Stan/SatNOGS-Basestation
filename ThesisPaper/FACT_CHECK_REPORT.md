@@ -1,6 +1,15 @@
 # Merged Verification of `ThesisPaper/FACT_CHECK_REPORT.md`
 
-Date: 2026-03-05
+Date: 2026-03-05 (**SUPERSEDED in part — see note below**)
+
+> **2026-04-17 update:** This report predates the April 9 and April 12 field-test sessions and the subsequent link-budget / signal-evidence analysis.
+> The authoritative current sources are:
+> - `ThesisPaper/draft.md` — canonical thesis content (§6.5 reception analysis, §6.6 + `draft_link_budget.md` link-budget analysis).
+> - `captures/evidence/signal_evidence.md` — synthesis of 62-pass reception evidence (2026-04-13).
+> - `memory/field_test_20260409.md`, `memory/field_test_20260412.md` — session logs.
+>
+> Where this report uses "hardware-validated" wording for the RF HAT, update to "v1 assembled and field-deployed; no protocol-valid frames decoded; link budget shows LNA + directional antenna required". The RF HAT *hardware* is now assembled (UHF verified, VHF not populated). The *reception* claim is weaker than previously suggested.
+
 Scope: concise re-check of the original report against the current repo and live official sources.
 
 ## Bottom Line

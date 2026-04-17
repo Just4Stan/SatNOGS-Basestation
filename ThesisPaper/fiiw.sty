@@ -21,6 +21,7 @@
 
 
 \usepackage{color}
+\usepackage{helvet}
 \usepackage{parallel}
 \usepackage{textpos}
 \newcommand{\citeauthorref}[1]{\citeauthor{#1}~\cite{#1}}
@@ -174,7 +175,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % GC: Include the back cover at the end of the thesis
 % Define the color of the title
-\definecolor{titlegreen}{RGB}{29,141,176}
+% Official KU Leuven Word-template theme colors (from theme1.xml)
+\definecolor{kulblueDark}{HTML}{00407A}
+\definecolor{kulblue}{HTML}{1D8DB0}
+\definecolor{titlegreen}{HTML}{1D8DB0}
+\definecolor{titleblue}{HTML}{1D8DB0}
 \def\titlep{%
 \thispagestyle{empty}
 \setlength{\unitlength}{1cm}
@@ -241,7 +246,10 @@
 	}
 
 	\printFrontCover{\@campus}
-	\vspace{6em}
+	% Word-template layout: sans-serif (Helvetica) overlays on cover image.
+	\begingroup
+	\renewcommand{\familydefault}{\sfdefault}\normalfont
+	\vspace*{0pt}
 	\begin{flushright}
 	\ifx \@embargo \@empty
 	\else
@@ -255,65 +263,60 @@
 	\endgroup
 	\fi
 	\end{flushright}
-	\vspace{4cm}
- % GC: nicer title rendering for large titels
- \begingroup
-	    {\fontsize{21pt}{24pt}\selectfont%
-	    \textcolor{titlegreen}{{\textbf{\textsf{\@title}}}}%
-	    \par%
-	    \vspace{10pt}
-	    }
-	    \endgroup
-	    {\LARGE\textsf{\@subtitle}\par}
-	    \vfill
-	    \begin{flushright}
-	    \ifx \@forenameA \@empty
-	    \else
-	    \textsf{\LARGE\textbf{\@forenameA~\MakeUppercase{\@surnameA}}}\\
-	    \fi
-	    \ifx \@forenameB \@empty
-	    \else
-	    \vspace{6pt}
-	    \textsf{\LARGE\textbf{\@forenameB~\MakeUppercase{\@surnameB}}}
-	    \fi
-	    \end{flushright}
-	    \vfill
-	    \noindent
-	    \begin{minipage}[t]{0.52\textwidth}
-	    \begin{list}{label}{\setlength{\leftmargin}{7.5em}\setlength{\labelsep}{1em}\setlength{\labelwidth}{7.5em}\setlength{\itemsep}{-.5ex}}
-	    \ifx \@promotorAname \@empty
-	    \else
-	    \large\item[\@promotorAtype:\hfill] \@promotorAname
-	    \fi
-	    \ifx \@promotorBname \@empty
-	    \else
-	    \item[ ]
-	    \item[\@promotorBtype:\hfill] \@promotorBname
-	    \fi
-	    \ifx \@promotorCname \@empty
-	    \else
-	    \item[\@promotorCtype:\hfill] \@promotorCname
-	    \fi
-	    \end{list}
-	    \end{minipage}%
-	    \hfill
-	    \begin{minipage}[t]{0.44\textwidth}
-	    \begin{flushright}
-	    \large\printDegree{}%
-	    \end{flushright}
-	    \end{minipage}
-	    \vspace{1.5em}
-	    \begin{flushright}
-	    \printAcademicYear{}%
-	    \end{flushright}
-	    \enlargethispage{2cm}
-	    \cleardoublepage
-	    \thispagestyle{empty}
-	    \null
-	    \vfill
-	    \copyright Copyright KU Leuven \\\\
-	    \printCopyRightInfo.\\\\	
-	    \cleardoublepage
+	% Push title down to ~35% of page height (matches Word template placement)
+	\vspace*{6.5cm}
+	% Title: large, left-aligned (ragged right), blue
+	{\fontsize{28pt}{34pt}\selectfont\raggedright%
+	 \textcolor{titleblue}{\@title}\par}
+	\vspace{4pt}
+	% Subtitle: black, smaller, left-aligned
+	{\fontsize{16pt}{20pt}\selectfont\raggedright\@subtitle\par}
+	\vfill
+	% Author names, right-aligned, bold, middle-right
+	\begin{flushright}
+	\fontsize{14pt}{18pt}\selectfont
+	\ifx \@forenameA \@empty\else
+	\textbf{\@forenameA~\MakeUppercase{\@surnameA}}\\
+	\fi
+	\ifx \@forenameB \@empty\else
+	\textbf{\@forenameB~\MakeUppercase{\@surnameB}}
+	\fi
+	\end{flushright}
+	\vfill
+	\vfill
+	% Bottom: supervisors on left, degree text on right (simple inline list, no list env)
+	\noindent
+	\begin{minipage}[t]{0.52\textwidth}
+	\fontsize{11pt}{15pt}\selectfont
+	\ifx \@promotorAname \@empty\else
+	\@promotorAtype: \@promotorAname\par\vspace{8pt}
+	\fi
+	\ifx \@promotorBname \@empty\else
+	\@promotorBtype: \@promotorBname\par\vspace{8pt}
+	\fi
+	\ifx \@promotorCname \@empty\else
+	\@promotorCtype: \@promotorCname\par
+	\fi
+	\end{minipage}\hfill
+	\begin{minipage}[t]{0.44\textwidth}
+	\begin{flushright}
+	\fontsize{11pt}{15pt}\selectfont
+	\printDegree{}%
+	\end{flushright}
+	\end{minipage}
+	\vspace{2em}
+	\begin{flushright}
+	\fontsize{11pt}{14pt}\selectfont\printAcademicYear{}%
+	\end{flushright}
+	\endgroup
+	\enlargethispage{2cm}
+	\cleardoublepage
+	\thispagestyle{empty}
+	\null
+	\vfill
+	\copyright Copyright KU Leuven \\\\
+	\printCopyRightInfo.\\\\
+	\cleardoublepage
 	    }
      
 \newcommand{\printAcademicYear}[1]{

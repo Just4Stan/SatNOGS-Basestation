@@ -156,22 +156,31 @@ class SatLibrary:
             self.satellites = []
 
     def lookup(self, norad_id: int = 0, name: str = "") -> Optional[SatProfile]:
-        """Look up a satellite profile by NORAD ID (preferred) or name substring.
+        """Look up a satellite profile by NORAD ID and/or name substring.
 
-        Returns None if no match or if the satellite is marked as incompatible.
+        Priority: 1) NORAD+name both match, 2) name match, 3) NORAD-only match.
+        This prevents TLE NORAD ID mismatches from selecting wrong profiles.
         """
-        # First pass: match by NORAD ID
-        if norad_id:
+        name_upper = name.upper() if name else ""
+
+        # Pass 1: NORAD ID + name both match (strongest signal)
+        if norad_id and name_upper:
             for sat in self.satellites:
-                if sat.get("norad_id") == norad_id:
+                match_str = sat.get("name_match", "").upper()
+                if sat.get("norad_id") == norad_id and match_str and match_str in name_upper:
                     return self._sat_to_profile(sat)
 
-        # Second pass: match by name substring (case-insensitive)
-        if name:
-            name_upper = name.upper()
+        # Pass 2: name substring match (handles TLE NORAD ID errors)
+        if name_upper:
             for sat in self.satellites:
                 match_str = sat.get("name_match", "").upper()
                 if match_str and match_str in name_upper:
+                    return self._sat_to_profile(sat)
+
+        # Pass 3: NORAD ID only (fallback)
+        if norad_id:
+            for sat in self.satellites:
+                if sat.get("norad_id") == norad_id:
                     return self._sat_to_profile(sat)
 
         return None
@@ -264,6 +273,14 @@ class SatLibrary:
             mode = tx.get("mode", "")
             cc_fmt = SATNOGS_MODE_MAP.get(mode.upper())
             if cc_fmt is None:
+                continue
+
+            # Skip 1200 baud AFSK — Bell 202 audio tones, not baseband FSK
+            baud = tx.get("baud") or 0
+            if mode.upper() == "AFSK" and baud <= 1200:
+                continue
+            # Skip CW beacons
+            if mode.upper() == "CW":
                 continue
 
             entry = {

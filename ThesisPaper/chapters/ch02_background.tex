@@ -149,7 +149,7 @@ Rotator communication goes through \textbf{hamlib}, an open-source library for a
 
 \subsection{The EasyComm Protocol}
 
-EasyComm is an ASCII protocol developed by Patrik Linder (SM0TQX) for antenna tracking. The SatNOGS variant (hamlib model 204) uses:
+EasyComm is an ASCII protocol developed by Chris Jackson (G7UPN) for antenna tracking. The SatNOGS variant uses hamlib model 204 (EasyComm III):
 
 \begin{table}[H]
     \centering
@@ -175,7 +175,7 @@ Each command is a newline-terminated ASCII string. No binary framing, no handsha
 
 \subsection{Why a Distributed Network}
 
-A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. For mission-critical telemetry this is not enough. SatNOGS solves this by distributing stations worldwide so nearly every orbit has coverage. Previous attempts (Mercury GSN, Japanese GSN, ESA's GENSO) failed because they required homogeneous hardware. SatNOGS accepts any hardware that speaks EasyComm and uses an SDR receiver.
+A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. For mission-critical telemetry this is not enough. SatNOGS solves this by distributing stations worldwide so nearly every orbit has coverage. Previous attempts --- the Japanese Ground Station Network (University of Tokyo) and ESA's GENSO (Global Educational Network for Satellite Operations, started 2006, cancelled by 2014) --- failed because they required homogeneous hardware and centralized coordination. SatNOGS accepts any hardware that speaks EasyComm and uses an SDR receiver.
 
 \section{Existing Ground Station Designs}
 
@@ -185,12 +185,11 @@ A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. 
         \toprule
         System & Type & Cost (EUR) & Accuracy & Notes \\
         \midrule
-        Yaesu G-5500 & Commercial & 900--1200 & $\sim$1\degree & Industry standard, heavy, needs separate controller \\
-        SPID RAS & Commercial & 400--800 & $\sim$1\degree & Lighter alternative \\
-        Alfa Radio RAS & Commercial & 500--700 & $\sim$1\degree & Similar to SPID \\
-        SatNOGS v3 & Open-source & 150--300 & $\sim$1\degree & 3D-printed, NEMA17 steppers, belt drive \\
-        SQ3SWF & Open-source & $\sim$100 & $\sim$2\degree & Compact 3D-printed stepper design \\
-        \textbf{This work} & \textbf{Open-source} & \textbf{$<$50} & \textbf{$<$0.3\degree} & \textbf{ASA 3D-printed, geared DC motors, EasyComm} \\
+        Yaesu G-5500 & Commercial & 760--900 & $\sim$1\degree\ backlash & Industry standard, potentiometer feedback \\
+        SPID RAS & Commercial & 1200--1300 & $\sim$1\degree & Also sold as Alfa-SPID \\
+        SatNOGS v3 & Open-source & 300--500 & $\sim$1\degree & 3D-printed, NEMA17 steppers, belt drive \\
+        SuperAntennaz & Open-source & $\sim$600 & $\sim$1\degree & Heavy-load stepper design \\
+        \textbf{This work} & \textbf{Open-source} & \textbf{$<$50} & \textbf{$<$0.5\degree\ EL} & \textbf{ASA 3D-printed, geared DC motors, 0--3\degree\ AZ} \\
         \bottomrule
     \end{tabularx}
     \caption{Cost comparison of satellite tracking rotator systems.}
@@ -199,17 +198,17 @@ A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. 
 
 \subsection{The SatNOGS v3 Rotator}
 
-The official SatNOGS rotator uses two NEMA17 bipolar steppers with GT2 belt reduction, controlled by an Arduino MEGA with CNC shield and A4988 drivers. BOM: EUR~150--300. Known limitations:
+The official SatNOGS rotator uses two NEMA17 bipolar steppers with GT2 belt reduction, controlled by an Arduino Pro Mini with A4988 or DRV8825 drivers. BOM: EUR~300--500. Known limitations:
 
 \begin{itemize}
-    \item Steppers draw 0.5--1.0~A holding current even when stationary---bad for battery operation.
+    \item Steppers draw 0.8--1.5~A per phase holding current to resist back-driving---problematic for battery operation.
     \item Low belt-drive gear ratio requires microstepping for smooth tracking, which reduces torque.
     \item Assembly needs precise belt tensioning and shaft alignment.
 \end{itemize}
 
 \subsection{University Implementations}
 
-Most university ground stations (UPSat/Patras, TU Delft/Delfi-C3, AraMiS/Politecnico di Torino) buy commercial rotators and focus on RF or software. Few attempt custom mechanical design. DIY exceptions: EA4GPZ's servo-based portable rotator, the Open Rotator Project (DC motors with potentiometer feedback), and SuperAntennaz for heavy loads.
+Most university ground stations (UPSat/University of Patras, TU Delft/Delfi-C3, AraMiS/Politecnico di Torino) buy commercial rotators and focus on RF or software. Few attempt custom mechanical design. A notable open-source exception is SuperAntennaz (Hadji), designed for heavy antenna loads ($>$10~kg) using stepper motors.
 
 \subsection{Comparison with Hanssens (2023)}
 
@@ -224,11 +223,11 @@ This thesis builds on Hanssens' 2023 study, which surveyed SatNOGS, assessed ant
         Rotator & Preliminary stepper test & Fully built ASA 3D-printed rotator \\
         Motor control & Not implemented & Custom PCB: dual TB6642FG + RP2040 \\
         Firmware & Not implemented & EasyComm firmware with PID control \\
-        Pi integration & Theoretical description & Python stack ($\sim$4000 LOC) + web dashboard \\
+        Pi integration & Theoretical description & Python stack ($\sim$7200 LOC) + web dashboard \\
         RF front-end & Not implemented & Dual CC1200 HAT (UHF + VHF) \\
         Field deployment & Not addressed & Zero-SSH smartphone workflow \\
         Cost analysis & Not performed & Full BOM, $<$EUR~50 rotator \\
-        Tracking & Not demonstrated & Live tracking validated ($<$0.3\degree\ error) \\
+        Tracking & Not demonstrated & Live tracking validated ($<$0.5\degree\ EL, 0--3\degree\ AZ) \\
         \bottomrule
     \end{tabularx}
     \caption{Advancement over Hanssens (2023).}

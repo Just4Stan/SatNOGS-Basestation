@@ -75,7 +75,7 @@
             "modulation": {
                 "format": "2-FSK",
                 "symbol_rate_bps": 1200,
-                "deviation_hz": 600,
+                "deviation_hz": 300,
                 "rx_bw_khz": 12.5,
                 "sync_word": "930B51DE"
             },
@@ -97,7 +97,7 @@
             "modulation": {
                 "format": "2-FSK",
                 "symbol_rate_bps": 2400,
-                "deviation_hz": 1200,
+                "deviation_hz": 750,
                 "rx_bw_khz": 12.5,
                 "sync_word": "930B51DE"
             },
@@ -182,9 +182,51 @@
             "rx_mode": "packet",
             "description": "Geoscan-Edelveis — 9600 GFSK, PN9+CRC16, 66-byte fixed frames"
         },
+        {
+            "name_match": "VIZARD",
+            "norad_id": 61749,
+            "freq_mhz": 436.870,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 4800,
+                "rx_bw_khz": 50,
+                "sync_word": "930B51DE"
+            },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "pkt_length": 66,
+                "variable_length": false,
+                "enable_pn9": true,
+                "enable_crc16": true
+            },
+            "protocol": "geoscan",
+            "rx_mode": "packet",
+            "description": "VIZARD-ION (Geoscan 3U) — 9600 GFSK, PN9+CRC16, 66-byte Geoscan frames"
+        },
 
         {
             "_section": "=== CCSDS — sync 0x1ACFFC1D, CC1200 packet mode ==="
+        },
+        {
+            "name_match": "TRISAT-R",
+            "norad_id": 53108,
+            "freq_mhz": 435.6125,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 1000,
+                "deviation_hz": 350,
+                "rx_bw_khz": 12.5,
+                "sync_word": "1ACFFC1D"
+            },
+            "pkt_config": {
+                "sync_threshold": 4,
+                "variable_length": false,
+                "pkt_length": 255
+            },
+            "protocol": "ccsds",
+            "rx_mode": "packet",
+            "description": "TRISAT-R — 1000 FSK, CCSDS concatenated (conv+RS), 223-byte frames"
         },
         {
             "name_match": "DELFI-PQ",
@@ -209,6 +251,20 @@
 
         {
             "_section": "=== AX.25 G3RUH — CC1200 serial mode required (G3RUH scrambles sync) ==="
+        },
+        {
+            "name_match": "MT-CUBE",
+            "norad_id": 53109,
+            "freq_mhz": 436.750,
+            "modulation": {
+                "format": "2-GFSK",
+                "symbol_rate_bps": 2400,
+                "deviation_hz": 1200,
+                "rx_bw_khz": 12.5
+            },
+            "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
+            "description": "MT-CUBE-2 — 2400 GMSK, AX.25, MEO orbit (long passes)"
         },
         {
             "name_match": "GO-32",
@@ -237,6 +293,34 @@
             "protocol": "ax25_g3ruh",
             "rx_mode": "serial_ax25",
             "description": "SNUGLITE-II — 9600 GFSK, AX.25 G3RUH"
+        },
+        {
+            "name_match": "NETSAT",
+            "norad_id": 46506,
+            "freq_mhz": 435.600,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 3200,
+                "rx_bw_khz": 50
+            },
+            "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
+            "description": "NETSAT 1-4 — 9600 FSK, AX.25 G3RUH, Würzburg formation"
+        },
+        {
+            "name_match": "POLYITAN",
+            "norad_id": 40042,
+            "freq_mhz": 437.676,
+            "modulation": {
+                "format": "2-FSK",
+                "symbol_rate_bps": 9600,
+                "deviation_hz": 3000,
+                "rx_bw_khz": 50
+            },
+            "protocol": "ax25_g3ruh",
+            "rx_mode": "serial_ax25",
+            "description": "POLYITAN-1 — 9600 FSK, AX.25 G3RUH (KPI Ukraine)"
         },
         {
             "name_match": "ISS",

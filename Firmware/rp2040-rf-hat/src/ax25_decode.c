@@ -43,14 +43,9 @@ void ax25_decoder_reset(ax25_decoder_t *d) {
 // Input: scrambled bit from demodulator
 // Output: descrambled bit
 static inline uint8_t g3ruh_descramble(ax25_decoder_t *d, uint8_t bit) {
-    // Descrambler taps: bit XOR sr[12] XOR sr[17]
-    // sr is indexed from 1 (MSB) to 17 (LSB)
-    // In our shift register: bit 16 = tap 1, bit 0 = tap 17
-    uint8_t tap12 = (d->g3ruh_sr >> 4) & 1;   // bit 4 = tap 13... no.
-    // Correct indexing: sr bit 0 is the most recently shifted in.
-    // tap at position 12: sr >> (12-1) = sr >> 11
-    // tap at position 17: sr >> (17-1) = sr >> 16
-    // Descrambler output = input XOR tap12 XOR tap17
+    // G3RUH descrambler: polynomial x^17 + x^12 + 1
+    // Shift register: bit 0 = most recently shifted in, bit 16 = oldest
+    // Tap at delay 12: sr >> 11, tap at delay 17: sr >> 16
     uint8_t tap_12 = (d->g3ruh_sr >> 11) & 1;
     uint8_t tap_17 = (d->g3ruh_sr >> 16) & 1;
     uint8_t out = bit ^ tap_12 ^ tap_17;
@@ -71,11 +66,13 @@ static inline uint8_t nrzi_decode(ax25_decoder_t *d, uint8_t bit) {
 bool ax25_decoder_feed_bit(ax25_decoder_t *d, uint8_t raw_bit) {
     d->frame_ready = false;
 
-    // Step 1: NRZ-I decode (before descrambler — G3RUH operates on NRZ-I encoded data)
-    uint8_t nrzi_bit = nrzi_decode(d, raw_bit & 1);
+    // TX chain: data → NRZ-I encode → G3RUH scramble → modulate
+    // RX chain: demodulate → G3RUH descramble → NRZ-I decode
+    // Step 1: G3RUH descramble (operates on raw demodulated bits)
+    uint8_t descrambled = g3ruh_descramble(d, raw_bit & 1);
 
-    // Step 2: G3RUH descramble
-    uint8_t bit = g3ruh_descramble(d, nrzi_bit);
+    // Step 2: NRZ-I decode (operates on descrambled bits)
+    uint8_t bit = nrzi_decode(d, descrambled);
 
     // Step 3: HDLC deframing
     // Track consecutive 1s

@@ -18,23 +18,29 @@ SatNOGS-compatible ground station for tracking the **AetherSpace CubeSat** at 43
 ```
                     ┌──────────────────────────────────┐
                     │       Raspberry Pi 3A+           │
-                    │  satnogs-client + rotctld        │
+                    │  rotctld + station.py + HTTPS UI │
+                    │  (SatNOGS DB via SiDS; no        │
+                    │   satnogs-client — SDR-centric)  │
                     │                                  │
                     │  USB serial ──────── UART ────── │
                     └──────┬───────────────────┬───────┘
                            │                   │
                     ┌──────┴──────┐     ┌──────┴──────┐
-                    │  Motor PCB  │     │   RF HAT    │
+                    │  MotorPCB   │     │   RF HAT    │
                     │   RP2040    │     │  Pico + 2x  │
                     │  TB6642FG   │     │   CC1200    │
-                    │  encoders   │     │  UHF + VHF  │
+                    │  encoders   │     │  UHF (432)  │
+                    │  ADXL345    │     │  VHF routed │
                     └──────┬──────┘     └──────┬──────┘
                            │                   │
                     ┌──────┴──────┐     ┌──────┴──────┐
                     │ AZ/EL motors│     │  SMA → Yagi │
-                    │ + gearboxes │     │   antennas  │
+                    │ + gearboxes │     │   antenna   │
                     └─────────────┘     └─────────────┘
 ```
+
+> v1 hardware (above) is the field-validated configuration — two separate boards connected to the Pi via USB (rotator) and UART (RF HAT).
+> v2 hardware `MOTOR_RF_HAT/` is the design-complete successor that merges both boards onto a single Pi HAT with A4950 motor drivers. Not yet fabricated.
 
 
 ## Repository structure
@@ -111,7 +117,7 @@ Full command reference and PID tuning details: [`Firmware/rp2040-satnogs-rotator
 
 ## SatNOGS integration
 
-The firmware speaks EasyComm (hamlib model 204), so the Pi runs stock `rotctld` + `satnogs-client` with no custom software.
+The rotator firmware speaks EasyComm III (hamlib model 204), so the Pi runs stock `rotctld` on the rotator path with no custom software. Observation scheduling and telemetry are handled by the custom Python stack in `Pi/` rather than `satnogs-client`: the CC1200 is a hardware packet modem, not an SDR, and is incompatible with the GNU Radio / SoapySDR pipeline that `satnogs-client` drives. Decoded frames are submitted to the SatNOGS DB directly via the SiDS API (station 4712, "Aether-Basestation").
 
 ### Raspberry Pi setup
 
@@ -162,16 +168,11 @@ python3 station.py --daemon            # auto-track all passes (no SSH needed)
 
 See [`Pi/README.md`](Pi/README.md) for full usage.
 
-### SatNOGS client (optional)
+### SatNOGS client (not used by this station)
 
-```sh
-curl -sfL https://satno.gs/install | sh -s --    # Ansible-based install
-sudo satnogs-setup                                # configure station
-```
+The official `satnogs-client` is SDR-centric (GNU Radio + SoapySDR) and incompatible with the CC1200 hardware modem, which produces decoded packets rather than IQ samples. The station uses the SatNOGS DB directly via the SiDS (Simple Downlink Sharing) API for telemetry submission.
 
-Set `SATNOGS_ROT_MODEL=ROT_MODEL_NETROTCTL` and `SATNOGS_ROT_PORT=localhost:4533`.
-
-> **Note**: The SatNOGS Docker stack needs ~1 GB RAM. A Pi 3 A+ (512 MB) can run it but is tight — Pi 3B+ or Pi 4 recommended.
+> If running `satnogs-client` alongside for scheduling heartbeat (Option B), an RTL-SDR dongle is required. The software architecture includes an `RfBackend` interface with both CC1200 and RTL-SDR implementations to enable this hybrid path; it is not the default.
 
 ## Safety features
 

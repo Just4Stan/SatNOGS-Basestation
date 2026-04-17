@@ -1,0 +1,90 @@
+Subsystem,Designator,Value,Qty,Footprint,LCSC,Unit_EUR,Line_EUR,Source,Notes
+# ═══════════════════════════════════════════════════════════════════════════
+# MOTOR_RF_HAT PCB — On-board components (LCSC BOM tool pricing, April 2026)
+# ═══════════════════════════════════════════════════════════════════════════
+# Capacitors
+PCB,C1,4.7uF 50V,1,1206,C98192,0.018,0.18,LCSC,MOQ 10
+PCB,C8/C9/C10/C12/C16/C23/C48/C52,15pF,8,0603,C1644,0.005,0.48,LCSC,MOQ 100
+PCB,C11,1.8nF,1,0603,C343008,0.033,0.66,LCSC,MOQ 20
+PCB,C13,1.5nF,1,0603,C76600,0.018,0.18,LCSC,MOQ 10
+PCB,C14/C15/C17-C20/C22/C25-C27/C29/C30/C32/C34/C35/C38/C40/C42/C43/C46/C50/C53,47nF,22,0603,C1622,0.005,0.47,LCSC,MOQ 100
+PCB,C2,100nF,1,0603,C76939,0.003,0.34,LCSC,MOQ 100
+PCB,C21/C31/C41/C51,10nF,4,0603,C57112,0.003,0.29,LCSC,MOQ 100
+PCB,C24/C33/C57,5.1pF,3,0603,C61816,0.003,0.30,LCSC,MOQ 100
+PCB,C3,22uF,1,0805,C2762594,0.041,0.20,LCSC,MOQ 5
+PCB,C4/C5/C6/C7/C28/C36,220nF,6,0603,C21120,0.007,0.66,LCSC,MOQ 100
+PCB,C37/C39/C44/C54/C56/C68-C71,100pF,9,0603,C14858,0.004,0.35,LCSC,MOQ 100
+PCB,C45,1.5pF,1,0603,C695130,0.015,0.77,LCSC,MOQ 50
+PCB,C47,56pF,1,0603,C338104,0.015,0.75,LCSC,MOQ 50
+PCB,C49,39pF,1,0603,C445758,0.015,0.75,LCSC,MOQ 50
+PCB,C55,2.2pF,1,0603,C1651,0.003,0.29,LCSC,MOQ 100
+PCB,C58,6.2pF,1,0603,C48579262,0.003,0.03,LCSC,
+PCB,C59,1nF,1,0603,C342910,0.017,0.17,LCSC,
+PCB,C60-C62/C64-C66,10uF,6,0805,C15850,0.008,0.10,LCSC,MOQ 10
+PCB,C63/C67,100nF,2,0603,C14663,0.004,0.04,LCSC,MOQ 100
+# Diodes & LEDs
+PCB,D1,Schottky,1,0603,C3759853,0.135,0.14,LCSC,
+PCB,D2/D4/D5/D6,WS2812B-2020,4,2020,C965555,0.071,0.28,LCSC,
+PCB,D3,1N4148WS,1,SOD-323,C2128,0.007,0.01,LCSC,
+# Connectors
+PCB,J3,2x20 Pi header,1,2.54mm,C50980,0.142,0.14,LCSC,
+PCB,J4/J5,SMA edge-mount,2,edge-mount,—,0.75,1.50,AliExpress,not on LCSC
+PCB,J6/J7,JST XH 6-pin,2,THT,C157919,0.166,0.33,LCSC,
+# Inductors
+PCB,L1,4.7uH power,1,3030,C39846837,0.145,0.15,LCSC,
+PCB,L2/L3/L5,100nH,3,0603,C98089,0.032,0.10,LCSC,
+PCB,L4,47nH,1,0603,C98076,0.010,0.01,LCSC,
+PCB,L6/L9,27nH,2,0603,C162550,0.044,0.09,LCSC,
+PCB,L7/L11,56nH,2,0603,C98079,0.010,0.02,LCSC,
+PCB,L8/L15,15nH,2,0603,C23651,0.025,0.50,LCSC,not found in BOM tool — estimate
+PCB,L10,270nH,1,0603,C668477,0.075,0.08,LCSC,
+PCB,L12/L17,22nH,2,0603,C98071,0.031,0.06,LCSC,
+PCB,L13,120nH,1,0603,C307612,0.069,0.07,LCSC,
+PCB,L14,82nH,1,0603,C98085,0.030,0.03,LCSC,
+PCB,L16,43nH,1,0603,C113126,0.010,0.01,LCSC,
+# MOSFET
+PCB,Q1,BSS138,1,SOT-23,C112239,0.014,0.01,LCSC,
+# Resistors
+PCB,R1,100k,1,0603,C270364,0.001,0.01,LCSC,
+PCB,R2,13.7k,1,0603,C138175,0.001,0.01,LCSC,
+PCB,R3/R4/R5/R7,10k,4,0603,C25804,0.001,0.01,LCSC,
+PCB,R6/R8,56k,2,0603,C23206,0.001,0.01,LCSC,
+PCB,R9,22R,1,0603,C23345,0.001,0.01,LCSC,
+PCB,R10,18R,1,0603,C245924,0.001,0.01,LCSC,
+PCB,R11-R14,100R,4,0603,C22775,0.001,0.01,LCSC,
+# ICs
+PCB,U1,XT30PW-M,1,AMASS,C431092,0.239,0.24,LCSC,
+PCB,U2,LMR51420YFDDCR,1,SOT-23-6,C7296200,0.837,0.84,LCSC,
+PCB,U3/U5,CC1200RHBR,2,QFN-32,C122881,2.217,4.43,LCSC,
+PCB,U4,Raspberry Pi Pico,1,SMD module,—,4.000,4.00,RPi distributor,hand-soldered
+PCB,U6/U7,A4950ELJTR-T,2,SOIC-8-EP,C82404,0.549,1.10,LCSC,
+PCB,Y1/Y2,40MHz crystal,2,3225,C5380316,0.058,0.12,LCSC,
+# ═══════════════════════════════════════════════════════════════════════════
+# PCB subtotals
+# Components (LCSC BOM tool): EUR 28.44 (incl. MOQ rounding)
+# SMA + 15nH (not on LCSC):  EUR  2.00
+# Pi Pico:                    EUR  4.00
+# Bare PCB (4-layer):         EUR  6.00
+# PCB TOTAL:                  EUR 40.44
+# ═══════════════════════════════════════════════════════════════════════════
+# Off-board components — per station
+# ═══════════════════════════════════════════════════════════════════════════
+Off-board,—,FAPG36-555-EN 24V DC motor 516:1,2,—,—,8.000,16.00,AliExpress,
+Off-board,—,Raspberry Pi 3 Model A+,1,—,—,25.000,25.00,RPi distributor,
+Off-board,—,ASA filament ~400g,1,—,—,10.000,10.00,local,
+Off-board,—,Steel balls 3mm (50 pcs),1,—,—,2.000,2.00,AliExpress,
+Off-board,—,M4x10 + M3x8 screws + heat-set inserts,1,lot,—,3.000,3.00,local,
+Off-board,—,PVC pipe + misc hardware,1,lot,—,2.000,2.00,local,
+Off-board,—,ADXL345 IMU breakout,1,—,—,1.500,1.50,AliExpress,
+# Off-board TOTAL:            EUR 59.50
+# ═══════════════════════════════════════════════════════════════════════════
+# GRAND TOTAL:                EUR ~100
+# ═══════════════════════════════════════════════════════════════════════════
+# Notes:
+# - LCSC component prices from BOM tool upload, April 2026
+# - MOQ inflation included (buy 100 passives when 1 needed)
+# - Hand-assembled, no JLCPCB PCBA fees
+# - Bare PCB: 4-layer, JLCPCB, 5-pc order
+# - Excludes: antenna, coax, 24V power supply, tripod (user-supplied)
+# - 3 items backordered on LCSC at time of lookup
+# - Combined MOTOR_RF_HAT board (motor control + RF on single Pi HAT)

@@ -2168,7 +2168,7 @@
         <!-- RIGHT COLUMN: RF Status + Rotator -->
         <div class="track-col-right">
 
-          <!-- ROTATOR -->
+          <!-- ROTATOR (hidden during active pass to give RF panel more room) -->
           <article class="card" id="card-rotator" aria-label="Rotator status">
             <div class="card-title">Rotator</div>
             <div class="rotator-body">
@@ -2268,32 +2268,94 @@
                 <span id="stream-label">Idle</span>
               </span>
             </div>
-            <!-- Recent packets (last 5) -->
-            <div id="recent-packets-panel" style="display:none;margin-top:6px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.52rem;font-family:var(--font-mono);color:var(--muted);line-height:1.5;max-height:120px;overflow-y:auto">
-              <div style="color:var(--text);font-size:0.56rem;font-weight:600;margin-bottom:3px">Recent Packets</div>
-              <div id="recent-packets-list"></div>
-            </div>
+            <!-- Unified RF diagnostics panel -->
+            <div id="rf-diag-panel" style="display:none;margin-top:6px;font-family:var(--font-mono);font-size:0.56rem">
 
-            <!-- Radio config panel (shows what was configured and why) -->
-            <div id="radio-config-panel" style="display:none;margin-top:6px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.52rem;font-family:var(--font-mono);color:var(--muted);line-height:1.6">
-              <div style="color:var(--text);font-size:0.56rem;font-weight:600;margin-bottom:3px">Radio Config</div>
-              <div>Tier <span id="rc-tier" style="color:var(--text)">---</span></div>
-              <div>Sync <span id="rc-sync" style="color:var(--text)">---</span> &nbsp; THR <span id="rc-sync-thr" style="color:var(--text)">---</span></div>
-              <div>Dev <span id="rc-deviation" style="color:var(--text)">---</span> &nbsp; BW <span id="rc-bw" style="color:var(--text)">---</span></div>
-              <div>Pkt <span id="rc-pkt-config" style="color:var(--text)">---</span></div>
-              <div>Base freq <span id="rc-base-freq" style="color:var(--text)">---</span></div>
-              <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--card-border)">Raw dump <span id="rc-raw-dump" style="color:var(--text)">---</span></div>
-            </div>
+              <!-- Radio Config section -->
+              <div id="radio-config-panel" style="padding:6px 8px;border:1px solid var(--card-border);border-radius:6px 6px 0 0;background:rgba(0,0,0,0.15)">
+                <table style="width:100%;border-collapse:collapse;color:var(--muted);line-height:1.5">
+                  <tr>
+                    <td style="color:var(--text);font-weight:600;padding-bottom:4px" colspan="2">Radio Config</td>
+                  </tr>
+                  <tr>
+                    <td style="width:35%;opacity:0.7">Tier</td>
+                    <td id="rc-tier" style="color:var(--text)">---</td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Sync</td>
+                    <td><span id="rc-sync" style="color:var(--text)">---</span> <span style="opacity:0.5">THR</span> <span id="rc-sync-thr" style="color:var(--text)">---</span></td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Dev / BW</td>
+                    <td><span id="rc-deviation" style="color:var(--text)">---</span> / <span id="rc-bw" style="color:var(--text)">---</span></td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Pkt mode</td>
+                    <td id="rc-pkt-config" style="color:var(--text)">---</td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Base freq</td>
+                    <td id="rc-base-freq" style="color:var(--text)">---</td>
+                  </tr>
+                </table>
+              </div>
 
-            <!-- CC1200 debug panel (only visible when CC1200 connected) -->
-            <div id="cc1200-debug" style="display:none;margin-top:6px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.58rem;font-family:var(--font-mono);color:var(--muted);line-height:1.7">
-              <div style="color:var(--text);font-size:0.62rem;font-weight:600;margin-bottom:3px">CC1200</div>
-              <div>MARC <span id="cc-marc" style="color:var(--text)">---</span> &nbsp; <span id="cc-state-match" style="font-size:0.5rem">---</span></div>
-              <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--card-border)">FREQ ERR <span id="cc-freqoff-est" style="color:var(--text)">---</span> &nbsp; LQI <span id="cc-lqi" style="color:var(--text)">---</span></div>
-              <div>RSSI <span id="cc-rssi-stats" style="color:var(--text)">---</span></div>
-              <div style="margin-top:3px;padding-top:3px;border-top:1px solid var(--card-border)">RX data <span id="cc-rx-total" style="color:var(--text)">0</span> &nbsp; <span id="cc-rx-rate" style="color:var(--text)">0 B/s</span></div>
-              <div>Errors <span id="cc-errors" style="color:var(--text)">none</span></div>
-              <div>Uptime <span id="cc-uptime" style="color:var(--text)">---</span></div>
+              <!-- CC1200 Hardware section -->
+              <div id="cc1200-debug" style="display:none;padding:6px 8px;border:1px solid var(--card-border);border-top:none;background:rgba(0,0,0,0.1)">
+                <table style="width:100%;border-collapse:collapse;color:var(--muted);line-height:1.5">
+                  <tr>
+                    <td style="color:var(--text);font-weight:600;padding-bottom:4px" colspan="2">CC1200 Hardware</td>
+                  </tr>
+                  <tr>
+                    <td style="width:35%;opacity:0.7">State</td>
+                    <td><span id="cc-marc" style="color:var(--text)">---</span> <span id="cc-state-match" style="font-size:0.48rem">---</span></td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Freq err</td>
+                    <td><span id="cc-freqoff-est" style="color:var(--text)">---</span> <span style="opacity:0.5">LQI</span> <span id="cc-lqi" style="color:var(--text)">---</span></td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">RSSI</td>
+                    <td id="cc-rssi-stats" style="color:var(--text);font-size:0.5rem">---</td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">RX data</td>
+                    <td><span id="cc-rx-total" style="color:var(--text)">0</span> &nbsp; <span id="cc-rx-rate" style="color:#4ade80;font-weight:600">0 B/s</span></td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Errors</td>
+                    <td id="cc-errors" style="color:var(--text)">none</td>
+                  </tr>
+                  <tr>
+                    <td style="opacity:0.7">Uptime</td>
+                    <td id="cc-uptime" style="color:var(--text)">---</td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Data capture section -->
+              <div style="padding:6px 8px;border:1px solid var(--card-border);border-top:none;border-radius:0 0 6px 6px;background:rgba(0,0,0,0.05)">
+                <table style="width:100%;border-collapse:collapse;color:var(--muted);line-height:1.5">
+                  <tr>
+                    <td style="color:var(--text);font-weight:600;padding-bottom:4px" colspan="2">Data Capture</td>
+                  </tr>
+                  <tr>
+                    <td style="width:35%;opacity:0.7">Raw dump</td>
+                    <td><span id="rc-raw-dump" style="color:var(--text)">---</span></td>
+                  </tr>
+                </table>
+                <div id="rc-hex-row" style="display:none;margin-top:4px;padding:4px 6px;background:rgba(0,0,0,0.3);border-radius:4px;font-size:0.48rem;word-break:break-all;line-height:1.4;max-height:4.5em;overflow:hidden">
+                  <div style="color:var(--muted);margin-bottom:2px;font-size:0.44rem">LIVE HEX (last 64 bytes)</div>
+                  <span id="rc-hex-data" style="color:#60a5fa;letter-spacing:0.3px">---</span>
+                </div>
+              </div>
+
+              <!-- Recent packets -->
+              <div id="recent-packets-panel" style="display:none;margin-top:4px;padding:6px 8px;border:1px solid var(--card-border);border-radius:6px;font-size:0.5rem;color:var(--muted);line-height:1.5;max-height:100px;overflow-y:auto">
+                <div style="color:var(--text);font-size:0.56rem;font-weight:600;margin-bottom:3px">Decoded Packets</div>
+                <div id="recent-packets-list"></div>
+              </div>
+
             </div>
 
             <div class="waterfall-preview" id="waterfall-preview">
@@ -3677,16 +3739,20 @@
     // Streaming dot + serial mode indicator
     const streaming = !!rf.streaming;
     const serialActive = !!rf.serial_mode;
-    const _hasTarget = !!rf.satellite;  // auto_tracker has a target (even if not streaming yet)
+    const switchedToSerial = !!rf.switched_to_serial;
+    const _hasTarget = !!rf.satellite;
     const dot  = document.getElementById('stream-dot');
     const lbl  = document.getElementById('stream-label');
     dot.classList.toggle('active', streaming || _hasTarget);
-    if (serialActive) {
+    if (switchedToSerial) {
+      lbl.textContent = 'Serial (fallback)';
+      lbl.style.color = '#f59e0b';  // amber — auto-switched
+    } else if (serialActive) {
       lbl.textContent = 'Serial RX';
       lbl.style.color = '#a78bfa';  // purple for serial mode
     } else if (streaming) {
-      lbl.textContent = rfBackend === 'rtlsdr' ? 'IQ Capture' : 'RX Active';
-      lbl.style.color = '';
+      lbl.textContent = rfBackend === 'rtlsdr' ? 'IQ Capture' : 'Packet RX';
+      lbl.style.color = '#4ade80';
     } else if (_hasTarget) {
       lbl.textContent = 'Slewing';
       lbl.style.color = '';
@@ -3696,29 +3762,31 @@
     }
 
     // Radio config debug panel
+    const diagPanel = document.getElementById('rf-diag-panel');
     const rcPanel = document.getElementById('radio-config-panel');
-    const rc = rf.radio_config;
-    if (rc && rcPanel && rf.satellite) {
+    const rcDbg = rf.radio_config;
+    if (rcDbg && rcPanel && rf.satellite) {
+      if (diagPanel) diagPanel.style.display = '';
       rcPanel.style.display = '';
-      document.getElementById('rc-tier').textContent = rc.config_tier || '---';
+      document.getElementById('rc-tier').textContent = rcDbg.config_tier || '---';
       // Sync word
-      const sw = rc.sync_word || '---';
+      const sw = rcDbg.sync_word || '---';
       const swEl = document.getElementById('rc-sync');
       swEl.textContent = sw;
       swEl.style.color = (sw === 'default' || sw === 'SmartRF default') ? '#fbbf24' : '#4ade80';
       // Sync threshold
-      const thr = rc.sync_threshold;
+      const thr = rcDbg.sync_threshold;
       const thrEl = document.getElementById('rc-sync-thr');
       thrEl.textContent = thr != null ? thr + ' (' + Math.floor(thr/2) + ' bit err max)' : '---';
       // Deviation + BW
-      document.getElementById('rc-deviation').textContent = rc.deviation_hz != null ? (rc.deviation_hz/1000).toFixed(1) + ' kHz' : '---';
-      document.getElementById('rc-bw').textContent = rc.rx_bw_khz != null ? rc.rx_bw_khz + ' kHz' : '---';
+      document.getElementById('rc-deviation').textContent = rcDbg.deviation_hz != null ? (rcDbg.deviation_hz/1000).toFixed(1) + ' kHz' : '---';
+      document.getElementById('rc-bw').textContent = rcDbg.rx_bw_khz != null ? rcDbg.rx_bw_khz + ' kHz' : '---';
       // Packet config
       const pktParts = [];
-      if (rc.enable_pn9) pktParts.push('PN9');
-      if (rc.enable_crc16) pktParts.push('CRC16');
-      if (rc.variable_length) pktParts.push('var-len');
-      else if (rc.pkt_length) pktParts.push('fixed ' + rc.pkt_length + 'B');
+      if (rcDbg.enable_pn9) pktParts.push('PN9');
+      if (rcDbg.enable_crc16) pktParts.push('CRC16');
+      if (rcDbg.variable_length) pktParts.push('var-len');
+      else if (rcDbg.pkt_length) pktParts.push('fixed ' + rcDbg.pkt_length + 'B');
       document.getElementById('rc-pkt-config').textContent = pktParts.length ? pktParts.join(' + ') : 'default';
       // Base freq (before Doppler)
       const baseF = rf.base_freq_mhz;
@@ -3728,8 +3796,25 @@
       const rawStr = rawB > 1048576 ? (rawB/1048576).toFixed(1)+'M' : rawB > 1024 ? (rawB/1024).toFixed(1)+'K' : rawB + 'B';
       document.getElementById('rc-raw-dump').textContent = rawB > 0 ? rawStr + ' captured' : 'not active';
       document.getElementById('rc-raw-dump').style.color = rawB > 0 ? '#4ade80' : 'var(--muted)';
+      // Live hex dump of last raw bytes
+      const hexRow = document.getElementById('rc-hex-row');
+      const hexData = document.getElementById('rc-hex-data');
+      const lastHex = rf.last_raw_hex || '';
+      if (lastHex && hexRow && hexData) {
+        hexRow.style.display = 'block';
+        // Color zeros red, non-zero blue
+        const colored = lastHex.split(' ').map(b => {
+          if (b === '00') return '<span style="color:#f87171">00</span>';
+          if (b === 'ff') return '<span style="color:#fbbf24">' + b + '</span>';
+          return b;
+        }).join(' ');
+        hexData.innerHTML = colored;
+      } else if (hexRow) {
+        hexRow.style.display = 'none';
+      }
     } else if (rcPanel) {
       rcPanel.style.display = 'none';
+      if (diagPanel) diagPanel.style.display = 'none';
     }
 
     // CC1200 debug panel
@@ -3837,6 +3922,11 @@
     const isTracking = !!(rf.satellite && rf.pass_progress != null && rf.pass_progress < 100);
     if (isTracking !== _isTracking) _skyNeedsRedraw = true; // force redraw on state change
     _isTracking = isTracking;
+    // During active pass: hide rotator + history cards, give RF panel full height
+    const rotCard = document.getElementById('card-rotator');
+    const histCard = document.getElementById('card-history');
+    if (rotCard) rotCard.style.display = isTracking ? 'none' : '';
+    if (histCard) histCard.style.display = isTracking ? 'none' : '';
     // Store tracked satellite name for sky plot focus matching
     _trackedSatName = rf.satellite || _pendingTrack || '';
     // Build live trajectory from cmd_az/cmd_el (fallback when pass data unavailable)
@@ -3909,8 +3999,15 @@
       const pct = Math.round(rf.pass_progress);
       const satLower = rf.satellite.toLowerCase();
       const matchPass = _passes.find(p => p.name.toLowerCase() === satLower || p.name.toLowerCase().includes(satLower) || satLower.includes(p.name.toLowerCase()));
-      const countdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.set_time))) : 0;
-      stateDetail.textContent = pct + '% complete \u00B7 LOS in ' + fmtDuration(countdown);
+      if (pct > 0) {
+        const losCountdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.set_time))) : 0;
+        stateDetail.textContent = pct + '% complete \u00B7 LOS in ' + fmtDuration(losCountdown);
+      } else {
+        const aosCountdown = matchPass ? Math.max(0, Math.round(secsUntil(matchPass.rise_time))) : 0;
+        stateDetail.textContent = aosCountdown > 0
+          ? 'AOS in ' + fmtDuration(aosCountdown)
+          : 'Tracking \u2014 acquiring signal';
+      }
     } else {
       // Not tracking — show idle/waiting/parked state
       const curAutoMode = d.auto_mode || (d.auto_track ? 'track' : 'off');
@@ -3955,12 +4052,19 @@
       const bannerSatLower = rf.satellite.toLowerCase();
       const matchPass2 = _passes.find(p => p.name.toLowerCase() === bannerSatLower || p.name.toLowerCase().includes(bannerSatLower) || bannerSatLower.includes(p.name.toLowerCase()));
       if (matchPass2) {
-        const remaining = secsUntil(matchPass2.set_time);
-        const t = remaining > 0 ? Math.round(remaining) : 0;
-        document.getElementById('pass-countdown').textContent = 'T-' + fmtDuration(t);
+        const aosRemaining = secsUntil(matchPass2.rise_time);
+        const losRemaining = secsUntil(matchPass2.set_time);
+        if (rf.pass_progress > 0 || aosRemaining <= 0) {
+          // Active pass — show LOS countdown
+          const t = losRemaining > 0 ? Math.round(losRemaining) : 0;
+          document.getElementById('pass-countdown').textContent = 'LOS in ' + fmtDuration(t);
+        } else {
+          // Pre-AOS wait — show AOS countdown
+          const t = aosRemaining > 0 ? Math.round(aosRemaining) : 0;
+          document.getElementById('pass-countdown').textContent = 'AOS in ' + fmtDuration(t);
+        }
         document.getElementById('pass-max-el').textContent = 'MAX ' + matchPass2.max_el.toFixed(0) + '\u00B0';
       } else {
-        // Pass expired from API — estimate from progress (100% = LOS)
         const pctLeft = Math.max(0, 100 - rf.pass_progress);
         document.getElementById('pass-countdown').textContent = pctLeft > 0 ? Math.round(pctLeft) + '% left' : 'LOS';
       }
@@ -3986,10 +4090,17 @@
 
       // Progress
       const pctF = rf.pass_progress || 0;
-      const losS = rf.los_seconds || (matchFocus ? Math.max(0, Math.round(secsUntil(matchFocus.set_time))) : 0);
-      document.getElementById('focus-pass-time').textContent = pctF > 0
-        ? 'LOS in ' + fmtDuration(losS)
-        : _pendingTrack ? 'Waiting for AOS...' : '---';
+      if (pctF > 0) {
+        const losS = rf.los_seconds || (matchFocus ? Math.max(0, Math.round(secsUntil(matchFocus.set_time))) : 0);
+        document.getElementById('focus-pass-time').textContent = 'LOS in ' + fmtDuration(losS);
+      } else if (matchFocus) {
+        const aosS = Math.max(0, Math.round(secsUntil(matchFocus.rise_time)));
+        document.getElementById('focus-pass-time').textContent = aosS > 0
+          ? 'AOS in ' + fmtDuration(aosS)
+          : 'Waiting for AOS...';
+      } else {
+        document.getElementById('focus-pass-time').textContent = _pendingTrack ? 'Waiting for AOS...' : '---';
+      }
       document.getElementById('focus-progress-bar').style.width = pctF + '%';
       document.getElementById('focus-progress-pct').textContent = Math.round(pctF) + '%';
 
@@ -5258,16 +5369,17 @@
     _skyNeedsRedraw = true;
     const sl = document.getElementById('state-label');
     if (sl) sl.textContent = 'Stopping...';
-    // Only send stop — don't change auto_mode.
-    // User can set Off explicitly via the segmented control.
-    // In track/scan mode, station.py will pause then resume with next pass.
-    fetch('/api/stop', { method: 'POST' })
-      .then(r => r.json())
-      .then(d => {
-        if (d.ok && sl) sl.textContent = 'Stopped — skipping to next';
-        else if (sl) sl.textContent = 'Stop failed';
-      })
-      .catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
+    // Stop the current pass AND pause auto-track so it doesn't immediately pick up next sat
+    Promise.all([
+      fetch('/api/stop', { method: 'POST' }),
+      fetch('/api/auto-track', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({mode: 'off'}) })
+    ]).then(() => {
+      if (sl) sl.textContent = 'Stopped';
+      // Switch UI to Off mode
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      const offBtn = document.querySelector('[data-mode="off"]');
+      if (offBtn) offBtn.classList.add('active');
+    }).catch(() => { if (sl) sl.textContent = 'Cannot reach station'; });
   }
 
   /** Satellite info popup */

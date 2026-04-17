@@ -816,6 +816,13 @@ class CC1200Link:
             if marc is not None and (marc & 0x1F) == 1:  # IDLE
                 break
             time.sleep(0.005)
+
+        # Force normal FIFO mode — clears stale serial mode from previous pass
+        # (serial_mode_disable() may not have run if station restarted mid-pass)
+        self.write_reg(0x03, 0x3C)   # IOCFG0 = SmartRF default (NOT serial RX)
+        self.write_reg(0x01, 0x06)   # IOCFG2 = SmartRF default (NOT serial CLK)
+        self.write_reg(0x26, 0x00)   # PKT_CFG2 = normal FIFO mode
+        self.write_reg(0x11, 0x40)   # MDMCFG1 = FIFO_EN = 1
         self.strobe(0x3A)  # SFRX — flush RX FIFO
 
         ok = True
@@ -848,24 +855,20 @@ class CC1200Link:
                 ok = ok and self.write_reg(REG_SYNC2, 0x00)
                 ok = ok and self.write_reg(REG_SYNC1, sw_bytes[0])
                 ok = ok and self.write_reg(REG_SYNC0, sw_bytes[1])
-                # SYNC_CFG1: 16-bit sync word mode + sync threshold
-                sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
-                if sync_cfg1 is not None:
-                    sync_cfg1 = (sync_cfg1 & 0xE0) | (sync_threshold & 0x1F)
-                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x04 << 2)  # 16-bit mode
-                    ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
+                # SYNC_CFG1: bits[7:5]=SYNC_MODE, bits[4:0]=SYNC_THR
+                # 16-bit sync: SYNC_MODE=010 (16-bit)
+                sync_cfg1 = (0x02 << 5) | (sync_threshold & 0x1F)
+                ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
             elif len(sw_bytes) == 4:
                 # 32-bit sync word
                 ok = ok and self.write_reg(REG_SYNC3, sw_bytes[0])
                 ok = ok and self.write_reg(REG_SYNC2, sw_bytes[1])
                 ok = ok and self.write_reg(REG_SYNC1, sw_bytes[2])
                 ok = ok and self.write_reg(REG_SYNC0, sw_bytes[3])
-                # SYNC_CFG1: 32-bit sync word mode + sync threshold
-                sync_cfg1 = self.read_reg(REG_SYNC_CFG1)
-                if sync_cfg1 is not None:
-                    sync_cfg1 = (sync_cfg1 & 0xE0) | (sync_threshold & 0x1F)
-                    sync_cfg1 = (sync_cfg1 & 0xE3) | (0x06 << 2)  # 32-bit mode
-                    ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
+                # SYNC_CFG1: bits[7:5]=SYNC_MODE, bits[4:0]=SYNC_THR
+                # 32-bit sync: SYNC_MODE=011 (30+32 bit)
+                sync_cfg1 = (0x03 << 5) | (sync_threshold & 0x1F)
+                ok = ok and self.write_reg(REG_SYNC_CFG1, sync_cfg1)
         else:
             # No sync word known — use caller-specified threshold (default 4).
             # SYNC_THR=4 → max 2 bit errors in 32-bit sync (SYNC_ERROR < THR/2).
@@ -884,10 +887,11 @@ class CC1200Link:
                 pkt_cfg0 |= 0x40   # WHITE_DATA = 1
             else:
                 pkt_cfg0 &= ~0x40  # WHITE_DATA = 0
+            # LENGTH_CONFIG is bits [1:0], PKT_FORMAT is bits [5:4]
             if variable_length:
-                pkt_cfg0 = (pkt_cfg0 & 0xE0) | 0x20  # LENGTH_CONFIG = 01 (variable)
+                pkt_cfg0 = (pkt_cfg0 & 0xFC) | 0x01  # LENGTH_CONFIG = 01 (variable)
             else:
-                pkt_cfg0 = (pkt_cfg0 & 0xE0) | 0x00  # LENGTH_CONFIG = 00 (fixed)
+                pkt_cfg0 = (pkt_cfg0 & 0xFC) | 0x00  # LENGTH_CONFIG = 00 (fixed)
             ok = ok and self.write_reg(REG_PKT_CFG0, pkt_cfg0)
 
             # PKT_CFG1: [1:0] CRC_CFG: 00=off, 01=CRC16 (ITU-T)

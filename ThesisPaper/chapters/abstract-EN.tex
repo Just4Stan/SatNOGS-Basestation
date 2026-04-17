@@ -5,8 +5,8 @@ We take a fresh perspective on ground station design, using modern production te
 
 The work can be cleanly split in two main parts: the rotator system, and the RF frontend.
 
-The rotator system is responsible for pointing the directional antenna towards the sattelite. For this 2 dimensions of freedom are required: azimuth and elevation.
-Instead of traditional stepper motors which lack torque and require complex control we use geared DC motors with ABZ encoders on the motor shaft which still allows for sub 0.1 degree pointing accuracy.
-DC motors are driven by half bridge-drivers using PWM in a closed loop PID control system. Calibration for elevation is done automatically using the gravity vector of an IMU mounted on the elevation axis. For azimuth, a manual calibration procedure is used where the user points the station north on boot up.
+The rotator system is responsible for pointing the directional antenna towards the satellite. For this 2 dimensions of freedom are required: azimuth and elevation.
+Instead of traditional stepper motors which lack torque and require continuous holding current, we use geared DC motors with Hall-effect quadrature encoders on the motor shaft. Field testing demonstrates sub-0.5° elevation tracking error and 0--3° azimuth error in the critical 20--70° elevation range.
+DC motors are driven by H-bridge drivers using PWM in a closed loop PID control system. Calibration for elevation is done automatically using the gravity vector of an IMU mounted on the elevation axis. For azimuth, a manual calibration procedure is used where the user points the station north on boot up.
 
 (robbe)

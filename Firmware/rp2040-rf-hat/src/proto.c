@@ -3,11 +3,13 @@
 // Adapted for: UART I/O, dual radio select, PlatformIO/Arduino-Pico
 #include "proto.h"
 
+#include <stdio.h>
 #include <string.h>
 #include "pico/stdlib.h"
 #include "hardware/uart.h"
 #include "hardware/pio.h"
 #include "hardware/gpio.h"
+#include "hardware/watchdog.h"
 
 #include "cobs.h"
 #include "crc16.h"
@@ -90,11 +92,23 @@ static uint32_t g_serial_total_words = 0;  // PIO words drained (debug)
 static uint8_t g_serial_decode_mode = 0;
 static ax25_decoder_t g_ax25_decoder;
 
+// Oversampling clock recovery: CC1200 blind mode outputs ~7-8x symbol rate.
+// Edge-triggered resampling: on each transition (0→1 or 1→0), reset the sample
+// counter. Output the bit value at the midpoint of each symbol period.
+// This tracks the actual bit timing instead of a fixed-ratio window.
+static uint8_t g_serial_oversample = 1;   // measured samples per symbol
+static uint8_t g_serial_sample_count = 0; // samples since last transition
+static uint8_t g_serial_prev_sample = 0;  // previous demodulator sample
+static uint8_t g_serial_midpoint = 4;     // sample index to output (oversample/2)
+static bool    g_serial_bit_output = false; // true when midpoint sample taken this symbol
+
 // Saved CC1200 register values for restore on serial mode disable
+static uint8_t g_saved_iocfg3 = 0;
 static uint8_t g_saved_iocfg2 = 0;
 static uint8_t g_saved_iocfg0 = 0;
 static uint8_t g_saved_pkt_cfg2 = 0;
 static uint8_t g_saved_mdmcfg1 = 0;
+static uint8_t g_saved_mdmcfg0 = 0;
 static uint8_t g_saved_sync_cfg1 = 0;
 static uint8_t g_saved_preamble_cfg1 = 0;
 
@@ -475,9 +489,12 @@ static bool build_metrics(uint8_t* out, uint16_t* out_len)
 #define REG_MDMCFG0        0x12
 #define REG_PKT_CFG2       0x26
 
-// Pin mapping: CC1200 GPIO0 → Pico GP7 (SERIAL_RX), CC1200 GPIO2 → Pico GP9 (SERIAL_CLK)
-#define SERIAL_RX_PIN   UHF_PIN_GPIO0   // GP7
-#define SERIAL_CLK_PIN  UHF_PIN_GPIO2   // GP9
+// Pin mapping for serial mode (CC1200 → Pico)
+// CC1200 GPIO0 → Pico GP7 (SERIAL_RX data)   — IOCFG0 = 0x09
+// CC1200 GPIO2 → Pico GP9 (SERIAL_CLK clock) — IOCFG2 = 0x08
+// PIO requires pin_clk > pin_rx: GP9 > GP7 ✓ (offset = 2)
+#define SERIAL_RX_PIN   UHF_PIN_GPIO0   // GP7 — data from CC1200
+#define SERIAL_CLK_PIN  UHF_PIN_GPIO2   // GP9 — clock from CC1200
 
 // Drain PIO RX FIFO into ring buffer, send accumulated bytes as EVT_RX_DATA
 static void maybe_stream_serial(void)
@@ -493,8 +510,9 @@ static void maybe_stream_serial(void)
     while (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm)) {
         uint32_t word = pio_sm_get(g_serial_pio, g_serial_sm);
         g_serial_total_words++;
-        // Data is in upper byte: left-shift autopush at 8 bits → bits [31:24]
-        uint8_t byte_val = (uint8_t)(word >> 24);
+        // Left-shift autopush at 8 bits → data in ISR[7:0] (not [31:24]!)
+        // Shift-left: new bits enter from right, MSB-first → byte in low 8 bits
+        uint8_t byte_val = (uint8_t)(word & 0xFF);
         uint16_t next_head = (g_serial_head + 1) & SERIAL_BUF_MASK;
         if (next_head != g_serial_tail) {
             g_serial_buf[g_serial_head] = byte_val;
@@ -503,32 +521,115 @@ static void maybe_stream_serial(void)
         // else: ring buffer full, drop byte (shouldn't happen at <10 kbaud)
     }
 
-    // AX.25 G3RUH decode mode: feed bits through decoder, send complete frames
+    // AX.25 G3RUH decode mode: feed bits through decoder AND stream raw bytes
     if (g_serial_decode_mode == 2) {
-        // Process ring buffer through AX.25 decoder
+        // Accumulate raw bytes for bulk send while decoding
+        static uint8_t raw_accum[64];
+        static uint8_t raw_count = 0;
+        static uint32_t raw_last_ms = 0;
+
         while (g_serial_tail != g_serial_head) {
             uint8_t byte_val = g_serial_buf[g_serial_tail];
             g_serial_tail = (g_serial_tail + 1) & SERIAL_BUF_MASK;
             g_rx_total_bytes++;
 
-            // Feed 8 bits (MSB first — CC1200 serial output is MSB first)
+            // Accumulate for raw send
+            raw_accum[raw_count++] = byte_val;
+
+            // Feed 8 bits through clock recovery → AX.25 decoder (MSB first)
+            // Edge-triggered resampling: detect transitions, resync counter,
+            // output the bit value sampled at the midpoint of each symbol.
             for (int b = 7; b >= 0; b--) {
-                uint8_t bit = (byte_val >> b) & 1;
-                if (ax25_decoder_feed_bit(&g_ax25_decoder, bit)) {
-                    // Complete frame available!
-                    uint16_t flen = g_ax25_decoder.frame_out_len;
-                    if (flen > 0 && flen <= AX25_MAX_FRAME) {
-                        // Send as EVT_RX_DATA with type byte 0x01 = decoded AX.25
-                        uint8_t body[2 + AX25_MAX_FRAME];
-                        body[0] = (uint8_t)(flen & 0xFF);  // length
-                        body[1] = 0x01;  // type: decoded AX.25 frame
-                        if (flen > sizeof(body) - 2) flen = sizeof(body) - 2;
-                        memcpy(&body[2], g_ax25_decoder.frame_buf, flen);
-                        g_last_rx_chunk = (uint8_t)(flen > 255 ? 255 : flen);
-                        send_frame(EVT_RX_DATA, 0, body, (uint16_t)(2u + flen));
+                uint8_t sample = (byte_val >> b) & 1;
+
+                if (g_serial_oversample <= 1) {
+                    // No decimation needed — feed directly
+                    if (ax25_decoder_feed_bit(&g_ax25_decoder, sample)) {
+                        uint16_t flen = g_ax25_decoder.frame_out_len;
+                        if (flen > 0 && flen <= AX25_MAX_FRAME) {
+                            uint8_t body[2 + AX25_MAX_FRAME];
+                            body[0] = (uint8_t)(flen & 0xFF);
+                            body[1] = 0x01;
+                            if (flen > sizeof(body) - 2) flen = sizeof(body) - 2;
+                            memcpy(&body[2], g_ax25_decoder.frame_buf, flen);
+                            g_last_rx_chunk = (uint8_t)(flen > 255 ? 255 : flen);
+                            send_frame(EVT_RX_DATA, 0, body, (uint16_t)(2u + flen));
+                        }
+                    }
+                    continue;
+                }
+
+                // Detect transition → resync to bit boundary
+                if (sample != g_serial_prev_sample) {
+                    g_serial_prev_sample = sample;
+                    g_serial_sample_count = 0;
+                    g_serial_bit_output = false;
+                }
+
+                g_serial_sample_count++;
+
+                // Output one bit at the midpoint of the symbol period
+                if (!g_serial_bit_output && g_serial_sample_count >= g_serial_midpoint) {
+                    g_serial_bit_output = true;
+
+                    if (ax25_decoder_feed_bit(&g_ax25_decoder, sample)) {
+                        uint16_t flen = g_ax25_decoder.frame_out_len;
+                        if (flen > 0 && flen <= AX25_MAX_FRAME) {
+                            uint8_t body[2 + AX25_MAX_FRAME];
+                            body[0] = (uint8_t)(flen & 0xFF);
+                            body[1] = 0x01;
+                            if (flen > sizeof(body) - 2) flen = sizeof(body) - 2;
+                            memcpy(&body[2], g_ax25_decoder.frame_buf, flen);
+                            g_last_rx_chunk = (uint8_t)(flen > 255 ? 255 : flen);
+                            send_frame(EVT_RX_DATA, 0, body, (uint16_t)(2u + flen));
+                        }
                     }
                 }
+
+                // If we've gone a full symbol period without transition,
+                // output a bit anyway (same value continues)
+                if (g_serial_sample_count >= g_serial_oversample) {
+                    if (!g_serial_bit_output) {
+                        if (ax25_decoder_feed_bit(&g_ax25_decoder, sample)) {
+                            uint16_t flen = g_ax25_decoder.frame_out_len;
+                            if (flen > 0 && flen <= AX25_MAX_FRAME) {
+                                uint8_t body[2 + AX25_MAX_FRAME];
+                                body[0] = (uint8_t)(flen & 0xFF);
+                                body[1] = 0x01;
+                                if (flen > sizeof(body) - 2) flen = sizeof(body) - 2;
+                                memcpy(&body[2], g_ax25_decoder.frame_buf, flen);
+                                g_last_rx_chunk = (uint8_t)(flen > 255 ? 255 : flen);
+                                send_frame(EVT_RX_DATA, 0, body, (uint16_t)(2u + flen));
+                            }
+                        }
+                    }
+                    g_serial_sample_count = 0;
+                    g_serial_bit_output = false;
+                }
             }
+
+            // Send raw chunk when buffer full
+            if (raw_count >= 64) {
+                uint8_t body[1 + 64];
+                body[0] = raw_count;
+                memcpy(&body[1], raw_accum, raw_count);
+                send_frame(EVT_RX_DATA, 0, body, (uint16_t)(1u + raw_count));
+                g_last_rx_chunk = raw_count;
+                raw_count = 0;
+                raw_last_ms = uptime_ms_now();
+            }
+        }
+
+        // Flush remaining raw bytes on timeout (50ms)
+        uint32_t now = uptime_ms_now();
+        if (raw_count > 0 && (now - raw_last_ms) >= 50) {
+            uint8_t body[1 + 64];
+            body[0] = raw_count;
+            memcpy(&body[1], raw_accum, raw_count);
+            send_frame(EVT_RX_DATA, 0, body, (uint16_t)(1u + raw_count));
+            g_last_rx_chunk = raw_count;
+            raw_count = 0;
+            raw_last_ms = now;
         }
         return;
     }
@@ -560,10 +661,12 @@ static bool serial_mode_enable(cc1200_t* radio)
     if (!radio) return false;
 
     // Save current register values for restore
+    cc1200_read_reg(radio, 0x00, &g_saved_iocfg3);  // IOCFG3
     cc1200_read_reg(radio, REG_IOCFG2, &g_saved_iocfg2);
     cc1200_read_reg(radio, REG_IOCFG0, &g_saved_iocfg0);
     cc1200_read_reg(radio, REG_PKT_CFG2, &g_saved_pkt_cfg2);
     cc1200_read_reg(radio, REG_MDMCFG1, &g_saved_mdmcfg1);
+    cc1200_read_reg(radio, REG_MDMCFG0, &g_saved_mdmcfg0);
     cc1200_read_reg(radio, REG_SYNC_CFG1, &g_saved_sync_cfg1);
     cc1200_read_reg(radio, REG_PREAMBLE_CFG1, &g_saved_preamble_cfg1);
 
@@ -571,16 +674,24 @@ static bool serial_mode_enable(cc1200_t* radio)
     (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
     sleep_us(500);
 
-    // 2. Configure CC1200 for synchronous serial output
-    //    IOCFG2 = 0x08 → GPIO2 = SERIAL_CLK
-    //    IOCFG0 = 0x09 → GPIO0 = SERIAL_RX
+    // 2. Flush FIFOs first (prevents stale FIFO error flags)
+    (void)cc1200_strobe(radio, CC1200_CMD_SFRX);
+    (void)cc1200_strobe(radio, CC1200_CMD_SFTX);
+    sleep_us(100);
+
+    // 3. Configure CC1200 for synchronous serial output
+    //    GPIO0 (→GP7) = SERIAL_RX (data)  — IOCFG0 = 0x09
+    //    GPIO2 (→GP9) = SERIAL_CLK (clock) — IOCFG2 = 0x08
+    //    GPIO3 = HI-Z (tri-state, not used)
+    //    Standard CC1200 serial pin assignment (all reference implementations use GPIO0+GPIO2)
     //    PKT_CFG2 bits[1:0] = 01 → synchronous serial mode
     //    MDMCFG1 bit 6 = 0 → FIFO_EN = 0
     //    SYNC_CFG1 bits[7:5] = 000 → no sync word matching (blind)
     //    PREAMBLE_CFG1 bits[5:2] = 0000 → no preamble
     bool ok = true;
-    ok = ok && cc1200_write_reg(radio, REG_IOCFG2, 0x08);
-    ok = ok && cc1200_write_reg(radio, REG_IOCFG0, 0x09);
+    ok = ok && cc1200_write_reg(radio, 0x00, 0x30);  // IOCFG3 = HI-Z (not used)
+    ok = ok && cc1200_write_reg(radio, REG_IOCFG2, 0x08);  // IOCFG2 = SERIAL_CLK (clock on GPIO2→GP9)
+    ok = ok && cc1200_write_reg(radio, REG_IOCFG0, 0x09);  // IOCFG0 = SERIAL_RX (data on GPIO0→GP7)
 
     uint8_t pkt_cfg2 = g_saved_pkt_cfg2;
     pkt_cfg2 = (pkt_cfg2 & 0xFC) | 0x01;  // PKT_FORMAT = 01
@@ -590,8 +701,19 @@ static bool serial_mode_enable(cc1200_t* radio)
     mdmcfg1 &= ~(1u << 6);  // FIFO_EN = 0
     ok = ok && cc1200_write_reg(radio, REG_MDMCFG1, mdmcfg1);
 
+    // Keep TRANSPARENT_MODE_EN = 0 (synchronous serial mode)
+    // Outputs demodulated data at symbol rate with bit sync + timing recovery
+    // (transparent mode outputs at 2x rate with interpolation — not what we want)
+    // Save MDMCFG0 for restore but don't modify it
+    cc1200_read_reg(radio, REG_MDMCFG0, &g_saved_mdmcfg0);
+
+    // SYNC_MODE=0 (blind mode): clock runs continuously at internal demod sample rate
+    // (~15x symbol rate). This is oversampled but the data is valid — the G3RUH decoder
+    // handles the oversampling because its LFSR + NRZ-I work at any sample rate.
+    // SYNC_MODE≠0 was tried but the CC1200 won't output serial clock until sync is
+    // detected, which never happens for scrambled G3RUH data.
     uint8_t sync_cfg1 = g_saved_sync_cfg1;
-    sync_cfg1 &= 0x1F;  // SYNC_MODE bits[7:5] = 000
+    sync_cfg1 &= 0x1F;  // SYNC_MODE bits[7:5] = 000 (blind)
     ok = ok && cc1200_write_reg(radio, REG_SYNC_CFG1, sync_cfg1);
 
     uint8_t preamble_cfg1 = g_saved_preamble_cfg1;
@@ -600,30 +722,31 @@ static bool serial_mode_enable(cc1200_t* radio)
 
     if (!ok) return false;
 
-    // 2b. Readback verification of critical registers
+    // Readback verification of critical registers
     {
-        uint8_t rb_iocfg2 = 0, rb_iocfg0 = 0, rb_pkt_cfg2 = 0;
+        uint8_t rb_iocfg0 = 0, rb_iocfg2 = 0, rb_pkt_cfg2 = 0;
+        cc1200_read_reg(radio, REG_IOCFG0, &rb_iocfg0);  // IOCFG0
         cc1200_read_reg(radio, REG_IOCFG2, &rb_iocfg2);
-        cc1200_read_reg(radio, REG_IOCFG0, &rb_iocfg0);
         cc1200_read_reg(radio, REG_PKT_CFG2, &rb_pkt_cfg2);
-        if (rb_iocfg2 != 0x08 || rb_iocfg0 != 0x09) {
-            // IOCFG didn't take — CC1200 may be in wrong state
+        if (rb_iocfg0 != 0x09 || rb_iocfg2 != 0x08) {
             return false;
         }
         if ((rb_pkt_cfg2 & 0x03) != 0x01) {
-            // PKT_FORMAT didn't take
             return false;
         }
     }
 
-    // 3. Configure Pico GPIO as inputs with pull-down
+    // 3. Configure Pico GPIO as inputs
+    // IMPORTANT: no pull-down on data pin — CC1200 SERIAL_RX idles high (mark),
+    // and a pull-down can overpower a weak/high-impedance output, causing all-zero reads.
+    // Pull-up on data matches idle state. Clock gets no pull (driven by CC1200).
     gpio_init(SERIAL_RX_PIN);
     gpio_set_dir(SERIAL_RX_PIN, GPIO_IN);
-    gpio_pull_down(SERIAL_RX_PIN);
+    gpio_disable_pulls(SERIAL_RX_PIN);  // was pull_down — caused all-zero bug
 
     gpio_init(SERIAL_CLK_PIN);
     gpio_set_dir(SERIAL_CLK_PIN, GPIO_IN);
-    gpio_pull_down(SERIAL_CLK_PIN);
+    gpio_disable_pulls(SERIAL_CLK_PIN);
 
     // 4. Load and init PIO state machine
     // Use pio1 to avoid conflicts with NeoPixel (which may use pio0)
@@ -652,25 +775,144 @@ static bool serial_mode_enable(cc1200_t* radio)
     g_serial_last_send_ms = uptime_ms_now();
     g_serial_total_words = 0;
 
-    // 5. Start PIO + radio RX
+    // 5. Calibrate + Start PIO + radio RX
     pio_sm_set_enabled(g_serial_pio, g_serial_sm, true);
+    (void)cc1200_strobe(radio, CC1200_CMD_SCAL);  // calibrate FS
+    sleep_ms(2);
     (void)cc1200_strobe(radio, CC1200_CMD_SRX);
     sleep_ms(10);  // Let CC1200 settle into RX
 
-    // 6. Check that CC1200 is actually producing clock on GP9
-    //    If clock is stuck low, PIO will never get data.
+    // 6. Check GPIO pin states after enabling serial mode
+    // Also test: force GPIO0 HIGH via IOCFG0=HW0+INV, read GP7 — proves pin connectivity
     {
+        // First: read GP7 with SERIAL_RX config (should toggle if demodulator active)
         bool clk_seen = false;
-        for (int i = 0; i < 100; i++) {
-            if (gpio_get(SERIAL_CLK_PIN)) {
-                clk_seen = true;
-                break;
-            }
+        bool data_seen = false;
+        uint16_t data_transitions = 0;
+        bool prev_data = gpio_get(SERIAL_RX_PIN);
+        for (int i = 0; i < 1000; i++) {
+            bool clk = gpio_get(SERIAL_CLK_PIN);
+            bool data = gpio_get(SERIAL_RX_PIN);
+            if (clk) clk_seen = true;
+            if (data) data_seen = true;
+            if (data != prev_data) { data_transitions++; prev_data = data; }
             sleep_us(100);
         }
-        // Don't fail — just note it. Clock may not toggle until data arrives
-        // on some CC1200 configs. Log via serial_total_words counter.
-        (void)clk_seen;
+
+        // Second: force GPIO0 HIGH to test pin connectivity
+        // Save current IOCFG0, write HW0+INV (0x6F = force high), read GP7, restore
+        uint8_t saved_iocfg0 = 0;
+        cc1200_read_reg(radio, 0x03, &saved_iocfg0);
+        cc1200_write_reg(radio, 0x03, 0x6F);  // Force GPIO0 HIGH
+        sleep_us(100);
+        bool forced_high = gpio_get(SERIAL_RX_PIN);
+        cc1200_write_reg(radio, 0x03, 0x2F);  // Force GPIO0 LOW (HW0)
+        sleep_us(100);
+        bool forced_low = gpio_get(SERIAL_RX_PIN);
+        cc1200_write_reg(radio, 0x03, saved_iocfg0);  // Restore SERIAL_RX
+
+        printf("[SERIAL_DIAG] CLK(GP%d)=%s DATA(GP%d)=%s transitions=%d "
+               "FORCE_HIGH=%d FORCE_LOW=%d\n",
+               SERIAL_CLK_PIN, clk_seen ? "toggling" : "STUCK_LOW",
+               SERIAL_RX_PIN, data_seen ? "seen_high" : "STUCK_LOW",
+               data_transitions, forced_high, forced_low);
+
+        // Read first 4 words from PIO FIFO to see what PIO actually produced
+        uint8_t fifo_bytes[4] = {0xEE, 0xEE, 0xEE, 0xEE};  // 0xEE = not read
+        for (int i = 0; i < 4; i++) {
+            if (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm)) {
+                uint32_t w = pio_sm_get(g_serial_pio, g_serial_sm);
+                fifo_bytes[i] = (uint8_t)(w & 0xFF);
+            }
+        }
+
+        // Also read raw GPIO register to check jmp_pin source
+        uint32_t gpio_in_raw = sio_hw->gpio_in;
+        uint8_t gp7_raw = (gpio_in_raw >> SERIAL_RX_PIN) & 1;
+        uint8_t gp9_raw = (gpio_in_raw >> SERIAL_CLK_PIN) & 1;
+
+        // Read PIO EXECCTRL to see what jmp_pin is actually configured to
+        uint32_t execctrl = g_serial_pio->sm[g_serial_sm].execctrl;
+        uint8_t jmp_pin_actual = (execctrl >> 24) & 0x1F;
+        // Read PIO PINCTRL for in_base
+        uint32_t pinctrl = g_serial_pio->sm[g_serial_sm].pinctrl;
+        uint8_t in_base_actual = (pinctrl >> 15) & 0x1F;
+
+        printf("[SERIAL_DIAG] CLK(GP%d)=%s DATA(GP%d)=%s transitions=%d "
+               "FORCE_HIGH=%d FORCE_LOW=%d FIFO=[%02X,%02X,%02X,%02X] "
+               "RAW_GP7=%d RAW_GP9=%d JMP_PIN=GP%d IN_BASE=GP%d\n",
+               SERIAL_CLK_PIN, clk_seen ? "toggling" : "STUCK_LOW",
+               SERIAL_RX_PIN, data_seen ? "seen_high" : "STUCK_LOW",
+               data_transitions, forced_high, forced_low,
+               fifo_bytes[0], fifo_bytes[1], fifo_bytes[2], fifo_bytes[3],
+               gp7_raw, gp9_raw, jmp_pin_actual, in_base_actual);
+
+        // Send diagnostic as EVT_ERROR (0xE1) so Pi can see it via UART
+        uint8_t diag[15] = {
+            0xDD,
+            clk_seen ? 1 : 0,
+            data_seen ? 1 : 0,
+            (uint8_t)(data_transitions >> 8),
+            (uint8_t)(data_transitions & 0xFF),
+            forced_high ? 1 : 0,
+            forced_low ? 1 : 0,
+            fifo_bytes[0], fifo_bytes[1], fifo_bytes[2], fifo_bytes[3],
+            gp7_raw, gp9_raw,
+            jmp_pin_actual, in_base_actual
+        };
+        send_frame(EVT_ERROR, 0, diag, 15);
+    }
+
+    // 7. Measure oversampling: CC1200 blind mode clocks at the internal demod
+    //    sample rate, not the symbol rate. Read the configured symbol rate from
+    //    registers, count actual PIO output over 100ms, compute the ratio.
+    {
+        // Read configured symbol rate from CC1200 registers
+        uint8_t sr2 = 0, sr1 = 0, sr0 = 0;
+        cc1200_read_reg(radio, 0x13, &sr2);
+        cc1200_read_reg(radio, 0x14, &sr1);
+        cc1200_read_reg(radio, 0x15, &sr0);
+        uint8_t srate_e = (sr2 >> 4) & 0xF;
+        uint32_t srate_m = ((uint32_t)(sr2 & 0xF) << 16) | ((uint32_t)sr1 << 8) | sr0;
+        // symbol_rate = (2^20 + SRATE_M) * 2^SRATE_E * f_xosc / 2^39
+        // Simplified: avoid 64-bit by computing in steps
+        uint32_t configured_bps = 0;
+        if (srate_e <= 15) {
+            uint64_t num = ((uint64_t)(1u << 20) + srate_m) * 40000000ULL;
+            uint64_t den = (uint64_t)1 << (39 - srate_e);
+            configured_bps = (uint32_t)(num / den);
+        }
+
+        // Drain stale PIO data, then count words over 100ms
+        while (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm))
+            (void)pio_sm_get(g_serial_pio, g_serial_sm);
+
+        uint32_t words = 0;
+        absolute_time_t t0 = get_absolute_time();
+        while (absolute_time_diff_us(t0, get_absolute_time()) < 100000) {
+            if (!pio_sm_is_rx_fifo_empty(g_serial_pio, g_serial_sm)) {
+                (void)pio_sm_get(g_serial_pio, g_serial_sm);
+                words++;
+            }
+            watchdog_update();
+        }
+        uint32_t measured_bps = words * 80;  // words * 8 bits * 10 (100ms → 1s)
+
+        uint8_t ratio = 1;
+        if (configured_bps > 0 && measured_bps > configured_bps * 2) {
+            ratio = (uint8_t)((measured_bps + configured_bps / 2) / configured_bps);
+            if (ratio < 1) ratio = 1;
+            if (ratio > 32) ratio = 32;
+        }
+
+        g_serial_oversample = ratio;
+        g_serial_midpoint = ratio / 2;  // sample at midpoint of symbol
+        g_serial_sample_count = 0;
+        g_serial_prev_sample = 0;
+        g_serial_bit_output = false;
+
+        printf("[SERIAL] configured=%lu bps, measured=%lu bps, oversample=%dx\n",
+               (unsigned long)configured_bps, (unsigned long)measured_bps, ratio);
     }
 
     g_serial_mode = true;
@@ -693,10 +935,12 @@ static void serial_mode_disable(cc1200_t* radio)
     if (radio) {
         (void)cc1200_strobe(radio, CC1200_CMD_SIDLE);
         sleep_us(500);
+        (void)cc1200_write_reg(radio, 0x00, g_saved_iocfg3);  // IOCFG3
         (void)cc1200_write_reg(radio, REG_IOCFG2, g_saved_iocfg2);
         (void)cc1200_write_reg(radio, REG_IOCFG0, g_saved_iocfg0);
         (void)cc1200_write_reg(radio, REG_PKT_CFG2, g_saved_pkt_cfg2);
         (void)cc1200_write_reg(radio, REG_MDMCFG1, g_saved_mdmcfg1);
+        (void)cc1200_write_reg(radio, REG_MDMCFG0, g_saved_mdmcfg0);
         (void)cc1200_write_reg(radio, REG_SYNC_CFG1, g_saved_sync_cfg1);
         (void)cc1200_write_reg(radio, REG_PREAMBLE_CFG1, g_saved_preamble_cfg1);
     }
