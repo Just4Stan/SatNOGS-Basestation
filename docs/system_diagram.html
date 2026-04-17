@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<title>SatNOGS Basestation — System Architecture</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  body { background: #0d1117; margin: 0; padding: 30px 40px; font-family: -apple-system, system-ui, sans-serif; }
+  h1 { color: #e6edf3; text-align: center; margin-bottom: 2px; font-size: 22px; }
+  h2 { color: #7d8590; text-align: center; font-weight: normal; margin-top: 4px; font-size: 13px; }
+  .mermaid { display: flex; justify-content: center; margin-top: 20px; }
+</style>
+</head><body>
+<h1>SatNOGS Basestation — System Architecture</h1>
+<h2>Stan Coene & Robbe Lehaen — KU Leuven ELO-ICT 2025-2026</h2>
+<pre class="mermaid">
+%%{init: {'theme': 'dark', 'themeVariables': {'fontSize': '13px', 'lineColor': '#4a5568'}, 'flowchart': {'rankSpacing': 45, 'nodeSpacing': 30, 'curve': 'basis'}}}%%
+
+graph TD
+    %% ═══════════ LAYER 1: SPACE ═══════════
+    SAT(("AetherSpace 3U<br/>433 MHz UHF CC1200<br/>~2030 launch"))
+
+    %% ═══════════ LAYER 2: ANTENNA ═══════════
+    SAT <-.->|"435 MHz 2-GFSK<br/>2.4 kbps +14dBm"| SMA
+
+    SMA["SMA 50&#937;<br/>M17/SWRR122 match"] --> CC["CC1200 UHF 432MHz<br/>part=0x20 ver=0x11"]
+
+    %% ═══════════ LAYER 3: RF HAT ═══════════
+    subgraph RHAT["RF HAT PCB — RP2040 + CC1200"]
+        CC --> PR["RP2040 Pico<br/>proto.c | COBS/CRC-16<br/>dual-transport UART+USB"]
+        PR -->|"GP5 PWM"| BZ["Buzzer"]
+        PR -->|"GP4"| NP["NeoPixel x4"]
+    end
+
+    %% ═══════════ LAYER 3: MOTOR PCB ═══════════
+    subgraph MPCB["Motor Control PCB — RP2040 + TB6642FG"]
+        PM["RP2040 Pico<br/>rotator.cpp | PID 100Hz<br/>Kp=0.15 Ki=0.03 Kd=0.02"] -->|"20kHz PWM"| DRV["2x TB6642FG H-Bridge"]
+        DRV --> MOT["2x FAPG36-555-EN<br/>24V 16RPM 516:1"]
+        MOT -->|"64 CPR quadrature"| PM
+        PM -->|"SPI0"| IMU["ADXL345 IMU"]
+    end
+
+    MOT --> YAGI["UHF Yagi 434MHz 10dBi<br/>AZ +/-360 deg 15:40 gears 244.6 t/deg<br/>EL 0-180 deg 40:55 gears 126.1 t/deg"]
+    SMA --- YAGI
+
+    %% ═══════════ LAYER 4: Pi 3A+ ═══════════
+    PR -->|"UART 115200 COBS<br/>/dev/serial0"| CCLINK["CC1200Link<br/>rf_hat.py 865L<br/>threaded RX"]
+    PM -->|"USB CDC EasyComm<br/>/dev/ttyACM0"| ROTCTLD["rotctld<br/>hamlib -m 204<br/>TCP :4533"]
+
+    subgraph PI["Raspberry Pi 3A+ — Trixie arm64 512MB"]
+        CCLINK --> RFMGR["RfHatManager<br/>SmartRF profiles<br/>Doppler + streaming"]
+        ROTCTLD --> ROTCL["RotctlClient<br/>AZ/EL commands"]
+
+        RFMGR --> STATION["station.py 1537L<br/>Track Loop 10Hz"]
+        ROTCL --> STATION
+
+        STATION -->|"TLE fetch"| EPHEM["PyEphem<br/>orbit predict<br/>12h horizon"]
+        STATION -->|"2Hz"| DOPPLER["Doppler Calc<br/>f = f0 * 1-v/c<br/>atomic FREQ word"]
+        STATION -->|"poll"| PKTRX["Packet RX<br/>EVT_RX_DATA events"]
+
+        STATION -->|"1Hz write"| STATUS["station_status.json"]
+        PKTRX --> SIDS["SatNOGS SiDS<br/>satnogs.py 354L<br/>offline queue"]
+
+        STATUS --> DASH["dashboard.py 1807L<br/>HTTPS :5000<br/>/api/status /api/passes<br/>Setup Wizard"]
+
+        SATLIB["sat_profiles.json<br/>10 sats + SatNOGS DB<br/>2656 transmitters"] -->|"per-pass reconfig<br/>3 tiers"| RFMGR
+    end
+
+    %% ═══════════ LAYER 5: USER + EXTERNAL ═══════════
+    DASH -->|"HTTPS :5000<br/>polled 1Hz"| PHONE["Phone Browser<br/>GPS + Live Dashboard"]
+    SIDS -->|"POST /api/telemetry"| SATNOGS["db.satnogs.org<br/>Station 4712"]
+    AMSAT["AMSAT / CelesTrak"] -->|"TLE HTTP"| EPHEM
+
+    %% ═══════════ POWER (separate) ═══════════
+    BAT["24V LiPo XT30"] -->|"LMR51420 5V/2A"| PR
+    BAT -->|"5V via D1"| PI
+    BAT -->|"24V direct"| DRV
+
+    %% ═══════════ BOOT ORDER ═══════════
+    subgraph BOOT["systemd boot"]
+        direction LR
+        b1(["rfkill"]) --> b2(["wifi-prov"]) --> b3(["rotctld"]) --> b4(["dashboard"]) --> b5(["station"])
+    end
+
+    %% ═══════════ STYLES ═══════════
+    classDef sat fill:#1a0a2e,stroke:#e94560,color:#e94560,stroke-width:2px
+    classDef rf fill:#0a2d4e,stroke:#3c9dde,color:#b8ddf5,stroke-width:1.5px
+    classDef motor fill:#0a2d1e,stroke:#2ecc71,color:#b8ecce,stroke-width:1.5px
+    classDef pi fill:#251540,stroke:#9b59b6,color:#d7bce8,stroke-width:1.5px
+    classDef user fill:#2d1a05,stroke:#e67e22,color:#f5d6b0,stroke-width:1.5px
+    classDef pwr fill:#2d0505,stroke:#e74c3c,color:#f5b0b0,stroke-width:1.5px
+    classDef ant fill:#1a2030,stroke:#778899,color:#c0d0e0,stroke-width:1px
+    classDef boot fill:#111,stroke:#444,color:#888,stroke-width:1px
+
+    class SAT sat
+    class PR,CC,SMA,BZ,NP rf
+    class PM,DRV,MOT,IMU motor
+    class CCLINK,ROTCTLD,RFMGR,ROTCL,STATION,EPHEM,DOPPLER,PKTRX,STATUS,SIDS,DASH,SATLIB pi
+    class PHONE,SATNOGS,AMSAT user
+    class BAT pwr
+    class YAGI ant
+    class b1,b2,b3,b4,b5 boot
+</pre>
+<script>mermaid.initialize({startOnLoad:true});</script>
+</body></html>

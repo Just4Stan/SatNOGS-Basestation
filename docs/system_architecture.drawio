@@ -1,0 +1,205 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram name="System Architecture" id="satnogs-arch">
+    <mxGraphModel dx="818" dy="647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" background="#0d1117" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sat" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1a0a2e;strokeColor=#e94560;fontColor=#e94560;fontSize=11;fontStyle=1;strokeWidth=2;" value="AetherSpace 3U&#xa;433 MHz UHF CC1200&#xa;~2030 launch" vertex="1">
+          <mxGeometry height="90" width="160" x="365" as="geometry" />
+        </mxCell>
+        <mxCell id="rotgrp" parent="1" style="swimlane;startSize=20;fillColor=#161e2e;strokeColor=#556;fontColor=#99b;fontSize=10;rounded=1;" value="2-Axis Rotator — ASA 3D-printed, 1/4-20 tripod" vertex="1">
+          <mxGeometry height="95" width="420" x="370" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="yagi" parent="rotgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a2030;strokeColor=#778899;fontColor=#c0d0e0;fontSize=10;" value="UHF Yagi 434 MHz&#xa;10 dBi" vertex="1">
+          <mxGeometry height="40" width="130" x="10" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="axes" parent="rotgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1a2030;strokeColor=#778899;fontColor=#c0d0e0;fontSize=9;" value="AZ ±360° 15:40 gears 244.6 t/deg&#xa;EL 0-180° 40:55 gears 126.1 t/deg" vertex="1">
+          <mxGeometry height="40" width="240" x="160" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="mbuck" parent="rotgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d0505;strokeColor=#e74c3c;fontColor=#f5b0b0;fontSize=9;" value="TPS560430&#xa;24V→5V / 2A" vertex="1">
+          <mxGeometry height="35" width="90" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rfgrp" parent="1" style="swimlane;startSize=22;fillColor=#0a1e3e;strokeColor=#3c9dde;fontColor=#b8ddf5;fontSize=11;fontStyle=1;rounded=1;" value="RF HAT PCB — RP2040 + CC1200" vertex="1">
+          <mxGeometry height="180" width="270" x="-370" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="cc1200" parent="rfgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a3d62;strokeColor=#3c9dde;fontColor=#e0f0ff;fontSize=9;" value="CC1200 UHF 432 MHz&#xa;part=0x20 ver=0x11&#xa;M17/SWRR122 match" vertex="1">
+          <mxGeometry height="50" width="155" x="10" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rfpico" parent="rfgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a3d62;strokeColor=#3c9dde;fontColor=#e0f0ff;fontSize=9;" value="RP2040 Pico&#xa;proto.c 841L&#xa;COBS/CRC-16 dual-transport" vertex="1">
+          <mxGeometry height="50" width="155" x="10" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="buzz" parent="rfgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a3d62;strokeColor=#3c9dde;fontColor=#e0f0ff;fontSize=9;" value="Buzzer GP5" vertex="1">
+          <mxGeometry height="30" width="70" x="205" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="neo" parent="rfgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a3d62;strokeColor=#3c9dde;fontColor=#e0f0ff;fontSize=9;" value="NeoPixel GP4" vertex="1">
+          <mxGeometry height="30" width="70" x="205" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="spi1" parent="rfgrp" style="text;fontSize=8;fontColor=#5af;align=center;" value="SPI1 5MHz" vertex="1">
+          <mxGeometry height="14" width="80" x="40" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="buck" parent="rfgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d0505;strokeColor=#e74c3c;fontColor=#f5b0b0;fontSize=9;" value="LMR51420&#xa;5V / 2A" vertex="1">
+          <mxGeometry height="40" width="80" x="200" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-19" edge="1" parent="rfgrp" source="buck" style="rounded=1;strokeColor=#e74c3c;fontSize=8;fontColor=#e74c3c;" target="rfpico" value="5V">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mgrp" parent="1" style="swimlane;startSize=22;fillColor=#0a1e1a;strokeColor=#2ecc71;fontColor=#b8ecce;fontSize=11;fontStyle=1;rounded=1;" value="Motor Control PCB — RP2040 + TB6642FG" vertex="1">
+          <mxGeometry height="180" width="360" x="400" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="mpico" parent="mgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a2d1e;strokeColor=#2ecc71;fontColor=#d5f5e3;fontSize=9;" value="RP2040 Pico&#xa;rotator.cpp 447L | PID 100Hz&#xa;Kp=0.15 Ki=0.03 Kd=0.02" vertex="1">
+          <mxGeometry height="55" width="170" x="10" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="tb" parent="mgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a2d1e;strokeColor=#2ecc71;fontColor=#d5f5e3;fontSize=9;" value="2x TB6642FG&#xa;H-Bridge 24V&#xa;20kHz PWM" vertex="1">
+          <mxGeometry height="50" width="110" x="200" y="32" as="geometry" />
+        </mxCell>
+        <mxCell id="mot" parent="mgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a2d1e;strokeColor=#2ecc71;fontColor=#d5f5e3;fontSize=9;" value="2x FAPG36-555-EN&#xa;24V 16RPM 516:1 | 64 CPR" vertex="1">
+          <mxGeometry height="40" width="145" x="200" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="imu" parent="mgrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0a2d1e;strokeColor=#2ecc71;fontColor=#d5f5e3;fontSize=9;dashed=1;" value="ADXL345 IMU&#xa;EL homing SPI0&#xa;(external breakout)" vertex="1">
+          <mxGeometry height="45" width="110" x="-10" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="pigrp" parent="1" style="swimlane;startSize=24;fillColor=#150e28;strokeColor=#8e44ad;fontColor=#d7bce8;fontSize=11;fontStyle=1;rounded=1;" value="Raspberry Pi 3A+ — Trixie arm64 512MB" vertex="1">
+          <mxGeometry height="260" width="740" x="510" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="rotctld" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="rotctld&#xa;hamlib -m 204&#xa;TCP :4533" vertex="1">
+          <mxGeometry height="50" width="105" x="10" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="cclink" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="CC1200Link&#xa;rf_hat.py 865L&#xa;threaded RX" vertex="1">
+          <mxGeometry height="50" width="105" x="135" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="satlib" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="sat_profiles.json&#xa;10 sats + SatNOGS DB&#xa;2656 transmitters" vertex="1">
+          <mxGeometry height="50" width="135" x="260" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="station" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3d1a5e;strokeColor=#b370d4;fontColor=#f0e0ff;fontSize=10;fontStyle=1;strokeWidth=2;" value="station.py 1537L&#xa;Track Loop 10Hz | Pass Controller" vertex="1">
+          <mxGeometry height="45" width="200" x="100" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="doppler" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="Doppler 2Hz&#xa;f=f0*(1-v/c)&#xa;atomic FREQ" vertex="1">
+          <mxGeometry height="45" width="100" x="360" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="ephem" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="PyEphem&#xa;orbit predict&#xa;12h horizon" vertex="1">
+          <mxGeometry height="45" width="95" x="410" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="pktrx" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="Packet RX&#xa;EVT_RX_DATA" vertex="1">
+          <mxGeometry height="40" width="90" x="510" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="statusjson" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="station_status.json&#xa;1Hz write" vertex="1">
+          <mxGeometry height="35" width="120" x="10" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="dash" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3d1a5e;strokeColor=#b370d4;fontColor=#f0e0ff;fontSize=9;fontStyle=1;strokeWidth=2;" value="dashboard.py 1807L&#xa;HTTPS :5000 | /api/status&#xa;/api/passes | Setup Wizard" vertex="1">
+          <mxGeometry height="50" width="175" x="150" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="sids" parent="pigrp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#251540;strokeColor=#9b59b6;fontColor=#d7bce8;fontSize=9;" value="SatNOGS SiDS&#xa;satnogs.py 354L&#xa;offline queue" vertex="1">
+          <mxGeometry height="45" width="105" x="505" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="bat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d0505;strokeColor=#e74c3c;fontColor=#f5b0b0;fontSize=10;fontStyle=1;direction=south;" value="24V LiPo&#xa;XT30" vertex="1">
+          <mxGeometry height="80" width="45" x="177.5" y="332.5" as="geometry" />
+        </mxCell>
+        <mxCell id="phone" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1a05;strokeColor=#e67e22;fontColor=#f5d6b0;fontSize=10;fontStyle=1;" value="Phone Browser&#xa;GPS + Live Dashboard" vertex="1">
+          <mxGeometry height="45" width="150" x="230" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="satnogs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1a05;strokeColor=#e67e22;fontColor=#f5d6b0;fontSize=10;" value="db.satnogs.org&#xa;Station 4712" vertex="1">
+          <mxGeometry height="40" width="120" x="687.5" y="855" as="geometry" />
+        </mxCell>
+        <mxCell id="amsat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2d1a05;strokeColor=#e67e22;fontColor=#f5d6b0;fontSize=10;" value="AMSAT / CelesTrak" vertex="1">
+          <mxGeometry height="35" width="130" x="550" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="bootgrp" parent="1" style="swimlane;startSize=16;fillColor=#0d0d0d;strokeColor=#333;fontColor=#666;fontSize=9;rounded=1;" value="systemd boot order" vertex="1">
+          <mxGeometry height="38" width="530" x="710" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" parent="bootgrp" style="rounded=1;fillColor=#1a1a1a;strokeColor=#444;fontColor=#888;fontSize=8;" value="rfkill" vertex="1">
+          <mxGeometry height="15" width="48" x="5" y="19" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" parent="bootgrp" style="rounded=1;fillColor=#1a1a1a;strokeColor=#444;fontColor=#888;fontSize=8;" value="wifi-prov" vertex="1">
+          <mxGeometry height="15" width="58" x="65" y="19" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" parent="bootgrp" style="rounded=1;fillColor=#1a1a1a;strokeColor=#444;fontColor=#888;fontSize=8;" value="rotctld" vertex="1">
+          <mxGeometry height="15" width="48" x="135" y="19" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" parent="bootgrp" style="rounded=1;fillColor=#1a1a1a;strokeColor=#444;fontColor=#888;fontSize=8;" value="dashboard" vertex="1">
+          <mxGeometry height="15" width="60" x="195" y="19" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" parent="bootgrp" style="rounded=1;fillColor=#1a1a1a;strokeColor=#444;fontColor=#888;fontSize=8;" value="station" vertex="1">
+          <mxGeometry height="15" width="48" x="267" y="19" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-1" edge="1" parent="1" source="sat" style="rounded=1;strokeColor=#e94560;dashed=1;strokeWidth=1;" target="yagi">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-2" edge="1" parent="1" source="mot" style="rounded=1;strokeColor=#556;" target="axes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-3" edge="1" parent="1" source="rfpico" style="rounded=1;strokeColor=#3c9dde;strokeWidth=2;" target="cclink">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-4" edge="1" parent="1" source="mpico" style="rounded=1;strokeColor=#2ecc71;strokeWidth=2;" target="rotctld">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-5" edge="1" parent="1" source="rotctld" style="rounded=1;strokeColor=#9b59b6;" target="station">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-6" edge="1" parent="1" source="cclink" style="rounded=1;strokeColor=#9b59b6;" target="station">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-7" edge="1" parent="1" source="satlib" style="rounded=1;strokeColor=#9b59b6;" target="station">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-8" edge="1" parent="1" source="station" style="rounded=1;strokeColor=#9b59b6;" target="doppler">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-9" edge="1" parent="1" source="station" style="rounded=1;strokeColor=#9b59b6;" target="ephem">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-10" edge="1" parent="1" source="station" style="rounded=1;strokeColor=#9b59b6;" target="pktrx">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-11" edge="1" parent="1" source="station" style="rounded=1;strokeColor=#9b59b6;" target="statusjson">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-12" edge="1" parent="1" source="statusjson" style="rounded=1;strokeColor=#9b59b6;" target="dash">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-13" edge="1" parent="1" source="pktrx" style="rounded=1;strokeColor=#9b59b6;" target="sids">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-14" edge="1" parent="1" source="dash" style="rounded=1;strokeColor=#e67e22;strokeWidth=2;" target="phone">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-15" edge="1" parent="1" source="sids" style="rounded=1;strokeColor=#e67e22;" target="satnogs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-16" edge="1" parent="1" source="amsat" style="rounded=1;strokeColor=#e67e22;" target="ephem">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-17" edge="1" parent="1" source="bat" style="rounded=1;strokeColor=#e74c3c;" target="buck">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-18" edge="1" parent="1" source="bat" style="rounded=1;strokeColor=#e74c3c;fontSize=8;fontColor=#e74c3c;" target="mbuck" value="24V">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-20" edge="1" parent="1" source="buck" style="rounded=1;strokeColor=#e74c3c;dashed=1;fontSize=8;fontColor=#e74c3c;" target="pigrp" value="5V">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-21" edge="1" parent="1" source="cc1200" style="rounded=1;strokeColor=#3c9dde;fontSize=8;fontColor=#5af;" target="yagi" value="SMA coax">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-22" edge="1" parent="1" source="mpico" style="rounded=1;strokeColor=#2ecc71;" target="tb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-23" edge="1" parent="1" source="tb" style="rounded=1;strokeColor=#2ecc71;" target="mot">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-24" edge="1" parent="1" source="mot" style="rounded=1;strokeColor=#2ecc71;dashed=1;" target="mpico">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="jlX9ekqQ_Ja97VpBOKvs-25" edge="1" parent="1" source="rfpico" style="rounded=1;strokeColor=#3c9dde;" target="cc1200">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_mbuck_pico" edge="1" parent="1" source="mbuck" style="rounded=1;strokeColor=#e74c3c;fontSize=8;fontColor=#e74c3c;" target="mpico" value="5V">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_mbuck_tb" edge="1" parent="1" source="mbuck" style="rounded=1;strokeColor=#e74c3c;fontSize=8;fontColor=#e74c3c;dashed=1;" target="tb" value="24V pass">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

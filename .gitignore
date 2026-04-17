@@ -77,4 +77,13 @@ firmware-*.uf2
 captures/
 *.raw
 
-MOTOR_RF_HAT/.history/
+# VS Code / Local History extension snapshots (any directory)
+**/.history/
+.history/
+
+# macOS Finder droppings
+._*
+**/._*
+
+# Stray LaTeX stdin output
+texput.log
