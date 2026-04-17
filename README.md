@@ -4,8 +4,8 @@ Portable, SatNOGS-compatible ground station for the **AetherSpace CubeSat** at 4
 Built as a joint Master's thesis at KU Leuven (Campus Geel), 2025–2026.
 
 <p align="center">
-  <img src="Images/rotatorimg1.jpg" width="400" alt="Rotator assembly"/>
-  <img src="Images/rotatorimg2.jpg" width="400" alt="Rotator assembly"/>
+  <img src="ThesisPaper/images/photos/rotator_hero_1.jpg" width="400" alt="Rotator assembly"/>
+  <img src="ThesisPaper/images/photos/rotator_hero_2.jpg" width="400" alt="Rotator assembly"/>
 </p>
 
 <p align="center">
@@ -67,7 +67,7 @@ If you want a general-purpose SatNOGS station today, run **`satnogs-client` + RT
 | [`MOTOR_RF_HAT/`](MOTOR_RF_HAT/) | v2 combined motor-control + RF HAT (design-complete, routed, ready to order). Thesis-final hardware. |
 | [`Pi/`](Pi/) | Python station stack: `station.py`, `dashboard.py`, `rf_hat.py`, `sat_library.py`, decoders, systemd services, SmartRF configs |
 | [`Hardware/`](Hardware/) | Motor + driver datasheets (FAPG36-555-EN, TB6642FG) |
-| [`Images/`](Images/) | Station photos |
+| [`ThesisPaper/images/`](ThesisPaper/images/) | All thesis visuals: `figures/` (plots), `figures/evidence/` (reception evidence plots), `photos/` (hardware + CAD) — consumed by LaTeX `\graphicspath{./images/}` |
 | [`ThesisPaper/`](ThesisPaper/) | LaTeX thesis (KU Leuven FIIW template) + rendered figures |
 | [`tools/`](tools/) | Analysis utilities (`analyze_passes.py` — generates the reception-evidence report) |
 | [`docs/`](docs/) | Project-level documentation: system diagrams, session logs |

@@ -79,7 +79,8 @@ firmware-*.uf2
 captures/
 **/captures/
 **/pass_logs/
-**/evidence/
+captures/evidence/
+# do NOT ignore ThesisPaper/images/figures/evidence/ — those are the thesis copies
 *.raw
 *.iq
 pass_log_*.csv
