@@ -595,9 +595,9 @@ Pi/
 ├── buzzer.py               ← buzzer driver (sends patterns to RF HAT Pico GP4)
 ├── sat_library.py          ← satellite profile database + SatNOGS DB API
 ├── satnogs.py              ← SiDS telemetry submission client
-├── ax100_decoder.py        ← GOMspace AX100 packet decoder
-├── usp_decoder.py          ← USP packet decoder
 ├── wifi_provision.py       ← WiFi captive portal for field setup
+├── (offline decoders live in ../tools/: ax100_decoder.py, decode_ax100.py,
+│    decode_serial.py, usp_decoder.py — run on captured .raw files)
 ├── services/
 │   ├── install.sh              ← one-command service installer
 │   ├── setup-pi.sh             ← fresh Pi setup script

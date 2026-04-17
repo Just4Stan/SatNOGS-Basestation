@@ -6,7 +6,7 @@ form the ground station electronics:
 ```
                           ┌─────────────────────────────────────────────────────┐
                           │  Raspberry Pi 3 Model A+                            │
-                          │  (Bookworm arm64, 10.72.3.105)                      │
+                          │  (Debian 13 Trixie, armhf 32-bit)                   │
                           │                                                     │
                           │  ┌──────────────┐   ┌────────────────────────────┐  │
                           │  │ rotctld      │   │ Python packet capture      │  │
@@ -92,14 +92,14 @@ The Raspberry Pi runs:
 | Component | Purpose | Interface |
 |-----------|---------|-----------|
 | `rotctld` | hamlib rotator daemon | USB serial → Rotator Pico |
-| `satnogs-client` | SatNOGS scheduler + pass execution | TCP → rotctld (port 4533) |
-| Packet capture script | CC1200 control + frame logging | UART → RF HAT Pico |
+| `station.py` | Pass prediction + tracking + CC1200 control (this project, not satnogs-client) | TCP → rotctld + UART → RF HAT Pico |
+| `dashboard.py` | HTTPS phone-first field UI | Same status file as station.py |
 
 **Data flow during a satellite pass:**
 
-1. `satnogs-client` schedules a pass from the SatNOGS network
-2. `satnogs-client` sends AZ/EL pointing commands via `rotctld` → Rotator Pico tracks the satellite
-3. A Python script (or systemd service) on the Pi:
+1. `station.py` (daemon mode) computes upcoming passes from CelesTrak TLEs via PyEphem.
+2. `station.py` sends AZ/EL pointing commands via `rotctld` → Rotator Pico tracks the satellite at 10 Hz.
+3. In parallel, `station.py`:
    - Selects the correct radio (UHF or VHF) via `MSG_SELECT_RADIO`
    - Loads the appropriate SmartRF register profile via `PROFILE_BEGIN` / `PROFILE_CHUNK` / `PROFILE_APPLY`
    - Enables RX streaming via `MSG_SET_STREAMING`
@@ -144,7 +144,7 @@ Firmware/
 │       ├── satnogs_protocol.cpp/h     EasyComm command parser
 │       └── adxl345.cpp/h              ADXL345 accelerometer (SPI)
 │
-├── rp2040-rf-hat/                     ← RF HAT Pico firmware (PlatformIO)
+├── rp2040-rf-hat/                     ← RF HAT Pico firmware (PlatformIO) — v1, field-deployed
 │   ├── platformio.ini
 │   ├── copy_uf2.py
 │   ├── README.md                      ← detailed RF HAT firmware docs
@@ -157,9 +157,20 @@ Firmware/
 │   │   ├── config.h                   Pin map + radio constants
 │   │   ├── proto.c/h                  Binary protocol handler (COBS/UART)
 │   │   ├── cobs.c/h                   COBS framing codec
-│   │   └── crc16.c/h                  CRC-16/CCITT-FALSE
+│   │   ├── crc16.c/h                  CRC-16/CCITT-FALSE
+│   │   ├── ax25_decode.c/h            AX.25 G3RUH software decoder (PIO serial mode)
+│   │   └── serial_rx.pio.h            PIO program for synchronous bitstream capture
 │   └── tools/
 │       └── cc1200_regmap_profile.json Profile-applicable registers
+│
+└── rp2040-motor-rf-hat/               ← v2 combined firmware scaffold
+                                       (target: MOTOR_RF_HAT combined board —
+                                        design-complete, not yet fabricated).
+                                       Pin plan + protocol are locked in
+                                       config.h; when v2 boards arrive, re-merge
+                                       the latest rotator + rf-hat sources on
+                                       top of this scaffold. Not currently
+                                       compiled or flashed.
 ```
 
 ## Build & Flash
