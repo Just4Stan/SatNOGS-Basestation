@@ -28,13 +28,13 @@ Architecture keeps rotator and RF independent: either can be tested, replaced, o
     \item \textbf{Portability.} 1/4"-20 UNC tripod thread on the base. Field setup time measured across three sessions: approximately 4 minutes from unpacking to first tracked pass (\S\ref{sec:field-tests}).
     \item \textbf{Zero-SSH workflow.} All field operations (GPS entry, north alignment, pass selection, park, shutdown) run through the HTTPS dashboard. The UI targets a laptop browser; a phone browser also works for quick field tasks such as supplying a GPS fix.
     \item \textbf{Cost target.} v2 MOTOR\_RF\_HAT BOM (\S\ref{sec:cost}, Appendix~\ref{app:bom}): $\sim$€40 combined controller/RF PCB, $\sim$€75 rotator hardware, $\sim$€100 station core (excluding antenna, coax, power supply, tripod).
-    \item \textbf{Licensing.} Hardware under CERN-OHL-S v2; firmware and Python stack under MIT.
+    \item \textbf{Licensing (intended).} Hardware under CERN-OHL-S v2; firmware and Python stack under MIT. Formal \file{LICENSE} files are added with the open-source release.
 \end{itemize}
 
 \section{Mechanical Design}
 \label{sec:mechanical-design}
 
-The rotator is designed in Onshape and printable on consumer FDM machines with a 220$\times$220~mm bed (the largest single printed part is 205$\times$160$\times$120~mm). All structural prints are in ASA (Acrylonitrile Styrene Acrylate). ASA is chosen over PLA for two properties: (i) UV stability from the acrylate rubber phase~\cite{wohlers2024}, and (ii) a glass transition $T_g \approx 100$\degC / Vicat softening $\approx$~105\degC, compared to $T_g \approx 60$\degC\ for PLA; this margin avoids thermal deformation in direct sunlight. PETG was considered and rejected because of lower interlayer adhesion and creep under sustained load compared with ASA at equivalent print settings.
+The rotator is designed in Onshape and printable on consumer FDM machines with a 220$\times$220~mm bed (the largest single printed part is 205$\times$160$\times$120~mm). All structural prints are in ASA (Acrylonitrile Styrene Acrylate). ASA is chosen over PLA for two properties: (i) UV stability from the acrylate rubber phase (a polymer-science property of ASA copolymers; ASA substitutes the acrylate rubber for the butadiene phase of ABS, eliminating the UV-degradation vector), and (ii) a glass transition $T_g \approx 100$\degC / Vicat softening $\approx$~105\degC, compared to $T_g \approx 60$\degC\ for PLA; this margin avoids thermal deformation in direct sunlight. PETG was considered and rejected because of lower interlayer adhesion and creep under sustained load compared with ASA at equivalent print settings.
 
 \begin{figure}[H]
     \centering
@@ -57,7 +57,7 @@ All fasteners are M4$\times$10~mm countersunk screws for structural joints and M
 
 Both axes use 3D-printed deep-groove ball bearings with COTS 3~mm steel balls. The elevation outer race is printed in place into the side plate. The azimuth outer race is a separate screw-in part: the raceway has to be printed flat-down on the build plate to avoid layer stairstepping on the running surface, which prevents printing it as a feature of the base plate. Inner races are separate rings that double as the rotating element (the main disk for AZ); a press-in 3D-printed retainer holds the ball complement.
 
-The trade-off is surface finish: printed races have higher $R_a$ than machined steel bearings. Two properties of the rotator keep this acceptable: (i) the operating speed at the output is bounded by the motor output divided by the external ratio, approximately 6~RPM on the AZ axis at 95\,\% duty (\S\ref{sec:slew-speed}), so contact-surface sliding velocity is low; and (ii) the bearing preload is low because the herringbone gear pair below imposes negligible axial thrust load (\S\ref{sec:gearing}). Endurance characterisation beyond the field sessions is future work.
+The trade-off is surface finish: printed races have higher $R_a$ than machined steel bearings. Two properties of the rotator keep this acceptable: (i) the operating speed at the output is bounded by the motor output divided by the external ratio (approximately 6~RPM on the AZ axis via the 15:40 reduction, approximately 11~RPM on EL via the 40:55 reduction, at 95\,\% duty; \S\ref{sec:slew-speed}), so contact-surface sliding velocity is low; and (ii) the bearing preload is low because the herringbone gear pair below imposes negligible axial thrust load (\S\ref{sec:gearing}). Endurance characterisation beyond the field sessions is future work.
 
 \begin{figure}[H]
     \centering

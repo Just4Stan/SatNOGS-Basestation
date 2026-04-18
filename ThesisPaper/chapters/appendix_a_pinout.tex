@@ -16,14 +16,19 @@
         GP5  & SPI0 CSn          & ADXL345 IMU       & \\
         GP6  & SPI0 SCK          & ADXL345 IMU       & \\
         GP7  & SPI0 MOSI         & ADXL345 IMU       & \\
+        GP8  & AZ endstop        & AZ\_END           & \code{kAzEndstop}, active-low \\
+        GP9  & EL endstop        & EL\_END           & \code{kElEndstop}, active-low \\
         GP10 & Encoder AZ-B      & Motor AZ encoder  & Firmware label \code{kAzEncB} (A/B swapped for correct count direction) \\
         GP11 & Encoder AZ-A      & Motor AZ encoder  & Firmware label \code{kAzEncA} \\
         GP12 & Encoder EL-A      & Motor EL encoder  & \\
         GP13 & Encoder EL-B      & Motor EL encoder  & \\
         GP14 & AZ motor IN2      & TB6642FG U1       & \\
         GP16 & AZ motor IN1      & TB6642FG U1       & Bodge wire from GP15 (damaged on rev1) \\
+        GP19 & AZ motor ALERT    & TB6642FG U1       & \code{kAzAlert}, active-low fault input \\
+        GP20 & EL motor ALERT    & TB6642FG U2       & \code{kElAlert}, active-low fault input \\
         GP21 & EL motor PWM      & TB6642FG U2       & \\
         GP22 & AZ motor PWM      & TB6642FG U1       & \\
+        GP25 & Pico on-board LED & Pico module       & \code{kLed}, active-high \\
         GP27 & EL motor IN2      & TB6642FG U2       & \\
         GP28 & EL motor IN1      & TB6642FG U2       & \\
         \bottomrule
@@ -31,6 +36,8 @@
     \caption{Motor controller Pico pin assignments (v1, as-deployed).}
     \label{tab:motor-pinout}
 \end{table}
+
+Firmware uses GP16 for AZ\_IN1 after the GP15-pad damage described in \S\ref{sec:bringup}; the schematic still carries the original GP15 label. Encoder A/B pin labels are swapped at the firmware level to invert the count direction on AZ. These schematic-vs-firmware discrepancies are intentional and documented in \file{Firmware/rp2040-satnogs-rotator/src/pins.h}.
 
 \section*{RF HAT Pico}
 

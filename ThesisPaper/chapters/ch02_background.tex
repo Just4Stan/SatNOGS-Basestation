@@ -63,7 +63,7 @@ The canonical link-budget scenario for the AetherSpace downlink is a 600~km-alti
         Pointing loss                       & $-$0.5~dB  & $-$0.3~dB  & $-$0.5~dB \\
         \midrule
         \textbf{Received power at CC1200}   & \textbf{$-$125.7~dBm} & \textbf{$-$116.7~dBm} & \textbf{$-$131.3~dBm} \\
-        CC1200 sensitivity (datasheet~\cite{cc1200}, 2.4~kbps 2-GFSK) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
+        CC1200 sensitivity (datasheet~\cite{cc1200}, 2.4~kbps 2-GFSK, interpolated) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
         \textbf{Theoretical margin}         & \textbf{$-$5.7~dB} & \textbf{+3.3~dB} & \textbf{$-$11.3~dB} \\
         CC1200 effective sensitivity (measured, no LNA) & $-$105~dBm & $-$105~dBm & $-$105~dBm \\
         \textbf{Measured margin}            & \textbf{$-$20.7~dB} & \textbf{$-$11.7~dB} & \textbf{$-$26.3~dB} \\
@@ -73,7 +73,7 @@ The canonical link-budget scenario for the AetherSpace downlink is a 600~km-alti
     \label{tab:link-budget}
 \end{table}
 
-Two observations follow. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the measured noise floor on the assembled RF HAT ($-$100 to $-$107~dBm depending on antenna pointing; \S\ref{sec:packet-reception}) sits $\sim$15--20~dB above the thermal baseline, giving an effective sensitivity of approximately $-$105~dBm and pushing the measured margin deeply negative across all geometries. The full multi-row budget and a Friis cascade analysis of an external low-noise amplifier are given in the link-budget reference document maintained alongside the thesis.
+Two observations follow. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the measured noise floor on the assembled RF HAT (approximately $-$96~dBm, canonical figure from \file{captures/evidence/signal\_evidence.md}; \S\ref{sec:packet-reception}) sits roughly 30~dB above the expected kTB+NF limit at the CC1200 input, giving an effective sensitivity that pushes the measured margin deeply negative across all geometries. The $-$105~dBm used in the measured-margin row is a conservative floor for that distribution. The full multi-row budget and a Friis cascade analysis of an external low-noise amplifier are given in the link-budget reference document maintained alongside the thesis.
 
 \section{Doppler Shift}
 \label{sec:doppler}
@@ -109,7 +109,7 @@ The ecosystem has four components~\cite{satnogs-main, satnogs-network, satnogs-w
     \item[SatNOGS Rotator] --- optional reference rotator (3D-printed, NEMA17 bipolar steppers, belt drive, Arduino controller)~\cite{satnogs-rotator-fw}.
 \end{description}
 
-Rotator communication goes through \textbf{hamlib}~\cite{hamlib}: the \code{rotctld} daemon exposes a TCP interface on port 4533 that accepts EasyComm ASCII commands. Any controller that speaks EasyComm III over a serial link integrates without modification, as hamlib model 204~\cite{jackson1990easycomm}.
+Rotator communication goes through \textbf{hamlib}~\cite{hamlib}: the \code{rotctld} daemon exposes a TCP interface on port 4533 speaking the hamlib \code{rotctl} protocol, and internally translates those commands to EasyComm III ASCII on the serial link to the controller. Any controller that speaks EasyComm III integrates without modification, as hamlib model 204~\cite{jackson1990easycomm}.
 
 \subsection{The EasyComm Protocol}
 
@@ -117,12 +117,12 @@ EasyComm is an ASCII protocol developed by Chris Jackson (G7UPN) for antenna tra
 
 \subsection{Why a Distributed Network}
 
-A single station contacts a LEO satellite for at most $\sim$11\% of each orbit ($t_{\max}/T \approx 10.1/92.4 = 10.9\%$ at 400~km). For mission-critical telemetry, one station is insufficient; distributing stations worldwide gives near-continuous coverage. Earlier attempts (the Japanese Ground Station Network at the University of Tokyo, and ESA's GENSO project, started 2007 and cancelled by 2014) relied on a centralised SOAP-over-SSL software stack and did not reach a sustainable scale~\cite{hanssens2023}. SatNOGS accepts any hardware that speaks EasyComm over serial and uses an SDR receiver.
+A single station contacts a LEO satellite for at most $\sim$11\% of each orbit ($t_{\max}/T \approx 10.1/92.4 = 10.9\%$ at 400~km). For mission-critical telemetry, one station is insufficient; distributing stations worldwide gives near-continuous coverage. Earlier attempts (the Japanese Ground Station Network at the University of Tokyo, and ESA's GENSO project, started 2007 and cancelled by 2014) coupled stations through a centralised SOAP-over-SSL software stack, which became the lock-in that prevented open scaling~\cite{hanssens2023}. SatNOGS accepts any hardware that speaks EasyComm over serial and uses an SDR receiver.
 
 \subsection{CC1200 Deviation}
 \label{sec:cc1200-deviation}
 
-The standard SatNOGS receive chain is SDR-based. An RTL-SDR v3 dongle feeds raw IQ samples through GNU~Radio flowgraphs (\code{gr-satnogs}) via SoapySDR; demodulation, sync detection, and CRC checking happen in software. This stack is flexible at the cost of compute requirements (GNU~Radio + Docker, targeting $\geq$1~GB of RAM~\cite{satnogs-main}).
+The standard SatNOGS receive chain is SDR-based. An RTL-SDR v3 dongle feeds raw IQ samples through GNU~Radio flowgraphs (\code{gr-satnogs}) via SoapySDR; demodulation, sync detection, and CRC checking happen in software. This stack is flexible at the cost of compute requirements (GNU~Radio + Docker, targeting $\geq$1~GB of RAM~\cite{satnogs-client-setup}).
 
 This thesis substitutes a CC1200 hardware packet modem for the SDR front-end. The CC1200 performs modulation/demodulation, sync-word detection, and CRC checking in hardware, producing decoded packets rather than raw IQ. As a consequence, the standard \code{satnogs-client} pipeline (built around GNU~Radio) cannot be used as-is; the station submits decoded frames directly to the SatNOGS DB via the SiDS API. The trade-off is reduced modulation flexibility (the CC1200 must be configured to match each satellite's transmit parameters) in exchange for alignment with AetherSpace (which carries a CC1200) and lower compute requirements on the Pi 3A+~\cite{rpi3aplus}.
 

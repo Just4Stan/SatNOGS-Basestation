@@ -44,6 +44,9 @@ citestyle=numeric-comp, maxnames=99]{biblatex}
 
 %%%% Tikz %%%%
 \usepackage{pgfplots}
+% \DeclareUnicodeCharacter is a pdfTeX builtin; the stock fiiw build uses pdflatex
+% via latexmk, so this declaration is fine here. (tectonic/XeLaTeX do not provide
+% \DeclareUnicodeCharacter — use inputenc-free source or latexmk for this thesis.)
 \DeclareUnicodeCharacter{2212}{−}
 \usepgfplotslibrary{groupplots,dateplot}
 \usetikzlibrary{patterns,shapes.arrows,arrows.meta,positioning,calc,decorations.pathreplacing,shapes.geometric}

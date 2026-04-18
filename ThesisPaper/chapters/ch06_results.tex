@@ -69,7 +69,7 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
 \section{RF Front-End Measurements}
 \label{sec:rf-measurements}
 
-\textbf{CC1200 verification.} SPI readback confirms part ID 0x20 and version 0x11. SmartRF profile load and register read-back are consistent with the written values. MARC state transitions IDLE$\to$RX$\to$IDLE$\to$TX$\to$IDLE as commanded. TX/RX FIFO access and overflow recovery both work.
+\textbf{CC1200 verification.} SPI readback confirms part ID 0x20; version reads 0x11 (empirical, not datasheet-specified). SmartRF profile load and register read-back are consistent with the written values. MARC state transitions IDLE$\to$RX$\to$IDLE$\to$TX$\to$IDLE as commanded. TX/RX FIFO access and overflow recovery both work.
 
 \textbf{RSSI.}
 
@@ -83,7 +83,7 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
         Outdoors (open field) & $-$77 to $-$80~dBm \\
         \bottomrule
     \end{tabular}
-    \caption{Measured RSSI across environments, AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
+    \caption{Measured RSSI across environments (reported by \code{rf\_hat.py} on the assembled RF HAT, $\geq$30~s continuous samples per environment), AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
     \label{tab:rssi-environments}
 \end{table}
 
@@ -140,7 +140,7 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 
 \paragraph{B. Cross-capture byte matching on SNUGLITE-II (suggestive, inconclusive).} Four independent SNUGLITE-II captures contain shared subsequences up to 81 bytes long. Two hypotheses are compatible: (i) repeated beacon frames captured at different orbital points, and (ii) a CC1200 demodulator/idle pattern emitted repeatedly at false sync triggers. The April 9 log explicitly identifies a 99-byte CC1200 idle pattern appearing identically across all satellites at all frequencies; the SNUGLITE-II matches have not yet been shown to differ structurally from this idle pattern, so (ii) is not excluded.
 
-\paragraph{C. Pass-profile RSSI range (weak).} Top passes show 17--29~dB RSSI variation from AOS to peak to LOS. This is loosely consistent with $1/r^2$ path-loss modulation of a real signal, but it is also consistent with antenna noise-temperature variation as the beam sweeps across ground and sky. Not diagnostic.
+\paragraph{C. Pass-profile RSSI range (weak).} A small subset of passes show an AOS-to-peak-to-LOS RSSI excursion of several dB, loosely consistent with $1/r^2$ path-loss modulation of a real signal but equally consistent with antenna noise-temperature variation as the beam sweeps across ground and sky. Not diagnostic. Raw per-pass numbers: \file{captures/evidence/signal\_evidence.md}.
 
 \begin{figure}[H]
     \centering

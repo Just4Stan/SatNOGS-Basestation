@@ -25,19 +25,7 @@ Implementation details:
 
 Both axes share the same PID. The elevation axis sets \code{kElInvert = true} in \file{config.h}, which inverts both the encoder reading and the PID output sign. Inverting only one of the two produces the positive-feedback runaway documented in \S\ref{sec:bringup}.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/pid_step_overlay.png}
-    \caption{PID step response overlay for a 90\degree\ commanded step.}
-    \label{fig:pid-step-overlay}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/pid_settling_zoom.png}
-    \caption{PID settling detail, zoomed to $\pm$1\degree\ around the setpoint.}
-    \label{fig:pid-settling-zoom}
-\end{figure}
+Step-response plots and settling-detail are quantified in Chapter~\ref{ch:results} (\S\ref{sec:pid-step}).
 
 \section{Quadrature Encoding}
 \label{sec:quadrature}
@@ -91,7 +79,7 @@ Key message types:
     \item \code{SET\_SERIAL\_MODE} (0x35) --- enable PIO-based serial bitstream capture.
     \item \code{TX\_WRITE/SEND} --- load FIFO + transmit.
     \item \code{BUZZER} (0x50) --- trigger patterns (ready, AOS, LOS, packet, error).
-    \item \code{PING/PONG} --- connectivity test.
+    \item \code{PING} --- connectivity test; response is \code{PING | 0x80} (0x81), not a separate type.
     \item \code{EVT\_RX\_DATA} (0xE0) --- asynchronous received data (firmware$\to$Pi, both FIFO and serial modes).
 \end{itemize}
 
@@ -118,7 +106,7 @@ A 3-instruction PIO program (\file{serial\_rx.pio.h}) captures the bitstream int
 
 The PIO is gated by the CC1200 clock output, so no baud-rate setup is needed on the RP2040 side.
 
-In blind mode the CC1200 outputs samples at $\sim$7--8$\times$ the configured symbol rate. The firmware measures this ratio at startup (PIO word count over 100~ms divided by the expected symbol rate), then an edge-triggered resampler extracts data bits at the midpoint of each symbol period.
+In blind mode the CC1200 outputs samples at approximately $15\times$ the configured symbol rate (empirical; the firmware measures the ratio at startup as PIO word count over 100~ms divided by the expected symbol rate). An edge-triggered resampler then extracts data bits at the midpoint of each symbol period.
 
 Two serial sub-modes are selected via the \code{MSG\_SET\_SERIAL\_MODE} body byte:
 
