@@ -44,28 +44,28 @@ The canonical link-budget scenario for the AetherSpace downlink is a 600~km-alti
 
 \begin{table}[H]
     \centering
-    \small
-    \begin{tabular}{lrrr}
+    \footnotesize
+    \begin{tabularx}{\textwidth}{@{}Xrrr@{}}
         \toprule
-        Parameter & 30\degree/600~km & Zenith/400~km & 10\degree/600~km \\
+        Parameter & 30\degree/600\,km & Zenith/400\,km & 10\degree/600\,km \\
         \midrule
         TX power (AetherSpace)              & +14.0~dBm  & +14.0~dBm  & +14.0~dBm \\
         TX antenna (turnstile/dipole)       & +2.0~dBi   & +2.0~dBi   & +2.0~dBi \\
         FSPL at 432~MHz                     & $-$145.8~dB & $-$137.2~dB & $-$150.9~dB \\
-        Atmospheric loss                    & $-$0.5~dB  & $-$0.3~dB  & $-$1.0~dB \\
-        Polarisation mismatch (circ $\leftrightarrow$ lin) & $-$3.0~dB & $-$3.0~dB & $-$3.0~dB \\
-        RX antenna (Siretta Oscar 44, 9~dBi)~\cite{siretta-oscar44} & +9.0~dBi & +9.0~dBi & +9.0~dBi \\
-        Feedline loss (3~m RG58 + N/SMA)    & $-$0.9~dB  & $-$0.9~dB  & $-$0.9~dB \\
+        Atmospheric loss (ITU-R P.676~\cite{itu-r-p676}) & $-$0.5~dB  & $-$0.3~dB  & $-$1.0~dB \\
+        Polarisation mismatch (circ/lin)    & $-$3.0~dB & $-$3.0~dB & $-$3.0~dB \\
+        RX antenna (Oscar 44, 9~dBi~\cite{siretta-oscar44}) & +9.0~dBi & +9.0~dBi & +9.0~dBi \\
+        Feedline loss (3~m RG58)            & $-$0.9~dB  & $-$0.9~dB  & $-$0.9~dB \\
         Pointing loss                       & $-$0.5~dB  & $-$0.3~dB  & $-$0.5~dB \\
         \midrule
         \textbf{Received power at CC1200}   & \textbf{$-$125.7~dBm} & \textbf{$-$116.7~dBm} & \textbf{$-$131.3~dBm} \\
-        CC1200 sensitivity (datasheet~\cite{cc1200}, 2.4~kbps 2-GFSK, interpolated) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
+        CC1200 sensitivity~\cite{cc1200} (2.4~kbps 2-GFSK, interp.) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
         \textbf{Theoretical margin}         & \textbf{$-$5.7~dB} & \textbf{+3.3~dB} & \textbf{$-$11.3~dB} \\
         CC1200 effective sensitivity (measured, no LNA) & $-$105~dBm & $-$105~dBm & $-$105~dBm \\
         \textbf{Measured margin}            & \textbf{$-$20.7~dB} & \textbf{$-$11.7~dB} & \textbf{$-$26.3~dB} \\
         \bottomrule
-    \end{tabular}
-    \caption{Link budget for the AetherSpace UHF downlink at 432~MHz across three canonical pass geometries. Atmospheric loss budget scaled with elevation per ITU-R P.676~\cite{itu-r-p676}.}
+    \end{tabularx}
+    \caption{Link budget for the AetherSpace UHF downlink at 432~MHz across three canonical pass geometries.}
     \label{tab:link-budget}
 \end{table}
 
