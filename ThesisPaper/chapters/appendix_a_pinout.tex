@@ -1,6 +1,5 @@
 % ══════════════════════════════════════════════════════════════════════════════
 \chapter{GPIO Pin Mapping}
-\label{app:pinout}
 % ══════════════════════════════════════════════════════════════════════════════
 
 \section*{Motor Controller Pico}
@@ -34,7 +33,6 @@
         \bottomrule
     \end{tabularx}
     \caption{Motor controller Pico pin assignments (v1, as-deployed).}
-    \label{tab:motor-pinout}
 \end{table}
 
 Firmware uses GP16 for AZ\_IN1 after the GP15-pad damage described in \S\ref{sec:bringup}; the schematic still carries the original GP15 label. Encoder A/B pin labels are swapped at the firmware level to invert the count direction on AZ. These schematic-vs-firmware discrepancies are intentional and documented in \file{Firmware/rp2040-satnogs-rotator/src/pins.h}.
@@ -70,5 +68,4 @@ Firmware uses GP16 for AZ\_IN1 after the GP15-pad damage described in \S\ref{sec
         \bottomrule
     \end{tabularx}
     \caption{RF HAT Pico pin assignments.}
-    \label{tab:rf-pinout}
 \end{table}

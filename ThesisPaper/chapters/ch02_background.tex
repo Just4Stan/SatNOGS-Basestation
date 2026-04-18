@@ -9,18 +9,15 @@
 For a circular orbit at altitude $h$ above Earth's surface, the orbital velocity follows from equating gravitational attraction to centripetal acceleration~\cite{montenbruck2000orbits}:
 \begin{equation}
     v = \sqrt{\frac{\mu}{R_E + h}}
-    \label{eq:orbital-velocity}
 \end{equation}
 with $\mu = GM_\oplus = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E = 6371$~km. For $h = 400$~km: $v = \sqrt{3.986 \times 10^{14} / 6.771 \times 10^6} = 7.669$~km/s. The orbital period is
 \begin{equation}
     T = 2\pi \sqrt{\frac{(R_E + h)^3}{\mu}} = 2\pi \sqrt{\frac{(6.771 \times 10^6)^3}{3.986 \times 10^{14}}} = 5545~\text{s} = 92.4~\text{min}.
-    \label{eq:orbital-period}
 \end{equation}
 
 The maximum slant range $d_{\max}$ at the geometric horizon (elevation $\epsilon = 0$\degree) for a spherical Earth is
 \begin{equation}
     d_{\max} = \sqrt{(R_E+h)^2 - R_E^2} = \sqrt{6771^2 - 6371^2} = 2293~\text{km}.
-    \label{eq:dmax}
 \end{equation}
 
 Visible-arc geometry (the angle subtended at Earth's centre by the portion of the orbit above the station horizon) gives a theoretical maximum pass duration of
@@ -37,7 +34,6 @@ The total angular rate as seen from the ground station reaches its bound at zeni
 The \textit{azimuth} rate, however, is unbounded as a pass approaches true zenith: for passes with closest-approach elevation above $\sim$80\degree, the AZ axis alone needs to move through a large arc in a short time, so instantaneous AZ rates can exceed 10\degree/s for a few seconds. This is a speed-limit concern for the mechanical rotator (\S\ref{sec:tracking-accuracy}) rather than an accuracy concern.
 
 \section{The AetherSpace CubeSat}
-\label{sec:aetherspace}
 
 AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. Per the specification provided by the AetherSpace team (2026-03-05): UHF downlink at 433~MHz, TX power approximately +14~dBm ($\approx$25~mW), TX antenna a turnstile or dipole with approximately 2~dBi gain, CC1200 native packet format, modulation and symbol rate not finalised at the time of writing. Previous KU Leuven work by Surkijn and Van Elst (2022) on the Earth--satellite communication chain and Hanssens (2023) on SatNOGS ground-station options~\cite{hanssens2023} scoped the ground-station problem.
 
@@ -96,7 +92,6 @@ At 145.9~MHz (the VHF uplink target):
 The Doppler rate $d(\Delta f)/dt$ peaks at closest approach. The station software applies Doppler correction by writing the CC1200 \code{FREQOFF} register at 2~Hz (\S\ref{sec:pi-stack}). A worst-case rate of approximately 200~Hz/s at 432~MHz near TCA means the residual uncompensated drift between 2~Hz updates is of order 100~Hz, which is small relative to the 10~kHz RX filter bandwidth used for 2.4~kbps 2-GFSK reception.
 
 \section{The SatNOGS Network}
-\label{sec:satnogs}
 
 SatNOGS (Satellite Networked Open Ground Station) originated at Hackerspace.gr in Athens during the 2014 NASA Space Apps Challenge and won that year's Hackaday Prize, which funded the Libre Space Foundation~\cite{satnogs-main}. A detailed ecosystem history appears in~\cite{hanssens2023}, which this thesis continues; the summary below is limited to what is load-bearing for the subsequent chapters.
 
@@ -127,7 +122,6 @@ The standard SatNOGS receive chain is SDR-based. An RTL-SDR v3 dongle feeds raw 
 This thesis substitutes a CC1200 hardware packet modem for the SDR front-end. The CC1200 performs modulation/demodulation, sync-word detection, and CRC checking in hardware, producing decoded packets rather than raw IQ. As a consequence, the standard \code{satnogs-client} pipeline (built around GNU~Radio) cannot be used as-is; the station submits decoded frames directly to the SatNOGS DB via the SiDS API. The trade-off is reduced modulation flexibility (the CC1200 must be configured to match each satellite's transmit parameters) in exchange for alignment with AetherSpace (which carries a CC1200) and lower compute requirements on the Pi 3A+~\cite{rpi3aplus}.
 
 \section{Existing Designs}
-\label{sec:existing-designs}
 
 \begin{table}[H]
     \centering
@@ -150,7 +144,6 @@ This thesis substitutes a CC1200 hardware packet modem for the SDR front-end. Th
 Most university ground stations (UPSat/University of Patras~\cite{upsat}, TU Delft/Delfi-C3~\cite{tudelft-delfi}, AraMiS/Politecnico di Torino~\cite{masera2005aramis}) buy commercial rotators and focus on the RF or software layers. Custom mechanical rotator design for university CubeSat ground stations is comparatively rare; SuperAntennaz~\cite{superantennaz} is an open-source outlier targeting heavy-antenna loads ($>$10~kg) using steppers.
 
 \section{Comparison with Hanssens (2023)}
-\label{sec:hanssens-comparison}
 
 This thesis continues the 2023 masterproef by Serge Hanssens~\cite{hanssens2023}, which surveyed the SatNOGS ecosystem, assessed hardware options (rotators, SDRs, antennas), and tested a Stepperdrive MSD-50-5.6D stepper motor driver for azimuth rotation.
 

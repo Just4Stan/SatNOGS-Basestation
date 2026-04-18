@@ -1,13 +1,11 @@
 % ══════════════════════════════════════════════════════════════════════════════
 \chapter{Introduction}
-\label{ch:introduction}
 % ══════════════════════════════════════════════════════════════════════════════
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{photos/station_wide.jpg}
     \caption{Assembled, field-deployed ground station tracking a pass.}
-    \label{fig:station-overview}
 \end{figure}
 
 \section{Problem Statement}
@@ -17,7 +15,6 @@
 A LEO satellite at 400~km altitude is visible from a given ground station for 5--10~minutes per 92-minute orbit. The total angular rate at zenith is bounded by
 \begin{equation}
     \dot{\theta}_{\max} = \frac{v}{h} = \frac{7.67~\text{km/s}}{400~\text{km}} = 0.01918~\text{rad/s} = 1.10~\text{deg/s},
-    \label{eq:theta-max}
 \end{equation}
 with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E+h = 6771$~km~\cite{montenbruck2000orbits}. The instantaneous azimuth rate exceeds 10\degree/s near zenith because a small displacement of the sub-satellite point maps to a large arc in azimuth.
 
@@ -48,7 +45,6 @@ This thesis adopts the CC1200 hardware-packet-modem path instead, for three reas
 Chapter~\ref{ch:results} quantifies the sensitivity cost of this choice: with the Siretta Oscar 44 Yagi but without an external LNA, the CC1200 receive chain did not decode AetherSpace-class downlinks from orbit during the three field sessions. \S\ref{sec:future-work} identifies the hardware additions required to close the remaining sensitivity gap.
 
 \section{Research Questions}
-\label{sec:research-questions}
 
 \begin{enumerate}
     \item Can a satellite-tracking rotator be built for under \euro{}50 in materials?

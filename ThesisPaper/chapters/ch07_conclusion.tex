@@ -4,7 +4,6 @@
 % ══════════════════════════════════════════════════════════════════════════════
 
 \section{Research Questions Answered}
-\label{sec:rq-answered}
 
 \begin{enumerate}
     \item \textbf{Under €50 rotator / €100 station?} Partially. v2 (\S\ref{sec:cost}) reaches $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the full rotator hardware, and $\sim$€100 for the station core (excluding antenna, coax, power supply, tripod). The strict ``full rotator under €50'' target is not met once motors and mechanics are included. The v1 setup used for field validation costs $\sim$€145 (two separate boards, 6-layer RF HAT).
@@ -18,11 +17,9 @@
     \centering
     \includegraphics[width=0.55\textwidth]{photos/battery.jpg}
     \caption{24~V 6S LiPo pack intended for portable operation.}
-    \label{fig:battery}
 \end{figure}
 
 \section{Limitations}
-\label{sec:limitations}
 
 \begin{itemize}
     \item \textbf{No protocol-valid frames decoded from orbit} --- documented in \S\ref{sec:packet-reception} with per-observation alternative hypotheses; root cause identified in \S\ref{sec:link-budget} and \S\ref{sec:field-tests} as the absence of an external LNA combined with a 15--20~dB above-thermal board-noise floor, leaving the AetherSpace link at approximately $-$20~dB measured margin at 30\degree\ elevation.
@@ -53,7 +50,6 @@
 \end{enumerate}
 
 \section{Summary}
-\label{sec:summary}
 
 This thesis designs, builds, and partially validates a portable SatNOGS-compatible ground station. The v1 hardware (two separate boards, used in the field sessions) tracks satellites with sub-0.5\degree\ elevation error and 0\degree--3\degree\ azimuth error in the 20\degree--70\degree\ peak-elevation band, integrates with the SatNOGS rotator ecosystem through standard EasyComm III, and deploys from unpacked to tracking in about four minutes using only a laptop (a phone can also supply GPS in a pinch). The v2 MOTOR\_RF\_HAT (design-complete, unfabricated at submission) projects to $\sim$€40 for the combined controller/RF PCB and $\sim$€100 for the station core; the projection remains to be validated by fabrication.
 

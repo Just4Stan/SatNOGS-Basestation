@@ -21,7 +21,6 @@ Slew speed was measured on a single axis, unloaded, at 24~V supply, by commandin
         \bottomrule
     \end{tabular}
     \caption{Slew-speed measurements, unloaded, 24~V supply.}
-    \label{tab:slew-speed}
 \end{table}
 
 Linear regression over the four measured points gives slope 0.40\degree/s per \% duty, $R^2 > 0.99$. 100\,\% duty was tested separately and trips the TB6642FG overcurrent protection on motor stall, so it is not included in the fit. The 35\degree/s ceiling at 95\,\% duty exceeds the total angular rate $\dot{\theta}_{\max} \approx 1.1$\degree/s derived in \S\ref{sec:orbital-mechanics} by a factor of approximately 32. It does not cover the instantaneous \textit{azimuth} rate during near-zenith passes (which can exceed 10\degree/s for a few seconds); \S\ref{sec:tracking-accuracy} reports the resulting AZ tracking error during such passes.
@@ -32,7 +31,6 @@ Linear regression over the four measured points gives slope 0.40\degree/s per \%
 With the deployed gains ($K_p = 0.15$, $K_i = 0.03$, $K_d = 0.02$, duty-filter $\alpha = 0.15$, max duty 0.95; \S\ref{sec:rotator-pid}) a 90\degree\ commanded step settles to within the 0.05\degree\ deadband in approximately 4~s, with overshoot below 0.5\degree. The settling time decomposes as: slew-limited traverse of 90\degree\ at 35\degree/s peak rate = $90/35 = 2.6$~s, plus roughly 1.4~s of final convergence through the duty output filter and deadband. The closed-loop bandwidth is bounded above by the duty-output filter time constant:
 \begin{equation}
     \tau_\text{duty} = \frac{\Delta t}{\alpha} = \frac{0.01}{0.15} \approx 0.067~\text{s}, \qquad f_{-3\,\text{dB}} \approx \frac{1}{2\pi \tau} \approx 2.4~\text{Hz}.
-    \label{eq:duty-filter-bw}
 \end{equation}
 
 In practice the slew-rate limit sets the large-signal response time; the 2.4~Hz figure applies to small-signal tracking above the deadband. Either is well above the $\leq$1.1\degree/s total angular rate of a 400~km LEO pass (\S\ref{sec:orbital-mechanics}).
@@ -41,7 +39,6 @@ In practice the slew-rate limit sets the large-signal response time; the 2.4~Hz 
     \centering
     \includegraphics[width=0.8\textwidth]{figures/pid_step_overlay.png}
     \caption{PID step response for a 90\degree\ commanded step.}
-    \label{fig:pid-step-response}
 \end{figure}
 
 \section{Satellite Tracking Accuracy}
@@ -61,7 +58,6 @@ Tracking error was computed per pass from the CSV log (commanded AZ/EL from \cod
         \bottomrule
     \end{tabularx}
     \caption{Tracking error binned by satellite peak elevation.}
-    \label{tab:tracking-accuracy}
 \end{table}
 
 Across passes with peak elevation in the 20\degree--70\degree\ band (the range where the Chapter~\ref{ch:background} link budget closes), both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:problem-statement}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
@@ -84,7 +80,6 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
         \bottomrule
     \end{tabular}
     \caption{Measured RSSI across environments (reported by \code{rf\_hat.py} on the assembled RF HAT, $\geq$30~s continuous samples per environment), AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
-    \label{tab:rssi-environments}
 \end{table}
 
 The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys). Indoor readings are lower than the outdoor interference level but still well above the CC1200 datasheet sensitivity, consistent with the measured effective-sensitivity figure used in the link budget.
@@ -146,7 +141,6 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/10_sky_coverage.png}
     \caption{Sky coverage heatmap: RSSI over AZ/EL across all tracked passes.}
-    \label{fig:sky-coverage}
 \end{figure}
 
 \paragraph{D. Doppler-sweep profile (confirms orbital geometry, not reception).} The expected $\pm$9~kHz sweep at 432~MHz with zero-crossing at TCA is observed on every pass. Because this sweep is \textit{applied} by station software to the FREQOFF register regardless of whether any signal is present, it verifies correct predict/correct software behaviour only.
@@ -155,7 +149,6 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/06_doppler_scurve.png}
     \caption{Doppler-correction S-curve applied during one pass.}
-    \label{fig:doppler-scurve}
 \end{figure}
 
 \paragraph{E. Capture-byte entropy (weak).} Captures show byte entropy of 6.95--7.91 bits/byte, below the 8.0 bits/byte expected of uniform random noise. Filtered or correlated noise from a demodulator can produce similar signatures without encoding any information. The entropy is consistent with ``not white noise'' but not with ``structured satellite telemetry'' specifically.
@@ -179,7 +172,6 @@ Three field sessions were conducted with the complete station on a camera tripod
     \centering
     \includegraphics[width=0.75\textwidth]{photos/station_wide.jpg}
     \caption{Wide shot of the deployed station in the field.}
-    \label{fig:station-wide}
 \end{figure}
 
 The canonical link-budget table is in \S\ref{sec:link-budget}. The measurement-derived numbers that tie it to this chapter:
@@ -204,7 +196,6 @@ Four firmware/software defects were diagnosed during field sessions and fixed in
 \end{itemize}
 
 \section{Cost Comparison}
-\label{sec:cost-comparison}
 
 The v2 MOTOR\_RF\_HAT BOM (from \S\ref{sec:cost}) compared against commercial and existing open-source alternatives. The ``rotator'' column counts the controller board + motors + mechanics only, excluding the station computer, antenna, coax, power supply, and tripod; ``total'' adds a Pi 3A+.
 
@@ -222,5 +213,4 @@ The v2 MOTOR\_RF\_HAT BOM (from \S\ref{sec:cost}) compared against commercial an
         \bottomrule
     \end{tabular}
     \caption{Cost comparison. v2 is design-complete but not yet fabricated; $\sim$\euro{}75/\euro{}100 are BOM projections (LCSC + JLCPCB, April 2026).}
-    \label{tab:cost-comparison}
 \end{table}

@@ -35,7 +35,6 @@ The Hall-effect encoder on each motor shaft gives two channels A, B. 4$\times$ d
 The decoder is a GPIO-IRQ-driven Gray-code state machine running on core 0. At the 35\degree/s peak slew (\S\ref{sec:slew-speed}), the inter-edge period on the fastest axis is $1/(35 \cdot 244.6) = 117$~$\mu$s, which is comfortably above the per-edge ISR service time.
 
 \section{Homing and Calibration}
-\label{sec:homing}
 
 \textbf{EL:} ADXL345 gravity vector $\to$ drive to horizontal $\to$ zero encoder. The \code{RECAL} command re-homes during operation.
 
@@ -45,11 +44,9 @@ The decoder is a GPIO-IRQ-driven Gray-code state machine running on core 0. At t
     \centering
     \includegraphics[width=0.55\textwidth]{photos/imu.jpg}
     \caption{ADXL345 accelerometer breakout mounted on the elevation frame for EL homing.}
-    \label{fig:imu}
 \end{figure}
 
 \section{Safety}
-\label{sec:safety}
 
 \begin{itemize}
     \item \textbf{Runaway detection}: e-stop if position exceeds soft limits by 50\degree.
@@ -165,14 +162,12 @@ The setup wizard has five steps: (1) GPS fix $\to$ Pi (typically supplied by a p
     \centering
     \includegraphics[width=0.9\textwidth]{gui_track_withdata.png}
     \caption{Dashboard Track page during a live AVUM R/B pass, viewed in a laptop browser.}
-    \label{fig:dashboard-track}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{skyplot.png}
     \caption{Sky plot view with trajectories of all upcoming passes.}
-    \label{fig:dashboard-skyplot}
 \end{figure}
 
 \subsection*{Systemd services and auto-start}
@@ -196,7 +191,6 @@ The station is registered as station 4712 (``Aether-Basestation'') on \url{netwo
 Because the CC1200 emits decoded packets rather than raw IQ, \code{satnogs-client} (GNU~Radio + SoapySDR) cannot be used as-is; frames are submitted directly to the SatNOGS DB over the SiDS API. The station therefore appears ``offline'' on the network map (no job-polling heartbeat) but still contributes telemetry on decode. The rationale for this trade-off is covered in \S\ref{sec:problem-statement} and \S\ref{sec:cc1200-deviation}.
 
 \section{Field Deployment Workflow}
-\label{sec:field-deployment}
 
 The deployment sequence, measured at $\sim$4~minutes from unpacking to first tracked pass across the three field sessions:
 
@@ -216,5 +210,4 @@ The browser runs on a laptop (primary) or phone; SSH is not used.
     \centering
     \includegraphics[width=0.6\textwidth]{photos/station_closeup.jpg}
     \caption{Close-up of the deployed station.}
-    \label{fig:station-closeup}
 \end{figure}

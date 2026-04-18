@@ -4,7 +4,6 @@
 % ══════════════════════════════════════════════════════════════════════════════
 
 \section{System Architecture}
-\label{sec:system-architecture}
 
 Three subsystems connected through a Raspberry Pi 3A+:
 \begin{enumerate}
@@ -19,7 +18,6 @@ Architecture keeps rotator and RF independent: either can be tested, replaced, o
     \centering
     \includegraphics[width=\textwidth]{figures/system_architecture.png}
     \caption{Station architecture: Pi 3A+ host, MotorPCB, dual-CC1200 RF HAT, and power tree.}
-    \label{fig:system-architecture}
 \end{figure}
 
 \subsection*{Design constraints}
@@ -32,7 +30,6 @@ Architecture keeps rotator and RF independent: either can be tested, replaced, o
 \end{itemize}
 
 \section{Mechanical Design}
-\label{sec:mechanical-design}
 
 The rotator is designed in Onshape and printable on consumer FDM machines with a 220$\times$220~mm bed (the largest single printed part is 205$\times$160$\times$120~mm). All structural prints are in ASA (Acrylonitrile Styrene Acrylate). ASA is chosen over PLA for two properties: (i) UV stability from the acrylate rubber phase (a polymer-science property of ASA copolymers; ASA substitutes the acrylate rubber for the butadiene phase of ABS, eliminating the UV-degradation vector), and (ii) a glass transition $T_g \approx 100$\degC / Vicat softening $\approx$~105\degC, compared to $T_g \approx 60$\degC\ for PLA; this margin avoids thermal deformation in direct sunlight. PETG was considered and rejected because of lower interlayer adhesion and creep under sustained load compared with ASA at equivalent print settings.
 
@@ -40,7 +37,6 @@ The rotator is designed in Onshape and printable on consumer FDM machines with a
     \centering
     \includegraphics[width=0.7\textwidth]{photos/rotator_hero_2.jpg}
     \caption{Assembled 3D-printed rotator, front view.}
-    \label{fig:rotator-hero-front}
 \end{figure}
 
 \subsection{Structure}
@@ -63,14 +59,12 @@ The trade-off is surface finish: printed races have higher $R_a$ than machined s
     \centering
     \includegraphics[width=0.6\textwidth]{photos/3DP_bearings_close-up.png}
     \caption{3D-printed deep-groove ball bearing close-up with 3\,mm steel balls and press-in retainer.}
-    \label{fig:bearings-closeup}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/3DP_bearings_all.png}
     \caption{Both printed bearings assembled, with the separate AZ inner race printed flat-down.}
-    \label{fig:bearings-all}
 \end{figure}
 
 \subsection{Gearing}
@@ -92,7 +86,6 @@ The gear-ratio bookkeeping:
         \bottomrule
     \end{tabular}
     \caption{Rotator gear ratios, encoder counts, and per-axis positional resolution.}
-    \label{tab:gear-ratios}
 \end{table}
 
 Ticks per degree at the output is derived from the encoder count per motor revolution multiplied by the total reduction, divided by 360:
@@ -108,14 +101,12 @@ Gears press-fit directly onto the motor's 6~mm D-shafts with additional set-scre
     \centering
     \includegraphics[width=0.7\textwidth]{photos/3DP_gears_all.png}
     \caption{Printed herringbone gear set: AZ pair (15:40, 2.667:1) and EL pair (40:55, 1.375:1).}
-    \label{fig:gears-all}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/gears_cad.png}
     \caption{Parametric CAD source of the gear profile, generated in Onshape.}
-    \label{fig:gears-cad}
 \end{figure}
 
 \section{Motors}
@@ -132,7 +123,42 @@ Hanssens~\cite{hanssens2023} identified insufficient stepper torque as the failu
     \item \textbf{EL:} $4~\text{Nm} \times 1.375 = 5.5$~Nm at the output shaft.
 \end{itemize}
 
-The manufacturer torque figure is a datasheet value; bench verification of the assembled rotator's available output torque and the torque actually required to initiate and maintain azimuth rotation under an antenna load is deferred to a follow-up torque-test bench.% TODO: Stan, measurement + photographs
+\paragraph{Measured output torque.} The assembled rotator was bench-measured with a lever-arm-plus-kitchen-scale setup. A rigid arm attached to the axis output pushes down on the scale at a known radius while the axis is commanded to rotate at 95\,\% duty; the peak scale reading gives the output force.
+
+\begin{itemize}
+    \item \textbf{AZ:} 0.71~kgf at 0.50~m lever $\Rightarrow T_\text{AZ} = 0.71 \cdot 9.81 \cdot 0.50 = 3.48$~Nm (Fig.~\ref{fig:torque-az}).
+    \item \textbf{EL:} 1.10~kgf at 0.40~m lever $\Rightarrow T_\text{EL} = 1.10 \cdot 9.81 \cdot 0.40 = 4.32$~Nm (Fig.~\ref{fig:torque-el}).
+\end{itemize}
+
+Measured EL reaches approximately 80\,\% of the spec-derived 5.5~Nm. Measured AZ reaches approximately 33\,\% of the spec-derived 10.7~Nm; the AZ rig lets the rotor continue to move as the scale deflects, so the reading is the rotating-under-load torque rather than the stalled peak. Both measured values exceed what the Siretta Oscar 44 Yagi (mass $\sim$0.6~kg) requires at the lever of the assembled antenna.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{photos/torque_az_arm.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{photos/torque_az_scale.png}
+    \end{minipage}
+    \caption{AZ torque measurement: 0.50~m lever, scale reads 0.71~kgf $\Rightarrow$ 3.48~Nm.}
+    \label{fig:torque-az}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{photos/torque_el_arm.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{photos/torque_el_scale.png}
+    \end{minipage}
+    \caption{EL torque measurement: 0.40~m lever, scale reads 1.10~kgf $\Rightarrow$ 4.32~Nm.}
+    \label{fig:torque-el}
+\end{figure}
 
 \subsection{DC vs stepper}
 
@@ -149,7 +175,6 @@ The trade-off is firmware complexity: the DC-motor path requires a PID loop and 
 No slip ring is fitted on the azimuth axis. The firmware tracks cumulative rotation and enforces soft limits at $\pm$360\degree, so the antenna cable never wraps more than one full turn. Between passes, the \code{PARK} command returns the antenna to true-north / zero position via the shortest path, which unwraps any accumulated wrap before the next observation (\S\ref{sec:easycomm}).
 
 \section{Motor Controller PCB}
-\label{sec:rotator_pcb}
 
 The v1 MotorPCB is a 4-layer KiCad~9 design with 13 hierarchical sub-sheets, JLCPCB assembled from LCSC basic parts.
 
@@ -175,21 +200,18 @@ The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in 
         \bottomrule
     \end{tabular}
     \caption{Rotator PCB pin assignments (as-deployed v1).}
-    \label{tab:rotator-pinout}
 \end{table}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/AZEL_control_front.png}
     \caption{KiCad 3D render of the v1 MotorPCB.}
-    \label{fig:motorpcb-v1-render}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/motorcontrol.jpg}
     \caption{v1 MotorPCB assembled prototype, mounted in the rotator electronics bay.}
-    \label{fig:motorpcb-v1}
 \end{figure}
 
 \begin{figure}[H]
@@ -203,7 +225,6 @@ The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in 
     \centering
     \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_back.png}
     \caption{v2 MOTOR\_RF\_HAT (back).}
-    \label{fig:motor-rf-hat-back}
 \end{figure}
 
 \section{Bring-Up and Hardware Debugging}
@@ -242,7 +263,6 @@ Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-pi
         \bottomrule
     \end{tabular}
     \caption{v1 (as-deployed) cost breakdown.}
-    \label{tab:v1-cost}
 \end{table}
 
 \subsection{v2 (MOTOR\_RF\_HAT, design-complete, ready to order)}
@@ -277,7 +297,6 @@ The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT.
         \bottomrule
     \end{tabular}
     \caption{v2 (MOTOR\_RF\_HAT, projected) cost breakdown. Excludes antenna, coax, power supply, and tripod.}
-    \label{tab:v2-cost}
 \end{table}
 
 Excludes antenna, coax, power supply, and tripod (user-supplied). v2 brings the rotator BOM (PCB + motors + mechanics, excluding the Pi) to $\sim$€75, or $\sim$€40 for the combined controller/RF PCB alone. This misses a strict full-rotator €50 target but remains far below existing open-source and commercial alternatives (Table~\ref{tab:rotator-comparison}).
