@@ -2,6 +2,165 @@
 \chapter{RF Front-End}
 \label{ch:rf-frontend}
 % ══════════════════════════════════════════════════════════════════════════════
+%
+% This chapter combines:
+%   §1 RF PCB Design          — formerly ch05 §5.1 (Robbe)
+%   §2 RF PCB Layout          — formerly ch08 §1   (Robbe)
+%   §3 RF Matching Network    — formerly ch08 §2   (Robbe)
+
+\section{RF PCB Design}
+\label{sec:rf_pcb}
+
+The RF PCB implements the front-end architecture responsible for signal transmission, reception, and communication with the host system. This section describes the electrical design of the PCB, including system architecture, component selection, and interconnections between subsystems.
+
+\subsection{System Overview}
+\label{subsec:rf_system_overview}
+
+The RF PCB is based on a microcontroller-controlled dual-transceiver architecture supporting both the VHF (144\,MHz) and UHF (433\,MHz) frequency bands.
+
+The design consists of the following functional blocks:
+
+\begin{itemize}
+\item A rp2040 based microcontroller for system control and data handling
+\item Two RF transceivers (VHF and UHF)
+\item Dedicated SPI communication interfaces
+\item A UART interface to the Raspberry Pi host
+\item Power distribution
+\end{itemize}
+
+Figure~X illustrates the high-level architecture of the RF PCB and the interaction between these subsystems.
+
+\subsection{Microcontroller Subsystem}
+\label{subsec:rf_microcontroller}
+
+The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040. This device acts as the central control unit of the RF system.
+
+Its responsibilities include:
+
+\begin{itemize}
+\item Configuration of both RF transceivers using SPI
+\item Handling of transmit and receive data
+\item Communication with the host system via UART
+\item Control of auxiliary signals such as chip select and interrupt lines
+\end{itemize}
+
+The RP2040 was selected due to its dual-core architecture and availability of multiple independent SPI peripherals, enabling parallel communication with both RF transceivers without bus arbitration. Compared to typical single-SPI microcontrollers, this reduces firmware complexity and improves timing determinism.
+
+Furthermore, the platform supports rapid firmware development and iteration through a well-established software ecosystem, enabling efficient testing and debugging during the development process.
+
+\begin{table}[H]
+\centering
+\caption{RP2040 Pin Assignment for RF PCB}
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{GPIO} & \textbf{Function} & \textbf{Connected To} \\
+\hline
+GPIO0  & UART TX & Raspberry Pi RX (J3) \\
+GPIO1  & UART RX & Raspberry Pi TX (J3) \\
+\hline
+GPIO10 & SPI (UHF) SCLK & CC1200 UHF SCLK \\
+GPIO11 & SPI (UHF) MOSI & CC1200 UHF SI \\
+GPIO12 & SPI (UHF) MISO & CC1200 UHF SO \\
+GPIO13 & SPI (UHF) CS   & CC1200 UHF \texttt{\textasciitilde CS} \\
+GPIO8  & UHF reset      & CC1200 UHF \texttt{\textasciitilde RESET} \\
+GPIO7  & UHF GDO0       & CC1200 UHF GPIO0 \\
+GPIO9  & UHF GDO2       & CC1200 UHF GPIO2 \\
+GPIO6  & UHF GDO3       & CC1200 UHF GPIO3 \\
+\hline
+GPIO18 & SPI (VHF) SCLK & CC1200 VHF SCLK \\
+GPIO19 & SPI (VHF) MOSI & CC1200 VHF SI \\
+GPIO16 & SPI (VHF) MISO & CC1200 VHF SO \\
+GPIO17 & SPI (VHF) CS   & CC1200 VHF \texttt{\textasciitilde CS} \\
+GPIO20 & VHF reset      & CC1200 VHF \texttt{\textasciitilde RESET} \\
+GPIO22 & VHF GDO0       & CC1200 VHF GPIO0 \\
+GPIO21 & VHF GDO2       & CC1200 VHF GPIO2 \\
+GPIO26 & VHF GDO3       & CC1200 VHF GPIO3 \\
+\hline
+\end{tabular}
+\label{tab:rp2040_pinout}
+\end{table}
+
+\subsection{RF Transceiver Subsystem}
+\label{subsec:rf_transceivers}
+
+The RF PCB employs two CC1200 transceivers to enable dual-band operation. Each transceiver can operate independently and includes its own supporting circuitry:
+
+\begin{itemize}
+\item A 40\,MHz crystal oscillator
+\item External matching and filtering electronics
+\item Decoupling capacitors for supply stabilization
+\end{itemize}
+
+The use of two dedicated transceivers eliminates the need for RF switching networks, simplifying the signal path and avoiding additional insertion losses.
+
+Key control and interface signals include SPI communication lines, interrupt outputs (GDO pins), and device control signals such as reset.
+
+This independent operation allows simultaneous configuration and rapid switching between frequency bands at the system level.
+
+The detailed layout and matching-network design of the RF front-end are discussed in the following sections.
+
+\subsection{Communication Interfaces}
+\label{subsec:rf_interfaces}
+
+\subsubsection{SPI Communication}
+\label{subsubsec:rf_spi}
+
+Each RF transceiver is connected to the microcontroller via a dedicated hardware SPI interface on the RP2040.
+
+The SPI interfaces consist of the following signals:
+
+\begin{itemize}
+\item Serial clock (SCLK)
+\item Master-out slave-in (MOSI)
+\item Master-in slave-out (MISO)
+\item Chip select (CS)
+\end{itemize}
+
+Interrupt lines from each transceiver are connected to the microcontroller to signal events such as packet reception or transmission completion.
+
+Using separate SPI buses avoids contention and ensures deterministic communication timing.
+
+\subsubsection{UART Interface to Host}
+\label{subsubsec:rf_uart}
+
+Communication between the RF PCB and the Raspberry Pi host is implemented via a UART interface.
+
+This interface is used for:
+
+\begin{itemize}
+\item Transferring received RF data to the host
+\item Receiving configuration and control commands
+\item Debugging and diagnostic output
+\end{itemize}
+
+\subsection{Power Distribution Network}
+\label{subsec:rf_power}
+
+The RF PCB is powered from a 24\,V battery supplied via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using a buck converter. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
+
+Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count.
+
+The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard power supply circuitry, which is based on a switching regulator. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. While switching regulators typically introduce more noise compared to dedicated low-noise linear regulators, the integrated solution provides adequate current capability and efficiency for the system.
+
+Given the noise sensitivity of RF circuits, particular attention was paid to supply integrity. Local decoupling capacitors were placed close to the supply pins of each active component to reduce high-frequency noise, provide transient current during switching events, and improve overall system stability. In addition, careful PCB layout practices were applied to minimize coupling of digital switching noise into the RF signal paths.
+
+\subsubsection{Power Supply Noise Evaluation}
+\label{subsubsec:rf_power_measurement}
+
+Oscilloscope measurements were performed at the 3.3\,V pins of the CC1200 transceivers to assess voltage stability and switching noise characteristics. The measurements were conducted under multiple operating conditions, including idle, receive, and transmit modes.
+
+The observed DC supply voltage was approximately \textbf{[X.XX\,V]}. The measured peak-to-peak ripple on the 3.3\,V rail was approximately \textbf{[XX\,mV\textsubscript{pp}]} under nominal operation, with transient deviations up to \textbf{[XX\,mV]} observed during mode transitions.
+
+No significant voltage drops or disturbances were observed that could affect the stability of the RF transceivers. Furthermore, the system demonstrated reliable communication during operation, indicating that the supply quality was sufficient for the intended application.
+
+These results suggest that, despite the use of a switching regulator, the implemented power distribution network, in combination with local decoupling, provides adequate noise suppression for this prototype. For future iterations, the use of a dedicated low-noise LDO for the RF section may be considered to further improve supply integrity and RF performance.
+
+\subsection{Summary}
+\label{subsec:rf_summary}
+
+The RF PCB electrical design integrates a microcontroller, dual RF transceivers, and dedicated communication interfaces into a modular and robust architecture. This design forms the foundation for the RF layout considerations discussed in the following sections.
+
+% ──────────────────────────────────────────────────────────────────────────────
 \section{RF PCB Layout Considerations}
 \label{sec:rf_layout}
 
@@ -48,23 +207,23 @@ All RF signal paths are routed with controlled impedance considerations, targeti
 The characteristic impedance of a microstrip line can be approximated as:
 
 \begin{equation}
-Z_0 = \frac{60}{\sqrt{\varepsilon_{\text{eff}}}} 
+Z_0 = \frac{60}{\sqrt{\varepsilon_{\text{eff}}}}
 \ln \left( \frac{8h}{w} + \frac{w}{4h} \right)
 \end{equation}
 
 with the effective dielectric constant given by:
 
 \begin{equation}
-\varepsilon_{\text{eff}} = \frac{\varepsilon_r + 1}{2} 
-+ \frac{\varepsilon_r - 1}{2} 
+\varepsilon_{\text{eff}} = \frac{\varepsilon_r + 1}{2}
++ \frac{\varepsilon_r - 1}{2}
 \left( \frac{1}{\sqrt{1 + 12h/w}} \right)
 \end{equation}
 
 where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate.
 
-Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.2\,mm. 
+Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.2\,mm.
 
-At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited. 
+At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited.
 
 In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact formfactor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative.
 
@@ -84,6 +243,7 @@ To ensure reliable operation across both bands, the PCB layout is designed accor
 
 A 6-layer PCB stackup was selected to enable a compact RF front-end while maintaining controlled impedance routing and effective isolation between RF, power, and digital domains. The layout is designed according to the more stringent requirements of the 433\,MHz band, ensuring reliable operation across both frequency bands within the given form factor constraints.
 
+% ──────────────────────────────────────────────────────────────────────────────
 \section{RF Matching Network}
 \label{sec:rf_matching}
 
@@ -102,11 +262,11 @@ There are TI designs for operation in the following frequency ranges:
     \item 820--950\,MHz
 \end{itemize}
 
-These bands correspond to typical ISM and SRD applications. Operation outside these ranges may be possible but requires careful validation. \cite{cc1200_datasheet}
+These bands correspond to typical ISM and SRD applications. Operation outside these ranges may be possible but requires careful validation. \cite{cc1200}
 
 \subsubsection{CC1200 RF IO Structure}
 
-The receiver input of the CC1200 consists of a differential low-noise amplifier (LNA) with input pins \texttt{LNA\_P} and \texttt{LNA\_N}. These pins require a DC path to ground and are intended to be driven by a differential RF signal. \cite{cc1200_datasheet}
+The receiver input of the CC1200 consists of a differential low-noise amplifier (LNA) with input pins \texttt{LNA\_P} and \texttt{LNA\_N}. These pins require a DC path to ground and are intended to be driven by a differential RF signal. \cite{cc1200}
 
 The transmitter output, in contrast, is single-ended at the \texttt{PA} pin and requires a DC path to the supply voltage.
 
@@ -115,7 +275,7 @@ The transmitter output, in contrast, is single-ended at the \texttt{PA} pin and 
 The CC1200 does not present a fixed 50\,$\Omega$ input impedance. Instead, the optimal source impedance is frequency-dependent and complex. For the relevant bands, the datasheet specifies:
 
 \begin{itemize}
-    \item 433\,MHz band: 
+    \item 433\,MHz band:
     \begin{itemize}
         \item Differential: $100 + j60\,\Omega$
         \item Single-ended equivalent: $50 + j30\,\Omega$
@@ -127,7 +287,7 @@ The CC1200 does not present a fixed 50\,$\Omega$ input impedance. Instead, the o
     \end{itemize}
 \end{itemize}
 
-These values represent the optimum impedance for maximum receiver sensitivity and must be realized through the external matching network. \cite{cc1200_datasheet}
+These values represent the optimum impedance for maximum receiver sensitivity and must be realized through the external matching network. \cite{cc1200}
 
 \subsubsection{Optimum Load Impedance (Transmitter)}
 
@@ -138,7 +298,7 @@ Similarly, the transmitter output requires impedance matching to a complex load.
     \item 169\,MHz band: $80 + j0\,\Omega$
 \end{itemize}
 
-This further emphasizes that the RF interface is not inherently matched to 50\,$\Omega$, and external matching is mandatory. \cite{cc1200_datasheet}
+This further emphasizes that the RF interface is not inherently matched to 50\,$\Omega$, and external matching is mandatory. \cite{cc1200}
 
 \subsubsection{Receiver Sensitivity and Matching Impact}
 
@@ -148,7 +308,7 @@ The CC1200 achieves high sensitivity, for example:
     \item Up to $-123$\,dBm at 1.2\,kbps in the 433\,MHz band
 \end{itemize}
 
-This performance is specified under optimal matching conditions at the antenna port. Any mismatch between the antenna and the IC will degrade sensitivity due to reduced power transfer and increased noise figure. \cite{cc1200_datasheet}
+This performance is specified under optimal matching conditions at the antenna port. Any mismatch between the antenna and the IC will degrade sensitivity due to reduced power transfer and increased noise figure. \cite{cc1200}
 
 \subsubsection{Output Power and Power Consumption}
 
@@ -165,7 +325,7 @@ At this output level, the current consumption is approximately:
     \item 46--49\,mA in high-performance mode at 433\,MHz
 \end{itemize}
 
-These values highlight the importance of efficient matching to avoid unnecessary power loss. \cite{cc1200_datasheet}
+These values highlight the importance of efficient matching to avoid unnecessary power loss. \cite{cc1200}
 
 \subsubsection{Implications for Matching Network Design}
 
@@ -197,7 +357,7 @@ Unlike a simple L-section matching network, this design uses multiple reactive e
 
 In addition to the validated 433\,MHz front-end, the PCB includes an optional 144\,MHz RF path implemented as a separate schematic section. This front-end is realized between SMA connector J2 and transceiver U2, using inductors L10, L12, L14, L16 and capacitors C11, C32, C38, C44, C46.
 
-The component values for this network were derived specifically for operation at 144\,MHz, adapting the matching concept used by the 164--190\,MHz reference desing.
+The component values for this network were derived specifically for operation at 144\,MHz, adapting the matching concept used by the 164--190\,MHz reference design.
 
 It is important to note that this 144\,MHz front-end was included as an additional design option but was \textbf{not populated on the final PCB}. Consequently, it was \textbf{not experimentally validated}, and its performance has not been verified in practice.
 
@@ -258,5 +418,3 @@ The final schematic and layout, however, are specific to this project and adapte
 The RF matching network is a critical part of the front-end design, enabling efficient signal transfer between the 50\,$\Omega$ antenna interface and the differential RF input of the CC1200.
 
 The validated 433\,MHz implementation is based on a multi-element LC network derived from the TI reference design and adapted to the project-specific PCB. An additional 144\,MHz front-end was included as an optional extension but was not populated or experimentally verified.
-
-By combining a proven topology with careful PCB implementation, the design achieves effective impedance matching, harmonic suppression, and reliable RF performance.

@@ -1,4 +1,119 @@
 % ══════════════════════════════════════════════════════════════════════════════
-\chapter{SmartRF CC1200 Register Configuration}
-\label{app:smartrf}
+\chapter{Detailed Bill of Materials}
+\label{app:bom}
 % ══════════════════════════════════════════════════════════════════════════════
+
+The BOM below costs the \textbf{v2 combined MOTOR\_RF\_HAT} (design-complete, routed, ready to order, not yet fabricated at the time of submission). Field validation used the v1 two-board setup (separate MotorPCB + RF HAT), which was more expensive because each board was ordered separately and the RF HAT uses a 6-layer stackup. The lessons from v1 bring-up (\S\ref{sec:bringup}) are incorporated into the v2 BOM: A4950 replaces TB6642FG for availability, and four 100\,$\Omega$ series resistors (R11--R14) protect the A4950 logic inputs from GPIO transients. The off-board rotator BOM (motors, gears, bearings, chassis, fasteners) is unchanged from v1.
+
+Component prices from the LCSC BOM tool (April 2026), hand-assembled. Full machine-readable BOM in \file{ThesisPaper/bom\_complete.csv}.
+
+\section*{D.1 \ MOTOR\_RF\_HAT PCB --- on-board components}
+
+123 placed components (excluding test pads and mounting holes), 48 unique LCSC line items.
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{lXrr}
+        \toprule
+        Category & Key components & Qty & LCSC total (\euro{}) \\
+        \midrule
+        Capacitors & 19 values (0603/0805/1206), CC1200 matching + bypass & 71 & 7.41 \\
+        Inductors & 11 values (0603 RF + 3030 power), CC1200 matching & 16 & 1.12 \\
+        Resistors & 7 values (0603) & 14 & 0.07 \\
+        CC1200RHBR & UHF + VHF transceivers (C122881) & 2 & 4.43 \\
+        A4950ELJTR-T & Motor drivers AZ + EL (C82404) & 2 & 1.10 \\
+        LMR51420YFDDCR & 24~V $\to$ 5~V buck (C7296200) & 1 & 0.84 \\
+        WS2812B-2020 & Status LEDs (C965555) & 4 & 0.28 \\
+        40~MHz crystal & CC1200 reference (C5380316) & 2 & 0.12 \\
+        BSS138 & Level shifter (C112239) & 1 & 0.01 \\
+        1N4148WS & Protection diode (C2128) & 1 & 0.01 \\
+        D\_Schottky & Buck diode (C3759853) & 1 & 0.14 \\
+        XT30PW-M & 24~V power input (C431092) & 1 & 0.24 \\
+        2$\times$20 Pi header & GPIO (C50980) & 1 & 0.14 \\
+        JST XH 6-pin & Motor/encoder connectors (C157919) & 2 & 0.33 \\
+        \midrule
+        \textbf{LCSC subtotal} & (incl. MOQ rounding for passives) & & \textbf{28.44} \\
+        \bottomrule
+    \end{tabularx}
+    \caption{MOTOR\_RF\_HAT on-board component cost breakdown.}
+    \label{tab:bom-onboard}
+\end{table}
+
+Items not on LCSC, sourced separately:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lrr}
+        \toprule
+        Component & Qty & \euro{} \\
+        \midrule
+        SMA edge-mount connectors & 2 & 1.50 \\
+        15~nH 0603 inductor & 2 & 0.50 \\
+        Raspberry Pi Pico (hand-soldered) & 1 & 4.00 \\
+        \midrule
+        \textbf{Non-LCSC subtotal} & & \textbf{6.00} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Items sourced outside LCSC.}
+    \label{tab:bom-non-lcsc}
+\end{table}
+
+\section*{D.2 \ PCB fabrication}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lr}
+        \toprule
+        Item & \euro{} \\
+        \midrule
+        Bare PCB (4-layer, JLCPCB, per board from 5-piece order) & 6.00 \\
+        \bottomrule
+    \end{tabular}
+    \caption{PCB fabrication cost (per board).}
+    \label{tab:bom-pcb}
+\end{table}
+
+\section*{D.3 \ Off-board components}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{llrr}
+        \toprule
+        Component & Source & Qty & \euro{} \\
+        \midrule
+        FAPG36-555-EN motor (24~V, 516:1) & AliExpress & 2 & 16.00 \\
+        Raspberry Pi 3 Model A+ & RPi distributor & 1 & 25.00 \\
+        ASA filament ($\sim$400~g) & local & 1 & 10.00 \\
+        Steel balls 3~mm (50~pcs) & AliExpress & 1 & 2.00 \\
+        M4$\times$10 + M3$\times$8 screws, heat-set inserts & local & lot & 3.00 \\
+        PVC pipe + misc hardware & local & lot & 2.00 \\
+        ADXL345 IMU breakout & AliExpress & 1 & 1.50 \\
+        \midrule
+        \textbf{Off-board subtotal} & & & \textbf{59.50} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Off-board mechanical and computing components.}
+    \label{tab:bom-off-board}
+\end{table}
+
+\section*{D.4 \ Grand total}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lr}
+        \toprule
+        Subsystem & \euro{} \\
+        \midrule
+        MOTOR\_RF\_HAT components (LCSC) & 28.44 \\
+        Non-LCSC parts (SMA, 15~nH, Pico) & 6.00 \\
+        Bare PCB (4-layer) & 6.00 \\
+        Off-board components & 59.50 \\
+        \midrule
+        \textbf{Grand total per station core} & \textbf{$\sim$€100} \\
+        \bottomrule
+    \end{tabular}
+    \caption{v2 grand-total cost (station core, excluding antenna, coax, power supply, and tripod).}
+    \label{tab:bom-grand-total}
+\end{table}
+
+Excludes antenna, coax cable, 24~V power supply, and tripod (user-supplied). Hand-assembled --- no JLCPCB PCBA fees. LCSC total includes MOQ rounding (buying 100 passives when 1--8 are needed). The combined MOTOR\_RF\_HAT board eliminates the separate motor controller PCB and USB cable between Pi and rotator used in v1 testing. Numbers are projections for the unfabricated v2 board.

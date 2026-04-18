@@ -1,0 +1,309 @@
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Results and Validation}
+\label{ch:results}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section{Slew Speed}
+\label{sec:slew-speed}
+
+Slew speed was measured on a single axis, unloaded, at 24~V supply, by commanding the rotator to traverse 360\degree\ at a fixed PWM duty and timing the traverse with the onboard encoder tick counter. Four duty levels were tested. Raw data and per-run encoder-derived rates are listed in Appendix~\ref{app:pid}.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        Duty (\%) & Speed (\degree/s) & 360\degree\ time (s) \\
+        \midrule
+        35 & 11.2 & 32 \\
+        55 & 18.9 & 19 \\
+        75 & 26.9 & 13 \\
+        95 & 35.0 & 10 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Slew-speed measurements, unloaded, 24~V supply.}
+    \label{tab:slew-speed}
+\end{table}
+
+Linear regression over the four measured points gives slope 0.40\degree/s per \% duty, $R^2 > 0.99$. 100\,\% duty was tested separately and trips the TB6642FG overcurrent protection on motor stall, so it is not included in the fit. The 35\degree/s ceiling at 95\,\% duty exceeds the total angular rate $\dot{\theta}_{\max} \approx 1.1$\degree/s derived in \S\ref{sec:orbital-mechanics} by a factor of approximately 32. It does not cover the instantaneous \textit{azimuth} rate during near-zenith passes (which can exceed 10\degree/s for a few seconds); \S\ref{sec:tracking-accuracy} reports the resulting AZ tracking error during such passes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/slew_speed_vs_duty.png}
+    \caption{Slew speed vs. duty cycle for a single axis, 24~V supply, unloaded. Linear fit over 35--95\,\% duty: $R^2 > 0.99$, slope $\approx$~0.40\degree/s per \% duty. 100\,\% duty trips TB6642FG overcurrent on stall and is excluded from the fit.}
+    \label{fig:slew-speed}
+\end{figure}
+
+\section{PID Step Response}
+\label{sec:pid-step}
+
+With the deployed gains ($K_p = 0.15$, $K_i = 0.03$, $K_d = 0.02$, duty-filter $\alpha = 0.15$, max duty 0.95; \S\ref{sec:rotator-pid}) a 90\degree\ commanded step settles to within the 0.05\degree\ deadband in approximately 4~s, with overshoot below 0.5\degree. The settling time decomposes as: slew-limited traverse of 90\degree\ at 35\degree/s peak rate = $90/35 = 2.6$~s, plus roughly 1.4~s of final convergence through the duty output filter and deadband. The closed-loop bandwidth is bounded above by the duty-output filter time constant:
+\begin{equation}
+    \tau_\text{duty} = \frac{\Delta t}{\alpha} = \frac{0.01}{0.15} \approx 0.067~\text{s}, \qquad f_{-3\,\text{dB}} \approx \frac{1}{2\pi \tau} \approx 2.4~\text{Hz}.
+    \label{eq:duty-filter-bw}
+\end{equation}
+
+In practice the slew-rate limit sets the large-signal response time; the 2.4~Hz figure applies to small-signal tracking above the deadband. Either is well above the $\leq$1.1\degree/s total angular rate of a 400~km LEO pass (\S\ref{sec:orbital-mechanics}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/pid_step_overlay.png}
+    \caption{PID step response (90\degree\ commanded step): reference trajectory, actual position, and tracking error overlaid. Settling to deadband in $\sim$4~s, $<$0.5\degree\ overshoot.}
+    \label{fig:pid-step-response}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/pid_error_comparison.png}
+    \caption{PID error comparison across three duty caps (75\,\%, 85\,\%, 95\,\%): error vs. time during the same 90\degree\ step. Higher duty cap reduces slew time but increases overshoot.}
+    \label{fig:pid-error-comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/pid_metrics.png}
+    \caption{PID performance metrics (overshoot, settling time, steady-state error) summarised per test run.}
+    \label{fig:pid-metrics}
+\end{figure}
+
+\section{Satellite Tracking Accuracy}
+\label{sec:tracking-accuracy}
+
+Tracking error was computed per pass from the CSV log (commanded AZ/EL from \code{station.py} pass predictor vs. actual encoder readback from the MotorPCB, sampled at 5~Hz; logs in \file{captures/20260409/pass\_logs/} and \file{captures/20260412/}). Absolute-value errors are binned by the satellite's peak-elevation category:
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{lX}
+        \toprule
+        Scenario & Error ($|$commanded $-$ actual$|$) \\
+        \midrule
+        EL tracking, all passes & $<$0.5\degree\ throughout the pass \\
+        AZ tracking, 20\degree--70\degree\ peak elevation & 0\degree--3\degree\ throughout the pass \\
+        AZ tracking, peak elevation $>$70\degree\ (near-zenith) & 11\degree--166\degree\ during the $\sim$2--4~s zenith-crossing window; recovers to 0\degree--3\degree\ below 70\degree \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Tracking error binned by satellite peak elevation.}
+    \label{tab:tracking-accuracy}
+\end{table}
+
+Across passes with peak elevation in the 20\degree--70\degree\ band --- the range where the Chapter~\ref{ch:background} link budget closes --- both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:orbital-mechanics}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/tracking_error_vs_time.png}
+    \caption{Tracking error vs. time across a full satellite pass (commanded vs. actual AZ/EL, with error in degrees). AZ saturation near peak elevation visible as a brief spike followed by recovery.}
+    \label{fig:tracking-error-time}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/tracking_error_vs_elevation.png}
+    \caption{Tracking error vs. peak elevation (scatter, one point per pass). EL error stays $<$0.5\degree\ across all elevations; AZ error grows with peak elevation beyond $\sim$70\degree\ due to motor speed limit.}
+    \label{fig:tracking-error-elevation}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{photos/allpasses.png}
+    \caption{Polar sky plot of all tracked passes from the April 9 session; rotator trajectories overlaid with colour encoding pass index.}
+    \label{fig:allpasses}
+\end{figure}
+
+\section{RF Front-End Measurements}
+\label{sec:rf-measurements}
+
+\textbf{CC1200 verification.} SPI readback confirms part ID 0x20 and version 0x11. SmartRF profile load and register read-back are consistent with the written values. MARC state transitions IDLE$\to$RX$\to$IDLE$\to$TX$\to$IDLE as commanded. TX/RX FIFO access and overflow recovery both work.
+
+\textbf{RSSI.}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        Environment & RSSI range \\
+        \midrule
+        Indoors (lab) & $-$92 to $-$105~dBm \\
+        Outdoors (open field) & $-$77 to $-$80~dBm \\
+        \bottomrule
+    \end{tabular}
+    \caption{Measured RSSI across environments, AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
+    \label{tab:rssi-environments}
+\end{table}
+
+The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys). Indoor readings are lower than the outdoor interference level but still well above the CC1200 datasheet sensitivity, consistent with the measured effective-sensitivity figure used in the link budget.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/rssi_indoor_outdoor.png}
+    \caption{RSSI distribution indoors (lab) vs. outdoors (open field): histogram of raw CC1200 RSSI readings with AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
+    \label{fig:rssi-indoor-outdoor}
+\end{figure}
+
+\textbf{Doppler correction.} FREQOFF-based updates during the pass (no SIDLE), with a full FREQ rewrite through SIDLE used only for the initial frequency set and for large jumps. The observed $\pm$9~kHz sweep at 432~MHz matches the \S\ref{sec:doppler} prediction.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/doppler_real_pass.png}
+    \caption{Doppler correction during a real pass: commanded FREQOFF (Hz) vs. time. The sweep is applied open-loop from TLE-derived radial velocity; no closed-loop correction from measured signal is performed.}
+    \label{fig:doppler-real}
+\end{figure}
+
+\textbf{VHF.} Not populated on the assembled board; not tested.
+
+\section{Packet Reception --- Result and Interpretation}
+\label{sec:packet-reception}
+
+As of April 2026, \textbf{no protocol-valid frames have been decoded from orbit}. Across three field-test sessions the station tracked approximately 210 satellite passes --- 16 on April 1 (baseline, RSSI readout not yet calibrated), 184 on April 9, and 10 on April 12 --- and captured tens of megabytes of raw binary data, but:
+
+\begin{itemize}
+    \item Zero CRC-16/CCITT-valid HDLC frames (with or without G3RUH descrambling).
+    \item Zero AX.25 frames with valid FCS.
+    \item Zero AX.100 Mode~5 frames passing Reed--Solomon RS(255,223) correction.
+    \item Zero decoded packets submitted to the SatNOGS DB from real satellites.
+\end{itemize}
+
+The receive chain has been validated for local test frames in a short-range ground-to-ground configuration between two CC1200 transceivers: transmitted test frames decode at the receiver with valid sync word and CRC, exercising the RF path, SmartRF register set, FIFO drain, and host-side decoders under those conditions. This ground validation confirms the digital and RF path is internally consistent; it does not establish that the system is receiving orbital signals.
+
+The April 1 session predates the RSSI-readout fix (AGC\_GAIN\_ADJUST calibration) and is used as the negative control in the analysis below; the April 9 and April 12 sessions use the post-fix calibration.
+
+\subsection{Reception Modes Deployed}
+
+Two RX modes were used, selected per satellite by \code{station.py} (\S\ref{sec:rf-hat-firmware}):
+
+\begin{enumerate}
+    \item \textbf{FIFO mode} (default) --- CC1200 matches a sync word (e.g. AX.100 ASM \code{0x930B51DE}), then delivers fixed-length 255-byte chunks. If sync or modulation parameters don't match, the FIFO drains receiver noise after false sync triggers.
+    \item \textbf{Serial mode with AX.25 G3RUH decode} --- for $\geq$4800~bps FSK, the firmware switches to PIO serial capture and the G3RUH / NRZ-I / HDLC pipeline of \S\ref{sec:serial-mode}. No CRC-valid AX.25 frames were recovered from orbital data.
+\end{enumerate}
+
+\subsection{Why no decoded frames}
+
+The \S\ref{sec:link-budget} link budget shows the AetherSpace downlink is already marginal at the datasheet CC1200 sensitivity and $-$20~dB at the measured effective sensitivity. CRC-16 is error detection, not correction; RS(255,223) cannot compensate for a deficit of that size. The zero-frame outcome is the predicted outcome.
+
+Three factors contribute:
+
+\begin{enumerate}
+    \item \textbf{Front-end noise figure and board interference.} No LNA, so the CC1200 AGC operates on antenna noise plus on-board interference (LMR51420 buck harmonics, RP2040 digital, Pi GPIO/HDMI); noise floor sits 15--20~dB above thermal.
+    \item \textbf{Modulation parameter uncertainty.} The SatNOGS DB does not always publish exact symbol rate / deviation / sync word for non-AetherSpace satellites; any mismatch in FIFO mode produces zero output.
+    \item \textbf{Link geometry.} A +14~dBm / +2~dBi CubeSat leaves negative theoretical margin at mid-elevation even with a perfect receiver.
+\end{enumerate}
+
+\subsection{What was observed --- suggestive but not diagnostic}
+
+The captures contain statistical patterns that are individually compatible with weak sub-threshold satellite reception, but each is also compatible with receiver noise or demodulator artefacts triggered by RF activity at the sync-word matcher. Both hypotheses are named explicitly below.
+
+\paragraph{A. Elevation-binned mean RSSI (suggestive).} Grouping 62 tracked passes by peak elevation, mean peak RSSI increases monotonically by +4.2~dB from the 0--20\degree\ bin to the 60--90\degree\ bin. Weak satellite RF entering the front end at higher elevations is one possible explanation. However, the dataset is also confounded by pointing-dependent antenna temperature, local 433~MHz interference, AGC behaviour, and pass-selection effects; a passive antenna pointed at cold sky would normally lower the noise floor relative to the horizon, so this trend cannot be treated as proof of satellite reception without calibrated controls.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/evidence/01_elevation_bin_rssi.png}
+    \caption{Mean peak RSSI binned by peak elevation across 62 tracked passes. Monotonic +4.2~dB rise from the 0--20\degree\ bin to the 60--90\degree\ bin.}
+    \label{fig:elevation-bin-rssi}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/evidence/04_negative_control.png}
+    \caption{Negative control: same binning procedure applied to the April 1 session (before RSSI calibration fix). No elevation trend, confirming the April 9/12 trend is not an artefact of the analysis itself.}
+    \label{fig:negative-control}
+\end{figure}
+
+Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
+
+\paragraph{B. Cross-capture byte matching on SNUGLITE-II (suggestive, inconclusive).} Four independent SNUGLITE-II captures contain shared subsequences up to 81 bytes long. Two hypotheses are compatible: (i) repeated beacon frames captured at different orbital points, and (ii) a CC1200 demodulator/idle pattern emitted repeatedly at false sync triggers. The April 9 log explicitly identifies a 99-byte CC1200 idle pattern appearing identically across all satellites at all frequencies; the SNUGLITE-II matches have not yet been shown to differ structurally from this idle pattern, so (ii) is not excluded.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/evidence/07_cross_capture_match.png}
+    \caption{Cross-capture byte-match histogram for SNUGLITE-II: match length on x-axis, pair-count on y-axis, across six pairwise comparisons of four independent captures. Tail extends to 81 bytes.}
+    \label{fig:cross-capture-match}
+\end{figure}
+
+\paragraph{C. Pass-profile RSSI range (weak).} Top passes show 17--29~dB RSSI variation from AOS to peak to LOS. This is loosely consistent with $1/r^2$ path-loss modulation of a real signal, but it is also consistent with antenna noise-temperature variation as the beam sweeps across ground and sky. Not diagnostic.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/evidence/09_rssi_vs_range.png}
+    \caption{RSSI vs. slant range for the six highest-dynamic-range passes. Loose $1/r^2$-compatible trend; confounded by antenna noise-temperature variation.}
+    \label{fig:rssi-vs-range}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/evidence/10_sky_coverage.png}
+    \caption{Sky coverage heatmap: RSSI colour vs. AZ/EL across all tracked passes, polar projection.}
+    \label{fig:sky-coverage}
+\end{figure}
+
+\paragraph{D. Doppler-sweep profile (confirms orbital geometry, not reception).} The expected $\pm$9~kHz sweep at 432~MHz with zero-crossing at TCA is observed on every pass. Because this sweep is \textit{applied} by station software to the FREQOFF register regardless of whether any signal is present, it verifies correct predict/correct software behaviour only.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/evidence/06_doppler_scurve.png}
+    \caption{Doppler-correction S-curve applied during one pass: commanded FREQOFF (Hz) vs. time, showing the expected $\pm$9~kHz sweep and zero-crossing at closest approach.}
+    \label{fig:doppler-scurve}
+\end{figure}
+
+\paragraph{E. Capture-byte entropy (weak).} Captures show byte entropy of 6.95--7.91 bits/byte, below the 8.0 bits/byte expected of uniform random noise. Filtered or correlated noise from a demodulator can produce similar signatures without encoding any information. The entropy is consistent with ``not white noise'' but not with ``structured satellite telemetry'' specifically.
+
+\paragraph{F. MIMAN AX.100 Mode~5 analysis (inconclusive).} MIMAN captures processed through AX.100 Mode~5 achieved Golay(24,12) decode rates of 73\,\% (April 9) and 66\,\% (April 12). The random false-positive baseline for Golay(24,12) with 3-error correction is approximately 57\,\%, so the observed rates are only marginally above chance. Zero frames passed the subsequent RS(255,223) correction. Golay matches without downstream RS-decoded content are not a definitive indicator. See \file{captures/evidence/miman\_decode\_report.json}.
+
+\subsection{Academic Conclusion}
+
+The two hypotheses behind observations A--F (weak sub-threshold reception vs. receiver-internal effects) are not separable from the available data. The link budget in \S\ref{sec:link-budget} predicts this outcome at the measured effective sensitivity; the required hardware intervention is a front-end LNA (\S\ref{sec:future-work}).
+
+\subsection{AetherSpace-Specific Outlook}
+
+For AetherSpace the modulation-match risk is lower than for arbitrary satellites because the CubeSat and the ground station use the same CC1200 transceiver, provided both sides load the same finalised SmartRF register set. The remaining risk is sensitivity, addressed in \S\ref{sec:future-work}. The software architecture already exposes an \code{RfBackend} abstraction with both CC1200 and RTL-SDR implementations, allowing an SDR-based wideband IQ capture to serve as an independent verification path once an LNA is installed.
+
+\section{Field Tests and Link Budget}
+\label{sec:field-tests}
+
+Three field sessions were conducted with the complete station on a camera tripod in an open field, powered from a bench supply via extension cord and using an iPhone hotspot for internet. The session calendar is given in \S\ref{sec:packet-reception}; total setup time from unpacking to first tracked pass was measured at approximately 4 minutes, with no laptop or SSH session used.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{photos/station_wide.jpg}
+    \caption{Wide shot of the deployed station in the field, showing tripod placement relative to surroundings.}
+    \label{fig:station-wide}
+\end{figure}
+
+The canonical link-budget table is in \S\ref{sec:link-budget}. The measurement-derived numbers that tie it to this chapter:
+
+\begin{itemize}
+    \item Measured effective noise floor on the assembled RF HAT: \textbf{$-$100 to $-$107~dBm}, depending on antenna pointing (cold sky vs. horizon). This is 15--20~dB above the $-$127~dBm thermal baseline and is attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) and antenna noise temperature. The conservative $-$105~dBm figure used in the measured-margin column of Table~\ref{tab:link-budget} is taken from this distribution.
+    \item An SPF5189Z-class LNA mast-mounted at the antenna feed reduces the system noise figure to approximately 0.7~dB via the Friis cascade and, by dominating the front-end gain, lifts the CC1200 AGC above the measured board-level noise floor. Estimated effective sensitivity with LNA: approximately $-$125~dBm (a 20~dB improvement on the current measurement), moving the AetherSpace 30\degree/600~km link margin from $-$20.7~dB measured to approximately 0~dB.
+    \item A higher-gain Yagi contributes additively but is secondary: the dominant gap is the missing front-end gain, not antenna gain.
+\end{itemize}
+
+CSV pass logs (timestamp, commanded AZ/EL, encoder AZ/EL, RSSI, frequency, Doppler offset, slant range, packet count, 5~Hz cadence) were written to \file{captures/20260409/pass\_logs/} and \file{captures/20260412/}. Total: $16 + 184 + 10 = 210$ files across the three sessions. Tracking-accuracy and Doppler-sweep results derived from these logs are reported in \S\ref{sec:tracking-accuracy} and \S\ref{sec:rf-measurements} respectively and are not repeated here.
+
+\subsection{Firmware bugs surfaced by live passes}
+
+Four firmware/software defects were diagnosed during field sessions and fixed in the same session:
+
+\begin{itemize}
+    \item \textbf{AZ integral windup after zenith crossing.} When the AZ axis saturated during a high-rate zenith crossing, the PID integral accumulated a large error; after the satellite descended and the rate dropped, the integral fought the proportional term and oscillated. Fixed with the saturation-based anti-windup described in \S\ref{sec:rotator-pid}: the integral stops accumulating when $|u| \geq 0.95$ and the error sign would grow it further.
+    \item \textbf{Duty output filter too slow.} The PWM output LPF at $\alpha = 0.05$ (time constant 0.2~s) made the AZ axis unresponsive at tracking rates below $\sim$1\degree/s. $\alpha$ was raised to 0.15 (0.067~s) with no observed increase in motor-current transients; this is the deployed setting used throughout \S\ref{sec:pid-step}.
+    \item \textbf{Doppler base-frequency compounding.} A defect in \code{set\_frequency()} overwrote the per-satellite base frequency with the Doppler-corrected value, so each successive 2~Hz update accumulated on top of the last correction. Fixed by introducing a separate \code{uhf\_base\_freq\_hz} variable that holds the satellite's nominal frequency constant across the pass, with the Doppler offset applied only when writing the CC1200 FREQ/FREQOFF registers.
+    \item \textbf{Rotator socket timeout.} The TCP \code{set\_position()} call to \code{rotctld} blocked up to 5~s on the receive side, limiting effective tracking rate. Reduced to 0.5~s with fire-and-forget sends, plus a 15~s keepalive ping during AOS wait to prevent the firmware's 30~s command timeout from triggering. Implementation in \code{station.py}.
+\end{itemize}
+
+\section{Cost Comparison}
+\label{sec:cost-comparison}
+
+The v2 MOTOR\_RF\_HAT BOM (from \S\ref{sec:cost}) compared against commercial and existing open-source alternatives. The ``rotator'' column counts the controller board + motors + mechanics only, excluding the station computer, antenna, coax, power supply, and tripod; ``total'' adds a Pi 3A+.
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{Xlll}
+        \toprule
+        System & Type & Rotator (\euro{}) & Total incl. station computer (\euro{}) \\
+        \midrule
+        Yaesu G-5500 & Commercial & 760--900 & 1200+ \\
+        SPID RAS & Commercial & 1200--1300 & 1800+ \\
+        SatNOGS v3 & Open-source (stepper + belt) & 300--500 & 600+ \\
+        \textbf{This work --- v2 MOTOR\_RF\_HAT (design-complete)} & \textbf{Open-source (DC + gear)} & \textbf{$\sim$75} & \textbf{$\sim$100} \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Cost comparison vs. commercial and open-source alternatives. v2 has not been fabricated at the time of writing; the €75/€100 figures are BOM projections based on current LCSC and JLCPCB pricing (April 2026).}
+    \label{tab:cost-comparison}
+\end{table}

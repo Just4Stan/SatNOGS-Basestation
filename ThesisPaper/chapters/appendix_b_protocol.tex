@@ -1,4 +1,73 @@
 % ══════════════════════════════════════════════════════════════════════════════
-\chapter{EasyComm Command Reference}
+\chapter{Communication Protocols}
 \label{app:protocol}
 % ══════════════════════════════════════════════════════════════════════════════
+
+\section*{EasyComm III (Rotator --- USB CDC serial, 115200 baud)}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{llX}
+        \toprule
+        Command & Response & Description \\
+        \midrule
+        \code{AZxxx.x ELyyy.y} & (none) & Set target position \\
+        \code{AZ} & \code{AZxxx.x ELyyy.y} & Query current position \\
+        \code{VE} & \code{VESatNOGS-RP2040-v0.2} & Firmware version (VE prefix inline) \\
+        \code{GS} & \code{GS<status\_reg>} & Status register bitmask \\
+        \code{GE} & \code{GE<error\_reg>} & Error register bitmask \\
+        \code{PARK} & \code{AZxxx.x ELyyy.y} & Return to (0\degree, 0\degree); replies with position \\
+        \code{STOP} & \code{AZxxx.x ELyyy.y} & Halt motors; replies with position \\
+        \code{RESET} & \code{AZxxx.x ELyyy.y} & Start the homing/reset routine; replies with position \\
+        \code{RECAL} & (none) & Re-read IMU, re-home EL \\
+        \code{ZERO} & confirmation string & Set current position as zero reference \\
+        \code{MONITOR} & telemetry stream & Toggle 10~Hz debug (ticks + endstop + alert pins) \\
+        \code{TICKS} & \code{AZ\_TICKS=n EL\_TICKS=n} & Report raw encoder ticks \\
+        \code{KP<f>} / \code{KI<f>} / \code{KD<f>} & (none) & Set individual PID gains at runtime \\
+        \code{GAINS} & \code{KP=x KI=x KD=x} & Read current PID gains \\
+        \code{IMU} & \code{X=f Y=f Z=f g EL=f deg} & Read ADXL345 accelerometer \\
+        \bottomrule
+    \end{tabularx}
+    \caption{EasyComm III commands (SatNOGS variant, hamlib model 204).}
+    \label{tab:easycomm}
+\end{table}
+
+\section*{COBS Binary Protocol (RF HAT --- UART 115200 baud)}
+
+Frame structure: \code{[type, seq, len, payload\ldots, crc16\_hi, crc16\_lo]}, COBS-encoded with a 0x00 delimiter. CRC: CRC-16/CCITT-FALSE (polynomial 0x1021, init 0xFFFF). Responses use \code{type | 0x80} --- e.g. \code{PING} (0x01) response is 0x81.
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{llX}
+        \toprule
+        Type & Name & Description \\
+        \midrule
+        0x01 & \code{PING} & Connectivity test \\
+        0x02 & \code{GET\_INFO} & CC1200 part/version \\
+        0x03 & \code{SET\_STATE} & Strobe CC1200 state machine \\
+        0x04 & \code{SET\_STREAMING} & Enable/disable continuous RX forwarding \\
+        0x05 & \code{GET\_METRICS} & RSSI, MARC state, FIFO levels \\
+        0x10 & \code{READ\_REG} & Normal register read \\
+        0x11 & \code{WRITE\_REG} & Normal register write \\
+        0x12 & \code{READ\_EXT} & Extended register read \\
+        0x13 & \code{WRITE\_EXT} & Extended register write \\
+        0x20 & \code{RX\_READ} & Read bytes from RX FIFO \\
+        0x21 & \code{STROBE} & Issue raw CC1200 strobe command \\
+        0x22 & \code{TX\_WRITE} & Write to TX FIFO \\
+        0x23 & \code{TX\_SEND} & Strobe TX \\
+        0x24 & \code{TX\_FLUSH} & Flush TX FIFO \\
+        0x30 & \code{PROFILE\_CLEAR} & Clear loaded profile buffer \\
+        0x31 & \code{PROFILE\_BEGIN} & Start SmartRF profile load \\
+        0x32 & \code{PROFILE\_CHUNK} & Profile data chunk \\
+        0x33 & \code{PROFILE\_APPLY} & Apply loaded profile \\
+        0x34 & \code{SET\_FREQ\_WORD} & Atomic Doppler frequency update \\
+        0x35 & \code{SET\_SERIAL\_MODE} & Raw serial / AX.25 G3RUH PIO mode \\
+        0x40 & \code{SELECT\_RADIO} & Switch UHF/VHF \\
+        0x50 & \code{BUZZER} & Play pattern (0x01--0x08) \\
+        0xE0 & \code{EVT\_RX\_DATA} & Received packet (async, firmware$\to$Pi) \\
+        0xE1 & \code{EVT\_ERROR} & Error event (async, firmware$\to$Pi) \\
+        \bottomrule
+    \end{tabularx}
+    \caption{COBS binary protocol message types (RF HAT $\leftrightarrow$ Pi).}
+    \label{tab:cobs-messages}
+\end{table}

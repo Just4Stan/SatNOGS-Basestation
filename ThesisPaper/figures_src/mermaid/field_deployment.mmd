@@ -1,0 +1,11 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CFE0EC', 'primaryBorderColor': '#00407A', 'primaryTextColor': '#111827', 'lineColor': '#00407A', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 30, 'nodeSpacing': 30, 'curve': 'basis'}}}%%
+flowchart LR
+    classDef step fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+
+    S1["1. Place and power\n- Mount on tripod\n- Point rotator North\n- Connect 24 V PSU (XT30)\n- Pi boots Debian 13\n- EL homes via ADXL345 IMU"]:::step
+    S2["2. Boot complete\n- rotctld on TCP 4533\n- dashboard.py HTTPS 5000\n- station.py waits for location\n- NeoPixel green = ready"]:::step
+    S3["3. Connect phone\n- Join WiFi hotspot\n- SSID SatNOGS-xxxx\n- Open https://pi:5000\n- Accept self-signed cert"]:::step
+    S4["4. GPS and wizard\n- Tap 'Use My GPS'\n- Browser Geolocation API\n- Confirm callsign / mode\n- Calibrate North (AZ zero)"]:::step
+    S5["5. Auto-tracking\n- station.py polls TLE\n- Rotator tracks AZ / EL\n- CC1200 Doppler @ 2 Hz\n- SiDS to SatNOGS DB"]:::step
+
+    S1 --> S2 --> S3 --> S4 --> S5

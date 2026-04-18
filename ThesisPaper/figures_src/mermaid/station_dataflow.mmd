@@ -1,0 +1,41 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CFE0EC', 'primaryBorderColor': '#00407A', 'primaryTextColor': '#111827', 'lineColor': '#374151', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 55, 'nodeSpacing': 35, 'curve': 'basis'}}}%%
+flowchart TB
+    classDef pi   fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+    classDef mcu  fill:#D4EEF7,stroke:#1D8DB0,stroke-width:1.4px,color:#111827
+    classDef rf   fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px,color:#111827
+    classDef ext  fill:#F3F4F6,stroke:#6B7280,stroke-width:1px,color:#111827
+
+    subgraph INPUTS["External inputs"]
+        direction LR
+        TLE["CelesTrak\nTLE catalogue"]:::ext
+        DB["SatNOGS DB\ntransmitter profile"]:::ext
+        GPS["Operator phone\nHTTPS dashboard\nlat / lon / elev"]:::ext
+    end
+
+    EPHEM["PyEphem + pass scheduler\nBody.compute(observer) @ 2 Hz\nto AZ, EL, range-rate, AOS/LOS"]:::pi
+    CCLINK["rf_hat.CC1200Link\ndoppler_shift()  df = f0 * rdot / c\nfreq_to_regs(f) to FREQ2 / FREQ1 / FREQ0"]:::rf
+
+    ROTCTL["rotctld\nTCP :4533\nEasyComm 'M AZ EL'"]:::mcu
+    MPCB["MotorPCB\nPID 100 Hz\nTB6642FG to motors"]:::mcu
+
+    RFHAT["RF HAT Pico\nCOBS + CRC-16\nSPI1 to UHF CC1200"]:::mcu
+    CC1200["UHF CC1200\n432 MHz +/- df\nRX_FIFO / TX_FIFO"]:::rf
+
+    DECODE["Decoders\nG3RUH (firmware)\nAX.25 - AX.100 - USP"]:::rf
+    SATNOGS["satnogs.py\nSiDS POST\ndb.satnogs.org/api/telemetry"]:::pi
+    DASH["dashboard.py\nHTTPS :5000 - live AZ/EL\nRSSI - pass timeline"]:::pi
+
+    TLE  -->|"TLE"| EPHEM
+    DB   -->|"freq / mod / baud"| EPHEM
+    GPS  -->|"observer"| EPHEM
+
+    EPHEM -->|"rdot, f0"| CCLINK
+    EPHEM -->|"AZ, EL (deg)"| ROTCTL
+    ROTCTL -->|"USB CDC"| MPCB
+
+    CCLINK -->|"SET_FREQ_WORD (0x34)"| RFHAT
+    RFHAT  <-->|"SPI 5 MHz"| CC1200
+
+    CC1200 -->|"RX_READ (0x20)"| DECODE
+    DECODE -->|"decoded frames"| SATNOGS
+    EPHEM  -.->|"status.json (1 Hz)"| DASH

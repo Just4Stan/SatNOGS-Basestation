@@ -1,0 +1,277 @@
+% ══════════════════════════════════════════════════════════════════════════════
+\chapter{Firmware and Software}
+\label{ch:firmware-software}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\section{Rotator Firmware --- PID Control}
+\label{sec:rotator-pid}
+
+The closed-loop controller is a discrete-time PID at 100~Hz (timer interrupt on RP2040 core 1). Gains and constants are set in \file{Firmware/rp2040-satnogs-rotator/src/config.h}:
+
+\begin{itemize}
+    \item $K_p = 0.15$, $K_i = 0.03$, $K_d = 0.02$
+    \item Deadband: 0.05\degree\ (error below which no correction is applied)
+    \item Sample period: $\Delta t = 0.01$~s
+\end{itemize}
+
+Implementation details:
+
+\begin{itemize}
+    \item \textbf{Anti-windup.} Integral accumulation is skipped when $|u| \geq 0.95$ and the error sign would grow the integral further.
+    \item \textbf{Derivative filter.} First-order LPF on the derivative term, $\alpha = 0.15$, suppresses encoder-quantisation noise at the 0.004\degree--0.008\degree\ resolution from \S\ref{sec:gearing}.
+    \item \textbf{Duty output filter.} First-order LPF on the PWM duty, $\alpha = 0.05$ initially; raised to $\alpha = 0.15$ during field testing (\S\ref{sec:pid-step}).
+    \item \textbf{Maximum duty}: 0.95, to avoid TB6642FG overcurrent on stall.
+\end{itemize}
+
+Both axes share the same PID. The elevation axis sets \code{kElInvert = true} in \file{pins.h}, which inverts both the encoder reading and the PID output sign. Inverting only one of the two produces the positive-feedback runaway documented in \S\ref{sec:bringup}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/pid_step_overlay.png}
+    \caption{PID step response overlay: 90\degree\ commanded step, actual trajectory, and error signal. Settling to within 0.05\degree\ deadband in $\sim$4~s, $<$0.5\degree\ overshoot.}
+    \label{fig:pid-step-overlay}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/p_controller_step_response.png}
+    \caption{PID vs. P-only step response, same 90\degree\ step. The integral term eliminates the $\sim$2\degree\ steady-state error left by the proportional controller alone.}
+    \label{fig:p-controller-step}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/pid_settling_zoom.png}
+    \caption{PID settling detail (zoomed): $\pm$1\degree\ around the setpoint for the last second of the step. Deadband band at $\pm$0.05\degree\ visible.}
+    \label{fig:pid-settling-zoom}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/pid_metrics_table.png}
+    \caption{PID metrics summary table: overshoot, settling time, steady-state error per axis at three duty limits.}
+    \label{fig:pid-metrics-table}
+\end{figure}
+
+\section{Quadrature Encoding}
+\label{sec:quadrature}
+
+The Hall-effect encoder on each motor shaft gives two channels A, B. 4$\times$ decode produces the 64 CPR / 244.6 AZ ticks/deg / 126.1 EL ticks/deg resolution derived in \S\ref{sec:gearing}.
+
+The decoder is an interrupt-driven Gray-code state machine on RP2040 core 1. At the 35\degree/s peak slew (\S\ref{sec:slew-speed}), the inter-edge period on the fastest axis is $1/(35 \cdot 244.6) = 117$~$\mu$s; the measured ISR latency is $<$10~$\mu$s per edge.
+
+\section{Homing and Calibration}
+\label{sec:homing}
+
+\textbf{EL:} ADXL345 gravity vector $\to$ drive to horizontal $\to$ zero encoder. The \code{RECAL} command re-homes during operation.
+
+\textbf{AZ:} assume north at boot. User points the station north (guided by the phone compass on the dashboard) and confirms via the setup wizard; the \code{ZERO} command sets the current position as 0\degree.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{photos/imu.jpg}
+    \caption{ADXL345 accelerometer breakout used for EL homing, mounted on the elevation frame with SPI0 wiring to the MotorPCB (MISO GP4, CSn GP5, SCK GP6, MOSI GP7).}
+    \label{fig:imu}
+\end{figure}
+
+\section{Safety}
+\label{sec:safety}
+
+\begin{itemize}
+    \item \textbf{Runaway detection}: e-stop if position exceeds soft limits by 50\degree.
+    \item \textbf{Shortest-path wrapping}: 350\degree $\to$ 10\degree\ takes a 20\degree\ path rather than 340\degree; re-centres the encoder after settling near $\pm$360\degree.
+    \item \textbf{8~s hardware watchdog}, including during the EL homing loop.
+\end{itemize}
+
+\section{EasyComm Implementation}
+\label{sec:easycomm}
+
+Standard commands: \code{AZ}/\code{EL} set/get, \code{PARK}, \code{STOP}, \code{VE}, \code{GS}/\code{GE}.
+Custom extensions: \code{RESET}, \code{RECAL}, \code{MONITOR}, \code{TICKS}, \code{ZERO}, \code{GAINS}, \code{IMU}.
+
+Custom commands are invisible to hamlib, so compatibility with \code{rotctld}, GPredict, and the \code{satnogs-client} rotator path is maintained. The full EasyComm + extensions parser is implemented in \file{satnogs\_protocol.cpp} ($\sim$250 lines of C++).
+
+\section{RF HAT Firmware}
+\label{sec:rf-hat-firmware}
+
+Binary protocol: COBS framing + CRC-16/CCITT-FALSE over UART 115200.
+
+Key message types:
+\begin{itemize}
+    \item \code{SELECT\_RADIO} (0x40) --- switch UHF/VHF CC1200.
+    \item \code{READ/WRITE\_REG}, \code{READ/WRITE\_EXT} --- CC1200 register access.
+    \item \code{PROFILE\_BEGIN/CHUNK/APPLY} --- SmartRF profile loading (chunked, no reflash needed).
+    \item \code{SET\_STREAMING} --- enable/disable continuous RX packet forwarding.
+    \item \code{SET\_SERIAL\_MODE} (0x35) --- enable PIO-based serial bitstream capture.
+    \item \code{TX\_WRITE/SEND} --- load FIFO + transmit.
+    \item \code{BUZZER} (0x50) --- trigger patterns (ready, AOS, LOS, packet, error).
+    \item \code{PING/PONG} --- connectivity test.
+    \item \code{EVT\_RX\_DATA} (0xE0) --- asynchronous received data (firmware$\to$Pi, both FIFO and serial modes).
+\end{itemize}
+
+CC1200 SPI driver: SPI1 = UHF (GP10--13), SPI0 = VHF (GP16--19), 5~MHz clock. Each on a separate SPI peripheral --- no bus contention.
+
+4$\times$ WS2812B NeoPixels on GP4. Non-blocking buzzer tone sequencer on GP5 (hardware PWM via NPN/MOSFET gate).
+
+\subsection{CC1200 Serial Mode and AX.25 G3RUH Decoding}
+\label{sec:serial-mode}
+
+The CC1200's default FIFO mode requires sync-word detection before delivering data. G3RUH scrambling~\cite{g3ruh-scrambler} randomises the bitstream before transmission, so the over-the-air bytes do not contain the pre-scrambling sync word and FIFO mode will either miss the frame or false-trigger on scrambled noise. Undocumented framing hits the same wall. The firmware therefore implements a synchronous serial receive mode using the RP2040's PIO (Programmable I/O) peripheral.
+
+The CC1200 is reconfigured for synchronous serial output (\code{PKT\_FORMAT=0x01}, \code{FIFO\_EN=0}, \code{SYNC\_MODE=0x00}) with GPIO0 carrying the demodulated bitstream and GPIO2 carrying the recovered bit clock. The internal demodulator runs continuously, outputting every demodulated bit.
+
+A 3-instruction PIO program (\file{serial\_rx.pio.h}) captures the bitstream into the CPU via autopush:
+
+\begin{verbatim}
+.wrap_target
+    wait 1 pin 2    ; SERIAL_CLK rising edge
+    in pins, 1      ; shift in SERIAL_RX
+    wait 0 pin 2    ; SERIAL_CLK falling edge
+.wrap
+\end{verbatim}
+
+The PIO is gated by the CC1200 clock output, so no baud-rate setup is needed on the RP2040 side.
+
+In blind mode the CC1200 outputs samples at $\sim$7--8$\times$ the configured symbol rate. The firmware measures this ratio at startup (PIO word count over 100~ms divided by the expected symbol rate), then an edge-triggered resampler extracts data bits at the midpoint of each symbol period.
+
+Two serial sub-modes are selected via the \code{MSG\_SET\_SERIAL\_MODE} body byte:
+
+\begin{enumerate}
+    \item \textbf{Mode 1 --- raw serial.} Demodulated bytes go to a 256-byte ring buffer, forwarded to the Pi as \code{EVT\_RX\_DATA} every 50~ms or 32~bytes. Used for blind capture of unknown framing.
+    \item \textbf{Mode 2 --- AX.25 G3RUH decode.} Each resampled bit is fed through a three-stage pipeline implemented in \file{ax25\_decode.c}:
+    \begin{itemize}
+        \item \textbf{G3RUH descrambler}: 17-bit LFSR, polynomial $x^{17} + x^{12} + 1$, reverses the AMSAT scrambler.
+        \item \textbf{NRZ-I decoder}: differential to absolute.
+        \item \textbf{HDLC deframer}: 0x7E flag detection, bit-stuffing removal after five consecutive ones, LSB-first byte assembly, CRC-16/CCITT check (poly 0x8408, residual 0xF0B8). Minimum valid frame 17~bytes (14 address + 1 control + 2 FCS).
+    \end{itemize}
+    CRC-valid frames go up as \code{EVT\_RX\_DATA} with \code{type=0x01}; raw bytes are forwarded in parallel for diagnostics.
+\end{enumerate}
+
+\code{station.py} selects serial mode automatically for satellites at $\geq$4800~bps FSK/GFSK (likely G3RUH), and FIFO mode with the AX.100 sync word 0x930B51DE for lower-rate satellites using the GOMspace NanoCom format.
+
+\begin{figure}[H]
+    \centering
+    % TODO: draw diagram
+    \includegraphics[width=0.85\textwidth, height=4cm, keepaspectratio]{figures/cobs_frame_diagram.png}
+    \caption{COBS frame structure: \code{[type | seq | len | payload\ldots(len bytes) | crc16\_hi | crc16\_lo]} encoded with Consistent Overhead Byte Stuffing, terminated by a 0x00 delimiter. Response type byte has bit 7 set (\code{type | 0x80}). CRC-16/CCITT-FALSE (poly 0x1021, init 0xFFFF) computed over \code{[type | seq | len | payload]} before COBS encoding.}
+    \label{fig:cobs-frame}
+\end{figure}
+
+\section{Raspberry Pi Software Stack}
+\label{sec:pi-stack}
+
+\subsection*{station.py}
+
+Main orchestration, two modes: manual (\code{--sat "ISS"} or auto-pick the next pass) and daemon (systemd service, waits for GPS from the dashboard, loops passes continuously). During a pass:
+
+\begin{enumerate}
+    \item Fetch TLEs from CelesTrak, compute trajectory with PyEphem.
+    \item Pre-position rotator to AOS azimuth.
+    \item Stream AZ/EL to \code{rotctld} at 10~Hz.
+    \item Configure the CC1200 for the satellite's frequency/modulation from the local profile DB, falling back to the SatNOGS DB API.
+    \item Apply Doppler correction at 2~Hz --- \code{FREQOFF} register for normal updates, full \code{FREQ} rewrite for large jumps.
+    \item Drain RX packets and log telemetry (position, RSSI, freq, Doppler, range) to CSV at 5~Hz.
+    \item Write \file{\textasciitilde/.station\_status.json} at $\sim$5~Hz for the dashboard.
+\end{enumerate}
+
+Scan mode cycles through visible satellites near peak elevation with a 30~s dwell each.
+
+\subsection*{rf\_hat.py --- CC1200Link}
+
+Threaded serial interface: COBS framing, CRC verification, SmartRF parsing, frequency calculation across 136--960~MHz, modulation config (2-FSK, 2-GFSK, 4-FSK, OOK), per-satellite radio configuration.
+
+\subsection*{dashboard.py --- HTTPS web dashboard}
+
+The dashboard is a self-contained HTTPS server built on the Python standard library only (no Flask, no npm). It serves a single-page app at \url{https://<pi-ip>:5000} for phone- or laptop-based field use.
+
+HTTPS is required because the browser Geolocation API needs a secure context. A self-signed TLS certificate is auto-generated on first run (\file{\textasciitilde/.station\_ssl/}); the user accepts the browser warning on first visit.
+
+Three pages:
+\begin{itemize}
+    \item \textbf{Track} --- sky plot, live AZ/EL (commanded vs. actual), RSSI, packet count, Doppler, pass progress. Upcoming passes come from TLE propagation enriched with SatNOGS DB frequency and modulation data. Filters: band (UHF/VHF), minimum elevation, CC1200-compatible modulation.
+    \item \textbf{Control} --- numeric AZ/EL goto, six preset positions (park, zenith, N/E/S/W at 45\degree\ EL), and a CC1200 debug panel (MARC state, FIFO levels, overflow count, raw register values).
+    \item \textbf{Settings} --- GPS entry, WiFi configuration, station parameters, and the setup wizard.
+\end{itemize}
+
+The setup wizard has five steps: (1) phone GPS $\to$ Pi, (2) point the station north using the phone compass and confirm with \code{ZERO}, (3) attach the antenna (the station is level from IMU homing), (4) select receiver type, (5) ready. Tracking begins automatically after step 5.
+
+\begin{figure}[H]
+    \centering
+    % TODO: capture phone screenshot
+    \includegraphics[width=0.45\textwidth, height=8cm, keepaspectratio]{figures/dashboard_track_page.png}
+    \caption{Dashboard Track page on phone: sky plot with satellite trajectory, live AZ/EL commanded vs. actual, RSSI bar, Doppler offset, pass timer, and filtered satellite list enriched from SatNOGS DB.}
+    \label{fig:dashboard-track}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    % TODO: capture phone screenshot
+    \includegraphics[width=0.45\textwidth, height=8cm, keepaspectratio]{figures/dashboard_setup_wizard.png}
+    \caption{Dashboard Settings page showing the five-step setup wizard: phone GPS $\to$ point-north compass $\to$ antenna attach $\to$ receiver selection $\to$ ready.}
+    \label{fig:dashboard-wizard}
+\end{figure}
+
+\subsection*{Systemd services and auto-start}
+
+Three systemd services run the station autonomously after boot:
+
+\begin{enumerate}
+    \item \file{rotctld.service} --- hamlib rotator daemon, model 204, listening on TCP 4533. Restarts automatically if the USB connection to the rotator Pico is interrupted.
+    \item \file{dashboard.service} --- HTTPS dashboard on port 5000. Starts immediately on boot.
+    \item \file{station.service} --- station controller in daemon mode. Waits for \file{station.conf} (written by the dashboard when the user provides GPS), then continuously fetches TLEs, computes passes, and tracks them in a loop.
+\end{enumerate}
+
+A setup script (\file{Pi/services/setup-pi.sh}) configures a fresh Raspberry Pi with all dependencies, UART configuration (\code{enable\_uart=1}, \code{dtoverlay=disable-bt}), a WiFi rfkill workaround (Debian Trixie blocks WiFi by default), and service installation. The script is idempotent.
+
+\subsection*{SatNOGS network integration}
+
+The station is registered as station 4712 (``Aether-Basestation'') on \url{network.satnogs.org}. SiDS telemetry submission to \url{db.satnogs.org} is verified (HTTP 201 OK).
+
+Because the CC1200 emits decoded packets rather than raw IQ, \code{satnogs-client} (GNU~Radio + SoapySDR) cannot be used as-is; frames are submitted directly to the SatNOGS DB over the SiDS API. The station therefore appears ``offline'' on the network map (no job-polling heartbeat) but still contributes telemetry on decode. The rationale for this trade-off is covered in \S\ref{sec:problem-statement} and \S\ref{sec:cc1200-deviation}.
+
+\begin{figure}[H]
+    \centering
+    % TODO: draw diagram
+    \includegraphics[width=0.95\textwidth, height=6cm, keepaspectratio]{figures/station_dataflow_diagram.png}
+    \caption{\code{station.py} data flow: CelesTrak TLE $\to$ PyEphem propagation $\to$ AZ/EL setpoints at 10~Hz $\to$ \code{rotctld} (TCP 4533) $\to$ MotorPCB (USB CDC, EasyComm). In parallel: satellite profile lookup (local DB $\to$ SatNOGS DB API fallback) $\to$ CC1200Link SmartRF load; during pass, Doppler FREQOFF update at 2~Hz $\to$ CC1200; RX packets/RSSI drained over UART, logged to CSV at 5~Hz, and pushed to \file{\textasciitilde/.station\_status.json} at 5~Hz for the dashboard.}
+    \label{fig:station-dataflow}
+\end{figure}
+
+\section{Field Deployment Workflow}
+\label{sec:field-deployment}
+
+The deployment sequence, measured at $\sim$4~minutes from unpacking to first tracked pass across the three field sessions:
+
+\begin{enumerate}
+    \item Place on tripod, point north, connect 24~V.
+    \item Pi boots, EL homes via IMU, services start ($\sim$60~s).
+    \item Phone joins the Pi WiFi (or the captive-portal provisioner).
+    \item Dashboard $\to$ ``Use My GPS'' $\to$ station location set.
+    \item Setup wizard: confirm north, attach antenna, select receiver type.
+    \item Auto-tracking begins; dashboard shows live status.
+    \item End of session $\to$ \code{PARK} $\to$ shutdown $\to$ wait 10~s $\to$ unplug.
+\end{enumerate}
+
+No laptop or SSH is used in the field.
+
+\begin{figure}[H]
+    \centering
+    % TODO: draw diagram
+    \includegraphics[width=0.85\textwidth, height=5cm, keepaspectratio]{figures/field_deployment_workflow.png}
+    \caption{Field deployment workflow: (1) place on tripod, connect 24~V; (2) Pi boots, EL homes via IMU; (3) phone joins Pi WiFi (or captive-portal provisioning); (4) dashboard $\to$ ``Use My GPS''; (5) setup wizard $\to$ tracking begins.}
+    \label{fig:field-deployment}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/station_whole_setup.jpg}
+    \caption{Station deployed in the field: tripod, rotator, Yagi on EL axis, 24~V bench supply via extension cord. Photo from the April 9 session.}
+    \label{fig:station-deployed}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{photos/station_closeup.jpg}
+    \caption{Close-up of the deployed station showing the rotator + Yagi feed + RF HAT cable routing.}
+    \label{fig:station-closeup}
+\end{figure}

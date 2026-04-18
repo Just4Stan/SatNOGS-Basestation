@@ -38,3 +38,6 @@ draft.md
 
 # Overleaf
 *.synctex(busy)
+
+# VS Code LaTeX Workshop build output
+.build/

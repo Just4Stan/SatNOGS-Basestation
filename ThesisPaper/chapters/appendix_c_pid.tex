@@ -1,4 +1,51 @@
 % ══════════════════════════════════════════════════════════════════════════════
-\chapter{PID Tuning Constants}
+\chapter{PID Tuning and Speed Test Data}
 \label{app:pid}
 % ══════════════════════════════════════════════════════════════════════════════
+
+\section*{PID tuning parameters}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{llX}
+        \toprule
+        Parameter & Value & Notes \\
+        \midrule
+        $K_p$ & 0.15 & Proportional gain \\
+        $K_i$ & 0.03 & Integral gain \\
+        $K_d$ & 0.02 & Derivative gain \\
+        Deadband & 0.05\degree & No correction below this error magnitude \\
+        Loop rate & 100~Hz & Timer interrupt on RP2040 core 1 \\
+        I-clamp & $\pm$5\degree$\cdot$s & Maximum integral accumulation \\
+        D-filter $\alpha$ & 0.15 & First-order LPF on derivative term \\
+        Duty filter $\alpha$ & 0.15 & First-order LPF on PWM output (deployed value; initially 0.05, raised during field testing) \\
+        Max duty & 95\,\% & Prevents TB6642FG overcurrent on stall \\
+        PWM frequency & 20~kHz & Above audible \\
+        AZ ticks/deg & 244.6 & $64 \times 516 \times (40/15) / 360$ \\
+        EL ticks/deg & 126.1 & $64 \times 516 \times (55/40) / 360$ \\
+        AZ invert & false & \\
+        EL invert & true & Motor direction reversed in firmware \\
+        Runaway threshold & 50\degree & E-stop beyond soft limit \\
+        \bottomrule
+    \end{tabularx}
+    \caption{PID and control-loop constants from \file{Firmware/rp2040-satnogs-rotator/src/config.h}.}
+    \label{tab:pid-params}
+\end{table}
+
+\section*{Speed test data}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lllll}
+        \toprule
+        Duty (\%) & Speed (\degree/s) & 360\degree\ time (s) & RPM at output & Current (A) \\
+        \midrule
+        35 & 11.2 & 32 & 1.9 & $\sim$0.3 \\
+        55 & 18.9 & 19 & 3.2 & $\sim$0.5 \\
+        75 & 26.9 & 13 & 4.5 & $\sim$0.7 \\
+        95 & 35.0 & 10 & 5.8 & $\sim$1.0 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Slew-speed measurements (single axis, unloaded, 24~V supply), as reported in \S\ref{sec:slew-speed}.}
+    \label{tab:speed-test}
+\end{table}

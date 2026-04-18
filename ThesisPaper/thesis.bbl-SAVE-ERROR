@@ -1,0 +1,707 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{montenbruck2000orbits}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=80a8be6ff5184fbb0119b6701e40cfb1}{%
+           family={Montenbruck},
+           familyi={M\bibinitperiod},
+           given={Oliver},
+           giveni={O\bibinitperiod}}}%
+        {{hash=77c26d441b367da6e23610e91f423855}{%
+           family={Gill},
+           familyi={G\bibinitperiod},
+           given={Eberhard},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{a5288bde8e80165675c3d89505c99a96}
+      \strng{fullhash}{a5288bde8e80165675c3d89505c99a96}
+      \strng{fullhashraw}{a5288bde8e80165675c3d89505c99a96}
+      \strng{bibnamehash}{a5288bde8e80165675c3d89505c99a96}
+      \strng{authorbibnamehash}{a5288bde8e80165675c3d89505c99a96}
+      \strng{authornamehash}{a5288bde8e80165675c3d89505c99a96}
+      \strng{authorfullhash}{a5288bde8e80165675c3d89505c99a96}
+      \strng{authorfullhashraw}{a5288bde8e80165675c3d89505c99a96}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Satellite Orbits: Models, Methods, and Applications}
+      \field{year}{2000}
+    \endentry
+    \entry{siretta-oscar44}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=e06e0143ebe35b7a9866350dbeafd67a}{%
+           family={{Siretta}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Siretta Ltd.}%
+      }
+      \strng{namehash}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{fullhash}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{fullhashraw}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{bibnamehash}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{authorbibnamehash}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{authornamehash}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{authorfullhash}{e06e0143ebe35b7a9866350dbeafd67a}
+      \strng{authorfullhashraw}{e06e0143ebe35b7a9866350dbeafd67a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{OSCAR-44} 5-Element {Yagi} Antenna, 400--480\,{MHz} Datasheet Rev 1.0}
+      \field{year}{2024}
+    \endentry
+    \entry{yaesu-g5500}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e4771c60ec1fcffcdafa5f871d2c40ab}{%
+           family={{Yaesu}},
+           familyi={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{fullhash}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{fullhashraw}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{bibnamehash}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{authorbibnamehash}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{authornamehash}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{authorfullhash}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \strng{authorfullhashraw}{e4771c60ec1fcffcdafa5f871d2c40ab}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Product datasheet}
+      \field{title}{{G-5500} Azimuth-Elevation Rotator System}
+      \verb{urlraw}
+      \verb https://www.yaesu.com/
+      \endverb
+      \verb{url}
+      \verb https://www.yaesu.com/
+      \endverb
+    \endentry
+    \entry{rfham-spid}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=9290e879443db3f0eb8678759c880ec3}{%
+           family={{RFHAM}},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{9290e879443db3f0eb8678759c880ec3}
+      \strng{fullhash}{9290e879443db3f0eb8678759c880ec3}
+      \strng{fullhashraw}{9290e879443db3f0eb8678759c880ec3}
+      \strng{bibnamehash}{9290e879443db3f0eb8678759c880ec3}
+      \strng{authorbibnamehash}{9290e879443db3f0eb8678759c880ec3}
+      \strng{authornamehash}{9290e879443db3f0eb8678759c880ec3}
+      \strng{authorfullhash}{9290e879443db3f0eb8678759c880ec3}
+      \strng{authorfullhashraw}{9290e879443db3f0eb8678759c880ec3}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{SPID} Antenna Rotator Systems}
+      \verb{urlraw}
+      \verb https://www.rfhamdesign.com/
+      \endverb
+      \verb{url}
+      \verb https://www.rfhamdesign.com/
+      \endverb
+    \endentry
+    \entry{satnogs-v3}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=65159111e2fbd3fd26ea90c37fa21ced}{%
+           family={{SatNOGS Wiki}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{fullhash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{fullhashraw}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{bibnamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorbibnamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authornamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorfullhash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorfullhashraw}{65159111e2fbd3fd26ea90c37fa21ced}
+      \field{extraname}{1}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{SatNOGS} Rotator v3}
+      \verb{urlraw}
+      \verb https://wiki.satnogs.org/SatNOGS_Rotator_v3
+      \endverb
+      \verb{url}
+      \verb https://wiki.satnogs.org/SatNOGS_Rotator_v3
+      \endverb
+    \endentry
+    \entry{satnogs-v3-bom}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=65159111e2fbd3fd26ea90c37fa21ced}{%
+           family={{SatNOGS Wiki}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{fullhash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{fullhashraw}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{bibnamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorbibnamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authornamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorfullhash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorfullhashraw}{65159111e2fbd3fd26ea90c37fa21ced}
+      \field{extraname}{2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{SatNOGS} Rotator v3 --- Bill of Materials}
+      \verb{urlraw}
+      \verb https://wiki.satnogs.org/SatNOGS_Rotator_v3/Bill_of_Materials
+      \endverb
+      \verb{url}
+      \verb https://wiki.satnogs.org/SatNOGS_Rotator_v3/Bill_of_Materials
+      \endverb
+    \endentry
+    \entry{cc1200}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=67e54b1ee931f3f4bddfefa5fbde5fd8}{%
+           family={{Texas Instruments}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{fullhash}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{fullhashraw}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{bibnamehash}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{authorbibnamehash}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{authornamehash}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{authorfullhash}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \strng{authorfullhashraw}{67e54b1ee931f3f4bddfefa5fbde5fd8}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Datasheet SWRS123D}
+      \field{title}{{CC1200} Low-Power, High-Performance {RF} Transceiver}
+      \field{year}{2014}
+    \endentry
+    \entry{satnogs-main}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=cac0f3ff812ccd35c72bc6751ae37e88}{%
+           family={{Libre Space Foundation}},
+           familyi={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{fullhash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{fullhashraw}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{bibnamehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authorbibnamehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authornamehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authorfullhash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authorfullhashraw}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \field{extraname}{1}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{SatNOGS} --- Open Source Ground Station Network}
+      \verb{urlraw}
+      \verb https://satnogs.org/
+      \endverb
+      \verb{url}
+      \verb https://satnogs.org/
+      \endverb
+    \endentry
+    \entry{hamlib}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=ae455df8c46de3fe64c665f53368187e}{%
+           family={{Hamlib Project}},
+           familyi={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{ae455df8c46de3fe64c665f53368187e}
+      \strng{fullhash}{ae455df8c46de3fe64c665f53368187e}
+      \strng{fullhashraw}{ae455df8c46de3fe64c665f53368187e}
+      \strng{bibnamehash}{ae455df8c46de3fe64c665f53368187e}
+      \strng{authorbibnamehash}{ae455df8c46de3fe64c665f53368187e}
+      \strng{authornamehash}{ae455df8c46de3fe64c665f53368187e}
+      \strng{authorfullhash}{ae455df8c46de3fe64c665f53368187e}
+      \strng{authorfullhashraw}{ae455df8c46de3fe64c665f53368187e}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Ham Radio Control Libraries}
+      \verb{urlraw}
+      \verb https://hamlib.github.io/
+      \endverb
+      \verb{url}
+      \verb https://hamlib.github.io/
+      \endverb
+    \endentry
+    \entry{jackson1990easycomm}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=c5b9983b85102d3653c60799fa60e0c8}{%
+           family={Jackson},
+           familyi={J\bibinitperiod},
+           given={Chris\bibnamedelima ({G7UPN})},
+           giveni={C\bibinitperiod\bibinitdelim (\bibinitperiod}}}%
+      }
+      \strng{namehash}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{fullhash}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{fullhashraw}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{bibnamehash}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{authorbibnamehash}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{authornamehash}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{authorfullhash}{c5b9983b85102d3653c60799fa60e0c8}
+      \strng{authorfullhashraw}{c5b9983b85102d3653c60799fa60e0c8}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Original EasyComm I/II specification}
+      \field{title}{{EasyComm} --- A Simple Satellite Rotator Protocol}
+      \field{year}{1990}
+      \verb{urlraw}
+      \verb https://www.mustbeart.com/software/easycomm.txt
+      \endverb
+      \verb{url}
+      \verb https://www.mustbeart.com/software/easycomm.txt
+      \endverb
+    \endentry
+    \entry{rpi3aplus}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0dac029e46904a2d35a186cfa0c1303c}{%
+           family={{Raspberry Pi Foundation}},
+           familyi={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{fullhash}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{fullhashraw}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{bibnamehash}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{authorbibnamehash}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{authornamehash}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{authorfullhash}{0dac029e46904a2d35a186cfa0c1303c}
+      \strng{authorfullhashraw}{0dac029e46904a2d35a186cfa0c1303c}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{Raspberry Pi 3 Model A+} Datasheet}
+      \verb{urlraw}
+      \verb https://www.raspberrypi.com/products/raspberry-pi-3-model-a-plus/
+      \endverb
+      \verb{url}
+      \verb https://www.raspberrypi.com/products/raspberry-pi-3-model-a-plus/
+      \endverb
+    \endentry
+    \entry{hanssens2023}{thesis}{}{}
+      \name{author}{1}{}{%
+        {{hash=f24abc2ef2bc2b91810bd9e6f981d65e}{%
+           family={Hanssens},
+           familyi={H\bibinitperiod},
+           given={Serge},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {KU Leuven, Campus Geel}%
+      }
+      \strng{namehash}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{fullhash}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{fullhashraw}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{bibnamehash}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{authorbibnamehash}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{authornamehash}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{authorfullhash}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \strng{authorfullhashraw}{f24abc2ef2bc2b91810bd9e6f981d65e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Draft}
+      \field{title}{Communicatie van een {RF}-grondstation met de {AetherSpace} {CubeSat}: Analyse, ontwikkeling en implementatie van een {SatNOGS} grondstation}
+      \field{type}{mathesis}
+      \field{year}{2023}
+    \endentry
+    \entry{itu-r-p676}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=af469a1d13dee029a04c2ee68e619f40}{%
+           family={{ITU-R}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {International Telecommunication Union}%
+      }
+      \strng{namehash}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{fullhash}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{fullhashraw}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{bibnamehash}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{authorbibnamehash}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{authornamehash}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{authorfullhash}{af469a1d13dee029a04c2ee68e619f40}
+      \strng{authorfullhashraw}{af469a1d13dee029a04c2ee68e619f40}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Recommendation {ITU-R} {P.676} --- Attenuation by atmospheric gases and related effects}
+      \field{year}{2022}
+    \endentry
+    \entry{satnogs-network}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=756e400a51d490dad6281812157ecc29}{%
+           family={{SatNOGS Network}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{756e400a51d490dad6281812157ecc29}
+      \strng{fullhash}{756e400a51d490dad6281812157ecc29}
+      \strng{fullhashraw}{756e400a51d490dad6281812157ecc29}
+      \strng{bibnamehash}{756e400a51d490dad6281812157ecc29}
+      \strng{authorbibnamehash}{756e400a51d490dad6281812157ecc29}
+      \strng{authornamehash}{756e400a51d490dad6281812157ecc29}
+      \strng{authorfullhash}{756e400a51d490dad6281812157ecc29}
+      \strng{authorfullhashraw}{756e400a51d490dad6281812157ecc29}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Station List}
+      \verb{urlraw}
+      \verb https://network.satnogs.org/stations/
+      \endverb
+      \verb{url}
+      \verb https://network.satnogs.org/stations/
+      \endverb
+    \endentry
+    \entry{satnogs-wiki}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=65159111e2fbd3fd26ea90c37fa21ced}{%
+           family={{SatNOGS Wiki}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{fullhash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{fullhashraw}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{bibnamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorbibnamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authornamehash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorfullhash}{65159111e2fbd3fd26ea90c37fa21ced}
+      \strng{authorfullhashraw}{65159111e2fbd3fd26ea90c37fa21ced}
+      \field{extraname}{3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{SatNOGS} Main Page}
+      \verb{urlraw}
+      \verb https://wiki.satnogs.org/Main_Page
+      \endverb
+      \verb{url}
+      \verb https://wiki.satnogs.org/Main_Page
+      \endverb
+    \endentry
+    \entry{satnogs-rotator-fw}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=cac0f3ff812ccd35c72bc6751ae37e88}{%
+           family={{Libre Space Foundation}},
+           familyi={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{fullhash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{fullhashraw}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{bibnamehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authorbibnamehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authornamehash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authorfullhash}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \strng{authorfullhashraw}{cac0f3ff812ccd35c72bc6751ae37e88}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{SatNOGS} Rotator Firmware --- Protocol Documentation}
+      \verb{urlraw}
+      \verb https://librespacefoundation.gitlab.io/satnogs/satnogs-rotator-firmware/
+      \endverb
+      \verb{url}
+      \verb https://librespacefoundation.gitlab.io/satnogs/satnogs-rotator-firmware/
+      \endverb
+    \endentry
+    \entry{superantennaz}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=b75dc347428c456541e8bbb41b32922e}{%
+           family={{SuperAntennaz}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{b75dc347428c456541e8bbb41b32922e}
+      \strng{fullhash}{b75dc347428c456541e8bbb41b32922e}
+      \strng{fullhashraw}{b75dc347428c456541e8bbb41b32922e}
+      \strng{bibnamehash}{b75dc347428c456541e8bbb41b32922e}
+      \strng{authorbibnamehash}{b75dc347428c456541e8bbb41b32922e}
+      \strng{authornamehash}{b75dc347428c456541e8bbb41b32922e}
+      \strng{authorfullhash}{b75dc347428c456541e8bbb41b32922e}
+      \strng{authorfullhashraw}{b75dc347428c456541e8bbb41b32922e}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Amateur radio community documentation}
+      \field{title}{Heavy-Duty {DIY} Rotator Design}
+    \endentry
+    \entry{upsat}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=49a0417c1be10c03db28b2ee131a9754}{%
+           family={{University of Patras}},
+           familyi={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{fullhash}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{fullhashraw}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{bibnamehash}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{authorbibnamehash}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{authornamehash}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{authorfullhash}{49a0417c1be10c03db28b2ee131a9754}
+      \strng{authorfullhashraw}{49a0417c1be10c03db28b2ee131a9754}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{UPSat} --- Open Source {CubeSat}}
+      \verb{urlraw}
+      \verb https://upsat.gr/
+      \endverb
+      \verb{url}
+      \verb https://upsat.gr/
+      \endverb
+    \endentry
+    \entry{tudelft-delfi}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=0dc4fb9b43a8a930246b593d50aaf66c}{%
+           family={{TU Delft}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{fullhash}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{fullhashraw}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{bibnamehash}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{authorbibnamehash}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{authornamehash}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{authorfullhash}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \strng{authorfullhashraw}{0dc4fb9b43a8a930246b593d50aaf66c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Delfi Space Program}
+      \verb{urlraw}
+      \verb https://www.tudelft.nl/lr/delfi-space
+      \endverb
+      \verb{url}
+      \verb https://www.tudelft.nl/lr/delfi-space
+      \endverb
+    \endentry
+    \entry{masera2005aramis}{inproceedings}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=07eedaed80608b879699dfb9e71f3e96}{%
+           family={Masera},
+           familyi={M\bibinitperiod},
+           given={G.},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Politecnico di Torino}%
+      }
+      \strng{namehash}{0301802918213341b39821d555a7da2a}
+      \strng{fullhash}{0301802918213341b39821d555a7da2a}
+      \strng{fullhashraw}{0301802918213341b39821d555a7da2a}
+      \strng{bibnamehash}{0301802918213341b39821d555a7da2a}
+      \strng{authorbibnamehash}{0301802918213341b39821d555a7da2a}
+      \strng{authornamehash}{0301802918213341b39821d555a7da2a}
+      \strng{authorfullhash}{0301802918213341b39821d555a7da2a}
+      \strng{authorfullhashraw}{0301802918213341b39821d555a7da2a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{IEEE Aerospace Conference}
+      \field{title}{{AraMiS} --- Architecture for Modular Satellites}
+      \field{year}{2005}
+    \endentry
+    \entry{wohlers2024}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=4dad323ff829c475122da73561700eda}{%
+           family={Wohlers},
+           familyi={W\bibinitperiod},
+           given={Terry},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wohlers Associates}%
+      }
+      \strng{namehash}{4dad323ff829c475122da73561700eda}
+      \strng{fullhash}{4dad323ff829c475122da73561700eda}
+      \strng{fullhashraw}{4dad323ff829c475122da73561700eda}
+      \strng{bibnamehash}{4dad323ff829c475122da73561700eda}
+      \strng{authorbibnamehash}{4dad323ff829c475122da73561700eda}
+      \strng{authornamehash}{4dad323ff829c475122da73561700eda}
+      \strng{authorfullhash}{4dad323ff829c475122da73561700eda}
+      \strng{authorfullhashraw}{4dad323ff829c475122da73561700eda}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Wohlers Report 2024: 3D Printing and Additive Manufacturing Global State of the Industry}
+      \field{year}{2024}
+    \endentry
+    \entry{iso53}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=7058e4bd76f877c52b621c942b30613c}{%
+           family={{International Organization for Standardization}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {ISO}%
+      }
+      \strng{namehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{fullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \strng{bibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorbibnamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authornamehash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhash}{7058e4bd76f877c52b621c942b30613c}
+      \strng{authorfullhashraw}{7058e4bd76f877c52b621c942b30613c}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{ISO} 53:1998 --- Cylindrical gears for general and heavy engineering -- Standard basic rack tooth profile}
+      \field{year}{1998}
+    \endentry
+    \entry{fapg36-555}{manual}{}{}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labeltitlesource}{title}
+      \field{note}{AliExpress vendor documentation. Motor internal: RS-555 DC motor, 516:1 planetary gearbox, FT-555 Hall encoder}
+      \field{title}{{FAPG36-555} Series Motor Datasheet}
+    \endentry
+    \entry{pololu-stepper}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=a94add26ebbb93e6f62cd6c06c9b80e0}{%
+           family={{Pololu}},
+           familyi={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{fullhash}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{fullhashraw}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{bibnamehash}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{authorbibnamehash}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{authornamehash}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{authorfullhash}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \strng{authorfullhashraw}{a94add26ebbb93e6f62cd6c06c9b80e0}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Stepper Motor Power Consumption Notes}
+      \verb{urlraw}
+      \verb https://www.pololu.com/
+      \endverb
+      \verb{url}
+      \verb https://www.pololu.com/
+      \endverb
+    \endentry
+    \entry{tb6642fg}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=0e550130373c0857829991e1767bc46d}{%
+           family={{Toshiba}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{0e550130373c0857829991e1767bc46d}
+      \strng{fullhash}{0e550130373c0857829991e1767bc46d}
+      \strng{fullhashraw}{0e550130373c0857829991e1767bc46d}
+      \strng{bibnamehash}{0e550130373c0857829991e1767bc46d}
+      \strng{authorbibnamehash}{0e550130373c0857829991e1767bc46d}
+      \strng{authornamehash}{0e550130373c0857829991e1767bc46d}
+      \strng{authorfullhash}{0e550130373c0857829991e1767bc46d}
+      \strng{authorfullhashraw}{0e550130373c0857829991e1767bc46d}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Rev.\ 3.0}
+      \field{title}{{TB6642FG} Brushed {DC} Motor Driver Datasheet}
+      \field{year}{2019}
+    \endentry
+    \entry{adxl345}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=a12ff886a2379a9ee6efaa9acfb54df4}{%
+           family={{Analog Devices}},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{bibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorbibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authornamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{Rev.\ G}
+      \field{title}{{ADXL345} 3-Axis Digital Accelerometer Datasheet}
+      \field{year}{2015}
+    \endentry
+    \entry{g3ruh-scrambler}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=bff0e87eeab4ba1e74ae3e776e15d490}{%
+           family={Miller},
+           familyi={M\bibinitperiod},
+           given={James},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{fullhash}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{fullhashraw}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{bibnamehash}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{authorbibnamehash}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{authornamehash}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{authorfullhash}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \strng{authorfullhashraw}{bff0e87eeab4ba1e74ae3e776e15d490}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{AMSAT-UK}
+      \field{note}{17-bit LFSR, polynomial $x^{17} + x^{12} + 1$, used for NRZ-I bit-stuffing on amateur-satellite 9k6 AX.25}
+      \field{title}{{G3RUH} Scrambler --- {AMSAT} {9600} baud {FSK} Packet Radio}
+      \field{year}{1988}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Thesis figures — live Mermaid editor</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --kul-dark: #00407A;
+    --kul-blue: #1D8DB0;
+    --kul-tint: #D4EEF7;
+    --muted: #6B7280;
+    --bg: #F7F9FB;
+    --card: #FFFFFF;
+    --border: #CFE0EC;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg); color: #111827;
+  }
+  header {
+    background: var(--kul-dark); color: #fff;
+    padding: 20px 32px; border-bottom: 4px solid var(--kul-blue);
+  }
+  header h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  header p  { margin: 6px 0 0 0; font-size: 13px; color: #CFE0EC; }
+  main { padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px 22px;
+    margin-bottom: 28px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .card h2 {
+    margin: 0 0 4px 0; color: var(--kul-dark);
+    font-size: 17px; font-weight: 600;
+  }
+  .card .meta { color: var(--muted); font-size: 12px; margin-bottom: 14px; }
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1.5fr; gap: 18px;
+  }
+  textarea {
+    width: 100%; min-height: 340px;
+    font-family: 'SF Mono', Menlo, 'DejaVu Sans Mono', monospace;
+    font-size: 12px; line-height: 1.45;
+    border: 1px solid #D1D5DB; border-radius: 6px; padding: 10px;
+    resize: vertical; background: #FAFBFC;
+  }
+  textarea:focus { outline: 2px solid var(--kul-blue); }
+  .preview {
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 14px; background: #fff; overflow: auto;
+    min-height: 340px; display: flex; align-items: center; justify-content: center;
+  }
+  .preview svg { max-width: 100%; height: auto; }
+  .btns { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  button, a.btn {
+    background: var(--kul-blue); color: #fff; border: none;
+    padding: 7px 14px; border-radius: 5px; font-size: 13px;
+    cursor: pointer; text-decoration: none;
+    font-family: inherit;
+  }
+  button:hover, a.btn:hover { background: var(--kul-dark); }
+  button.sec { background: #fff; color: var(--kul-dark); border: 1px solid var(--kul-dark); }
+  button.sec:hover { background: var(--kul-tint); }
+  .mpl-note {
+    padding: 14px; background: #FBF1D4; border-left: 4px solid #B8860B;
+    border-radius: 4px; font-size: 13px; color: #4B3A00; margin-bottom: 10px;
+  }
+  .mpl-note code { background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; }
+  .mpl-img { max-width: 100%; border: 1px solid var(--border); border-radius: 6px; }
+  .err {
+    color: #991B1B; background: #FEE2E2; padding: 10px;
+    border-radius: 4px; font-family: monospace; font-size: 12px;
+    white-space: pre-wrap;
+  }
+  .status { color: var(--muted); font-size: 11px; margin-left: 6px; }
+  footer { padding: 20px 32px; color: var(--muted); font-size: 12px; text-align: center; }
+  .toolbar {
+    position: sticky; top: 0; background: var(--bg); padding: 10px 0;
+    border-bottom: 1px solid var(--border); margin-bottom: 14px; z-index: 10;
+  }
+  .toolbar input[type="number"] { width: 70px; padding: 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Thesis figures — live editor</h1>
+  <p>Edit the Mermaid source on the left. Preview updates as you type. Click <b>Export PNG</b> to download the rendered image, then drop it into <code>ThesisPaper/images/figures/</code>.</p>
+</header>
+
+<main>
+
+<div class="toolbar">
+  Export scale: <input type="number" id="scale" value="3" min="1" max="6" step="1">
+  <span class="status">higher = bigger file, sharper print. 3× ≈ thesis DPI.</span>
+</div>
+
+<!-- Figures are rendered dynamically by the script below -->
+<div id="figures"></div>
+
+<footer>
+  Styled to match the KU Leuven FIIW template (<code>fiiw.sty</code>):
+  kulblueDark <code>#00407A</code> · kulblue <code>#1D8DB0</code>.
+  Sources also saved as plain files in <code>figures_src/mermaid/*.mmd</code>.
+</footer>
+
+<script>
+mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' });
+
+// ─── Figure definitions ─────────────────────────────────────────────────
+const FIGURES = [
+  {
+    id: 'system_block',
+    title: '1. System block diagram',
+    meta: 'Pi centre · USB ↔ MotorPCB · UART ↔ RF HAT · WiFi ↔ phone · 24 V power topology',
+    kind: 'mermaid',
+    src: `%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CFE0EC', 'primaryBorderColor': '#00407A', 'primaryTextColor': '#111827', 'lineColor': '#374151', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '14px'}, 'flowchart': {'rankSpacing': 55, 'nodeSpacing': 40, 'curve': 'basis'}}}%%
+flowchart TB
+    classDef pi      fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+    classDef mcu     fill:#D4EEF7,stroke:#1D8DB0,stroke-width:1.4px,color:#111827
+    classDef rf      fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px,color:#111827
+    classDef pwr     fill:#FBF1D4,stroke:#B8860B,stroke-width:1.4px,color:#111827
+    classDef mot     fill:#F2DACC,stroke:#8A3A1E,stroke-width:1.4px,color:#111827
+    classDef ext     fill:#FFFFFF,stroke:#374151,stroke-width:1.2px,color:#111827
+
+    PSU["24 V battery / PSU<br/>XT30 connector"]:::pwr
+    BUCK["LMR51420 buck 24&rarr;5V / 2A<br/>Pico RT6150 5&rarr;3.3 V"]:::pwr
+    PHONE["Operator phone<br/>HTTPS :5000 dashboard<br/>Geolocation API"]:::ext
+
+    MPCB["MotorPCB (RP2040)<br/>EasyComm III  ·  PID 100 Hz<br/>IMU homing  ·  AZ/EL drivers"]:::mcu
+    PI["Raspberry Pi 3A+<br/>Debian 13 Trixie (armhf)<br/>station.py  ·  dashboard.py<br/>rotctld  ·  sat_library"]:::pi
+    RF["RF HAT (RP2040)<br/>COBS + CRC-16/CCITT<br/>UHF CC1200 (432 MHz)<br/>VHF CC1200 (not pop.)"]:::mcu
+
+    AZ["AZ motor<br/>FAPG36-555  ·  244.6 tick/&deg;"]:::mot
+    EL["EL motor<br/>FAPG36-555  ·  126.1 tick/&deg;"]:::mot
+    ANT["Siretta Oscar 44<br/>Yagi 9 dBi  ·  432 MHz<br/>RG58 3 m (0.9 dB)"]:::rf
+
+    PSU  ===|"24 V bus"| BUCK
+    BUCK -.->|"5 V / 2A"| PI
+    BUCK -.->|"5 V"| MPCB
+    BUCK -.->|"5 V"| RF
+    PSU  -.->|"24 V PWM"| MPCB
+
+    MPCB <-->|"USB CDC<br/>hamlib 204"| PI
+    PI   <-->|"UART /dev/serial0<br/>115200  ·  COBS + CRC-16"| RF
+    PI   <-.->|"WiFi hotspot"| PHONE
+
+    MPCB ==>|"24 V PWM"| AZ
+    MPCB ==>|"24 V PWM"| EL
+    RF   ==>|"SMA 50 &Omega;<br/>M17 match"| ANT
+`,
+  },
+  {
+    id: 'power_distribution',
+    title: '2. Power distribution',
+    meta: '24 V → LMR51420 buck → 5 V → Pico RT6150 → 3.3 V with decoupling',
+    kind: 'mermaid',
+    src: `%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FBF1D4', 'primaryBorderColor': '#B8860B', 'primaryTextColor': '#111827', 'lineColor': '#B8860B', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 50, 'nodeSpacing': 30, 'curve': 'basis'}}}%%
+flowchart LR
+    classDef pwr  fill:#FBF1D4,stroke:#B8860B,stroke-width:1.4px
+    classDef mot  fill:#F2DACC,stroke:#8A3A1E,stroke-width:1.4px
+    classDef pi   fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px
+    classDef mcu  fill:#D4EEF7,stroke:#1D8DB0,stroke-width:1.4px
+    classDef rf   fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px
+    classDef cap  fill:#FFFFFF,stroke:#6B7280,stroke-width:1px,color:#6B7280
+
+    PSU["24 V<br/>XT30 battery"]:::pwr
+
+    subgraph V24["+24 V rail"]
+        direction LR
+        MOT["Motor drivers (direct)<br/>v1 TB6642FG / v2 A4950"]:::mot
+        BUCK["LMR51420 buck<br/>24&rarr;5 V / 2A<br/>LCSC C7296200"]:::pwr
+        C1["4.7 &micro;F / 50 V<br/>(C1 input)"]:::cap
+        C3["22 &micro;F<br/>(C3 output)"]:::cap
+    end
+
+    subgraph V5["+5 V rail"]
+        direction LR
+        PI["Raspberry Pi 3A+<br/>pins 2 / 4<br/>internal LDO &rarr; 3.3 V logic"]:::pi
+        PICO["RP2040 Pico (RF HAT)<br/>VSYS = 5 V<br/>RT6150 &rarr; 3V3_OUT"]:::mcu
+        CPI["100 nF"]:::cap
+    end
+
+    subgraph V33["+3.3 V rail  (AVDD_FILT)"]
+        direction LR
+        FB["FB 1 k&Omega; @ 100 MHz"]:::cap
+        CC1200["CC1200 &times; 2  (UHF + VHF)<br/>decoupling &times; 9 per rail:<br/>10 nF  &middot;  47 nF  &middot;  100 nF  &middot;  220 nF<br/>40 MHz XO, 15 pF load"]:::rf
+        CCAP["10 nF + 100 nF<br/>(TP5 / TP6)"]:::cap
+    end
+
+    PSU  ===|"24 V"| MOT
+    PSU  ===|"24 V"| BUCK
+    C1   -.- BUCK
+    BUCK ==>|"5 V / 2A"| C3
+    C3   ==>|"5 V"| PI
+    C3   ==>|"5 V"| PICO
+    CPI  -.- PI
+    PICO ==>|"3.3 V"| FB
+    FB   ==>|"AVDD_FILT"| CC1200
+    CCAP -.- CC1200
+`,
+  },
+  {
+    id: 'cobs_frame',
+    title: '3. COBS frame byte layout',
+    meta: 'Pre-COBS logical frame + post-COBS on-wire format',
+    kind: 'mpl',
+    script: 'cobs_frame_diagram.py',
+    png: '../images/figures/cobs_frame_diagram.png',
+  },
+  {
+    id: 'station_dataflow',
+    title: '4. station.py runtime dataflow',
+    meta: 'TLE → ephemeris → AZ/EL + freq → CC1200 Doppler → decoders → SiDS',
+    kind: 'mermaid',
+    src: `%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CFE0EC', 'primaryBorderColor': '#00407A', 'primaryTextColor': '#111827', 'lineColor': '#374151', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 55, 'nodeSpacing': 35, 'curve': 'basis'}}}%%
+flowchart TB
+    classDef pi   fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+    classDef mcu  fill:#D4EEF7,stroke:#1D8DB0,stroke-width:1.4px,color:#111827
+    classDef rf   fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px,color:#111827
+    classDef ext  fill:#F3F4F6,stroke:#6B7280,stroke-width:1px,color:#111827
+
+    subgraph INPUTS["External inputs"]
+        direction LR
+        TLE["CelesTrak<br/>TLE catalogue"]:::ext
+        DB["SatNOGS DB<br/>transmitter profile"]:::ext
+        GPS["Operator phone<br/>HTTPS dashboard<br/>lat / lon / elev"]:::ext
+    end
+
+    EPHEM["PyEphem + pass scheduler<br/>Body.compute(observer) @ 2 Hz<br/>&rarr;  AZ, EL, range-rate &rho;&#775;,  AOS/LOS"]:::pi
+    CCLINK["rf_hat.CC1200Link<br/>doppler_shift()  &Delta;f = f&#8320;&middot;&rho;&#775;/c<br/>freq_to_regs(f)  &rarr;  FREQ2 / FREQ1 / FREQ0"]:::rf
+
+    ROTCTL["rotctld<br/>TCP :4533<br/>EasyComm  'M AZ EL'"]:::mcu
+    MPCB["MotorPCB<br/>PID 100 Hz<br/>TB6642FG &rarr; motors"]:::mcu
+
+    RFHAT["RF HAT Pico<br/>COBS + CRC-16<br/>SPI1 &rarr; UHF CC1200"]:::mcu
+    CC1200["UHF CC1200<br/>432 MHz &plusmn; &Delta;f<br/>RX_FIFO / TX_FIFO"]:::rf
+
+    DECODE["Decoders<br/>G3RUH (firmware)<br/>AX.25  ·  AX.100  ·  USP"]:::rf
+    SATNOGS["satnogs.py<br/>SiDS POST<br/>db.satnogs.org/api/telemetry"]:::pi
+    DASH["dashboard.py<br/>HTTPS :5000  ·  live AZ/EL<br/>RSSI  ·  pass timeline"]:::pi
+
+    TLE  -->|"TLE"| EPHEM
+    DB   -->|"freq / mod / baud"| EPHEM
+    GPS  -->|"observer"| EPHEM
+
+    EPHEM -->|"&rho;&#775;, f&#8320;"| CCLINK
+    EPHEM -->|"AZ, EL (&deg;)"| ROTCTL
+    ROTCTL -->|"USB CDC"| MPCB
+
+    CCLINK -->|"SET_FREQ_WORD (0x34)"| RFHAT
+    RFHAT  <-->|"SPI 5 MHz"| CC1200
+
+    CC1200 -->|"RX_READ (0x20)"| DECODE
+    DECODE -->|"decoded frames"| SATNOGS
+    EPHEM  -.->|"status.json (1 Hz)"| DASH
+`,
+  },
+  {
+    id: 'field_deployment',
+    title: '5. Field deployment workflow',
+    meta: '5 steps from unpack to tracking (~4 minutes wall-clock)',
+    kind: 'mermaid',
+    src: `%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CFE0EC', 'primaryBorderColor': '#00407A', 'primaryTextColor': '#111827', 'lineColor': '#00407A', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 30, 'nodeSpacing': 30, 'curve': 'basis'}}}%%
+flowchart LR
+    classDef step fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+
+    S1["<b>1.  Place &amp; power</b><br/>&middot; Mount on tripod<br/>&middot; Point rotator North<br/>&middot; Connect 24 V PSU (XT30)<br/>&middot; Pi boots Debian 13<br/>&middot; EL homes via ADXL345 IMU"]:::step
+    S2["<b>2.  Boot complete</b><br/>&middot; rotctld on TCP :4533<br/>&middot; dashboard.py HTTPS :5000<br/>&middot; station.py waits for location<br/>&middot; NeoPixel &rarr; green = ready"]:::step
+    S3["<b>3.  Connect phone</b><br/>&middot; Join WiFi hotspot<br/>&middot; SSID: SatNOGS-xxxx<br/>&middot; Open https://&lt;pi&gt;:5000<br/>&middot; Accept self-signed cert"]:::step
+    S4["<b>4.  GPS + wizard</b><br/>&middot; Tap 'Use My GPS'<br/>&middot; Browser Geolocation API<br/>&middot; Confirm callsign / mode<br/>&middot; Calibrate North (AZ zero)"]:::step
+    S5["<b>5.  Auto-tracking</b><br/>&middot; station.py polls TLE<br/>&middot; Rotator tracks AZ / EL<br/>&middot; CC1200 Doppler @ 2 Hz<br/>&middot; SiDS &rarr; SatNOGS DB"]:::step
+
+    S1 --> S2 --> S3 --> S4 --> S5
+`,
+  },
+  {
+    id: 'matching_network',
+    title: '6a. UHF matching — functional blocks',
+    meta: 'M17 / TI SWRR122 topology. Smith-chart overlay remains in the matplotlib figure below.',
+    kind: 'mermaid',
+    src: `%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CCE5E8', 'primaryBorderColor': '#2F8F9D', 'primaryTextColor': '#111827', 'lineColor': '#2F8F9D', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 55, 'nodeSpacing': 35, 'curve': 'basis'}}}%%
+flowchart LR
+    classDef rf   fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px,color:#111827
+    classDef pwr  fill:#FBF1D4,stroke:#B8860B,stroke-width:1.4px,color:#111827
+    classDef pi   fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+    classDef port fill:#FFFFFF,stroke:#111827,stroke-width:1.2px,color:#111827
+
+    CC["CC1200<br/>pin 17 PA<br/>pin 18 TRX_SW<br/>pins 19/20 LNA_P/N"]:::port
+
+    BIAS["<b>PA bias tee</b><br/>L4 56 nH<br/>R3 18 &Omega; || C5 56 pF<br/>from AVDD_FILT (3.3 V)"]:::pwr
+    TX["<b>TX low-pass ladder</b>&nbsp;&nbsp;(PA &rarr; SMA)<br/>series:  C2 39 pF  ·  L1 15 nH  ·  L2 43 nH  ·  L3 22 nH  ·  C27 1 nF<br/>shunt:   C1 2.2 pF (fb)  ·  C4 6.2 pF (GND)"]:::rf
+    TRX["<b>TRX coupling</b>&nbsp;&nbsp;(TX/RX switch)<br/>C3 5.1 pF  (to TX ladder)<br/>L9 15 nH   (to LNA balun)"]:::rf
+    LNA["<b>LNA differential balun</b>&nbsp;&nbsp;(SMA &rarr; LNA_P/N)<br/>L6 27 nH bias  ·  L7 56 nH bridge<br/>L8 27 nH coupling  ·  C8 5.1 pF  ·  C9 5.1 pF"]:::pi
+
+    SMA["SMA<br/>50 &Omega;<br/>UFL pigtail"]:::port
+    ANT["Siretta Oscar 44<br/>Yagi 9 dBi  ·  432 MHz"]:::rf
+
+    BIAS --> TX
+    CC -->|"PA"| TX
+    TX -->|"50 &Omega;"| SMA
+    CC -->|"TRX_SW"| TRX
+    TRX -->|"C3"| TX
+    TRX -->|"L9"| LNA
+    SMA -->|"RX"| LNA
+    LNA -->|"LNA_P / N"| CC
+    SMA === ANT
+`,
+  },
+  {
+    id: 'smith_chart',
+    title: '6b. Smith chart (data plot)',
+    meta: 'Z₀ = 50 Ω · f = 432 MHz · TX trajectory from SMA to CC1200 PA load',
+    kind: 'mpl',
+    script: 'matching_network_annotated.py',
+    png: '../images/figures/matching_network_annotated.png',
+  },
+];
+
+// ─── Render figures ─────────────────────────────────────────────────────
+const container = document.getElementById('figures');
+
+function download(filename, dataUrl) {
+  const a = document.createElement('a');
+  a.href = dataUrl; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+function downloadText(filename, text) {
+  const blob = new Blob([text], { type: 'text/plain' });
+  download(filename, URL.createObjectURL(blob));
+}
+
+async function renderMermaid(id, src, statusEl) {
+  try {
+    const { svg } = await mermaid.render(id + '_svg', src);
+    document.getElementById(id + '_preview').innerHTML = svg;
+    statusEl.textContent = 'rendered';
+    statusEl.style.color = '#047857';
+    return svg;
+  } catch (err) {
+    document.getElementById(id + '_preview').innerHTML =
+      '<div class="err">' + (err.message || err) + '</div>';
+    statusEl.textContent = 'error';
+    statusEl.style.color = '#991B1B';
+    return null;
+  }
+}
+
+function svgToPng(svgEl, scale, cb) {
+  const bbox = svgEl.getBBox();
+  const w = Math.ceil(svgEl.viewBox.baseVal.width  || bbox.width  || svgEl.clientWidth);
+  const h = Math.ceil(svgEl.viewBox.baseVal.height || bbox.height || svgEl.clientHeight);
+  const cloned = svgEl.cloneNode(true);
+  cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  cloned.setAttribute('width',  w);
+  cloned.setAttribute('height', h);
+  const xml = new XMLSerializer().serializeToString(cloned);
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = w * scale; canvas.height = h * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.drawImage(img, 0, 0);
+    cb(canvas.toDataURL('image/png'));
+  };
+  img.onerror = (e) => alert('PNG render failed: ' + e);
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml);
+}
+
+function buildCard(fig) {
+  const card = document.createElement('section');
+  card.className = 'card';
+
+  if (fig.kind === 'mermaid') {
+    card.innerHTML = `
+      <h2>${fig.title} <span class="status" id="${fig.id}_status">…</span></h2>
+      <p class="meta">${fig.meta}</p>
+      <div class="two-col">
+        <div>
+          <textarea id="${fig.id}_src" spellcheck="false">${fig.src.replace(/</g, '&lt;')}</textarea>
+          <div class="btns">
+            <button onclick="exportPng('${fig.id}')">Export PNG</button>
+            <button class="sec" onclick="saveMmd('${fig.id}')">Download .mmd</button>
+            <button class="sec" onclick="copySrc('${fig.id}')">Copy source</button>
+          </div>
+        </div>
+        <div class="preview" id="${fig.id}_preview"></div>
+      </div>
+    `;
+  } else {
+    card.innerHTML = `
+      <h2>${fig.title}</h2>
+      <p class="meta">${fig.meta}</p>
+      <div class="mpl-note">
+        Data-driven / programmatic figure. Edit
+        <code>figures_src/${fig.script}</code> then run
+        <code>python3 ${fig.script}</code> (or <code>make all</code>) to regenerate.
+      </div>
+      <img class="mpl-img" src="${fig.png}?t=${Date.now()}" alt="${fig.id}">
+    `;
+  }
+  return card;
+}
+
+FIGURES.forEach(fig => container.appendChild(buildCard(fig)));
+
+// Wire up Mermaid live-reload
+FIGURES.filter(f => f.kind === 'mermaid').forEach(fig => {
+  const ta = document.getElementById(fig.id + '_src');
+  const st = document.getElementById(fig.id + '_status');
+  let t;
+  const run = () => renderMermaid(fig.id, ta.value, st);
+  ta.addEventListener('input', () => {
+    clearTimeout(t);
+    st.textContent = '…rendering';
+    st.style.color = '#6B7280';
+    t = setTimeout(run, 250);
+  });
+  run();
+});
+
+// Button handlers (attached to window so inline onclick can find them)
+window.exportPng = function (id) {
+  const svg = document.querySelector('#' + id + '_preview svg');
+  if (!svg) { alert('No SVG rendered — fix any errors first.'); return; }
+  const scale = parseInt(document.getElementById('scale').value) || 3;
+  svgToPng(svg, scale, (url) => download(id + '_diagram.png', url));
+};
+window.saveMmd = function (id) {
+  const txt = document.getElementById(id + '_src').value;
+  downloadText(id + '.mmd', txt);
+};
+window.copySrc = function (id) {
+  const ta = document.getElementById(id + '_src');
+  ta.select(); document.execCommand('copy');
+  ta.setSelectionRange(0, 0);
+};
+</script>
+
+</body>
+</html>

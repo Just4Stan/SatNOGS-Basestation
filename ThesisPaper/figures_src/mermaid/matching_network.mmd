@@ -1,0 +1,26 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#CCE5E8', 'primaryBorderColor': '#2F8F9D', 'primaryTextColor': '#111827', 'lineColor': '#2F8F9D', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 55, 'nodeSpacing': 35, 'curve': 'basis'}}}%%
+flowchart LR
+    classDef rf   fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px,color:#111827
+    classDef pwr  fill:#FBF1D4,stroke:#B8860B,stroke-width:1.4px,color:#111827
+    classDef pi   fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px,color:#111827
+    classDef port fill:#FFFFFF,stroke:#111827,stroke-width:1.2px,color:#111827
+
+    CC["CC1200\npin 17 PA\npin 18 TRX_SW\npins 19/20 LNA_P/N"]:::port
+
+    BIAS["PA bias tee\nL4 56 nH\nR3 18 ohm || C5 56 pF\nfrom AVDD_FILT (3.3 V)"]:::pwr
+    TX["TX low-pass ladder (PA to SMA)\nseries: C2 39 pF - L1 15 nH - L2 43 nH - L3 22 nH - C27 1 nF\nshunt:  C1 2.2 pF (fb) - C4 6.2 pF (GND)"]:::rf
+    TRX["TRX coupling (TX/RX switch)\nC3 5.1 pF (to TX ladder)\nL9 15 nH  (to LNA balun)"]:::rf
+    LNA["LNA differential balun (SMA to LNA_P/N)\nL6 27 nH bias - L7 56 nH bridge\nL8 27 nH coupling - C8 5.1 pF - C9 5.1 pF"]:::pi
+
+    SMA["SMA\n50 ohm\nUFL pigtail"]:::port
+    ANT["Siretta Oscar 44\nYagi 9 dBi - 432 MHz"]:::rf
+
+    BIAS --> TX
+    CC -->|"PA"| TX
+    TX -->|"50 ohm"| SMA
+    CC -->|"TRX_SW"| TRX
+    TRX -->|"C3"| TX
+    TRX -->|"L9"| LNA
+    SMA -->|"RX"| LNA
+    LNA -->|"LNA_P / N"| CC
+    SMA === ANT

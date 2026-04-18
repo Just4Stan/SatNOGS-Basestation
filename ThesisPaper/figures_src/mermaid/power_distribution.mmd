@@ -1,0 +1,43 @@
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#FBF1D4', 'primaryBorderColor': '#B8860B', 'primaryTextColor': '#111827', 'lineColor': '#B8860B', 'fontFamily': 'DejaVu Sans, Arial, sans-serif', 'fontSize': '13px'}, 'flowchart': {'rankSpacing': 50, 'nodeSpacing': 30, 'curve': 'basis'}}}%%
+flowchart LR
+    classDef pwr  fill:#FBF1D4,stroke:#B8860B,stroke-width:1.4px
+    classDef mot  fill:#F2DACC,stroke:#8A3A1E,stroke-width:1.4px
+    classDef pi   fill:#CFE0EC,stroke:#00407A,stroke-width:1.4px
+    classDef mcu  fill:#D4EEF7,stroke:#1D8DB0,stroke-width:1.4px
+    classDef rf   fill:#CCE5E8,stroke:#2F8F9D,stroke-width:1.4px
+    classDef cap  fill:#FFFFFF,stroke:#6B7280,stroke-width:1px,color:#6B7280
+
+    PSU["24 V\nXT30 battery"]:::pwr
+
+    subgraph V24["+24 V rail"]
+        direction LR
+        MOT["Motor drivers (direct)\nv1 TB6642FG / v2 A4950"]:::mot
+        BUCK["LMR51420 buck\n24 to 5 V / 2 A\nLCSC C7296200"]:::pwr
+        C1["4.7 uF / 50 V\n(C1 input)"]:::cap
+        C3["22 uF\n(C3 output)"]:::cap
+    end
+
+    subgraph V5["+5 V rail"]
+        direction LR
+        PI["Raspberry Pi 3A+\npins 2 / 4\ninternal LDO to 3.3 V logic"]:::pi
+        PICO["RP2040 Pico (RF HAT)\nVSYS = 5 V\nRT6150 to 3V3_OUT"]:::mcu
+        CPI["100 nF"]:::cap
+    end
+
+    subgraph V33["+3.3 V rail (AVDD_FILT)"]
+        direction LR
+        FB["FB 1 kohm @ 100 MHz"]:::cap
+        CC1200["CC1200 x 2 (UHF + VHF)\ndecoupling x 9 per rail:\n10 nF - 47 nF - 100 nF - 220 nF\n40 MHz XO, 15 pF load"]:::rf
+        CCAP["10 nF + 100 nF\n(TP5 / TP6)"]:::cap
+    end
+
+    PSU  ===|"24 V"| MOT
+    PSU  ===|"24 V"| BUCK
+    C1   -.- BUCK
+    BUCK ==>|"5 V / 2 A"| C3
+    C3   ==>|"5 V"| PI
+    C3   ==>|"5 V"| PICO
+    CPI  -.- PI
+    PICO ==>|"3.3 V"| FB
+    FB   ==>|"AVDD_FILT"| CC1200
+    CCAP -.- CC1200

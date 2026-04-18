@@ -51,26 +51,26 @@ The free space path loss (FSPL) for a direct line-of-sight link is:
 
 $$\text{FSPL (dB)} = 20 \log_{10}(d) + 20 \log_{10}(f) + 20 \log_{10}\left(\frac{4\pi}{c}\right)$$
 
-Simplified at 437 MHz:
+Simplified at 432 MHz (CC1200 firmware centre frequency):
 
-$$\text{FSPL (dB)} = 20 \log_{10}(d_\text{km}) + 20 \log_{10}(437 \times 10^6) + 32.45$$
+$$\text{FSPL (dB)} = 20 \log_{10}(d_\text{km}) + 20 \log_{10}(432) + 32.45 = 20\log_{10}(d_\text{km}) + 85.16$$
 
 The slant range depends on the satellite altitude $h$ and the ground station elevation angle $\theta$. For a spherical Earth with radius $R_E = 6371$ km:
 
-$$d = \sqrt{(R_E + h)^2 - (R_E \cos\theta)^2} - R_E \sin\theta$$
+$$d = \sqrt{R_E^2 \sin^2\theta + h^2 + 2 R_E h} - R_E \sin\theta$$
 
-| Elevation | Altitude (km) | Slant Range (km) | FSPL (dB) |
+| Elevation | Altitude (km) | Slant Range (km) | FSPL (dB) at 432 MHz |
 |---|---|---|---|
-| 10 deg | 400 | 1340 | 149.0 |
-| 10 deg | 600 | 1830 | 151.6 |
-| 30 deg | 400 | 620 | 142.2 |
-| 30 deg | 600 | 920 | 145.6 |
-| 45 deg | 400 | 480 | 139.9 |
-| 60 deg | 400 | 420 | 138.8 |
-| 90 deg (zenith) | 400 | 400 | 138.4 |
-| 90 deg (zenith) | 600 | 600 | 141.9 |
+| 10 deg | 400 | 1439 | 148.3 |
+| 10 deg | 600 | 1932 | 150.9 |
+| 30 deg | 400 | 693  | 141.9 |
+| 30 deg | 600 | 1075 | 145.8 |
+| 45 deg | 400 | 525  | 139.5 |
+| 60 deg | 400 | 440  | 138.0 |
+| 90 deg (zenith) | 400 | 400 | 137.2 |
+| 90 deg (zenith) | 600 | 600 | 140.7 |
 
-At the best case (overhead pass at 400 km), FSPL = 138.4 dB. At a typical 30 deg elevation pass at 600 km, FSPL = 145.6 dB. At the horizon (10 deg), FSPL exceeds 149 dB.
+At the best case (overhead pass at 400 km), FSPL = 137.2 dB. At the canonical 30 deg elevation / 600 km altitude geometry (primary reference throughout this analysis), slant range is 1075 km and FSPL = 145.8 dB. At the 10 deg horizon (600 km altitude), FSPL is 150.9 dB.
 
 ## Additional Losses
 
@@ -94,7 +94,7 @@ For satellites with linear antennas (e.g., simple dipole or monopole), the polar
 
 ### Atmospheric Losses
 
-At 437 MHz, atmospheric absorption through the troposphere is negligible (< 0.1 dB) for elevation angles above 10 deg. Ionospheric effects include Faraday rotation (rotation of the polarisation plane, already captured in the polarisation loss budget) and scintillation (typically < 1 dB at UHF). We budget:
+At 432 MHz, atmospheric absorption through the troposphere is negligible (< 0.1 dB) for elevation angles above 10 deg. Ionospheric effects include Faraday rotation (rotation of the polarisation plane, already captured in the polarisation loss budget) and scintillation (typically < 1 dB at UHF). We budget:
 
 $$L_\text{atm} = 0.5\ \text{dB}$$
 
@@ -181,14 +181,14 @@ The practical effect is that the **effective sensitivity of this receiver implem
 | TX antenna gain | +2.0 | dBi | Turnstile/dipole on CubeSat |
 | EIRP | +16.0 | dBm | |
 | **Path** | | | |
-| Free space path loss | -145.6 | dB | 437 MHz, 920 km slant range |
+| Free space path loss | -145.6 | dB | 432 MHz, 1075 km slant range (30°, 600 km altitude) |
 | Atmospheric loss | -0.5 | dB | Troposphere + ionosphere |
 | Polarisation mismatch | -3.0 | dB | Circular TX vs linear RX |
 | **Receiver** | | | |
 | RX antenna gain | +9.0 | dBi | Siretta Oscar 44 peak |
 | Feedline loss | -0.9 | dB | 3 m RG58 + connectors |
 | Pointing loss | -0.5 | dB | Rotator accuracy |
-| **Signal at CC1200 input** | **-125.5** | **dBm** | |
+| **Signal at CC1200 input** | **-125.7** | **dBm** | |
 | | | | |
 | CC1200 sensitivity (theoretical) | -120.0 | dBm | 2.4 kbps 2-GFSK, BER 10^-3 |
 | **Link margin (theoretical)** | **-5.5** | **dB** | NEGATIVE --- link fails |
@@ -203,7 +203,7 @@ The practical effect is that the **effective sensitivity of this receiver implem
 | TX power (ISS UHF digipeater) | +40.0 | dBm | 10 W |
 | TX antenna gain | +2.0 | dBi | ISS UHF antenna |
 | EIRP | +42.0 | dBm | |
-| Free space path loss | -138.4 | dB | 437 MHz, 400 km zenith |
+| Free space path loss | -137.2 | dB | 432 MHz, 400 km zenith |
 | Atmospheric loss | -0.3 | dB | |
 | Polarisation mismatch | -3.0 | dB | |
 | RX antenna gain | +9.0 | dBi | |
@@ -219,7 +219,7 @@ The practical effect is that the **effective sensitivity of this receiver implem
 
 | Scenario | TX Power | Altitude | Elev | EIRP | FSPL | Received | Margin (theory) | Margin (measured) |
 |---|---|---|---|---|---|---|---|---|
-| AetherSpace (CC1200, design) | +14 dBm | 600 km | 30 deg | +16 dBm | 145.6 dB | -125.5 dBm | **-5.5 dB** | **-20.5 dB** |
+| AetherSpace (CC1200, design) | +14 dBm | 600 km | 30 deg | +16 dBm | 145.8 dB | -125.7 dBm | **-5.7 dB** | **-20.7 dB** |
 | AetherSpace (CC1200, zenith) | +14 dBm | 600 km | 90 deg | +16 dBm | 141.9 dB | -121.8 dBm | **-1.8 dB** | **-16.8 dB** |
 | ISS digipeater (10 W) | +40 dBm | 408 km | 30 deg | +42 dBm | 142.3 dB | -97.1 dBm | **+22.9 dB** | **+7.9 dB** |
 | ISS digipeater (zenith) | +40 dBm | 408 km | 90 deg | +42 dBm | 138.5 dB | -93.3 dBm | **+26.7 dB** | **+11.7 dB** |
@@ -293,7 +293,7 @@ Even if board-level noise adds 5 dB of degradation (rather than the current 20 d
 
 | Scenario | Received | Margin (no LNA, measured) | Margin (with LNA, estimated) |
 |---|---|---|---|
-| AetherSpace, 30 deg | -125.5 dBm | **-20.5 dB** | **+0.5 dB** (marginal) |
+| AetherSpace, 30 deg | -125.7 dBm | **-20.7 dB** | **+0.5 dB** (marginal) |
 | AetherSpace, zenith | -121.8 dBm | **-16.8 dB** | **+3.2 dB** (viable) |
 | ISS digipeater, 30 deg | -97.1 dBm | **+7.9 dB** | **+27.9 dB** (strong) |
 | Typical CubeSat (0.5 W), 30 deg | -111.0 dBm | **-6.0 dB** | **+14.0 dB** (comfortable) |
@@ -361,7 +361,7 @@ The processing gain available in software is the decisive factor. A properly con
 
 The link budget reveals three compounding problems:
 
-1. **Marginal theoretical link**: Even with perfect receiver performance (-120 dBm sensitivity), the AetherSpace 25 mW CubeSat link closes with -5.5 dB margin at typical elevations. There is no margin for any real-world degradation.
+1. **Marginal theoretical link**: Even with perfect receiver performance (-120 dBm sensitivity), the AetherSpace 25 mW CubeSat link closes with -5.7 dB margin at typical elevations. There is no margin for any real-world degradation.
 
 2. **15--20 dB noise floor elevation**: The measured CC1200 noise floor (-100 to -107 dBm) is 15--20 dB above the theoretical thermal noise floor (-127 dBm). This is caused by a combination of PCB-level interference from the buck converter, RP2040 digital noise, Raspberry Pi broadband emissions, and possibly imperfect RSSI calibration.
 
@@ -384,6 +384,6 @@ In order of impact:
 For the thesis target --- receiving AetherSpace at 433 MHz with CC1200 native packets:
 
 - **With LNA**: Link margin = +0.5 dB at 30 deg elevation, +3.2 dB at zenith. Marginal but potentially viable.
-- **Without LNA**: Link margin = -20.5 dB. Not viable under any conditions.
+- **Without LNA**: Link margin = -20.7 dB. Not viable under any conditions.
 
 The LNA is not optional. It is a hard requirement for the AetherSpace link to close.

@@ -1,0 +1,58 @@
+{
+  // ─── LaTeX Workshop ─────────────────────────────────────────────────────
+  // Root file so VS Code knows which .tex is the main document.
+  "latex-workshop.latex.rootFile.doNotPrompt": true,
+
+  // Use latexmk, which reads ThesisPaper/.latexmkrc (pdflatex + biber, multi-pass).
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-pdf",
+        "-interaction=nonstopmode",
+        "-synctex=1",
+        "-file-line-error",
+        "%DOC%"
+      ],
+      "env": {}
+    },
+    {
+      "name": "latexmk-clean",
+      "command": "latexmk",
+      "args": ["-c", "%DOC%"],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    { "name": "latexmk", "tools": ["latexmk"] },
+    { "name": "clean aux", "tools": ["latexmk-clean"] }
+  ],
+  "latex-workshop.latex.recipe.default": "latexmk",
+
+  // Auto-build on save (Ctrl+S triggers a rebuild).
+  "latex-workshop.latex.autoBuild.run": "onSave",
+
+  // Don't pollute the repo with auxiliary files — put them in .build/.
+  "latex-workshop.latex.outDir": "%DIR%/.build",
+  "latex-workshop.latex.auxDir": "%DIR%/.build",
+
+  // Keep the PDF where tools expect it (next to thesis.tex).
+  "latex-workshop.latex.clean.subfolder.enabled": true,
+
+  // Open the PDF viewer inside VS Code in a split tab.
+  "latex-workshop.view.pdf.viewer": "tab",
+
+  // Reverse-search: click in PDF → jump to source. (Forward-search is Ctrl+Alt+J.)
+  "latex-workshop.synctex.afterBuild.enabled": true,
+
+  // Hide log warnings we don't care about.
+  "latex-workshop.message.badbox.show": false,
+  "latex-workshop.message.log.show": false,
+
+  // Auto-clean these intermediates when cleaning.
+  "latex-workshop.latex.clean.fileTypes": [
+    "*.aux", "*.bbl", "*.bcf", "*.blg", "*.fdb_latexmk", "*.fls",
+    "*.log", "*.out", "*.run.xml", "*.synctex.gz", "*.toc", "*.lof", "*.lot"
+  ]
+}

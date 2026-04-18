@@ -4,234 +4,156 @@
 % ══════════════════════════════════════════════════════════════════════════════
 
 \section{LEO Orbital Mechanics}
+\label{sec:orbital-mechanics}
 
-\subsection{Orbital Velocity and Period}
-
-A satellite in circular orbit at altitude $h$ orbits at radius $r = R_E + h$ ($R_E = 6371$~km). Equating gravitational and centripetal force:
-
+For a circular orbit at altitude $h$ above Earth's surface, the orbital velocity follows from equating gravitational attraction to centripetal acceleration~\cite{montenbruck2000orbits}:
 \begin{equation}
-    v = \sqrt{\frac{\mu}{r}}, \qquad T = 2\pi\sqrt{\frac{r^3}{\mu}}
+    v = \sqrt{\frac{\mu}{R_E + h}}
+    \label{eq:orbital-velocity}
+\end{equation}
+with $\mu = GM_\oplus = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E = 6371$~km. For $h = 400$~km: $v = \sqrt{3.986 \times 10^{14} / 6.771 \times 10^6} = 7.669$~km/s. The orbital period is
+\begin{equation}
+    T = 2\pi \sqrt{\frac{(R_E + h)^3}{\mu}} = 2\pi \sqrt{\frac{(6.771 \times 10^6)^3}{3.986 \times 10^{14}}} = 5554~\text{s} = 92.6~\text{min}.
+    \label{eq:orbital-period}
 \end{equation}
 
-where $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$. At $h = 400$~km: $v = 7.67$~km/s, $T = 92.6$~min. The range 400--600~km covers the vast majority of CubeSat orbits, giving periods of 90--97 minutes.
-
-\subsection{Contact Time Geometry}
-
-% TODO: Add orbital geometry diagram (Earth, satellite orbit, ground station, slant range, visible arc, elevation angle)
-
-The maximum slant range at the horizon ($\epsilon = 0\degree$) is:
-
+The maximum slant range $d_{\max}$ at the geometric horizon (elevation $\epsilon = 0$\degree) for a spherical Earth is
 \begin{equation}
-    d_{max} = \sqrt{h^2 + 2R_E h}
+    d_{\max} = \sqrt{(R_E+h)^2 - R_E^2} = \sqrt{6771^2 - 6371^2} = 2293~\text{km}.
+    \label{eq:dmax}
 \end{equation}
 
-At 400~km: $d_{max} = 2294$~km. The visible arc subtends $\alpha = \arccos\!\left(\frac{R_E}{R_E + h}\right) = 19.6\degree$ at Earth's center, giving a maximum overhead pass duration of:
-
+Visible-arc geometry (the angle subtended at Earth's centre by the portion of the orbit above the station horizon) gives a theoretical maximum pass duration of
 \begin{equation}
-    t_{max} = \frac{2 R_E \alpha}{v} \approx 568~\text{s} \approx 9.5~\text{min}
+    t_{\max} = T \cdot \frac{\alpha}{\pi} \approx 10.1~\text{min at } h = 400~\text{km, zenith pass,}
+\end{equation}
+where $\alpha = \arccos(R_E / (R_E + h))$. Passes with practical elevations above 10\degree\ are shorter --- typically 5--8~min in field data (Chapter~\ref{ch:results}).
+
+The total angular rate as seen from the ground station reaches its bound at zenith:
+\begin{equation}
+    \dot{\theta}_{\max} = \frac{v}{h} = \frac{7669}{400 \times 10^3}~\text{rad/s} = 1.10~\text{deg/s}.
 \end{equation}
 
-In practice, useful passes with elevation above 10\degree\ last 5--8 minutes. A single station contacts the satellite for roughly 5--10\% of its orbital period.
-
-\subsection{Angular Velocity Across the Sky}
-
-The satellite's angular rate as seen from the ground is slowest near the horizon and fastest near zenith. At closest approach during a zenith pass:
-
-\begin{equation}
-    \dot{\theta}_{max} = \frac{v}{h} = \frac{7672}{400 \times 10^3} = 1.1~\text{deg/s}
-\end{equation}
-
-For high-elevation passes, rates up to 2~deg/s are possible. With a 10-element Yagi ($\sim$30\degree\ 3~dB beamwidth at 434~MHz), the tracking error must stay below $\pm$15\degree\ to remain within the 3~dB beamwidth. Tracking within $\pm$5\degree\ is desirable (less than 0.3~dB loss).
-
-% TODO: Add angular velocity plot (deg/s vs time) for a typical overhead pass
+The \textit{azimuth} rate, however, is unbounded as a pass approaches true zenith: for passes with closest-approach elevation above $\sim$80\degree, the AZ axis alone needs to move through a large arc in a short time, so instantaneous AZ rates can exceed 10\degree/s for a few seconds. This is a speed-limit concern for the mechanical rotator (\S\ref{sec:tracking-accuracy}) rather than an accuracy concern.
 
 \section{The AetherSpace CubeSat}
+\label{sec:aetherspace}
 
-% TODO: Add AetherSpace CubeSat render (if available from AetherSpace team)
-
-AetherSpace is a KU Leuven project building a 3U CubeSat for a heat-shield sample return demonstration from LEO, with a planned launch around 2030. It communicates on 433~MHz UHF within the amateur satellite service allocation. The TX power is estimated at $\sim$14~dBm ($\sim$25~mW), with either a turnstile or dipole antenna ($\sim$2~dBi). Modulation and datarate are not yet finalized but will use the CC1200's native packet format.
-
-Previous KU Leuven work: Surkijn and Van Elst (2022) studied the earth-satellite communication chain, Hanssens (2023) investigated SatNOGS ground station implementation. This thesis delivers the working ground station that those studies scoped but did not build.
-
-% NOTE: AetherSpace team contacted for up-to-date specs (TX power, antenna, modulation, launch date).
-% Update this section when confirmed.
+AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. Per the specification provided by the AetherSpace team (2026-03-05): UHF downlink at 433~MHz, TX power approximately +14~dBm ($\approx$25~mW), TX antenna a turnstile or dipole with approximately 2~dBi gain, CC1200 native packet format, modulation and symbol rate not finalised at the time of writing. Previous KU Leuven work --- Surkijn and Van Elst (2022) on the Earth--satellite communication chain, Hanssens (2023) on SatNOGS ground-station options~\cite{hanssens2023} --- scoped the ground-station problem.
 
 \section{Link Budget}
+\label{sec:link-budget}
 
-The Friis transmission equation gives the received power:
-
-\begin{equation}
-    P_r = P_t + G_t + G_r - L_{fs} \quad \text{[all in dB]}
-\end{equation}
-
-where the free-space path loss is:
-
-\begin{equation}
-    L_{fs} = 20\log_{10}\!\left(\frac{4\pi d}{\lambda}\right)
-\end{equation}
-
-At 433~MHz ($\lambda = 0.693$~m), the path loss depends on the slant range $d$ between station and satellite. A \textit{zenith pass} (satellite passes directly overhead, elevation = 90\degree) has the shortest slant range, equal to the orbital altitude. A \textit{mid-elevation pass} (peak elevation $\sim$30--50\degree) is the most common useful geometry. At the \textit{horizon} (elevation = 0\degree), the slant range is at its maximum.
+The canonical link-budget scenario for the AetherSpace downlink is a 600~km-altitude pass at 30\degree\ peak elevation, giving a slant range of 1075~km at 432~MHz (firmware centre frequency; formula $d = \sqrt{R_E^2 \sin^2\theta + h^2 + 2 R_E h} - R_E \sin\theta$ with $R_E = 6371$~km). Two supporting rows bracket the geometry: a zenith pass at 400~km altitude (best case, 400~km slant) and a horizon pass at 10\degree\ elevation / 600~km altitude (worst case, 1932~km slant). All FSPL values use $L_\text{fs} = 20\log_{10}(d_\text{km}) + 20\log_{10}(f_\text{MHz}) + 32.45$.
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{lccc}
+    \small
+    \begin{tabular}{lrrr}
         \toprule
-        Scenario & Peak elevation & Slant range & $L_{fs}$ \\
+        Parameter & 30\degree/600~km & Zenith/400~km & 10\degree/600~km \\
         \midrule
-        Zenith pass & 90\degree & 400~km & 137.2~dB \\
-        Mid-elevation & $\sim$40\degree & 600~km & 140.7~dB \\
-        Horizon & 0\degree & 2294~km & 152.4~dB \\
+        TX power (AetherSpace)              & +14.0~dBm  & +14.0~dBm  & +14.0~dBm \\
+        TX antenna (turnstile/dipole)       & +2.0~dBi   & +2.0~dBi   & +2.0~dBi \\
+        FSPL at 432~MHz                     & $-$145.8~dB & $-$137.2~dB & $-$150.9~dB \\
+        Atmospheric loss                    & $-$0.5~dB  & $-$0.3~dB  & $-$1.0~dB \\
+        Polarisation mismatch (circ $\leftrightarrow$ lin) & $-$3.0~dB & $-$3.0~dB & $-$3.0~dB \\
+        RX antenna (Siretta Oscar 44, 9~dBi)~\cite{siretta-oscar44} & +9.0~dBi & +9.0~dBi & +9.0~dBi \\
+        Feedline loss (3~m RG58 + N/SMA)    & $-$0.9~dB  & $-$0.9~dB  & $-$0.9~dB \\
+        Pointing loss                       & $-$0.5~dB  & $-$0.3~dB  & $-$0.5~dB \\
+        \midrule
+        \textbf{Received power at CC1200}   & \textbf{$-$125.7~dBm} & \textbf{$-$116.7~dBm} & \textbf{$-$131.3~dBm} \\
+        CC1200 sensitivity (datasheet~\cite{cc1200}, 2.4~kbps 2-GFSK) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
+        \textbf{Theoretical margin}         & \textbf{$-$5.7~dB} & \textbf{+3.3~dB} & \textbf{$-$11.3~dB} \\
+        CC1200 effective sensitivity (measured, no LNA) & $-$105~dBm & $-$105~dBm & $-$105~dBm \\
+        \textbf{Measured margin}            & \textbf{$-$20.7~dB} & \textbf{$-$11.7~dB} & \textbf{$-$26.3~dB} \\
         \bottomrule
     \end{tabular}
-    \caption{Free-space path loss at 433~MHz for different pass geometries.}
-    \label{tab:path-loss}
-\end{table}
-
-Table~\ref{tab:link-budget} shows the full link budget for a mid-elevation pass at 600~km slant range.
-
-\begin{table}[H]
-    \centering
-    \begin{tabularx}{\textwidth}{lr>{\raggedright\arraybackslash}X}
-        \toprule
-        Parameter & Value & Notes \\
-        \midrule
-        TX power (CubeSat) & +14~dBm & $\sim$25~mW (AetherSpace estimate) \\
-        TX antenna gain & +2~dBi & Turnstile or dipole \\
-        Free-space path loss & $-$140.7~dB & 600~km, 433~MHz \\
-        Atmospheric loss & $-$1~dB & Ionospheric + tropospheric attenuation; negligible at zenith, up to 1~dB at low elevations \\
-        Polarization mismatch & $-$3~dB & CubeSat tumbles in orbit, randomizing polarization relative to the linearly-polarized Yagi; 3~dB average loss \\
-        RX antenna gain (Yagi) & +10~dBi & 10-element at 434~MHz \\
-        \midrule
-        \textbf{Received power} & \textbf{$-$118.7~dBm} & \\
-        CC1200 sensitivity & $-$120~dBm & At 2.4~kbps \\
-        \textbf{Link margin} & \textbf{1.3~dB} & \\
-        \bottomrule
-    \end{tabularx}
-    \caption{Link budget for AetherSpace UHF downlink at 433~MHz.}
+    \caption{Link budget for the AetherSpace UHF downlink at 432~MHz across three canonical pass geometries. Atmospheric loss budget scaled with elevation per ITU-R P.676~\cite{itu-r-p676}.}
     \label{tab:link-budget}
 \end{table}
 
-With only 1.3~dB of margin at 600~km, the link is tight. At zenith ($d = 400$~km, $L_{fs} = 137.2$~dB), the margin improves to 4.8~dB. At the horizon ($d = 2294$~km, $L_{fs} = 152.4$~dB), the margin is $-$10.4~dB---the link does not close. Communication is only viable above $\sim$20\degree\ elevation with 14~dBm TX power. Reducing the datarate below 2.4~kbps would improve CC1200 sensitivity and widen the margin. Accurate antenna pointing becomes critical: even a few degrees of pointing error costs dB that cannot be spared.
+Two observations follow. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the measured noise floor on the assembled RF HAT ($-$100 to $-$107~dBm depending on antenna pointing; \S\ref{sec:packet-reception}) sits $\sim$15--20~dB above the thermal baseline, giving an effective sensitivity of approximately $-$105~dBm and pushing the measured margin deeply negative across all geometries. The full multi-row budget and a Friis cascade analysis of an external low-noise amplifier are given in the link-budget reference document maintained alongside the thesis.
 
 \section{Doppler Shift}
+\label{sec:doppler}
 
-A satellite moving with radial velocity $v_r$ relative to the ground station shifts the received frequency by:
-
+A satellite moving with radial velocity $v_r$ relative to the ground station shifts the received carrier by $\Delta f = v_r \cdot f_0 / c$. The radial velocity reaches its maximum at the geometric horizon, where the full orbital velocity projects onto the line of sight:
 \begin{equation}
-    \Delta f = \frac{v_r}{c} \cdot f_0
+    v_{r,\max} \approx v = 7669~\text{m/s}.
 \end{equation}
 
-The maximum radial velocity occurs at the horizon, where the orbital velocity projects fully onto the line of sight: $v_{r,max} \approx 7229$~m/s. This gives:
+At 433~MHz this gives
+\begin{equation}
+    \Delta f_{\max} = \frac{7669}{3 \times 10^8} \cdot 433 \times 10^6 = 11.07~\text{kHz} \quad (\pm 11~\text{kHz}).
+\end{equation}
 
-\begin{itemize}
-    \item At 433~MHz (UHF): $\Delta f_{max} = \pm 10.4$~kHz
-    \item At 145.9~MHz (VHF): $\Delta f_{max} = \pm 3.5$~kHz
-\end{itemize}
+At 145.9~MHz (the VHF uplink target):
+\begin{equation}
+    \Delta f_{\max} = \frac{7669}{3 \times 10^8} \cdot 145.9 \times 10^6 = 3.73~\text{kHz} \quad (\pm 3.7~\text{kHz}).
+\end{equation}
 
-These shifts are significant relative to the CC1200's receive bandwidth of $\sim$30~kHz at 2.4~kbps. Without compensation, the signal drifts out of the passband within seconds. Our station software updates the CC1200 frequency registers at 2~Hz, limiting the uncompensated drift between updates to $\sim$106~Hz---well within the receiver bandwidth.
-
-% TODO: Add Doppler shift vs time plot for a typical pass
+The Doppler rate $d(\Delta f)/dt$ peaks at closest approach. The station software applies Doppler correction by writing the CC1200 \code{FREQOFF} register at 2~Hz (\S\ref{sec:pi-stack}). A worst-case rate of approximately 200~Hz/s at 432~MHz near TCA means the residual uncompensated drift between 2~Hz updates is of order 100~Hz, which is small relative to the 10~kHz RX filter bandwidth used for 2.4~kbps 2-GFSK reception.
 
 \section{The SatNOGS Network}
+\label{sec:satnogs}
 
-SatNOGS (Satellite Networked Open Ground Station) started at Hackerspace.gr in Athens during the 2014 NASA Space Apps Challenge, winning the Hackaday Prize which funded the Libre Space Foundation. As of 2025: over 400 active stations, 50+ countries, 1177+ tracked satellites, 165+ million data frames.
+SatNOGS (Satellite Networked Open Ground Station) originated at Hackerspace.gr in Athens during the 2014 NASA Space Apps Challenge and won that year's Hackaday Prize, which funded the Libre Space Foundation~\cite{satnogs-main}. A detailed ecosystem history appears in~\cite{hanssens2023}, which this thesis continues; the summary below is limited to what is load-bearing for the subsequent chapters.
 
-The ecosystem has four parts:
+The ecosystem has four components~\cite{satnogs-main, satnogs-network, satnogs-wiki}:
 
 \begin{description}
-    \item[SatNOGS Network] (network.satnogs.org) --- schedules observations across stations based on pass predictions, collects results.
-    \item[SatNOGS DB] (db.satnogs.org) --- decoded telemetry database, supports the SiDS (Simple Downlink Sharing) protocol.
-    \item[SatNOGS Client] --- Python daemon on each station. Gets observation jobs, controls the rotator via hamlib/rotctld, controls the receiver (typically RTL-SDR via SoapySDR/GNU Radio), uploads results.
-    \item[SatNOGS Rotator] --- optional open-source rotator (3D-printed, NEMA17 steppers, Arduino controller).
+    \item[SatNOGS Network] (\url{network.satnogs.org}) --- observation scheduling across stations based on TLE pass predictions.
+    \item[SatNOGS DB] (\url{db.satnogs.org}) --- telemetry database, accepts decoded frames over the SiDS (Simple Downlink Sharing) HTTP API.
+    \item[SatNOGS Client] --- Python daemon running on each station, polls Network for scheduled observations, drives the rotator via hamlib/\code{rotctld}, drives the SDR receiver via SoapySDR + GNU~Radio, uploads results.
+    \item[SatNOGS Rotator] --- optional reference rotator (3D-printed, NEMA17 bipolar steppers, belt drive, Arduino controller)~\cite{satnogs-rotator-fw}.
 \end{description}
 
-Rotator communication goes through \textbf{hamlib}, an open-source library for amateur radio equipment. The \code{rotctld} daemon exposes a TCP interface (port 4533) accepting EasyComm commands. Any controller that speaks EasyComm over serial works with SatNOGS without modification.
+Rotator communication goes through \textbf{hamlib}~\cite{hamlib}: the \code{rotctld} daemon exposes a TCP interface on port 4533 that accepts EasyComm ASCII commands. Any controller that speaks EasyComm III over a serial link integrates without modification, as hamlib model 204~\cite{jackson1990easycomm}.
 
 \subsection{The EasyComm Protocol}
 
-EasyComm is an ASCII protocol developed by Chris Jackson (G7UPN) for antenna tracking. The SatNOGS variant uses hamlib model 204 (EasyComm III):
-
-\begin{table}[H]
-    \centering
-    \begin{tabular}{ll}
-        \toprule
-        Command & Function \\
-        \midrule
-        \code{AZxxx.x ELyyy.y} & Set target azimuth and elevation \\
-        \code{AZ} / \code{EL} & Query current position \\
-        \code{VE} & Query firmware version \\
-        \code{GS} & Get status (0 = idle, 1 = moving) \\
-        \code{GE} & Get error flags \\
-        \code{SA} / \code{SE} / \code{STOP} & Stop azimuth / elevation / both \\
-        \code{RESET} & Home the rotator \\
-        \code{PARK} & Move to park position (0\degree, 0\degree) \\
-        \bottomrule
-    \end{tabular}
-    \caption{EasyComm command set (SatNOGS variant).}
-    \label{tab:easycomm}
-\end{table}
-
-Each command is a newline-terminated ASCII string. No binary framing, no handshaking. The entire parser fits in $\sim$50 lines of C.
+EasyComm is an ASCII protocol developed by Chris Jackson (G7UPN) for antenna tracking~\cite{jackson1990easycomm}. The SatNOGS variant uses hamlib model 204 (EasyComm III), with commands summarised in Appendix~\ref{app:protocol}.
 
 \subsection{Why a Distributed Network}
 
-A single station contacts a LEO satellite for at most $\sim$10\% of each orbit. For mission-critical telemetry this is not enough. SatNOGS solves this by distributing stations worldwide so nearly every orbit has coverage. Previous attempts --- the Japanese Ground Station Network (University of Tokyo) and ESA's GENSO (Global Educational Network for Satellite Operations, started 2006, cancelled by 2014) --- failed because they required homogeneous hardware and centralized coordination. SatNOGS accepts any hardware that speaks EasyComm and uses an SDR receiver.
+A single station contacts a LEO satellite for at most $\sim$10\% of each orbit ($t_{\max}/T \approx 10.1/92.6 = 10.9\%$ at 400~km). For mission-critical telemetry, one station is insufficient; distributing stations worldwide gives near-continuous coverage. Earlier attempts --- the Japanese Ground Station Network at the University of Tokyo, and ESA's GENSO project (started 2006, cancelled by 2014) --- required homogeneous hardware and centralised coordination and did not reach a sustainable scale~\cite{hanssens2023}. SatNOGS accepts any hardware that speaks EasyComm over serial and uses an SDR receiver.
 
-\section{Existing Ground Station Designs}
+\subsection{CC1200 Deviation}
+\label{sec:cc1200-deviation}
+
+The standard SatNOGS receive chain is SDR-based. An RTL-SDR v3 dongle feeds raw IQ samples through GNU~Radio flowgraphs (\code{gr-satnogs}) via SoapySDR; demodulation, sync detection, and CRC checking happen in software. This stack is flexible at the cost of compute requirements (GNU~Radio + Docker, targeting $\geq$1~GB of RAM~\cite{satnogs-main}).
+
+This thesis substitutes a CC1200 hardware packet modem for the SDR front-end. The CC1200 performs modulation/demodulation, sync-word detection, and CRC checking in hardware, producing decoded packets rather than raw IQ. As a consequence, the standard \code{satnogs-client} pipeline (built around GNU~Radio) cannot be used as-is; the station submits decoded frames directly to the SatNOGS DB via the SiDS API. The trade-off is reduced modulation flexibility (the CC1200 must be configured to match each satellite's transmit parameters) in exchange for alignment with AetherSpace (which carries a CC1200) and lower compute requirements on the Pi 3A+~\cite{rpi3aplus}.
+
+\section{Existing Designs}
+\label{sec:existing-designs}
 
 \begin{table}[H]
     \centering
-    \begin{tabularx}{\textwidth}{llcl>{\raggedright\arraybackslash}X}
+    \small
+    \begin{tabularx}{\textwidth}{lXXXl}
         \toprule
-        System & Type & Cost (EUR) & Accuracy & Notes \\
+        System & Type & Cost (\euro{}) & Accuracy (spec) & Ref. \\
         \midrule
-        Yaesu G-5500 & Commercial & 760--900 & $\sim$1\degree\ backlash & Industry standard, potentiometer feedback \\
-        SPID RAS & Commercial & 1200--1300 & $\sim$1\degree & Also sold as Alfa-SPID \\
-        SatNOGS v3 & Open-source & 300--500 & $\sim$1\degree & 3D-printed, NEMA17 steppers, belt drive \\
-        SuperAntennaz & Open-source & $\sim$600 & $\sim$1\degree & Heavy-load stepper design \\
-        \textbf{This work} & \textbf{Open-source} & \textbf{$<$50} & \textbf{$<$0.5\degree\ EL} & \textbf{ASA 3D-printed, geared DC motors, 0--3\degree\ AZ} \\
+        Yaesu G-5500 & Commercial & 760--900 & $\sim$1\degree\ backlash, pot. feedback & \cite{yaesu-g5500} \\
+        SPID RAS / Alfa-SPID & Commercial & 1200--1300 & $\sim$1\degree & \cite{rfham-spid} \\
+        SatNOGS v3 & Open-source, stepper + belt & 300--500 & $\sim$1\degree & \cite{satnogs-v3, satnogs-v3-bom} \\
+        SuperAntennaz & Open-source, stepper & $\sim$600 & $\sim$1\degree & \cite{superantennaz} \\
+        \textbf{This work (v2)} & \textbf{Open-source, DC + gear} & \textbf{$\sim$75 rotator / $\sim$40 PCB} & \textbf{$<$0.5\degree\ EL, 0--3\degree\ AZ @ 20--70\degree} & \S\ref{sec:cost} \\
         \bottomrule
     \end{tabularx}
-    \caption{Cost comparison of satellite tracking rotator systems.}
+    \caption{Cost and accuracy comparison of satellite-tracking rotator systems. ``This work (v2)'' is the projected MOTOR\_RF\_HAT; AZ accuracy figure is measured in the 20--70\degree\ peak-elevation band (\S\ref{sec:tracking-accuracy}).}
     \label{tab:rotator-comparison}
 \end{table}
 
-\subsection{The SatNOGS v3 Rotator}
+Most university ground stations (UPSat/University of Patras~\cite{upsat}, TU Delft/Delfi-C3~\cite{tudelft-delfi}, AraMiS/Politecnico di Torino~\cite{masera2005aramis}) buy commercial rotators and focus on the RF or software layers. Custom mechanical rotator design for university CubeSat ground stations is comparatively rare; SuperAntennaz~\cite{superantennaz} is an open-source outlier targeting heavy-antenna loads ($>$10~kg) using steppers.
 
-The official SatNOGS rotator uses two NEMA17 bipolar steppers with GT2 belt reduction, controlled by an Arduino Pro Mini with A4988 or DRV8825 drivers. BOM: EUR~300--500. Known limitations:
+\section{Comparison with Hanssens (2023)}
+\label{sec:hanssens-comparison}
 
-\begin{itemize}
-    \item Steppers draw 0.8--1.5~A per phase holding current to resist back-driving---problematic for battery operation.
-    \item Low belt-drive gear ratio requires microstepping for smooth tracking, which reduces torque.
-    \item Assembly needs precise belt tensioning and shaft alignment.
-\end{itemize}
+This thesis continues the 2023 masterproef by Serge Hanssens~\cite{hanssens2023}, which surveyed the SatNOGS ecosystem, assessed hardware options (rotators, SDRs, antennas), and tested a Stepperdrive MSD-50-5.6D stepper motor driver for azimuth rotation.
 
-\subsection{University Implementations}
+Hanssens' load-bearing finding for the present thesis is that the stepper motor he tested did not deliver sufficient torque for reliable azimuth rotation under wind loading~\cite{hanssens2023}. He measured the required torque for azimuth movement on a cantilevered Yagi and concluded that a higher-torque motor or higher gear ratio was needed. This directly informed the choice in the present work of geared DC motors (FAPG36-555-EN, 516:1 internal planetary gearbox) with a further 2.667:1 external reduction, covered in \S\ref{sec:motors}.
 
-Most university ground stations (UPSat/University of Patras, TU Delft/Delfi-C3, AraMiS/Politecnico di Torino) buy commercial rotators and focus on RF or software. Few attempt custom mechanical design. A notable open-source exception is SuperAntennaz (Hadji), designed for heavy antenna loads ($>$10~kg) using stepper motors.
-
-\subsection{Comparison with Hanssens (2023)}
-
-This thesis builds on Hanssens' 2023 study, which surveyed SatNOGS, assessed antenna options, and tested a Stepperdrive MSD-50-5.6D stepper motor. His work identified that the stepper-and-belt approach required more torque than available for reliable azimuth rotation under wind loading. This informed our choice of high-torque geared DC motors with a higher gear ratio.
-
-\begin{table}[H]
-    \centering
-    \begin{tabularx}{\textwidth}{l>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
-        \toprule
-        Aspect & Hanssens (2023) & This work (2026) \\
-        \midrule
-        Rotator & Preliminary stepper test & Fully built ASA 3D-printed rotator \\
-        Motor control & Not implemented & Custom PCB: dual TB6642FG + RP2040 \\
-        Firmware & Not implemented & EasyComm firmware with PID control \\
-        Pi integration & Theoretical description & Python stack ($\sim$7200 LOC) + web dashboard \\
-        RF front-end & Not implemented & Dual CC1200 HAT (UHF + VHF) \\
-        Field deployment & Not addressed & Zero-SSH smartphone workflow \\
-        Cost analysis & Not performed & Full BOM, $<$EUR~50 rotator \\
-        Tracking & Not demonstrated & Live tracking validated ($<$0.5\degree\ EL, 0--3\degree\ AZ) \\
-        \bottomrule
-    \end{tabularx}
-    \caption{Advancement over Hanssens (2023).}
-    \label{tab:hanssens-comparison}
-\end{table}
-
-Our design combines: (a) 3D-printed deep groove ball bearings integrated into the chassis, (b) 516:1 internally geared DC motors with zero idle current, and (c) full SatNOGS compatibility via EasyComm, verified with live satellite passes.
+Hanssens' research questions were survey-oriented; the present work's are implementation-oriented, and the two studies therefore compare as scope rather than as competing results.

@@ -2,3 +2,66 @@
 \chapter{GPIO Pin Mapping}
 \label{app:pinout}
 % ══════════════════════════════════════════════════════════════════════════════
+
+\section*{Motor Controller Pico}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{llXX}
+        \toprule
+        GPIO & Function & Connected To & Notes \\
+        \midrule
+        GP2  & NeoPixel data     & WS2812B           & Relocated from GP16 on rev1 \\
+        GP4  & SPI0 MISO         & ADXL345 IMU       & \\
+        GP5  & SPI0 CSn          & ADXL345 IMU       & \\
+        GP6  & SPI0 SCK          & ADXL345 IMU       & \\
+        GP7  & SPI0 MOSI         & ADXL345 IMU       & \\
+        GP10 & Encoder AZ-B      & Motor AZ encoder  & Firmware label \code{kAzEncB} (A/B swapped for correct count direction) \\
+        GP11 & Encoder AZ-A      & Motor AZ encoder  & Firmware label \code{kAzEncA} \\
+        GP12 & Encoder EL-A      & Motor EL encoder  & \\
+        GP13 & Encoder EL-B      & Motor EL encoder  & \\
+        GP14 & AZ motor IN2      & TB6642FG U1       & \\
+        GP16 & AZ motor IN1      & TB6642FG U1       & Bodge wire from GP15 (damaged on rev1) \\
+        GP21 & EL motor PWM      & TB6642FG U2       & \\
+        GP22 & AZ motor PWM      & TB6642FG U1       & \\
+        GP27 & EL motor IN2      & TB6642FG U2       & \\
+        GP28 & EL motor IN1      & TB6642FG U2       & \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Motor controller Pico pin assignments (v1, as-deployed).}
+    \label{tab:motor-pinout}
+\end{table}
+
+\section*{RF HAT Pico}
+
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{llX}
+        \toprule
+        GPIO & Function & Connected To \\
+        \midrule
+        GP0  & UART0 TX        & Pi GPIO15 (RXD) \\
+        GP1  & UART0 RX        & Pi GPIO14 (TXD) \\
+        GP4  & NeoPixel data   & 4$\times$ WS2812B \\
+        GP5  & Buzzer PWM      & Passive piezo (via NPN/MOSFET gate) \\
+        GP6  & UHF GPIO3       & CC1200 UHF \\
+        GP7  & UHF GPIO0       & CC1200 UHF \\
+        GP8  & UHF RESET       & CC1200 UHF \\
+        GP9  & UHF GPIO2       & CC1200 UHF \\
+        GP10 & SPI1 SCLK       & CC1200 UHF \\
+        GP11 & SPI1 MOSI       & CC1200 UHF \\
+        GP12 & SPI1 MISO       & CC1200 UHF \\
+        GP13 & SPI1 CSn        & CC1200 UHF \\
+        GP16 & SPI0 MISO       & CC1200 VHF \\
+        GP17 & SPI0 CSn        & CC1200 VHF \\
+        GP18 & SPI0 SCLK       & CC1200 VHF \\
+        GP19 & SPI0 MOSI       & CC1200 VHF \\
+        GP20 & VHF RESET       & CC1200 VHF \\
+        GP21 & VHF GPIO2       & CC1200 VHF \\
+        GP22 & VHF GPIO0       & CC1200 VHF \\
+        GP26 & VHF GPIO3       & CC1200 VHF \\
+        \bottomrule
+    \end{tabularx}
+    \caption{RF HAT Pico pin assignments.}
+    \label{tab:rf-pinout}
+\end{table}
