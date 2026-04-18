@@ -3,7 +3,7 @@
 \label{app:protocol}
 % ══════════════════════════════════════════════════════════════════════════════
 
-\section*{EasyComm III (Rotator --- USB CDC serial, 115200 baud)}
+\section*{EasyComm III (Rotator: USB CDC serial, 115200 baud)}
 
 \begin{table}[H]
     \centering
@@ -31,7 +31,7 @@
     \caption{EasyComm III commands (SatNOGS variant, hamlib model 204).}
 \end{table}
 
-\section*{COBS Binary Protocol (RF HAT --- UART 115200 baud)}
+\section*{COBS Binary Protocol (RF HAT: UART 115200 baud)}
 
 Frame structure (little-endian): \code{[type, seq, len\_lo, len\_hi, payload\ldots, crc16\_lo, crc16\_hi]}, COBS-encoded with a 0x00 delimiter. CRC: CRC-16/CCITT-FALSE (polynomial 0x1021, init 0xFFFF). Responses use \code{type | 0x80}; e.g. \code{PING} (0x01) response is 0x81.
 

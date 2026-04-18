@@ -88,7 +88,7 @@ The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys
 
 \textbf{VHF.} Not populated on the assembled board; not tested.
 
-\section{Packet Reception --- Result and Interpretation}
+\section{Packet Reception: Result and Interpretation}
 \label{sec:packet-reception}
 
 As of April 2026, \textbf{no protocol-valid frames have been decoded from orbit}. Across three field-test sessions the station tracked approximately 210 satellite passes (16 on April 1 baseline with uncalibrated RSSI readout, 184 on April 9, and 10 on April 12) and captured tens of megabytes of raw binary data, but:
@@ -109,8 +109,8 @@ The April 1 session predates the RSSI-readout fix (AGC\_GAIN\_ADJUST calibration
 Two RX modes were used, selected per satellite by \code{station.py} (\S\ref{sec:rf-hat-firmware}):
 
 \begin{enumerate}
-    \item \textbf{FIFO mode} (default) --- CC1200 matches a sync word (e.g. AX.100 ASM \code{0x930B51DE}), then delivers fixed-length 255-byte chunks. If sync or modulation parameters don't match, the FIFO drains receiver noise after false sync triggers.
-    \item \textbf{Serial mode with AX.25 G3RUH decode} --- for $\geq$4800~bps FSK, the firmware switches to PIO serial capture and the G3RUH / NRZ-I / HDLC pipeline of \S\ref{sec:serial-mode}. No CRC-valid AX.25 frames were recovered from orbital data.
+    \item \textbf{FIFO mode} (default): CC1200 matches a sync word (e.g. AX.100 ASM \code{0x930B51DE}), then delivers fixed-length 255-byte chunks. If sync or modulation parameters don't match, the FIFO drains receiver noise after false sync triggers.
+    \item \textbf{Serial mode with AX.25 G3RUH decode}: for $\geq$4800~bps FSK, the firmware switches to PIO serial capture and the G3RUH / NRZ-I / HDLC pipeline of \S\ref{sec:serial-mode}. No CRC-valid AX.25 frames were recovered from orbital data.
 \end{enumerate}
 
 \subsection{Why no decoded frames}
@@ -125,7 +125,7 @@ Three factors contribute:
     \item \textbf{Link geometry.} A +14~dBm / +2~dBi CubeSat leaves negative theoretical margin at mid-elevation even with a perfect receiver.
 \end{enumerate}
 
-\subsection{What was observed --- suggestive but not diagnostic}
+\subsection{What was observed: suggestive but not diagnostic}
 
 The captures contain statistical patterns that are individually compatible with weak sub-threshold satellite reception, but each is also compatible with receiver noise or demodulator artefacts triggered by RF activity at the sync-word matcher. Both hypotheses are named explicitly below.
 

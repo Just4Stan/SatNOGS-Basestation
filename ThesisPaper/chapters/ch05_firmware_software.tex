@@ -3,7 +3,7 @@
 \label{ch:firmware-software}
 % ══════════════════════════════════════════════════════════════════════════════
 
-\section{Rotator Firmware --- PID Control}
+\section{Rotator Firmware: PID Control}
 \label{sec:rotator-pid}
 
 The closed-loop controller is a discrete-time PID at 100~Hz, executed from the main \code{for(;;)} loop on core 0 (period-gated with \code{absolute\_time\_diff\_us}, not a hardware timer). Gains and constants are set in \file{Firmware/rp2040-satnogs-rotator/src/config.h}:
@@ -69,15 +69,15 @@ Binary protocol: COBS framing + CRC-16/CCITT-FALSE over UART 115200.
 
 Key message types:
 \begin{itemize}
-    \item \code{SELECT\_RADIO} (0x40) --- switch UHF/VHF CC1200.
-    \item \code{READ/WRITE\_REG}, \code{READ/WRITE\_EXT} --- CC1200 register access.
-    \item \code{PROFILE\_BEGIN/CHUNK/APPLY} --- SmartRF profile loading (chunked, no reflash needed).
-    \item \code{SET\_STREAMING} --- enable/disable continuous RX packet forwarding.
-    \item \code{SET\_SERIAL\_MODE} (0x35) --- enable PIO-based serial bitstream capture.
-    \item \code{TX\_WRITE/SEND} --- load FIFO + transmit.
-    \item \code{BUZZER} (0x50) --- trigger patterns (ready, AOS, LOS, packet, error).
-    \item \code{PING} --- connectivity test; response is \code{PING | 0x80} (0x81), not a separate type.
-    \item \code{EVT\_RX\_DATA} (0xE0) --- asynchronous received data (firmware$\to$Pi, both FIFO and serial modes).
+    \item \code{SELECT\_RADIO} (0x40): switch UHF/VHF CC1200.
+    \item \code{READ/WRITE\_REG}, \code{READ/WRITE\_EXT}: CC1200 register access.
+    \item \code{PROFILE\_BEGIN/CHUNK/APPLY}: SmartRF profile loading (chunked, no reflash needed).
+    \item \code{SET\_STREAMING}: enable/disable continuous RX packet forwarding.
+    \item \code{SET\_SERIAL\_MODE} (0x35): enable PIO-based serial bitstream capture.
+    \item \code{TX\_WRITE/SEND}: load FIFO + transmit.
+    \item \code{BUZZER} (0x50): trigger patterns (ready, AOS, LOS, packet, error).
+    \item \code{PING}: connectivity test; response is \code{PING | 0x80} (0x81), not a separate type.
+    \item \code{EVT\_RX\_DATA} (0xE0): asynchronous received data (firmware$\to$Pi, both FIFO and serial modes).
 \end{itemize}
 
 CC1200 SPI driver: SPI1 = UHF (GP10--13), SPI0 = VHF (GP16--19), 5~MHz clock. Each on a separate SPI peripheral, so there is no bus contention.
@@ -108,8 +108,8 @@ In blind mode the CC1200 outputs samples at approximately $15\times$ the configu
 Two serial sub-modes are selected via the \code{MSG\_SET\_SERIAL\_MODE} body byte:
 
 \begin{enumerate}
-    \item \textbf{Mode 1 --- raw serial.} Demodulated bytes go to a 256-byte ring buffer, forwarded to the Pi as \code{EVT\_RX\_DATA} every 50~ms or 32~bytes. Used for blind capture of unknown framing.
-    \item \textbf{Mode 2 --- AX.25 G3RUH decode.} Each resampled bit is fed through a three-stage pipeline implemented in \file{ax25\_decode.c}:
+    \item \textbf{Mode 1: raw serial.} Demodulated bytes go to a 256-byte ring buffer, forwarded to the Pi as \code{EVT\_RX\_DATA} every 50~ms or 32~bytes. Used for blind capture of unknown framing.
+    \item \textbf{Mode 2: AX.25 G3RUH decode.} Each resampled bit is fed through a three-stage pipeline implemented in \file{ax25\_decode.c}:
     \begin{itemize}
         \item \textbf{G3RUH descrambler}: 17-bit LFSR, polynomial $x^{17} + x^{12} + 1$, reverses the AMSAT scrambler.
         \item \textbf{NRZ-I decoder}: differential to absolute.
@@ -139,11 +139,11 @@ Main orchestration, two modes: manual (\code{--sat "ISS"} or auto-pick the next 
 
 Scan mode cycles through visible satellites near peak elevation with a 30~s dwell each.
 
-\subsection*{rf\_hat.py --- CC1200Link}
+\subsection*{rf\_hat.py: CC1200Link}
 
 Threaded serial interface: COBS framing, CRC verification, SmartRF parsing, frequency calculation across 136--960~MHz, modulation config (2-FSK, 2-GFSK, 4-FSK, OOK), per-satellite radio configuration.
 
-\subsection*{dashboard.py --- HTTPS web dashboard}
+\subsection*{dashboard.py: HTTPS web dashboard}
 
 The dashboard is a self-contained HTTPS server built on the Python standard library only (no Flask, no npm). It serves a single-page app at \url{https://<pi-ip>:5000} that was developed and operated primarily on a laptop; a phone browser can also reach it (useful for feeding GPS in the field), but the layout is not optimised for small screens.
 
@@ -151,9 +151,9 @@ HTTPS is required because the browser Geolocation API needs a secure context. A 
 
 Three pages:
 \begin{itemize}
-    \item \textbf{Track} --- sky plot, live AZ/EL (commanded vs. actual), RSSI, packet count, Doppler, pass progress. Upcoming passes come from TLE propagation enriched with SatNOGS DB frequency and modulation data. Filters: band (UHF/VHF), minimum elevation, CC1200-compatible modulation.
-    \item \textbf{Control} --- numeric AZ/EL goto, six preset positions (park, zenith, N/E/S/W at 45\degree\ EL), and a CC1200 debug panel (MARC state, FIFO levels, overflow count, raw register values).
-    \item \textbf{Settings} --- GPS entry, WiFi configuration, station parameters, and the setup wizard.
+    \item \textbf{Track}: sky plot, live AZ/EL (commanded vs. actual), RSSI, packet count, Doppler, pass progress. Upcoming passes come from TLE propagation enriched with SatNOGS DB frequency and modulation data. Filters: band (UHF/VHF), minimum elevation, CC1200-compatible modulation.
+    \item \textbf{Control}: numeric AZ/EL goto, six preset positions (park, zenith, N/E/S/W at 45\degree\ EL), and a CC1200 debug panel (MARC state, FIFO levels, overflow count, raw register values).
+    \item \textbf{Settings}: GPS entry, WiFi configuration, station parameters, and the setup wizard.
 \end{itemize}
 
 The setup wizard has five steps: (1) GPS fix $\to$ Pi (typically supplied by a phone browser, which has a GPS sensor), (2) point the station north and confirm with the ``Use Phone Compass'' button, which calls \code{onboardCalibrate()} in the dashboard and sends the EasyComm \code{ZERO} command to the rotator, (3) attach the antenna (the station is level from IMU homing), (4) select receiver type, (5) ready. Tracking begins automatically after step 5.

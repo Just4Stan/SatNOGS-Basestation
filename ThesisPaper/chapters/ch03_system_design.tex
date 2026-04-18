@@ -7,9 +7,9 @@
 
 Three subsystems connected through a Raspberry Pi 3A+:
 \begin{enumerate}
-    \item \textbf{Rotator} --- 2-axis AZ/EL, DC motors, custom RP2040 motor PCB. USB CDC serial, EasyComm III.
-    \item \textbf{RF front-end} --- Pi HAT, 2$\times$ CC1200 populated only on UHF (433~MHz); VHF (144/145~MHz) path routed but not populated. Second RP2040, UART link, COBS binary protocol.
-    \item \textbf{Station computer} --- Pi runs \code{rotctld} (hamlib), \code{station.py}, \code{dashboard.py}. Pass prediction, Doppler correction, telemetry submission.
+    \item \textbf{Rotator}: 2-axis AZ/EL, DC motors, custom RP2040 motor PCB. USB CDC serial, EasyComm III.
+    \item \textbf{RF front-end}: Pi HAT, 2$\times$ CC1200 populated only on UHF (433~MHz); VHF (144/145~MHz) path routed but not populated. Second RP2040, UART link, COBS binary protocol.
+    \item \textbf{Station computer}: Pi runs \code{rotctld} (hamlib), \code{station.py}, \code{dashboard.py}. Pass prediction, Doppler correction, telemetry submission.
 \end{enumerate}
 
 Architecture keeps rotator and RF independent: either can be tested, replaced, or upgraded alone.
@@ -180,11 +180,11 @@ The v1 MotorPCB is a 4-layer KiCad~9 design with 13 hierarchical sub-sheets, JLC
 
 Components:
 \begin{itemize}
-    \item \textbf{RP2040} (Pi Pico module) --- EasyComm firmware, PID, encoder ISRs.
-    \item \textbf{2$\times$ TB6642FG}~\cite{tb6642fg} --- 50~V absolute-max / 4.5~A peak H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
-    \item \textbf{ADXL345}~\cite{adxl345} --- 3-axis accelerometer on SPI0, gravity vector for EL homing.
-    \item \textbf{Encoder inputs} --- 4 GPIO with IRQ, 4$\times$ quadrature decoding. RC filter caps removed (see \S\ref{sec:bringup}).
-    \item \textbf{NeoPixel} --- optional WS2812B status output: idle = green, tracking = blue, on-target = cyan, fault = red.
+    \item \textbf{RP2040} (Pi Pico module): EasyComm firmware, PID, encoder ISRs.
+    \item \textbf{2$\times$ TB6642FG}~\cite{tb6642fg}: 50~V absolute-max / 4.5~A peak H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
+    \item \textbf{ADXL345}~\cite{adxl345}: 3-axis accelerometer on SPI0, gravity vector for EL homing.
+    \item \textbf{Encoder inputs}: 4 GPIO with IRQ, 4$\times$ quadrature decoding. RC filter caps removed (see \S\ref{sec:bringup}).
+    \item \textbf{NeoPixel}: optional WS2812B status output: idle = green, tracking = blue, on-target = cyan, fault = red.
 \end{itemize}
 
 The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in \S\ref{sec:bringup}; the schematic's original GP15 assignment is retained only as bring-up history.

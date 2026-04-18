@@ -98,10 +98,10 @@ SatNOGS (Satellite Networked Open Ground Station) originated at Hackerspace.gr i
 The ecosystem has four components~\cite{satnogs-main, satnogs-network, satnogs-wiki}:
 
 \begin{description}
-    \item[SatNOGS Network] (\url{network.satnogs.org}) --- observation scheduling across stations based on TLE pass predictions.
-    \item[SatNOGS DB] (\url{db.satnogs.org}) --- telemetry database, accepts decoded frames over the SiDS (Simple Downlink Sharing) HTTP API.
-    \item[SatNOGS Client] --- Python daemon running on each station, polls Network for scheduled observations, drives the rotator via hamlib/\code{rotctld}, drives the SDR receiver via SoapySDR + GNU~Radio, uploads results.
-    \item[SatNOGS Rotator] --- optional reference rotator (3D-printed, NEMA17 bipolar steppers, belt drive, Arduino controller)~\cite{satnogs-rotator-fw}.
+    \item[SatNOGS Network] (\url{network.satnogs.org}): observation scheduling across stations based on TLE pass predictions.
+    \item[SatNOGS DB] (\url{db.satnogs.org}): telemetry database, accepts decoded frames over the SiDS (Simple Downlink Sharing) HTTP API.
+    \item[SatNOGS Client]: Python daemon running on each station, polls Network for scheduled observations, drives the rotator via hamlib/\code{rotctld}, drives the SDR receiver via SoapySDR + GNU~Radio, uploads results.
+    \item[SatNOGS Rotator]: optional reference rotator (3D-printed, NEMA17 bipolar steppers, belt drive, Arduino controller)~\cite{satnogs-rotator-fw}.
 \end{description}
 
 Rotator communication goes through \textbf{hamlib}~\cite{hamlib}: the \code{rotctld} daemon exposes a TCP interface on port 4533 speaking the hamlib \code{rotctl} protocol, and internally translates those commands to EasyComm III ASCII on the serial link to the controller. Any controller that speaks EasyComm III integrates without modification, as hamlib model 204~\cite{jackson1990easycomm}.
