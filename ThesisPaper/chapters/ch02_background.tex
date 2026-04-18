@@ -13,7 +13,7 @@ For a circular orbit at altitude $h$ above Earth's surface, the orbital velocity
 \end{equation}
 with $\mu = GM_\oplus = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E = 6371$~km. For $h = 400$~km: $v = \sqrt{3.986 \times 10^{14} / 6.771 \times 10^6} = 7.669$~km/s. The orbital period is
 \begin{equation}
-    T = 2\pi \sqrt{\frac{(R_E + h)^3}{\mu}} = 2\pi \sqrt{\frac{(6.771 \times 10^6)^3}{3.986 \times 10^{14}}} = 5554~\text{s} = 92.6~\text{min}.
+    T = 2\pi \sqrt{\frac{(R_E + h)^3}{\mu}} = 2\pi \sqrt{\frac{(6.771 \times 10^6)^3}{3.986 \times 10^{14}}} = 5545~\text{s} = 92.4~\text{min}.
     \label{eq:orbital-period}
 \end{equation}
 
@@ -27,7 +27,7 @@ Visible-arc geometry (the angle subtended at Earth's centre by the portion of th
 \begin{equation}
     t_{\max} = T \cdot \frac{\alpha}{\pi} \approx 10.1~\text{min at } h = 400~\text{km, zenith pass,}
 \end{equation}
-where $\alpha = \arccos(R_E / (R_E + h))$. Passes with practical elevations above 10\degree\ are shorter --- typically 5--8~min in field data (Chapter~\ref{ch:results}).
+where $\alpha = \arccos(R_E / (R_E + h))$. Passes with practical elevations above 10\degree\ are shorter, typically 5--8~min in field data (Chapter~\ref{ch:results}).
 
 The total angular rate as seen from the ground station reaches its bound at zenith:
 \begin{equation}
@@ -39,7 +39,7 @@ The \textit{azimuth} rate, however, is unbounded as a pass approaches true zenit
 \section{The AetherSpace CubeSat}
 \label{sec:aetherspace}
 
-AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. Per the specification provided by the AetherSpace team (2026-03-05): UHF downlink at 433~MHz, TX power approximately +14~dBm ($\approx$25~mW), TX antenna a turnstile or dipole with approximately 2~dBi gain, CC1200 native packet format, modulation and symbol rate not finalised at the time of writing. Previous KU Leuven work --- Surkijn and Van Elst (2022) on the Earth--satellite communication chain, Hanssens (2023) on SatNOGS ground-station options~\cite{hanssens2023} --- scoped the ground-station problem.
+AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. Per the specification provided by the AetherSpace team (2026-03-05): UHF downlink at 433~MHz, TX power approximately +14~dBm ($\approx$25~mW), TX antenna a turnstile or dipole with approximately 2~dBi gain, CC1200 native packet format, modulation and symbol rate not finalised at the time of writing. Previous KU Leuven work by Surkijn and Van Elst (2022) on the Earth--satellite communication chain and Hanssens (2023) on SatNOGS ground-station options~\cite{hanssens2023} scoped the ground-station problem.
 
 \section{Link Budget}
 \label{sec:link-budget}
@@ -117,7 +117,7 @@ EasyComm is an ASCII protocol developed by Chris Jackson (G7UPN) for antenna tra
 
 \subsection{Why a Distributed Network}
 
-A single station contacts a LEO satellite for at most $\sim$10\% of each orbit ($t_{\max}/T \approx 10.1/92.6 = 10.9\%$ at 400~km). For mission-critical telemetry, one station is insufficient; distributing stations worldwide gives near-continuous coverage. Earlier attempts --- the Japanese Ground Station Network at the University of Tokyo, and ESA's GENSO project (started 2006, cancelled by 2014) --- required homogeneous hardware and centralised coordination and did not reach a sustainable scale~\cite{hanssens2023}. SatNOGS accepts any hardware that speaks EasyComm over serial and uses an SDR receiver.
+A single station contacts a LEO satellite for at most $\sim$11\% of each orbit ($t_{\max}/T \approx 10.1/92.4 = 10.9\%$ at 400~km). For mission-critical telemetry, one station is insufficient; distributing stations worldwide gives near-continuous coverage. Earlier attempts (the Japanese Ground Station Network at the University of Tokyo, and ESA's GENSO project, started 2007 and cancelled by 2014) relied on a centralised SOAP-over-SSL software stack and did not reach a sustainable scale~\cite{hanssens2023}. SatNOGS accepts any hardware that speaks EasyComm over serial and uses an SDR receiver.
 
 \subsection{CC1200 Deviation}
 \label{sec:cc1200-deviation}

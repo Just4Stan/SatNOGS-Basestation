@@ -14,10 +14,10 @@ Slew speed was measured on a single axis, unloaded, at 24~V supply, by commandin
         \toprule
         Duty (\%) & Speed (\degree/s) & 360\degree\ time (s) \\
         \midrule
-        35 & 11.2 & 32 \\
-        55 & 18.9 & 19 \\
-        75 & 26.9 & 13 \\
-        95 & 35.0 & 10 \\
+        35 & 11.2 & 32.1 \\
+        55 & 18.9 & 19.0 \\
+        75 & 26.9 & 13.4 \\
+        95 & 35.0 & 10.3 \\
         \bottomrule
     \end{tabular}
     \caption{Slew-speed measurements, unloaded, 24~V supply.}
@@ -29,7 +29,7 @@ Linear regression over the four measured points gives slope 0.40\degree/s per \%
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/slew_speed_vs_duty.png}
-    \caption{Slew speed vs. duty cycle for a single axis, 24~V supply, unloaded. Linear fit over 35--95\,\% duty: $R^2 > 0.99$, slope $\approx$~0.40\degree/s per \% duty. 100\,\% duty trips TB6642FG overcurrent on stall and is excluded from the fit.}
+    \caption{Slew speed vs. duty cycle, single axis, 24~V, unloaded.}
     \label{fig:slew-speed}
 \end{figure}
 
@@ -47,21 +47,21 @@ In practice the slew-rate limit sets the large-signal response time; the 2.4~Hz 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/pid_step_overlay.png}
-    \caption{PID step response (90\degree\ commanded step): reference trajectory, actual position, and tracking error overlaid. Settling to deadband in $\sim$4~s, $<$0.5\degree\ overshoot.}
+    \caption{PID step response for a 90\degree\ commanded step.}
     \label{fig:pid-step-response}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/pid_error_comparison.png}
-    \caption{PID error comparison across three duty caps (75\,\%, 85\,\%, 95\,\%): error vs. time during the same 90\degree\ step. Higher duty cap reduces slew time but increases overshoot.}
+    \caption{PID error vs. time for 75\,\%, 85\,\%, and 95\,\% duty caps on the same 90\degree\ step.}
     \label{fig:pid-error-comparison}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/pid_metrics.png}
-    \caption{PID performance metrics (overshoot, settling time, steady-state error) summarised per test run.}
+    \caption{PID performance metrics per test run.}
     \label{fig:pid-metrics}
 \end{figure}
 
@@ -85,26 +85,26 @@ Tracking error was computed per pass from the CSV log (commanded AZ/EL from \cod
     \label{tab:tracking-accuracy}
 \end{table}
 
-Across passes with peak elevation in the 20\degree--70\degree\ band --- the range where the Chapter~\ref{ch:background} link budget closes --- both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:orbital-mechanics}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
+Across passes with peak elevation in the 20\degree--70\degree\ band (the range where the Chapter~\ref{ch:background} link budget closes), both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:problem-statement}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/tracking_error_vs_time.png}
-    \caption{Tracking error vs. time across a full satellite pass (commanded vs. actual AZ/EL, with error in degrees). AZ saturation near peak elevation visible as a brief spike followed by recovery.}
+    \caption{Tracking error vs. time across a full satellite pass.}
     \label{fig:tracking-error-time}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{figures/tracking_error_vs_elevation.png}
-    \caption{Tracking error vs. peak elevation (scatter, one point per pass). EL error stays $<$0.5\degree\ across all elevations; AZ error grows with peak elevation beyond $\sim$70\degree\ due to motor speed limit.}
+    \caption{Tracking error vs. peak elevation, one point per pass.}
     \label{fig:tracking-error-elevation}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{photos/allpasses.png}
-    \caption{Polar sky plot of all tracked passes from the April 9 session; rotator trajectories overlaid with colour encoding pass index.}
+    \caption{Polar sky plot of all tracked passes from the April 9 session.}
     \label{fig:allpasses}
 \end{figure}
 
@@ -134,16 +134,16 @@ The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/rssi_indoor_outdoor.png}
-    \caption{RSSI distribution indoors (lab) vs. outdoors (open field): histogram of raw CC1200 RSSI readings with AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
+    \caption{RSSI distribution indoors (lab) vs. outdoors (open field).}
     \label{fig:rssi-indoor-outdoor}
 \end{figure}
 
-\textbf{Doppler correction.} FREQOFF-based updates during the pass (no SIDLE), with a full FREQ rewrite through SIDLE used only for the initial frequency set and for large jumps. The observed $\pm$9~kHz sweep at 432~MHz matches the \S\ref{sec:doppler} prediction.
+\textbf{Doppler correction.} Full CC1200 \code{FREQ} word rewritten every 500~ms from the TLE-derived radial velocity; the \code{FREQOFF} register is read back only as a residual-error estimate. The observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum at 433~MHz predicted in \S\ref{sec:doppler} (the commanded offset is clipped at the mid-pass peak that the satellite actually reaches).
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/doppler_real_pass.png}
-    \caption{Doppler correction during a real pass: commanded FREQOFF (Hz) vs. time. The sweep is applied open-loop from TLE-derived radial velocity; no closed-loop correction from measured signal is performed.}
+    \caption{Doppler correction during a real pass: commanded FREQOFF vs. time.}
     \label{fig:doppler-real}
 \end{figure}
 
@@ -152,7 +152,7 @@ The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys
 \section{Packet Reception --- Result and Interpretation}
 \label{sec:packet-reception}
 
-As of April 2026, \textbf{no protocol-valid frames have been decoded from orbit}. Across three field-test sessions the station tracked approximately 210 satellite passes --- 16 on April 1 (baseline, RSSI readout not yet calibrated), 184 on April 9, and 10 on April 12 --- and captured tens of megabytes of raw binary data, but:
+As of April 2026, \textbf{no protocol-valid frames have been decoded from orbit}. Across three field-test sessions the station tracked approximately 210 satellite passes (16 on April 1 baseline with uncalibrated RSSI readout, 184 on April 9, and 10 on April 12) and captured tens of megabytes of raw binary data, but:
 
 \begin{itemize}
     \item Zero CRC-16/CCITT-valid HDLC frames (with or without G3RUH descrambling).
@@ -195,14 +195,14 @@ The captures contain statistical patterns that are individually compatible with 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/01_elevation_bin_rssi.png}
-    \caption{Mean peak RSSI binned by peak elevation across 62 tracked passes. Monotonic +4.2~dB rise from the 0--20\degree\ bin to the 60--90\degree\ bin.}
+    \caption{Mean peak RSSI binned by peak elevation across 62 tracked passes.}
     \label{fig:elevation-bin-rssi}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/04_negative_control.png}
-    \caption{Negative control: same binning procedure applied to the April 1 session (before RSSI calibration fix). No elevation trend, confirming the April 9/12 trend is not an artefact of the analysis itself.}
+    \caption{Negative control: same binning applied to the April 1 session, pre-calibration.}
     \label{fig:negative-control}
 \end{figure}
 
@@ -213,7 +213,7 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/07_cross_capture_match.png}
-    \caption{Cross-capture byte-match histogram for SNUGLITE-II: match length on x-axis, pair-count on y-axis, across six pairwise comparisons of four independent captures. Tail extends to 81 bytes.}
+    \caption{Cross-capture byte-match histogram for SNUGLITE-II across six pairwise comparisons.}
     \label{fig:cross-capture-match}
 \end{figure}
 
@@ -222,14 +222,14 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/09_rssi_vs_range.png}
-    \caption{RSSI vs. slant range for the six highest-dynamic-range passes. Loose $1/r^2$-compatible trend; confounded by antenna noise-temperature variation.}
+    \caption{RSSI vs. slant range for the six highest-dynamic-range passes.}
     \label{fig:rssi-vs-range}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/10_sky_coverage.png}
-    \caption{Sky coverage heatmap: RSSI colour vs. AZ/EL across all tracked passes, polar projection.}
+    \caption{Sky coverage heatmap: RSSI over AZ/EL across all tracked passes.}
     \label{fig:sky-coverage}
 \end{figure}
 
@@ -238,7 +238,7 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/evidence/06_doppler_scurve.png}
-    \caption{Doppler-correction S-curve applied during one pass: commanded FREQOFF (Hz) vs. time, showing the expected $\pm$9~kHz sweep and zero-crossing at closest approach.}
+    \caption{Doppler-correction S-curve applied during one pass.}
     \label{fig:doppler-scurve}
 \end{figure}
 
@@ -262,7 +262,7 @@ Three field sessions were conducted with the complete station on a camera tripod
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{photos/station_wide.jpg}
-    \caption{Wide shot of the deployed station in the field, showing tripod placement relative to surroundings.}
+    \caption{Wide shot of the deployed station in the field.}
     \label{fig:station-wide}
 \end{figure}
 

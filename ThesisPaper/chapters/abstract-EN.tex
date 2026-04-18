@@ -7,7 +7,7 @@ The rotator uses a 3D-printed ASA structure with integrated printed bearing race
 
 The RF front-end is a 6-layer Pi HAT carrying two TI CC1200 transceivers; the UHF (432\,MHz) path is assembled with a matching network derived from the TI CC1200EM reference, while the VHF (144/145\,MHz) path is routed but not populated.
 
-A Python stack on the Pi handles pass prediction, Doppler correction, per-satellite CC1200 reconfiguration, and SiDS telemetry submission. An HTTPS dashboard provides phone- or laptop-based field control. The station speaks standard EasyComm III over hamlib.
+A Python stack on the Pi handles pass prediction, Doppler correction, per-satellite CC1200 reconfiguration, and SiDS telemetry submission. An HTTPS dashboard provides laptop-based field control, with optional phone access. The station speaks standard EasyComm III over hamlib.
 
 Across three field sessions, approximately 210 satellite passes were tracked with a Siretta Oscar 44 Yagi. The CC1200 receive chain was validated for local test frames in short-range ground-to-ground CC1200-to-CC1200 tests but no protocol-valid frames were decoded from orbit. 
 

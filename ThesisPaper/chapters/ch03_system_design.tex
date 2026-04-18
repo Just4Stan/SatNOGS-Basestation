@@ -13,13 +13,13 @@ Three subsystems connected through a Raspberry Pi 3A+:
     \item \textbf{Station computer} --- Pi runs \code{rotctld} (hamlib), \code{station.py}, \code{dashboard.py}. Pass prediction, Doppler correction, telemetry submission.
 \end{enumerate}
 
-Architecture keeps rotator and RF independent --- either can be tested, replaced, or upgraded alone.
+Architecture keeps rotator and RF independent: either can be tested, replaced, or upgraded alone.
 
 \begin{figure}[H]
     \centering
     % TODO: draw system block diagram
     \includegraphics[width=0.9\textwidth, height=5cm, keepaspectratio]{figures/system_block_diagram.png}
-    \caption{System block diagram. Pi 3A+ as central node. USB CDC $\to$ MotorPCB (RP2040) $\to$ TB6642FG $\times$ 2 $\to$ AZ/EL motors with Hall encoders. UART \code{/dev/serial0} $\to$ RF HAT (RP2040) $\to$ dual CC1200 (UHF SPI1, VHF SPI0 unpopulated) $\to$ SMA. WiFi $\to$ phone (dashboard). 24~V input $\to$ LMR51420 buck $\to$ 5~V rail feeds Pi header and Pico VSYS; 3.3~V from the Pico onboard regulator feeds the CC1200s.}
+    \caption{System block diagram: Pi 3A+ host, USB-connected MotorPCB, UART-connected dual-CC1200 RF HAT, and 24\,V $\to$ 5\,V $\to$ 3.3\,V power tree.}
     \label{fig:system-block-diagram}
 \end{figure}
 
@@ -27,29 +27,10 @@ Architecture keeps rotator and RF independent --- either can be tested, replaced
 
 \begin{itemize}
     \item \textbf{Portability.} 1/4"-20 UNC tripod thread on the base. Field setup time measured across three sessions: approximately 4 minutes from unpacking to first tracked pass (\S\ref{sec:field-tests}).
-    \item \textbf{Zero-SSH workflow.} All field operations (GPS entry, north alignment, pass selection, park, shutdown) run through the HTTPS dashboard on the user's phone or laptop.
+    \item \textbf{Zero-SSH workflow.} All field operations (GPS entry, north alignment, pass selection, park, shutdown) run through the HTTPS dashboard. The UI targets a laptop browser; a phone browser also works for quick field tasks such as supplying a GPS fix.
     \item \textbf{Cost target.} v2 MOTOR\_RF\_HAT BOM (\S\ref{sec:cost}, Appendix~\ref{app:bom}): $\sim$€40 combined controller/RF PCB, $\sim$€75 rotator hardware, $\sim$€100 station core (excluding antenna, coax, power supply, tripod).
     \item \textbf{Licensing.} Hardware under CERN-OHL-S v2; firmware and Python stack under MIT.
 \end{itemize}
-
-\section{Power Distribution}
-\label{sec:power-distribution}
-
-Single 24~V input (bench PSU or 6S LiPo):
-\begin{itemize}
-    \item 24~V $\to$ motors directly (TB6642FG, max torque).
-    \item 24~V $\to$ 5~V (LMR51420 buck on RF HAT) $\to$ Pi (40-pin header) + Pico (VSYS, Schottky OR).
-    \item 5~V $\to$ 3.3~V (Pico onboard RT6150) $\to$ both CC1200s.
-    \item Motor controller Pico powered via USB from the Pi.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    % TODO: draw power distribution diagram
-    \includegraphics[width=0.9\textwidth, height=5cm, keepaspectratio]{figures/power_distribution_diagram.png}
-    \caption{Power distribution. 24~V input (XT30) splits to motor drivers (direct) and the LMR51420 buck $\to$ 5~V rail $\to$ Pi 40-pin header (VBUS), Pico VSYS via a Schottky OR diode $\to$ Pico onboard RT6150 $\to$ 3.3~V $\to$ both CC1200 transceivers. Decoupling caps local to each IC; LC filter on the 3.3~V rail to the RF section.}
-    \label{fig:power-distribution}
-\end{figure}
 
 \section{Mechanical Design}
 \label{sec:mechanical-design}
@@ -59,15 +40,8 @@ The rotator is designed in Onshape and printable on consumer FDM machines with a
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/rotator_hero_1.jpg}
-    \caption{Assembled 3D-printed rotator, front view. The AZ base plate houses the azimuth gear and bearing; the two side plates form the elevation frame; the hood covers the electronics bay.}
+    \caption{Assembled 3D-printed rotator, front view.}
     \label{fig:rotator-hero-front}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{photos/AZEL_control_front.png}
-    \caption{Onshape CAD render of the AZ/EL control assembly, showing gear meshing and motor placement before ASA print.}
-    \label{fig:azel-cad}
 \end{figure}
 
 \subsection{Structure}
@@ -78,7 +52,7 @@ The station mounts to any standard camera tripod through a 1/4"-20 UNC brass hea
 
 The elevation axis is a PVC pipe passing through both side plates. The elevation gear is clamped directly onto this pipe by integrated 3D-printed screw clamps. The clamp geometry lets the EL gear be slid along the pipe during assembly to set mesh with the motor pinion, without set screws or adhesives.
 
-All fasteners are M4$\times$10~mm countersunk screws for structural joints and M3$\times$8~mm for motor mounts. The assembly uses no adhesives --- every joint is either a press-fit, a screw fastener, or a clamp --- so the station disassembles for transport or repair without destructive separation.
+All fasteners are M4$\times$10~mm countersunk screws for structural joints and M3$\times$8~mm for motor mounts. The assembly uses no adhesives (every joint is either a press-fit, a screw fastener, or a clamp), so the station disassembles for transport or repair without destructive separation.
 
 \subsection{Bearings}
 
@@ -86,19 +60,19 @@ Both axes use 3D-printed deep-groove ball bearings with COTS 3~mm steel balls. T
 
 The azimuth outer race is a separate screw-in part rather than a feature printed in place because the raceway surface has to be printed flat-down on the build plate to avoid layer stairstepping on the running surface and to make sure it is circular.
 
-The trade-off is surface finish: printed races have higher $R_a$ than machined steel bearings. Two properties of the rotator keep this acceptable: (i) the operating speed at the output is bounded by the motor output divided by the external ratio --- approximately 6~RPM at 95\,\% duty (\S\ref{sec:slew-speed}) --- so contact-surface sliding velocity is low; and (ii) the bearing preload is low because the herringbone gear pair below imposes negligible axial thrust load (\S\ref{sec:gearing}). Endurance characterisation beyond the field sessions is future work.
+The trade-off is surface finish: printed races have higher $R_a$ than machined steel bearings. Two properties of the rotator keep this acceptable: (i) the operating speed at the output is bounded by the motor output divided by the external ratio, approximately 6~RPM on the AZ axis at 95\,\% duty (\S\ref{sec:slew-speed}), so contact-surface sliding velocity is low; and (ii) the bearing preload is low because the herringbone gear pair below imposes negligible axial thrust load (\S\ref{sec:gearing}). Endurance characterisation beyond the field sessions is future work.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{photos/3DP_bearings_close-up.png}
-    \caption{3D-printed deep-groove ball bearing close-up: steel 3~mm balls seated in the printed race groove, with the press-in retainer visible. The outer race is integrated directly into the chassis part.}
+    \caption{3D-printed deep-groove ball bearing close-up with 3\,mm steel balls and press-in retainer.}
     \label{fig:bearings-closeup}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/3DP_bearings_all.png}
-    \caption{Both printed bearings assembled, showing AZ base-plate race and the separate AZ inner race that must be printed flat-down for dimensional accuracy.}
+    \caption{Both printed bearings assembled, with the separate AZ inner race printed flat-down.}
     \label{fig:bearings-all}
 \end{figure}
 
@@ -136,21 +110,21 @@ Gears press-fit directly onto the motor's 6~mm D-shafts with additional set-scre
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/3DP_gears_all.png}
-    \caption{Printed gear set: double-helical (herringbone) profile with 15\degree\ helix angle, 4/3~mm module, 8~mm face width. AZ pair (15:40 teeth, 2.667:1) and EL pair (40:55 teeth, 1.375:1).}
+    \caption{Printed herringbone gear set: AZ pair (15:40, 2.667:1) and EL pair (40:55, 1.375:1).}
     \label{fig:gears-all}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/gears_cad.png}
-    \caption{Parametric CAD source of the gear profile, generated in Onshape. The integer-module choice (4/3~mm) was driven by FDM printability and gives whole-number reference diameters.}
+    \caption{Parametric CAD source of the gear profile, generated in Onshape.}
     \label{fig:gears-cad}
 \end{figure}
 
 \section{Motors}
 \label{sec:motors}
 
-The axis motor is the FAPG36-555-EN (FONEACC): a 24~V brushed DC motor with a 516:1 internal planetary gearbox~\cite{fapg36-555}. Manufacturer spec: approximately 12~RPM no-load at 24~V, nominal output torque 4~Nm, 6~mm D-shaft output. A Hall-effect quadrature encoder is mounted on the motor shaft (before the gearbox). The manufacturer datasheet specifies 12~PPR (48~CPR in 4$\times$ decode); the purchased units empirically measure as 16~PPR (64~CPR in 4$\times$ decode), verified by matching firmware encoder counts against known commanded axis rotations during bring-up. The 6~mm D-shaft press-fits directly into the printed gear.
+The axis motor is the FAPG36-555-EN (FONEACC): a 24~V brushed DC motor with a 516:1 internal planetary gearbox~\cite{fapg36-555}. Manufacturer spec: approximately 16~RPM no-load at 24~V, nominal output torque 4~Nm, 6~mm D-shaft output. A Hall-effect quadrature encoder is mounted on the motor shaft (before the gearbox). The manufacturer datasheet specifies 12~PPR (48~CPR in 4$\times$ decode); the purchased units empirically measure as 16~PPR (64~CPR in 4$\times$ decode), verified by matching firmware encoder counts against known commanded axis rotations during bring-up. The 6~mm D-shaft press-fits directly into the printed gear.
 
 \subsection{Torque budget}
 
@@ -209,45 +183,43 @@ The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in 
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=0.7\textwidth]{photos/AZEL_control_front.png}
+    \caption{KiCad 3D render of the v1 MotorPCB.}
+    \label{fig:motorpcb-v1-render}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \includegraphics[width=0.7\textwidth]{photos/motorcontrol.jpg}
-    \caption{v1 MotorPCB: assembled prototype mounted in the rotator electronics bay. RP2040 Pico module, dual TB6642FG drivers, ADXL345 IMU breakout, XT30 24~V inlet, JST motor/encoder connectors.}
+    \caption{v1 MotorPCB assembled prototype, mounted in the rotator electronics bay.}
     \label{fig:motorpcb-v1}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_front.png}
-    \caption{v2 MOTOR\_RF\_HAT front --- combined 4-layer Pi HAT merging motor control and dual-CC1200 RF front-end. Design-complete, routed, not yet fabricated at submission.}
+    \caption{v2 MOTOR\_RF\_HAT (front): 6-layer Pi HAT merging motor control and dual-CC1200 RF.}
     \label{fig:motor-rf-hat-front}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_back.png}
-    \caption{v2 MOTOR\_RF\_HAT back --- shows Pi 40-pin header footprint and mechanical mounting.}
+    \caption{v2 MOTOR\_RF\_HAT (back).}
     \label{fig:motor-rf-hat-back}
 \end{figure}
 
 \section{Bring-Up and Hardware Debugging}
 \label{sec:bringup}
 
-The first-revision motor controller PCB required several corrections during commissioning --- typical for a first prototype but instructive for the v2 design.
+The first-revision MotorPCB shipped with three defects, all fixed with bodge wires and reflected in the v2 design:
+\begin{itemize}
+    \item \textbf{Missing EL driver traces.} OUT1/OUT2 on the elevation TB6642FG were unrouted; bodged through unused NC pins (6, 11).
+    \item \textbf{Encoder RC filters (C1--C4).} 100~nF caps on the Hall-sensor lines low-passed the signal into unusability; removed. Debouncing is handled in firmware.
+    \item \textbf{AZ driver blown by bootloader cycling.} The 1200-baud bootloader trick with 24~V connected damaged the TB6642FG IN1 ESD diode and the GP15 pad; driver replaced and IN1 rerouted to GP16.
+\end{itemize}
 
-\paragraph{Missing EL driver traces.} The elevation TB6642FG (U2) had no connection between its output pins (OUT1/OUT2) and the motor connector. This was a layout error --- the traces existed in the schematic but were not routed on the PCB.
-
-\paragraph{Encoder RC filters destroyed signal integrity.} The PCB included 100~nF RC filter capacitors (C1--C4) on all four encoder input lines, intended to suppress high-frequency noise from the Hall sensors. In practice, the RC time constant introduced too much lowpassing and completely destroyed the signal. The lesson: Hall sensor outputs are clean digital signals that do not benefit from analog filtering. If noise suppression is needed, digital debouncing (minimum pulse-width validation) in firmware is the correct approach.
-
-\paragraph{AZ driver destroyed by bootloader cycling.} During firmware development, rapidly cycling the Pico into bootloader mode remotely from the Pi3 using the 1200-baud open-and-close trick (to enable bootloader wirelessly) while 24~V was connected to the motor drivers caused a transient on GP15 that forward-biased an internal ESD protection diode in the TB6642FG, shorting it to ground and permanently damaging the IC. The AZ driver was replaced, and because the damaged GP15 pad was also compromised, a bodge wire rerouted the IN1 signal to GP16.
-
-These issues are all addressed in the v2 combined board (MOTOR\_RF\_HAT, design-complete and ready to fabricate): corrected trace routing, 100\,$\Omega$ series resistors (R11--R14) on all GPIO-to-driver connections to limit transients during bootloader cycling, and the motor controller and RF front-end merged onto a single Pi HAT to eliminate the USB cable and separate power path entirely.
-
-\begin{figure}[H]
-    \centering
-    % TODO: photograph rev1 board with bodges highlighted
-    \includegraphics[width=0.7\textwidth, height=5cm, keepaspectratio]{photos/motorpcb_bodges.jpg}
-    \caption{Bodge-wire inventory on the v1 MotorPCB: AZ IN1 rerouted from damaged GP15 to GP16; EL OUT1/OUT2 traced through TB6642FG unused NC pins (6, 11); encoder RC caps (C1--C4) removed. All issues fixed natively in v2.}
-    \label{fig:motorpcb-bodges}
-\end{figure}
+The v2 MOTOR\_RF\_HAT corrects all three natively: routed EL outputs, no encoder caps, and 100\,$\Omega$ series resistors (R11--R14) on every GPIO-to-driver line. Merging the motor controller and RF front-end onto one Pi HAT also removes the USB cable and separate 5\,V path.
 
 \section{Cost}
 \label{sec:cost}
@@ -278,7 +250,7 @@ Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-pi
 
 \subsection{v2 (MOTOR\_RF\_HAT, design-complete, ready to order)}
 
-The v2 board merges motor control and RF front-end onto a single 4-layer Pi HAT. The A4950 replaces the TB6642FG (mainstream, in-stock, same footprint class), and four 100\,$\Omega$ series resistors (R11--R14) on the GPIO-to-driver lines limit transients during bootloader cycling. One RP2040 handles both motor control and RF --- the USB cable and separate 5~V path are removed. Hand assembly avoids JLCPCB's extended-part setup fee ($\sim$€18/board for the many precise RF L/C values).
+The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT. The A4950 replaces the TB6642FG (mainstream, in-stock, same footprint class), and four 100\,$\Omega$ series resistors (R11--R14) on the GPIO-to-driver lines limit transients during bootloader cycling. One RP2040 handles both motor control and RF, so the USB cable and separate 5~V path are removed. Hand assembly avoids JLCPCB's extended-part setup fee ($\sim$€18/board for the many precise RF L/C values).
 
 \begin{table}[H]
     \centering
@@ -290,7 +262,7 @@ The v2 board merges motor control and RF front-end onto a single 4-layer Pi HAT.
         Components (LCSC, incl. MOQ rounding) & 28.44 \\
         SMA connectors + 15~nH inductors (not on LCSC) & 2.00 \\
         Raspberry Pi Pico (hand-soldered) & 4.00 \\
-        Bare PCB (4-layer, JLCPCB, per board from 5-pc order) & 6.00 \\
+        Bare PCB (6-layer, JLCPCB, per board from 5-pc order) & 6.00 \\
         \textbf{PCB subtotal} & \textbf{$\sim$40} \\
         \midrule
         \multicolumn{2}{l}{\textbf{Off-board}} \\
@@ -312,10 +284,3 @@ The v2 board merges motor control and RF front-end onto a single 4-layer Pi HAT.
 \end{table}
 
 Excludes antenna, coax, power supply, and tripod (user-supplied). v2 brings the rotator BOM (PCB + motors + mechanics, excluding the Pi) to $\sim$€75, or $\sim$€40 for the combined controller/RF PCB alone. This misses a strict full-rotator €50 target but remains far below existing open-source and commercial alternatives (Table~\ref{tab:rotator-comparison}).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{figures/cost_comparison.png}
-    \caption{Cost comparison: this work (v2, projected) vs. SatNOGS v3, SPID RAS, Yaesu G-5500. Rotator-only BOM on the left axis; total station cost on the right.}
-    \label{fig:cost-comparison}
-\end{figure}
