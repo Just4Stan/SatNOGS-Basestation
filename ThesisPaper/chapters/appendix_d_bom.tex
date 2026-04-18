@@ -9,7 +9,7 @@ Component prices from the LCSC BOM tool (April 2026), hand-assembled. Full machi
 
 \section*{D.1 \ MOTOR\_RF\_HAT PCB --- on-board components}
 
-123 placed components (excluding test pads and mounting holes), 48 unique LCSC line items.
+125 placed components (excluding test pads and mounting holes), 48 unique LCSC line items.
 
 \begin{table}[H]
     \centering
@@ -18,7 +18,7 @@ Component prices from the LCSC BOM tool (April 2026), hand-assembled. Full machi
         Category & Key components & Qty & LCSC total (\euro{}) \\
         \midrule
         Capacitors & 19 values (0603/0805/1206), CC1200 matching + bypass & 71 & 7.41 \\
-        Inductors & 11 values (0603 RF + 3030 power), CC1200 matching & 16 & 1.12 \\
+        Inductors & 11 values (0603 RF + 3030 power), CC1200 matching & 17 & 1.18 \\
         Resistors & 7 values (0603) & 14 & 0.07 \\
         CC1200RHBR & UHF + VHF transceivers (C122881) & 2 & 4.43 \\
         A4950ELJTR-T & Motor drivers AZ + EL (C82404) & 2 & 1.10 \\
@@ -32,29 +32,31 @@ Component prices from the LCSC BOM tool (April 2026), hand-assembled. Full machi
         2$\times$20 Pi header & GPIO (C50980) & 1 & 0.14 \\
         JST XH 6-pin & Motor/encoder connectors (C157919) & 2 & 0.33 \\
         \midrule
-        \textbf{LCSC subtotal} & (incl. MOQ rounding for passives) & & \textbf{28.44} \\
+        Visible line-item sum & & & 16.30 \\
+        MOQ rounding uplift & (reels of 100 for 1--8-piece needs) & & 12.14 \\
+        \textbf{LCSC subtotal} & & & \textbf{28.44} \\
         \bottomrule
     \end{tabularx}
     \caption{MOTOR\_RF\_HAT on-board component cost breakdown.}
     \label{tab:bom-onboard}
 \end{table}
 
-Items not on LCSC, sourced separately:
+Items sourced outside the default LCSC reflow batch (hand-soldered or not stocked at LCSC):
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{lrr}
+    \begin{tabular}{llrr}
         \toprule
-        Component & Qty & \euro{} \\
+        Component & LCSC~\# & Qty & \euro{} \\
         \midrule
-        SMA edge-mount connectors & 2 & 1.50 \\
-        15~nH 0603 inductor & 2 & 0.50 \\
-        Raspberry Pi Pico (hand-soldered) & 1 & 4.00 \\
+        SMA edge-mount connector & (not on LCSC) & 2 & 1.50 \\
+        15~nH 0603 inductor & C23651 & 2 & 0.50 \\
+        Raspberry Pi Pico (hand-soldered) & C7203002 & 1 & 4.00 \\
         \midrule
-        \textbf{Non-LCSC subtotal} & & \textbf{6.00} \\
+        \textbf{Subtotal} & & & \textbf{6.00} \\
         \bottomrule
     \end{tabular}
-    \caption{Items sourced outside LCSC.}
+    \caption{Hand-soldered / off-batch items.}
     \label{tab:bom-non-lcsc}
 \end{table}
 
@@ -81,7 +83,7 @@ Items not on LCSC, sourced separately:
         \toprule
         Component & Source & Qty & \euro{} \\
         \midrule
-        FAPG36-555-EN motor (24~V, 516:1) & AliExpress & 2 & 16.00 \\
+        FAPG36-555-EN motor (24~V, 516:1) & AliExpress & 2 & 16.00 (line) \\
         Raspberry Pi 3 Model A+ & RPi distributor & 1 & 25.00 \\
         ASA filament ($\sim$400~g) & local & 1 & 10.00 \\
         Steel balls 3~mm (50~pcs) & AliExpress & 1 & 2.00 \\
@@ -105,7 +107,7 @@ Items not on LCSC, sourced separately:
         Subsystem & \euro{} \\
         \midrule
         MOTOR\_RF\_HAT components (LCSC) & 28.44 \\
-        Non-LCSC parts (SMA, 15~nH, Pico) & 6.00 \\
+        Hand-soldered parts (SMA, 15~nH, Pico) & 6.00 \\
         Bare PCB (6-layer) & 6.00 \\
         Off-board components & 59.50 \\
         \midrule

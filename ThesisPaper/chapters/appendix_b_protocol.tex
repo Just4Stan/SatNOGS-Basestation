@@ -34,7 +34,7 @@
 
 \section*{COBS Binary Protocol (RF HAT --- UART 115200 baud)}
 
-Frame structure: \code{[type, seq, len, payload\ldots, crc16\_hi, crc16\_lo]}, COBS-encoded with a 0x00 delimiter. CRC: CRC-16/CCITT-FALSE (polynomial 0x1021, init 0xFFFF). Responses use \code{type | 0x80} --- e.g. \code{PING} (0x01) response is 0x81.
+Frame structure (little-endian): \code{[type, seq, len\_lo, len\_hi, payload\ldots, crc16\_lo, crc16\_hi]}, COBS-encoded with a 0x00 delimiter. CRC: CRC-16/CCITT-FALSE (polynomial 0x1021, init 0xFFFF). Responses use \code{type | 0x80} --- e.g. \code{PING} (0x01) response is 0x81.
 
 \begin{table}[H]
     \centering

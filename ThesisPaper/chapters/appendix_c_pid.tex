@@ -15,7 +15,7 @@
         $K_i$ & 0.03 & Integral gain \\
         $K_d$ & 0.02 & Derivative gain \\
         Deadband & 0.05\degree & No correction below this error magnitude \\
-        Loop rate & 100~Hz & Timer interrupt on RP2040 core 1 \\
+        Loop rate & 100~Hz & Main \code{for(;;)} loop on core 0, period-gated with \code{absolute\_time\_diff\_us()} \\
         I-clamp & $\pm$5\degree$\cdot$s & Maximum integral accumulation \\
         D-filter $\alpha$ & 0.15 & First-order LPF on derivative term \\
         Duty filter $\alpha$ & 0.15 & First-order LPF on PWM output (deployed value; initially 0.05, raised during field testing) \\

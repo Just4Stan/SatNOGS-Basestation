@@ -89,7 +89,7 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
 
 The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys). Indoor readings are lower than the outdoor interference level but still well above the CC1200 datasheet sensitivity, consistent with the measured effective-sensitivity figure used in the link budget.
 
-\textbf{Doppler correction.} Full CC1200 \code{FREQ} word rewritten every 500~ms from the TLE-derived radial velocity; the \code{FREQOFF} register is read back only as a residual-error estimate. The observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum at 433~MHz predicted in \S\ref{sec:doppler} (the commanded offset is clipped at the mid-pass peak that the satellite actually reaches).
+\textbf{Doppler correction.} The Pi computes the Doppler shift every 500~ms from the TLE-derived radial velocity and sends frequency-word commands to the RF HAT; the firmware applies small deltas via \code{FREQOFF} and rewrites the full \code{FREQ}+\code{FS\_CFG} word on large or forced retunes, with \code{FREQOFF} also read back as a residual-error estimate. The observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum at 433~MHz predicted in \S\ref{sec:doppler} (the commanded offset is clipped at the mid-pass peak that the satellite actually reaches).
 
 \textbf{VHF.} Not populated on the assembled board; not tested.
 
@@ -125,7 +125,7 @@ The \S\ref{sec:link-budget} link budget shows the AetherSpace downlink is alread
 Three factors contribute:
 
 \begin{enumerate}
-    \item \textbf{Front-end noise figure and board interference.} No LNA, so the CC1200 AGC operates on antenna noise plus on-board interference (LMR51420 buck harmonics, RP2040 digital, Pi GPIO/HDMI); noise floor sits 15--20~dB above thermal.
+    \item \textbf{Front-end noise figure and board interference.} No LNA, so the CC1200 AGC operates on antenna noise plus on-board interference (LMR51420 buck harmonics, RP2040 digital, Pi GPIO/HDMI); measured noise floor sits approximately 30~dB above the expected kTB+NF limit at the CC1200 input.
     \item \textbf{Modulation parameter uncertainty.} The SatNOGS DB does not always publish exact symbol rate / deviation / sync word for non-AetherSpace satellites; any mismatch in FIFO mode produces zero output.
     \item \textbf{Link geometry.} A +14~dBm / +2~dBi CubeSat leaves negative theoretical margin at mid-elevation even with a perfect receiver.
 \end{enumerate}
@@ -185,8 +185,8 @@ Three field sessions were conducted with the complete station on a camera tripod
 The canonical link-budget table is in \S\ref{sec:link-budget}. The measurement-derived numbers that tie it to this chapter:
 
 \begin{itemize}
-    \item Measured effective noise floor on the assembled RF HAT: \textbf{$-$100 to $-$107~dBm}, depending on antenna pointing (cold sky vs. horizon). This is 15--20~dB above the $-$127~dBm thermal baseline and is attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) and antenna noise temperature. The conservative $-$105~dBm figure used in the measured-margin column of Table~\ref{tab:link-budget} is taken from this distribution.
-    \item An SPF5189Z-class LNA mast-mounted at the antenna feed reduces the system noise figure to approximately 0.7~dB via the Friis cascade and, by dominating the front-end gain, lifts the CC1200 AGC above the measured board-level noise floor. Estimated effective sensitivity with LNA: approximately $-$125~dBm (a 20~dB improvement on the current measurement), moving the AetherSpace 30\degree/600~km link margin from $-$20.7~dB measured to approximately 0~dB.
+    \item Measured effective noise floor at the CC1200 input on the assembled RF HAT: \textbf{approximately $-$96~dBm} (canonical figure from \file{captures/evidence/signal\_evidence.md}). This is approximately 30~dB above the expected kTB+NF limit of $\sim$$-$127~dBm and is attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) and antenna noise temperature. Pure thermal kTB at 290~K for the CC1200 channel bandwidth is $\sim$$-$134~dBm; the $\sim$$-$127~dBm figure already folds in the CC1200 noise figure.
+    \item A mast-mounted LNA at the antenna feed contributes two compounding improvements via the Friis cascade: $\sim$6~dB from replacing the receiver noise figure with the LNA's and $\sim$14~dB by lifting antenna-referred signal above the board-level floor before it re-enters the CC1200, for a total of $\sim$20~dB. This would move the AetherSpace 30\degree/600~km link margin from the measured $\sim$$-$21~dB towards break-even.
     \item A higher-gain Yagi contributes additively but is secondary: the dominant gap is the missing front-end gain, not antenna gain.
 \end{itemize}
 
@@ -200,7 +200,7 @@ Four firmware/software defects were diagnosed during field sessions and fixed in
     \item \textbf{AZ integral windup after zenith crossing.} When the AZ axis saturated during a high-rate zenith crossing, the PID integral accumulated a large error; after the satellite descended and the rate dropped, the integral fought the proportional term and oscillated. Fixed with the saturation-based anti-windup described in \S\ref{sec:rotator-pid}: the integral stops accumulating when $|u| \geq 0.95$ and the error sign would grow it further.
     \item \textbf{Duty output filter too slow.} The PWM output LPF at $\alpha = 0.05$ (time constant 0.2~s) made the AZ axis unresponsive at tracking rates below $\sim$1\degree/s. $\alpha$ was raised to 0.15 (0.067~s) with no observed increase in motor-current transients; this is the deployed setting used throughout \S\ref{sec:pid-step}.
     \item \textbf{Doppler base-frequency compounding.} A defect in \code{set\_frequency()} overwrote the per-satellite base frequency with the Doppler-corrected value, so each successive 2~Hz update accumulated on top of the last correction. Fixed by introducing a separate \code{uhf\_base\_freq\_hz} variable that holds the satellite's nominal frequency constant across the pass, with the Doppler offset applied only when writing the CC1200 FREQ/FREQOFF registers.
-    \item \textbf{Rotator socket timeout.} The TCP \code{set\_position()} call to \code{rotctld} blocked up to 5~s on the receive side, limiting effective tracking rate. Reduced to 0.5~s with fire-and-forget sends, plus a 15~s keepalive ping during AOS wait to prevent the firmware's 30~s command timeout from triggering. Implementation in \code{station.py}.
+    \item \textbf{Rotator socket timeout.} The TCP \code{set\_position()} call to \code{rotctld} blocked up to 5~s on the receive side, limiting effective tracking rate. Reduced to 0.5~s with fire-and-forget sends, plus a 15~s keepalive ping during AOS wait to keep the socket responsive. Implementation in \code{station.py}.
 \end{itemize}
 
 \section{Cost Comparison}

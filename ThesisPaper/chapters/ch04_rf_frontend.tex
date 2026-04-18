@@ -63,18 +63,18 @@ GPIO11 & SPI (UHF) MOSI & CC1200 UHF SI \\
 GPIO12 & SPI (UHF) MISO & CC1200 UHF SO \\
 GPIO13 & SPI (UHF) CS   & CC1200 UHF \texttt{\textasciitilde CS} \\
 GPIO8  & UHF reset      & CC1200 UHF \texttt{\textasciitilde RESET} \\
-GPIO7  & UHF GDO0       & CC1200 UHF GPIO0 \\
-GPIO9  & UHF GDO2       & CC1200 UHF GPIO2 \\
-GPIO6  & UHF GDO3       & CC1200 UHF GPIO3 \\
+GPIO7  & UHF GPIO0      & CC1200 UHF GPIO0 \\
+GPIO9  & UHF GPIO2      & CC1200 UHF GPIO2 \\
+GPIO6  & UHF GPIO3      & CC1200 UHF GPIO3 \\
 \hline
 GPIO18 & SPI (VHF) SCLK & CC1200 VHF SCLK \\
 GPIO19 & SPI (VHF) MOSI & CC1200 VHF SI \\
 GPIO16 & SPI (VHF) MISO & CC1200 VHF SO \\
 GPIO17 & SPI (VHF) CS   & CC1200 VHF \texttt{\textasciitilde CS} \\
 GPIO20 & VHF reset      & CC1200 VHF \texttt{\textasciitilde RESET} \\
-GPIO22 & VHF GDO0       & CC1200 VHF GPIO0 \\
-GPIO21 & VHF GDO2       & CC1200 VHF GPIO2 \\
-GPIO26 & VHF GDO3       & CC1200 VHF GPIO3 \\
+GPIO22 & VHF GPIO0      & CC1200 VHF GPIO0 \\
+GPIO21 & VHF GPIO2      & CC1200 VHF GPIO2 \\
+GPIO26 & VHF GPIO3      & CC1200 VHF GPIO3 \\
 \hline
 \end{tabular}
 \label{tab:rp2040_pinout}
@@ -93,7 +93,7 @@ The RF PCB employs two CC1200 transceivers to enable dual-band operation. Each t
 
 The use of two dedicated transceivers eliminates the need for RF switching networks, simplifying the signal path and avoiding additional insertion losses.
 
-Key control and interface signals include SPI communication lines, interrupt outputs (GDO pins), and device control signals such as reset.
+Key control and interface signals include SPI communication lines, interrupt outputs (the CC1200 GPIO pins), and device control signals such as reset.
 
 This independent operation allows simultaneous configuration and rapid switching between frequency bands at the system level.
 
@@ -153,7 +153,7 @@ The observed DC supply voltage was approximately \textbf{[X.XX\,V]}. The measure
 
 No significant voltage drops or disturbances were observed that could affect the stability of the RF transceivers. Furthermore, the system demonstrated reliable communication during operation, indicating that the supply quality was sufficient for the intended application.
 
-These results suggest that, despite the use of a switching regulator, the implemented power distribution network, in combination with local decoupling, provides adequate noise suppression for this prototype. For future iterations, the use of a dedicated low-noise LDO for the RF section may be considered to further improve supply integrity and RF performance.
+These results scope the 3.3\,V supply rail at the CC1200 pins to within the transceiver's supply-ripple requirements. In-band RF noise at the antenna (characterised in \S\ref{sec:packet-reception}) is a separate concern driven by board-level radiated/conducted interference, not by supply-rail quality; the principal mitigation is a mast-mounted LNA (\S\ref{sec:future-work}). For future iterations, a dedicated low-noise LDO on the RF section may be considered to further improve supply integrity.
 
 \subsection{Summary}
 \label{subsec:rf_summary}

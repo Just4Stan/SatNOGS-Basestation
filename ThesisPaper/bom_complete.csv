@@ -64,7 +64,7 @@ PCB,Y1/Y2,40MHz crystal,2,3225,C5380316,0.058,0.12,LCSC,
 # Components (LCSC BOM tool): EUR 28.44 (incl. MOQ rounding)
 # SMA + 15nH (not on LCSC):  EUR  2.00
 # Pi Pico:                    EUR  4.00
-# Bare PCB (4-layer):         EUR  6.00
+# Bare PCB (6-layer):         EUR  6.00
 # PCB TOTAL:                  EUR 40.44
 # ═══════════════════════════════════════════════════════════════════════════
 # Off-board components — per station
@@ -84,7 +84,7 @@ Off-board,—,ADXL345 IMU breakout,1,—,—,1.500,1.50,AliExpress,
 # - LCSC component prices from BOM tool upload, April 2026
 # - MOQ inflation included (buy 100 passives when 1 needed)
 # - Hand-assembled, no JLCPCB PCBA fees
-# - Bare PCB: 4-layer, JLCPCB, 5-pc order
+# - Bare PCB: 6-layer, JLCPCB, 5-pc order
 # - Excludes: antenna, coax, 24V power supply, tripod (user-supplied)
 # - 3 items backordered on LCSC at time of lookup
 # - Combined MOTOR_RF_HAT board (motor control + RF on single Pi HAT)

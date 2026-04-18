@@ -147,9 +147,9 @@ Main orchestration, two modes: manual (\code{--sat "ISS"} or auto-pick the next 
     \item Pre-position rotator to AOS azimuth.
     \item Stream AZ/EL to \code{rotctld} at 10~Hz.
     \item Configure the CC1200 for the satellite's frequency/modulation from the local profile DB, falling back to the SatNOGS DB API.
-    \item Apply Doppler correction at 2~Hz by writing the full CC1200 \code{FREQ} word; the \code{FREQOFF} register is read back only as a residual-error estimate.
-    \item Drain RX packets and log telemetry (position, RSSI, freq, Doppler, range) to CSV at 1~Hz.
-    \item Write \file{\textasciitilde/.station\_status.json} at 1~Hz for the dashboard.
+    \item Compute Doppler shift at 2~Hz from the TLE radial-velocity prediction and send a frequency-word command to the RF HAT. Firmware applies small deltas via \code{FREQOFF} and rewrites the full \code{FREQ}+\code{FS\_CFG} word on large or forced retunes; \code{FREQOFF} is also read back as a residual-error estimate.
+    \item Drain RX packets and log telemetry (position, RSSI, freq, Doppler, range) to CSV at 5~Hz.
+    \item Write \file{\textasciitilde/.station\_status.json} at 5~Hz for the dashboard.
 \end{enumerate}
 
 Scan mode cycles through visible satellites near peak elevation with a 30~s dwell each.
@@ -171,7 +171,7 @@ Three pages:
     \item \textbf{Settings} --- GPS entry, WiFi configuration, station parameters, and the setup wizard.
 \end{itemize}
 
-The setup wizard has five steps: (1) GPS fix $\to$ Pi (typically supplied by a phone browser, which has a GPS sensor), (2) point the station north and confirm with the ``Use Phone Compass'' button (which calls \code{onboardCalibrate()} over the EasyComm socket), (3) attach the antenna (the station is level from IMU homing), (4) select receiver type, (5) ready. Tracking begins automatically after step 5.
+The setup wizard has five steps: (1) GPS fix $\to$ Pi (typically supplied by a phone browser, which has a GPS sensor), (2) point the station north and confirm with the ``Use Phone Compass'' button, which calls \code{onboardCalibrate()} in the dashboard and sends the EasyComm \code{ZERO} command to the rotator, (3) attach the antenna (the station is level from IMU homing), (4) select receiver type, (5) ready. Tracking begins automatically after step 5.
 
 \begin{figure}[H]
     \centering
@@ -222,7 +222,7 @@ The deployment sequence, measured at $\sim$4~minutes from unpacking to first tra
     \item End of session $\to$ \code{PARK} $\to$ shutdown $\to$ wait 10~s $\to$ unplug.
 \end{enumerate}
 
-No laptop or SSH is used in the field.
+The browser runs on a laptop (primary) or phone; SSH is not used.
 
 \begin{figure}[H]
     \centering

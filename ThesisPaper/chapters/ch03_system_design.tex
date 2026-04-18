@@ -55,9 +55,7 @@ All fasteners are M4$\times$10~mm countersunk screws for structural joints and M
 
 \subsection{Bearings}
 
-Both axes use 3D-printed deep-groove ball bearings with COTS 3~mm steel balls. The outer race is integrated into the chassis part (base plate for AZ, side plate for EL); the inner race is a separate ring and is also part of the connecting element, like the main rotating disk for AZ; a press-in 3D-printed retainer holds the ball complement.
-
-The azimuth outer race is a separate screw-in part rather than a feature printed in place because the raceway surface has to be printed flat-down on the build plate to avoid layer stairstepping on the running surface and to make sure it is circular.
+Both axes use 3D-printed deep-groove ball bearings with COTS 3~mm steel balls. The elevation outer race is printed in place into the side plate. The azimuth outer race is a separate screw-in part: the raceway has to be printed flat-down on the build plate to avoid layer stairstepping on the running surface, which prevents printing it as a feature of the base plate. Inner races are separate rings that double as the rotating element (the main disk for AZ); a press-in 3D-printed retainer holds the ball complement.
 
 The trade-off is surface finish: printed races have higher $R_a$ than machined steel bearings. Two properties of the rotator keep this acceptable: (i) the operating speed at the output is bounded by the motor output divided by the external ratio, approximately 6~RPM on the AZ axis at 95\,\% duty (\S\ref{sec:slew-speed}), so contact-surface sliding velocity is low; and (ii) the bearing preload is low because the herringbone gear pair below imposes negligible axial thrust load (\S\ref{sec:gearing}). Endurance characterisation beyond the field sessions is future work.
 
@@ -153,12 +151,12 @@ No slip ring is fitted on the azimuth axis. The firmware tracks cumulative rotat
 \section{Motor Controller PCB}
 \label{sec:rotator_pcb}
 
-KiCad 9, 4-layer, 13 hierarchical sub-sheets. JLCPCB assembled, LCSC basic parts.
+The v1 MotorPCB is a 4-layer KiCad~9 design with 13 hierarchical sub-sheets, JLCPCB assembled from LCSC basic parts.
 
 Components:
 \begin{itemize}
     \item \textbf{RP2040} (Pi Pico module) --- EasyComm firmware, PID, encoder ISRs.
-    \item \textbf{2$\times$ TB6642FG}~\cite{tb6642fg} --- 28~V/3.5~A H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
+    \item \textbf{2$\times$ TB6642FG}~\cite{tb6642fg} --- 50~V absolute-max / 4.5~A peak H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
     \item \textbf{ADXL345}~\cite{adxl345} --- 3-axis accelerometer on SPI0, gravity vector for EL homing.
     \item \textbf{Encoder inputs} --- 4 GPIO with IRQ, 4$\times$ quadrature decoding. RC filter caps removed (see \S\ref{sec:bringup}).
     \item \textbf{NeoPixel} --- optional WS2812B status output: idle = green, tracking = blue, on-target = cyan, fault = red.
@@ -249,7 +247,7 @@ Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-pi
 
 \subsection{v2 (MOTOR\_RF\_HAT, design-complete, ready to order)}
 
-The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT. The A4950 replaces the TB6642FG (mainstream, in-stock, same footprint class), and four 100\,$\Omega$ series resistors (R11--R14) on the GPIO-to-driver lines limit transients during bootloader cycling. One RP2040 handles both motor control and RF, so the USB cable and separate 5~V path are removed. Hand assembly avoids JLCPCB's extended-part setup fee ($\sim$€18/board for the many precise RF L/C values).
+The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT. The A4950 (SOIC-8-EP) replaces the TB6642FG (HSOP-16) for availability --- the TB6642FG went out of stock at JLCPCB during the project --- and four 100\,$\Omega$ series resistors (R11--R14) on the GPIO-to-driver lines limit transients during bootloader cycling. One RP2040 handles both motor control and RF, so the USB cable and separate 5~V path are removed. Hand assembly avoids JLCPCB's extended-part setup fee ($\sim$€18/board for the many precise RF L/C values).
 
 \begin{table}[H]
     \centering

@@ -9,7 +9,7 @@ The RF front-end is a 6-layer Pi HAT carrying two TI CC1200 transceivers; the UH
 
 A Python stack on the Pi handles pass prediction, Doppler correction, per-satellite CC1200 reconfiguration, and SiDS telemetry submission. An HTTPS dashboard provides laptop-based field control, with optional phone access. The station speaks standard EasyComm III over hamlib.
 
-Across three field sessions, approximately 210 satellite passes were tracked with a Siretta Oscar 44 Yagi. The CC1200 receive chain was validated for local test frames in short-range ground-to-ground CC1200-to-CC1200 tests but no protocol-valid frames were decoded from orbit. 
+Across three field sessions, approximately 210 satellite passes were tracked with a Siretta Oscar 44 Yagi. The CC1200 receive chain was validated for local test frames in short-range ground-to-ground CC1200-to-CC1200 tests but no protocol-valid frames were decoded from orbit. The link-budget analysis identifies a mast-mounted LNA as the dominant remaining sensitivity gap. The v2 MOTOR\_RF\_HAT (combined controller/RF board) is design-complete but not yet fabricated at submission.
 
 
 
