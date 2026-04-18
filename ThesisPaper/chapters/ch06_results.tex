@@ -26,13 +26,6 @@ Slew speed was measured on a single axis, unloaded, at 24~V supply, by commandin
 
 Linear regression over the four measured points gives slope 0.40\degree/s per \% duty, $R^2 > 0.99$. 100\,\% duty was tested separately and trips the TB6642FG overcurrent protection on motor stall, so it is not included in the fit. The 35\degree/s ceiling at 95\,\% duty exceeds the total angular rate $\dot{\theta}_{\max} \approx 1.1$\degree/s derived in \S\ref{sec:orbital-mechanics} by a factor of approximately 32. It does not cover the instantaneous \textit{azimuth} rate during near-zenith passes (which can exceed 10\degree/s for a few seconds); \S\ref{sec:tracking-accuracy} reports the resulting AZ tracking error during such passes.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/slew_speed_vs_duty.png}
-    \caption{Slew speed vs. duty cycle, single axis, 24~V, unloaded.}
-    \label{fig:slew-speed}
-\end{figure}
-
 \section{PID Step Response}
 \label{sec:pid-step}
 
@@ -49,20 +42,6 @@ In practice the slew-rate limit sets the large-signal response time; the 2.4~Hz 
     \includegraphics[width=0.8\textwidth]{figures/pid_step_overlay.png}
     \caption{PID step response for a 90\degree\ commanded step.}
     \label{fig:pid-step-response}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/pid_error_comparison.png}
-    \caption{PID error vs. time for 75\,\%, 85\,\%, and 95\,\% duty caps on the same 90\degree\ step.}
-    \label{fig:pid-error-comparison}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/pid_metrics.png}
-    \caption{PID performance metrics per test run.}
-    \label{fig:pid-metrics}
 \end{figure}
 
 \section{Satellite Tracking Accuracy}
@@ -87,27 +66,6 @@ Tracking error was computed per pass from the CSV log (commanded AZ/EL from \cod
 
 Across passes with peak elevation in the 20\degree--70\degree\ band (the range where the Chapter~\ref{ch:background} link budget closes), both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:problem-statement}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{figures/tracking_error_vs_time.png}
-    \caption{Tracking error vs. time across a full satellite pass.}
-    \label{fig:tracking-error-time}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{figures/tracking_error_vs_elevation.png}
-    \caption{Tracking error vs. peak elevation, one point per pass.}
-    \label{fig:tracking-error-elevation}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{photos/allpasses.png}
-    \caption{Polar sky plot of all tracked passes from the April 9 session.}
-    \label{fig:allpasses}
-\end{figure}
-
 \section{RF Front-End Measurements}
 \label{sec:rf-measurements}
 
@@ -131,21 +89,7 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
 
 The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys). Indoor readings are lower than the outdoor interference level but still well above the CC1200 datasheet sensitivity, consistent with the measured effective-sensitivity figure used in the link budget.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/rssi_indoor_outdoor.png}
-    \caption{RSSI distribution indoors (lab) vs. outdoors (open field).}
-    \label{fig:rssi-indoor-outdoor}
-\end{figure}
-
 \textbf{Doppler correction.} Full CC1200 \code{FREQ} word rewritten every 500~ms from the TLE-derived radial velocity; the \code{FREQOFF} register is read back only as a residual-error estimate. The observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum at 433~MHz predicted in \S\ref{sec:doppler} (the commanded offset is clipped at the mid-pass peak that the satellite actually reaches).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/doppler_real_pass.png}
-    \caption{Doppler correction during a real pass: commanded FREQOFF vs. time.}
-    \label{fig:doppler-real}
-\end{figure}
 
 \textbf{VHF.} Not populated on the assembled board; not tested.
 
@@ -192,39 +136,11 @@ The captures contain statistical patterns that are individually compatible with 
 
 \paragraph{A. Elevation-binned mean RSSI (suggestive).} Grouping 62 tracked passes by peak elevation, mean peak RSSI increases monotonically by +4.2~dB from the 0--20\degree\ bin to the 60--90\degree\ bin. Weak satellite RF entering the front end at higher elevations is one possible explanation. However, the dataset is also confounded by pointing-dependent antenna temperature, local 433~MHz interference, AGC behaviour, and pass-selection effects; a passive antenna pointed at cold sky would normally lower the noise floor relative to the horizon, so this trend cannot be treated as proof of satellite reception without calibrated controls.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/evidence/01_elevation_bin_rssi.png}
-    \caption{Mean peak RSSI binned by peak elevation across 62 tracked passes.}
-    \label{fig:elevation-bin-rssi}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/evidence/04_negative_control.png}
-    \caption{Negative control: same binning applied to the April 1 session, pre-calibration.}
-    \label{fig:negative-control}
-\end{figure}
-
 Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 
 \paragraph{B. Cross-capture byte matching on SNUGLITE-II (suggestive, inconclusive).} Four independent SNUGLITE-II captures contain shared subsequences up to 81 bytes long. Two hypotheses are compatible: (i) repeated beacon frames captured at different orbital points, and (ii) a CC1200 demodulator/idle pattern emitted repeatedly at false sync triggers. The April 9 log explicitly identifies a 99-byte CC1200 idle pattern appearing identically across all satellites at all frequencies; the SNUGLITE-II matches have not yet been shown to differ structurally from this idle pattern, so (ii) is not excluded.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/evidence/07_cross_capture_match.png}
-    \caption{Cross-capture byte-match histogram for SNUGLITE-II across six pairwise comparisons.}
-    \label{fig:cross-capture-match}
-\end{figure}
-
 \paragraph{C. Pass-profile RSSI range (weak).} Top passes show 17--29~dB RSSI variation from AOS to peak to LOS. This is loosely consistent with $1/r^2$ path-loss modulation of a real signal, but it is also consistent with antenna noise-temperature variation as the beam sweeps across ground and sky. Not diagnostic.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/evidence/09_rssi_vs_range.png}
-    \caption{RSSI vs. slant range for the six highest-dynamic-range passes.}
-    \label{fig:rssi-vs-range}
-\end{figure}
 
 \begin{figure}[H]
     \centering
@@ -294,16 +210,17 @@ The v2 MOTOR\_RF\_HAT BOM (from \S\ref{sec:cost}) compared against commercial an
 
 \begin{table}[H]
     \centering
-    \begin{tabularx}{\textwidth}{Xlll}
+    \small
+    \begin{tabular}{@{}llll@{}}
         \toprule
-        System & Type & Rotator (\euro{}) & Total incl. station computer (\euro{}) \\
+        System & Type & Rotator (\euro{}) & +Pi (\euro{}) \\
         \midrule
-        Yaesu G-5500 & Commercial & 760--900 & 1200+ \\
-        SPID RAS & Commercial & 1200--1300 & 1800+ \\
-        SatNOGS v3 & Open-source (stepper + belt) & 300--500 & 600+ \\
-        \textbf{This work --- v2 MOTOR\_RF\_HAT (design-complete)} & \textbf{Open-source (DC + gear)} & \textbf{$\sim$75} & \textbf{$\sim$100} \\
+        Yaesu G-5500   & Commercial    & 760--900   & 1200+ \\
+        SPID RAS       & Commercial    & 1200--1300 & 1800+ \\
+        SatNOGS v3     & Stepper, belt & 300--500   & 600+ \\
+        \textbf{This work (v2)} & \textbf{DC + gears} & \textbf{$\sim$75} & \textbf{$\sim$100} \\
         \bottomrule
-    \end{tabularx}
-    \caption{Cost comparison vs. commercial and open-source alternatives. v2 has not been fabricated at the time of writing; the €75/€100 figures are BOM projections based on current LCSC and JLCPCB pricing (April 2026).}
+    \end{tabular}
+    \caption{Cost comparison. v2 is design-complete but not yet fabricated; $\sim$\euro{}75/\euro{}100 are BOM projections (LCSC + JLCPCB, April 2026).}
     \label{tab:cost-comparison}
 \end{table}

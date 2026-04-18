@@ -207,14 +207,6 @@ The station is registered as station 4712 (``Aether-Basestation'') on \url{netwo
 
 Because the CC1200 emits decoded packets rather than raw IQ, \code{satnogs-client} (GNU~Radio + SoapySDR) cannot be used as-is; frames are submitted directly to the SatNOGS DB over the SiDS API. The station therefore appears ``offline'' on the network map (no job-polling heartbeat) but still contributes telemetry on decode. The rationale for this trade-off is covered in \S\ref{sec:problem-statement} and \S\ref{sec:cc1200-deviation}.
 
-\begin{figure}[H]
-    \centering
-    % TODO: draw diagram
-    \includegraphics[width=0.95\textwidth, height=6cm, keepaspectratio]{figures/station_dataflow_diagram.png}
-    \caption{\code{station.py} data flow from TLE propagation to rotator, CC1200, and dashboard.}
-    \label{fig:station-dataflow}
-\end{figure}
-
 \section{Field Deployment Workflow}
 \label{sec:field-deployment}
 
@@ -231,21 +223,6 @@ The deployment sequence, measured at $\sim$4~minutes from unpacking to first tra
 \end{enumerate}
 
 No laptop or SSH is used in the field.
-
-\begin{figure}[H]
-    \centering
-    % TODO: draw diagram
-    \includegraphics[width=0.85\textwidth, height=5cm, keepaspectratio]{figures/field_deployment_workflow.png}
-    \caption{Field deployment workflow from tripod placement to auto-tracking.}
-    \label{fig:field-deployment}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{photos/station_whole_setup.jpg}
-    \caption{Station deployed in the field, April 9 session.}
-    \label{fig:station-deployed}
-\end{figure}
 
 \begin{figure}[H]
     \centering

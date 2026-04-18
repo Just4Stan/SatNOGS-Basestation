@@ -132,18 +132,18 @@ This thesis substitutes a CC1200 hardware packet modem for the SDR front-end. Th
 \begin{table}[H]
     \centering
     \small
-    \begin{tabularx}{\textwidth}{lXXXl}
+    \begin{tabular}{@{}lllll@{}}
         \toprule
-        System & Type & Cost (\euro{}) & Accuracy (spec) & Ref. \\
+        System & Type & Cost (\euro{}) & Accuracy & Ref. \\
         \midrule
-        Yaesu G-5500 & Commercial & 760--900 & $\sim$1\degree\ backlash, pot. feedback & \cite{yaesu-g5500} \\
-        SPID RAS / Alfa-SPID & Commercial & 1200--1300 & $\sim$1\degree & \cite{rfham-spid} \\
-        SatNOGS v3 & Open-source, stepper + belt & 300--500 & $\sim$1\degree & \cite{satnogs-v3, satnogs-v3-bom} \\
-        SuperAntennaz & Open-source, stepper & $\sim$600 & $\sim$1\degree & \cite{superantennaz} \\
-        \textbf{This work (v2)} & \textbf{Open-source, DC + gear} & \textbf{$\sim$75 rotator / $\sim$40 PCB} & \textbf{$<$0.5\degree\ EL, 0--3\degree\ AZ @ 20--70\degree} & \S\ref{sec:cost} \\
+        Yaesu G-5500         & Commercial     & 760--900   & $\sim$1\degree & \cite{yaesu-g5500} \\
+        SPID RAS             & Commercial     & 1200--1300 & $\sim$1\degree & \cite{rfham-spid} \\
+        SatNOGS v3           & Stepper, belt  & 300--500   & $\sim$1\degree & \cite{satnogs-v3, satnogs-v3-bom} \\
+        SuperAntennaz        & Stepper        & $\sim$600  & $\sim$1\degree & \cite{superantennaz} \\
+        \textbf{This work (v2)} & \textbf{DC + gears} & \textbf{$\sim$75} & \textbf{$<$0.5\degree\ EL / 0--3\degree\ AZ}$^\star$ & \S\ref{sec:cost} \\
         \bottomrule
-    \end{tabularx}
-    \caption{Cost and accuracy comparison of satellite-tracking rotator systems. ``This work (v2)'' is the projected MOTOR\_RF\_HAT; AZ accuracy figure is measured in the 20--70\degree\ peak-elevation band (\S\ref{sec:tracking-accuracy}).}
+    \end{tabular}
+    \caption{Rotator comparison. All open-source entries except the two commercial units. $^\star$AZ error excludes near-zenith passes where the required AZ rate exceeds the motor slew (\S\ref{sec:tracking-accuracy}). v2 PCB-only BOM is $\sim$\euro{}40.}
     \label{tab:rotator-comparison}
 \end{table}
 
