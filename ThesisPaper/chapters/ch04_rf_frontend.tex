@@ -2,11 +2,6 @@
 \chapter{RF Front-End}
 \label{ch:rf-frontend}
 % ══════════════════════════════════════════════════════════════════════════════
-%
-% This chapter combines:
-%   §1 RF PCB Design          — formerly ch05 §5.1 (Robbe)
-%   §2 RF PCB Layout          — formerly ch08 §1   (Robbe)
-%   §3 RF Matching Network    — formerly ch08 §2   (Robbe)
 
 \section{RF PCB Design}
 
@@ -19,7 +14,7 @@ The RF PCB is based on a microcontroller-controlled dual-transceiver architectur
 The design consists of the following functional blocks:
 
 \begin{itemize}
-\item A rp2040 based microcontroller for system control and data handling
+\item An RP2040-based microcontroller for system control and data handling
 \item Two RF transceivers (VHF and UHF)
 \item Dedicated SPI communication interfaces
 \item A UART interface to the Raspberry Pi host
@@ -30,7 +25,7 @@ Figure~\ref{fig:motor-rf-hat-front} (Chapter~\ref{ch:system-design}) shows the a
 
 \subsection{Microcontroller Subsystem}
 
-The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040. This device acts as the central control unit of the RF system.
+The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040 \cite{rp2040ds}. This device acts as the central control unit of the RF system.
 
 Its responsibilities include:
 
@@ -41,7 +36,7 @@ Its responsibilities include:
 \item Control of auxiliary signals such as chip select and interrupt lines
 \end{itemize}
 
-The RP2040 was selected due to its dual-core architecture and availability of multiple independent SPI peripherals, enabling parallel communication with both RF transceivers without bus arbitration. Compared to typical single-SPI microcontrollers, this reduces firmware complexity and improves timing determinism.
+The RP2040 was selected due to its dual-core architecture and availability of two independent hardware SPI peripherals, enabling independent communication with both RF transceivers without bus arbitration \cite{rp2040ds}. Compared to typical single-SPI microcontrollers, this reduces firmware complexity and improves timing determinism.
 
 Furthermore, the platform supports rapid firmware development and iteration through a well-established software ecosystem, enabling efficient testing and debugging during the development process.
 
@@ -78,7 +73,7 @@ GPIO26 & VHF GPIO3      & CC1200 VHF GPIO3 \\
 
 \subsection{RF Transceiver Subsystem}
 
-The RF PCB employs two CC1200 transceivers to enable dual-band operation. Each transceiver can operate independently and includes its own supporting circuitry:
+The RF PCB employs two CC1200 transceivers to enable dual-band operation \cite{cc1200}. Each transceiver can operate independently and includes its own supporting circuitry:
 
 \begin{itemize}
 \item A 40\,MHz crystal oscillator
@@ -86,11 +81,9 @@ The RF PCB employs two CC1200 transceivers to enable dual-band operation. Each t
 \item Decoupling capacitors for supply stabilization
 \end{itemize}
 
-The use of two dedicated transceivers eliminates the need for RF switching networks, simplifying the signal path and avoiding additional insertion losses.
+The use of two dedicated transceivers eliminates the need for an external band-select relay between UHF and VHF, simplifying the signal path and avoiding additional insertion losses.
 
 Key control and interface signals include SPI communication lines, interrupt outputs (the CC1200 GPIO pins), and device control signals such as reset.
-
-This independent operation allows simultaneous configuration and rapid switching between frequency bands at the system level.
 
 The detailed layout and matching-network design of the RF front-end are discussed in the following sections.
 
@@ -127,11 +120,11 @@ This interface is used for:
 
 \subsection{Power Distribution Network}
 
-The RF PCB is powered from a 24\,V battery supplied via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using a buck converter. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
+The RF PCB is powered from a 24\,V supply via an XT30 connector. This input voltage is converted to a regulated 5\,V rail using an LMR51420 buck converter \cite{lmr51420}. The resulting 5\,V supply is used both to power the Raspberry Pi host through the board header and to supply the VSYS input of the Raspberry Pi Pico microcontroller.
 
 Using a single 5\,V rail for both the host and the onboard controller simplifies the overall power architecture and reduces the required component count.
 
-The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard power supply circuitry, which is based on a switching regulator. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. While switching regulators typically introduce more noise compared to dedicated low-noise linear regulators, the integrated solution provides adequate current capability and efficiency for the system.
+The Raspberry Pi Pico generates the required 3.3\,V rail using its onboard RT6150 switching regulator \cite{rt6150}. This 3.3\,V supply powers both CC1200 transceivers as well as the associated digital circuitry on the RF PCB. While switching regulators typically introduce more noise compared to dedicated low-noise linear regulators, the integrated solution provides adequate current capability and efficiency for the system.
 
 Given the noise sensitivity of RF circuits, particular attention was paid to supply integrity. Local decoupling capacitors were placed close to the supply pins of each active component to reduce high-frequency noise, provide transient current during switching events, and improve overall system stability. In addition, careful PCB layout practices were applied to minimize coupling of digital switching noise into the RF signal paths.
 
@@ -152,46 +145,46 @@ The RF PCB electrical design integrates a microcontroller, dual RF transceivers,
 % ──────────────────────────────────────────────────────────────────────────────
 \section{RF PCB Layout Considerations}
 
-The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are sub GHz and thus relatively low in frequency compared to microwave systems, careful RF design is still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
+The performance of the RF front-end is strongly influenced by the PCB layout. While both the 144\,MHz (VHF) and 433\,MHz (UHF) bands are sub-GHz and thus relatively low in frequency compared to microwave systems, careful RF design is still required to ensure impedance control, minimize losses, and reduce electromagnetic interference.
 
-On the first RF front-end prototype, a 4-layer stackup was considered sufficient because it had no size constraints. However, to achieve a more compact design within the form factor of a Raspberry Pi shield, a 6-layer stackup was used.
+On an early bench prototype, a 4-layer stackup was considered sufficient because compact size was not yet a constraint. However, to achieve the compact form factor of a Raspberry Pi HAT, a 6-layer stackup was used for the final design.
 
 \subsection{6-Layer Stackup Strategy}
 
-The PCB is implemented using JLCPCB's \texttt{JLC0612H-3313} 6-layer stackup with a nominal thickness of 1.2\,mm.
+The PCB is implemented using JLCPCB's \texttt{JLC06121H-3313} 6-layer stackup with a finished thickness of 1.14\,mm \cite{jlcpcb_stackup}.
 
 \begin{table}[H]
     \centering
-    \caption{6-layer PCB stackup with electrical function and material properties.}
+    \caption{6-layer PCB stackup (\texttt{JLC06121H-3313}) with electrical function and material properties \cite{jlcpcb_stackup}.}
     \small
     \renewcommand{\arraystretch}{1.2}
     \begin{tabularx}{\textwidth}{l l l l c X}
         \toprule
         \textbf{Layer} & \textbf{Type} & \textbf{Thickness} & \textbf{Material} & \textbf{$\varepsilon_r$} & \textbf{Function} \\
         \midrule
-        F.Cu   & Copper       & 0.035\,mm (1\,oz)   & ---     & ---  & RF routing, matching networks, SMA feedlines \\
+        F.Cu   & Copper       & 0.035\,mm (1\,oz)   & -       & -    & RF routing, matching networks, SMA feedlines \\
         Dielectric 1 & Prepreg 3313 & 0.0994\,mm & NP-155F & 4.1  &  \\
-        In1.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Primary ground plane (RF return path) \\
+        In1.Cu & Copper       & 0.0152\,mm (0.5\,oz)& -       & -    & Primary ground plane (RF return path) \\
         Dielectric 2 & Core   & 0.35\,mm            & NP-155F & 4.36 &  \\
-        In2.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Power distribution (3.3\,V, 5\,V) \\
-        Dielectric 3 & Prepreg 2116 & 0.1164\,mm & NP-155F & 4.16 &  \\
-        In3.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Secondary ground plane (coupling reduction) \\
+        In2.Cu & Copper       & 0.0152\,mm (0.5\,oz)& -       & -    & Power distribution (3.3\,V, 5\,V) \\
+        Dielectric 3 & Prepreg 2116 & 0.1088\,mm & NP-155F & 4.16 &  \\
+        In3.Cu & Copper       & 0.0152\,mm (0.5\,oz)& -       & -    & Secondary ground plane (coupling reduction) \\
         Dielectric 4 & Core   & 0.35\,mm            & NP-155F & 4.36 &  \\
-        In4.Cu & Copper       & 0.0152\,mm (0.5\,oz)& ---     & ---  & Digital and control signal routing \\
+        In4.Cu & Copper       & 0.0152\,mm (0.5\,oz)& -       & -    & Digital and control signal routing \\
         Dielectric 5 & Prepreg 3313 & 0.0994\,mm & NP-155F & 4.1  &  \\
-        B.Cu   & Copper       & 0.035\,mm (1\,oz)   & ---     & ---  & Auxiliary signals and component placement \\
+        B.Cu   & Copper       & 0.035\,mm (1\,oz)   & -       & -    & Auxiliary signals and component placement \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 This stackup ensures that RF traces on the top layer (F.Cu) are implemented as controlled-impedance microstrip lines referenced to the continuous ground plane on In1.Cu. This keeps the current return path and loop area minimal, and prevents additional radiation and impedance discontinuities.
-The use of two ground planes (L2 and L4) improves electromagnetic shielding and reduces coupling between RF and digital layers. Additionally separating digital routing on L5 minimizes interference with sensitive RF signals on the top layer.
+The use of two ground planes (In1.Cu and In3.Cu) improves electromagnetic shielding and reduces coupling between RF and digital layers. Additionally, separating digital routing on In4.Cu minimizes interference with sensitive RF signals on the top layer.
 
 \subsection{Transmission Line Implementation}
 
 All RF signal paths are routed with controlled impedance considerations, targeting a characteristic impedance of 50\,$\Omega$, which is standard for RF systems and ensures proper matching with external components.
 
-The characteristic impedance of a microstrip line can be approximated as:
+The characteristic impedance of a microstrip line can be approximated using the narrow-strip Hammerstad expression \cite{pozar}:
 
 \begin{equation}
 Z_0 = \frac{60}{\sqrt{\varepsilon_{\text{eff}}}}
@@ -206,13 +199,13 @@ with the effective dielectric constant given by:
 \left( \frac{1}{\sqrt{1 + 12h/w}} \right)
 \end{equation}
 
-where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate.
+where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate. This form is strictly valid for $w/h < 1$; for wider traces a modified expression applies, though the two forms converge near the transition point.
 
-Using the selected PCB stackup ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$), the required trace width for a 50\,$\Omega$ microstrip line is approximately 0.2\,mm.
+Applying these expressions with the selected stackup parameters ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$) yields an initial estimate of $w \approx 0.20$\,mm. This analytical result does not account for copper thickness. Cross-validating with the JLCPCB impedance calculator \cite{jlcpcb_impedance}, which implements a full numerical model including the finite copper thickness (1\,oz, 0.035\,mm), yields $w = 0.1565$\,mm for a 50\,$\Omega$ single-ended non-coplanar microstrip on this stackup. The KiCad net class was set to 0.15\,mm (6\,mil), the nearest standard routing increment, corresponding to approximately 52--53\,$\Omega$, which is within accepted tolerance for the operating frequencies.
 
 At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited.
 
-In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. This approach was implemented in the initial prototype. However, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact formfactor constraints of the final design (Raspberry Pi shield), microstrip routing was selected as a practical alternative on the pi hat iteration.
+In theory, grounded coplanar waveguide (GCPW) is often preferred for RF routing due to its improved field confinement, reduced radiation, and better isolation from surrounding structures. However, GCPW requires additional lateral spacing and via fencing, which increases the required board area. Due to the compact form-factor constraints of the Raspberry Pi HAT, microstrip routing was selected as a practical alternative.
 
 By maintaining a continuous ground reference, minimizing trace lengths, and applying sufficient ground stitching, the performance degradation is expected to remain limited.
 
@@ -235,7 +228,7 @@ A 6-layer PCB stackup was selected to enable a compact RF front-end while mainta
 
 \subsection{CC1200 RF Interface Characteristics}
 
-To properly design the matching network, it is necessary to consider the RF interface characteristics of the CC1200 as specified in the datasheet.
+To properly design the matching network, it is necessary to consider the RF interface characteristics of the CC1200 as specified in the datasheet \cite{cc1200}.
 
 \subsubsection{Operating Frequency Bands}
 
@@ -251,13 +244,15 @@ These bands correspond to typical ISM and SRD applications. Operation outside th
 
 \subsubsection{CC1200 RF IO Structure}
 
-The receiver input of the CC1200 consists of a differential low-noise amplifier (LNA) with input pins \texttt{LNA\_P} and \texttt{LNA\_N}. These pins require a DC path to ground and are intended to be driven by a differential RF signal. \cite{cc1200}
+The receiver input of the CC1200 consists of a differential low-noise amplifier (LNA) with input pins \texttt{LNA\_P} and \texttt{LNA\_N}. These pins require a DC path to ground and are intended to be driven by a differential RF signal \cite{cc1200}.
 
-The transmitter output, in contrast, is single-ended at the \texttt{PA} pin and requires a DC path to the supply voltage.
+The transmitter output is single-ended at the \texttt{PA} pin and requires a DC path to the supply voltage.
+
+In addition, the CC1200 provides a \texttt{TRX\_SW} output pin that the chip drives high during transmission and low during reception \cite{cc1200}. The external matching network uses this switching signal to route signals between the PA output, the LNA input, and the shared antenna port. During transmission, \texttt{TRX\_SW} couples the PA output through the TX matching path to the SMA connector; during reception, it decouples the PA and connects the antenna signal through a coupling network to the differential LNA inputs. This mechanism allows a single SMA connector per transceiver to serve both transmit and receive without an external RF switch.
 
 \subsubsection{Optimum Source Impedance (Receiver)}
 
-The CC1200 does not present a fixed 50\,$\Omega$ input impedance. Instead, the optimal source impedance is frequency-dependent and complex. For the relevant bands, the datasheet specifies:
+The CC1200 does not present a fixed 50\,$\Omega$ input impedance. Instead, the optimal source impedance is frequency-dependent and complex. The datasheet provides reference values for the two bands most relevant to this design \cite{cc1200}:
 
 \begin{itemize}
     \item 433\,MHz band:
@@ -265,25 +260,27 @@ The CC1200 does not present a fixed 50\,$\Omega$ input impedance. Instead, the o
         \item Differential: $100 + j60\,\Omega$
         \item Single-ended equivalent: $50 + j30\,\Omega$
     \end{itemize}
-    \item 169\,MHz band:
+    \item 169\,MHz band (closest datasheet entry to the 144\,MHz design target):
     \begin{itemize}
         \item Differential: $140 + j40\,\Omega$
         \item Single-ended equivalent: $70 + j20\,\Omega$
     \end{itemize}
 \end{itemize}
 
-These values represent the optimum impedance for maximum receiver sensitivity and must be realized through the external matching network. \cite{cc1200}
+No datasheet entry exists for 144\,MHz. The 169\,MHz values are used as the nearest available reference; the 144\,MHz matching network was designed by scaling component values accordingly (see Section~\ref{sec:matching-topology}).
+
+These values represent the optimum impedance for maximum receiver sensitivity and must be realized through the external matching network.
 
 \subsubsection{Optimum Load Impedance (Transmitter)}
 
-Similarly, the transmitter output requires impedance matching to a complex load. The datasheet specifies:
+Similarly, the transmitter output requires impedance matching to a complex load. The datasheet specifies \cite{cc1200}:
 
 \begin{itemize}
     \item 433\,MHz band: $55 + j25\,\Omega$
-    \item 169\,MHz band: $80 + j0\,\Omega$
+    \item 169\,MHz band (closest reference to the 144\,MHz design target): $80 + j0\,\Omega$
 \end{itemize}
 
-This further emphasizes that the RF interface is not inherently matched to 50\,$\Omega$, and external matching is mandatory. \cite{cc1200}
+This further emphasizes that the RF interface is not inherently matched to 50\,$\Omega$, and external matching is mandatory.
 
 \subsubsection{Receiver Sensitivity and Matching Impact}
 
@@ -297,7 +294,7 @@ This performance is specified under optimal matching conditions at the antenna p
 
 \subsubsection{Output Power and Power Consumption}
 
-The transmitter is capable of delivering:
+The transmitter is capable of delivering \cite{cc1200}:
 
 \begin{itemize}
     \item Up to +16\,dBm at 433\,MHz with a 3.3\,V supply rail
@@ -310,7 +307,7 @@ At this output level, the current consumption is approximately:
     \item 46--49\,mA in high-performance mode at 433\,MHz
 \end{itemize}
 
-These values highlight the importance of efficient matching to avoid unnecessary power loss. \cite{cc1200}
+These values highlight the importance of efficient matching to avoid unnecessary power loss.
 
 \subsubsection{Implications for Matching Network Design}
 
@@ -319,65 +316,49 @@ The combination of:
     \item Complex, frequency-dependent RF impedance
     \item Differential receiver input
     \item Single-ended transmitter output
+    \item Shared antenna port for TX and RX via \texttt{TRX\_SW}
 \end{itemize}
 
-necessitates the use of a multi-element matching network that performs both impedance transformation and single-ended to differential conversion.
+necessitates the use of a multi-element matching network that performs impedance transformation, single-ended to differential conversion, and TX/RX path routing simultaneously.
 
-This justifies the use of the cascaded LC topology implemented in this work, rather than a simple L-section network.
+This justifies the use of the three-path LC topology implemented in this work, rather than a simple L-section network.
 
 \subsection{Matching Network Topology}
+\label{sec:matching-topology}
 
 \subsubsection{433\,MHz Front-End (Validated Design)}
 
-The implemented 433\,MHz matching network is realized between SMA connector J1 and the CC1200 transceiver U1. The network consists of a multi-element LC structure using inductors L1, L3, L5, L7 and capacitors C2, C4, C8, C13.
+The implemented 433\,MHz matching network is realized between SMA connector J1 and CC1200 transceiver U1, based on the TI CC1200EM reference design for the 420--470\,MHz band \cite{swrr122} and the M17 CC1200\_HAT Rev~B hardware \cite{m17cc1200hat}. The network is organized across three functional paths:
 
-Unlike a simple L-section matching network, this design uses multiple reactive elements arranged in a cascaded structure. This approach provides:
 \begin{itemize}
-    \item Gradual impedance transformation
-    \item Improved bandwidth stability
-    \item Additional filtering capability
+    \item \textbf{TX matching path}: series inductors L1 (15\,nH), L2 (43\,nH), and L3 (22\,nH) transform the PA output impedance to 50\,$\Omega$, with feedback capacitor C1 (2.2\,pF), series capacitor C2 (39\,pF), shunt capacitor C4 (6.2\,pF), and DC-blocking capacitor C10 (1\,nF) at the SMA interface.
+    \item \textbf{PA supply bias path}: RF choke L4 (56\,nH) and bypass capacitor C5 (56\,pF) provide the required DC supply path to the \texttt{PA} pin while presenting high impedance to RF signals.
+    \item \textbf{TRX coupling and LNA balun}: inductor L5 (15\,nH) and capacitor C3 (5.1\,pF) form the \texttt{TRX\_SW}-driven coupling network. The differential LNA input is driven through bridge inductor L7 (56\,nH) connecting \texttt{LNA\_P} and \texttt{LNA\_N}, with bias inductors L6 and L8 (27\,nH each) and coupling/shunt capacitors C8 and C9 (5.1\,pF each).
 \end{itemize}
+
+This multi-element structure provides gradual impedance transformation, improved bandwidth stability, and additional harmonic filtering compared to a simple L-section network.
 
 \subsubsection{144\,MHz Front-End (Optional, Not Populated)}
 
-In addition to the validated 433\,MHz front-end, the PCB includes an optional 144\,MHz RF path implemented as a separate schematic section. This front-end is realized between SMA connector J2 and transceiver U2, using inductors L10, L12, L14, L16 and capacitors C11, C32, C38, C44, C46.
-
-The component values for this network were derived specifically for operation at 144\,MHz, adapting the matching concept used by the 164--190\,MHz reference design.
+In addition to the validated 433\,MHz front-end, the PCB includes an optional 144\,MHz RF path between SMA connector J2 and transceiver U2. The component values were derived by adapting the topology of the TI CC1120EM 169\,MHz reference design \cite{tidr220} and scaling for operation at 144\,MHz. As no official TI reference design exists for 136--160\,MHz, inductor values were scaled by approximately 17\,\% relative to the 169\,MHz design. The three-path network uses inductors L9--L16 (U2 instance). Per the KiCad netlist: L14 (22\,nH, TX match), L15 (120\,nH, TX match), L16 (82\,nH, TX match), L13 (270\,nH, PA choke), L11 (47\,nH, TRX coupling), and L9, L10, L12 (100\,nH each, LNA balun elements). Capacitors are numbered in the C11 and C20--C47 range in the global KiCad annotation; the exact designator-to-function mapping should be confirmed against the project netlist before final assembly.
 
 It is important to note that this 144\,MHz front-end was included as an additional design option but was \textbf{not populated on the final PCB}. Consequently, it was \textbf{not experimentally validated}, and its performance has not been verified in practice.
 
-\subsection{Signal Transformation from SMA to CC1200}
+\subsection{Signal Transformation Through the Matching Network}
 
-The signal transformation through the matching network can be understood as a sequence of stages:
+The matching network simultaneously serves three functional paths that share the single SMA antenna port.
 
-\subsubsection{SMA Interface and Initial Matching}
+\subsubsection{TX Path: PA Output to SMA}
 
-At the SMA connector (J1 for 433\,MHz), the signal is a 50\,$\Omega$ single-ended RF signal. The first stage of the network typically consists of a series inductive element followed by a shunt capacitive element.
+During transmission, the CC1200 drives the single-ended \texttt{PA} pin. The TX matching path performs impedance transformation from the PA output impedance (55\,+\,j25\,$\Omega$ at 433\,MHz) to the 50\,$\Omega$ antenna interface. A DC-blocking capacitor at the SMA side prevents the PA supply bias from reaching the antenna, while the series LC sections move the impedance along the Smith chart toward the matched condition. Distributing the transformation across multiple elements reduces sensitivity to component tolerances and insertion loss.
 
-This stage initiates the impedance transformation while also contributing to low-pass filtering behavior.
+\subsubsection{TRX Switching Path}
 
-\subsubsection{Intermediate LC Network}
+The \texttt{TRX\_SW} pin output drives a coupling network (L5, C3) that connects the TX and RX paths to the shared antenna node. During transmission, \texttt{TRX\_SW} is high and the coupling network routes the PA signal to the antenna. During reception, it is low, isolating the PA and directing the antenna signal toward the LNA balun. This arrangement avoids the insertion loss of an external RF switch.
 
-Following the initial stage, the signal propagates through multiple LC sections. These sections progressively transform the impedance toward the desired value at the IC interface.
+\subsubsection{RX Path: SMA to Differential LNA Input}
 
-Using multiple stages instead of a single matching section allows:
-\begin{itemize}
-    \item Reduced sensitivity to component tolerances
-    \item Smoother impedance transformation
-    \item Lower insertion loss
-\end{itemize}
-
-Each LC section can be interpreted as moving the impedance along the Smith chart toward the matched condition.
-
-\subsubsection{Single-Ended to Differential Conversion}
-
-A key function of the network is the conversion from single-ended to differential signaling. The CC1200 requires a differential RF input, meaning that two signals of equal amplitude but opposite phase must be generated.
-
-This is achieved through a symmetric arrangement of reactive components connected to the differential RF pins of the IC. As a result, the network effectively performs a passive balun function, splitting the incoming signal into differential components.
-
-\subsubsection{Final Matching to the IC}
-
-The final stage of the network fine-tunes the impedance presented to the CC1200. At this point, the reactive elements compensate for the internal capacitance and inductance of the IC, ensuring that the effective impedance seen by the chip is optimal.
+During reception, the single-ended 50\,$\Omega$ antenna signal must be converted to the differential input required by the LNA. The LNA balun consists of a bridge inductor (L7) connecting \texttt{LNA\_P} and \texttt{LNA\_N}, with separate bias inductors (L6, L8) providing the required DC path to ground and coupling elements to the TRX node. This quasi-differential arrangement splits the single-ended signal into two anti-phase components, effectively performing a passive balun function. The component values are chosen so that the impedance presented to the LNA inputs matches the optimum source impedance (100\,+\,j60\,$\Omega$ differential at 433\,MHz) for maximum sensitivity.
 
 \subsection{Frequency-Selective Behavior}
 
@@ -387,19 +368,21 @@ The cascaded LC structure attenuates higher-order harmonics, improving spectral 
 
 \subsection{Use of the Reference Design}
 
-The design of the 433\,MHz matching network is based on the Texas Instruments CC1200 reference design for the 420--470\,MHz band. This reference provides a validated topology and component selection strategy.
+The design of the 433\,MHz matching network is based on the Texas Instruments CC1200EM reference design for the 420--470\,MHz band \cite{swrr122}. Component values were further cross-referenced against the M17 CC1200\_HAT Rev~B, an open-hardware design verified at +14\,dBm output at 433\,MHz \cite{m17cc1200hat}. These references provide a validated topology and component selection strategy.
 
-In this work, the reference design is used as a guideline for:
+The 144\,MHz matching network was adapted from the TI CC1120EM 169\,MHz reference design \cite{tidr220}, which is the closest available TI reference for the VHF band.
+
+In this work, the reference designs are used as a guideline for:
 \begin{itemize}
     \item Matching network topology
     \item Impedance transformation strategy
     \item Differential interface implementation
 \end{itemize}
 
-The final schematic and layout, however, are specific to this project and adapted to the chosen PCB stackup and form factor.
+The final schematic and layout are specific to this project and adapted to the chosen PCB stackup and form factor.
 
 \subsection{Summary}
 
 The RF matching network is a critical part of the front-end design, enabling efficient signal transfer between the 50\,$\Omega$ antenna interface and the differential RF input of the CC1200.
 
-The validated 433\,MHz implementation is based on a multi-element LC network derived from the TI reference design and adapted to the project-specific PCB. An additional 144\,MHz front-end was included as an optional extension but was not populated or experimentally verified.
+The validated 433\,MHz implementation uses a three-path LC network (TX match, PA bias, TRX coupling and LNA balun) derived from the TI CC1200EM and M17 CC1200\_HAT reference designs and adapted to the project-specific PCB. An additional 144\,MHz front-end was included as an optional extension but was not populated or experimentally verified.
