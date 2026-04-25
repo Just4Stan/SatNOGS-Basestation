@@ -39,7 +39,7 @@ RF_SETTINGS code rfSettings = {
     0x00,  // WOR_EVENT0_LSB        Event 0 Configuration LSB
     0x00,  // RXDCM_TIME            RX Duty Cycle Mode Configuration
     0x00,  // PKT_CFG2              Packet Configuration Reg. 2
-    0x03,  // PKT_CFG1              Packet Configuration Reg. 1
+    0x07,  // PKT_CFG1              Packet Configuration Reg. 1
     0x20,  // PKT_CFG0              Packet Configuration Reg. 0
     0x0F,  // RFEND_CFG1            RFEND Configuration Reg. 1
     0x00,  // RFEND_CFG0            RFEND Configuration Reg. 0

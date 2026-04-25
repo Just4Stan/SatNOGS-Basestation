@@ -100,7 +100,7 @@ As of April 2026, \textbf{no protocol-valid frames have been decoded from orbit}
     \item Zero decoded packets submitted to the SatNOGS DB from real satellites.
 \end{itemize}
 
-The receive chain has been validated for local test frames in a short-range ground-to-ground configuration between two CC1200 transceivers: transmitted test frames decode at the receiver with valid sync word and CRC, exercising the RF path, SmartRF register set, FIFO drain, and host-side decoders under those conditions. This ground validation confirms the digital and RF path is internally consistent; it does not establish that the system is receiving orbital signals.
+The receive chain has been validated for local test frames in a short-range ground-to-ground configuration between two devboards (\S\ref{sec:devboard-bench}): transmitted test frames decode at the receiver with valid sync word and zero payload errors across all tested frequencies, exercising the RF path, SmartRF register set, FIFO drain, and host-side decoders under those conditions. This ground validation confirms the digital and RF path is internally consistent; it does not establish that the system is receiving orbital signals.
 
 The April 1 session predates the RSSI-readout fix (AGC\_GAIN\_ADJUST calibration) and is used as the negative control in the analysis below; the April 9 and April 12 sessions use the post-fix calibration.
 

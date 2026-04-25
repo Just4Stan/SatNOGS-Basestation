@@ -62,6 +62,13 @@ Custom extensions: \code{RESET}, \code{RECAL}, \code{MONITOR}, \code{TICKS}, \co
 
 Custom commands are invisible to hamlib, so compatibility with \code{rotctld}, GPredict, and the \code{satnogs-client} rotator path is maintained. The full EasyComm + extensions parser is implemented in \file{satnogs\_protocol.cpp} ($\sim$250 lines of C++).
 
+\section{RF Devboard Firmware}
+\label{sec:devboard-firmware}
+
+The devboard firmware runs on the RP2040 and communicates with a host PC over USB CDC. The transport uses the same COBS framing and CRC-16/CCITT-FALSE as the later RF HAT firmware, but over USB instead of UART. The RP2040 drives the CC1200 over SPI0 at 5\,MHz; on startup it resets the transceiver and reads the part identification registers to confirm communication before entering the protocol polling loop.
+
+The runtime SmartRF register profile loading mechanism — the three-phase \textsc{profile\_begin} / \textsc{profile\_chunk} / \textsc{profile\_apply} sequence that writes all register values in a single atomic batch with the radio held in \textsc{idle} — was designed and validated on the devboard and carried over unchanged to the RF HAT firmware (\S\ref{sec:rf-hat-firmware}).
+
 \section{RF HAT Firmware}
 \label{sec:rf-hat-firmware}
 
