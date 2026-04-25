@@ -21,8 +21,6 @@ The design consists of the following functional blocks:
 \item Power distribution
 \end{itemize}
 
-Figure~\ref{fig:motor-rf-hat-front} (Chapter~\ref{ch:system-design}) shows the assembled v2 Pi HAT, which merges this RF architecture with the motor-controller front-end.
-
 \subsection{Microcontroller Subsystem}
 
 The RF PCB is controlled by a Raspberry Pi Pico microcontroller based on the RP2040 \cite{rp2040ds}. This device acts as the central control unit of the RF system.
@@ -82,8 +80,6 @@ The RF PCB employs two CC1200 transceivers to enable dual-band operation \cite{c
 \end{itemize}
 
 The use of two dedicated transceivers eliminates the need for an external band-select relay between UHF and VHF, simplifying the signal path and avoiding additional insertion losses.
-
-Key control and interface signals include SPI communication lines, interrupt outputs (the CC1200 GPIO pins), and device control signals such as reset.
 
 The detailed layout and matching-network design of the RF front-end are discussed in the following sections.
 

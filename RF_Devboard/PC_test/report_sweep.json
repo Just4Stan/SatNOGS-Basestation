@@ -1,0 +1,4253 @@
+{
+  "timestamp": "2026-04-23T21:42:24",
+  "notes": "50 cm separation, simple dipole, indoor lab",
+  "board_a_port": "COM7",
+  "board_b_port": "COM8",
+  "board_info": {
+    "A": {
+      "part": "0x20",
+      "version": "0x11"
+    },
+    "B": {
+      "part": "0x20",
+      "version": "0x11"
+    }
+  },
+  "profile": "../config.txt",
+  "profile_summary": "parsed 209 lines, compiled 117 writes, ignored 92",
+  "packet_count": 50,
+  "payload_size": 16,
+  "frequency_sweep": [
+    {
+      "freq_mhz": 430.0,
+      "phase1_A_to_B": {
+        "tx_board": "A",
+        "rx_board": "B",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -83.2,
+        "rssi_min_dbm": -84.7,
+        "rssi_max_dbm": -81.7,
+        "lqi_avg": 0.5,
+        "lqi_min": 0,
+        "lqi_max": 2,
+        "latency_avg_ms": 102.71,
+        "latency_min_ms": 89.02,
+        "latency_max_ms": 128.31,
+        "latency_stddev_ms": 10.02,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 107.92374610900879
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -84.7,
+            "lqi": 1,
+            "latency_ms": 91.86625480651855
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 97.51391410827637
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -84.7,
+            "lqi": 0,
+            "latency_ms": 101.66501998901367
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 94.36154365539551
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 102.3263931274414
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 116.95647239685059
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 92.34499931335449
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 89.02406692504883
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 93.22667121887207
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -84.7,
+            "lqi": 1,
+            "latency_ms": 101.8211841583252
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -81.7,
+            "lqi": 1,
+            "latency_ms": 116.36567115783691
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 91.66145324707031
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 113.7850284576416
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 90.98529815673828
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 112.97011375427246
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 124.3443489074707
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 105.44085502624512
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 92.34309196472168
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 108.72173309326172
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 97.35488891601562
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 98.00958633422852
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 92.16761589050293
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 106.98723793029785
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 118.18456649780273
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 101.99809074401855
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 97.62859344482422
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -81.7,
+            "lqi": 1,
+            "latency_ms": 90.12126922607422
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -81.7,
+            "lqi": 2,
+            "latency_ms": 91.14217758178711
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 92.46063232421875
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -81.7,
+            "lqi": 1,
+            "latency_ms": 96.68898582458496
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 108.18839073181152
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 102.61845588684082
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 112.1060848236084
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 90.6367301940918
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 102.63276100158691
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -84.7,
+            "lqi": 1,
+            "latency_ms": 96.9703197479248
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 117.8898811340332
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -84.7,
+            "lqi": 0,
+            "latency_ms": 91.40467643737793
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 107.71393775939941
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -84.7,
+            "lqi": 0,
+            "latency_ms": 96.29464149475098
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 118.1943416595459
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 96.50468826293945
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 107.59449005126953
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 119.19951438903809
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 102.4329662322998
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 97.20635414123535
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 102.53000259399414
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 128.309965133667
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -84.7,
+            "lqi": 0,
+            "latency_ms": 108.5348129272461
+          }
+        ]
+      },
+      "phase2_B_to_A": {
+        "tx_board": "B",
+        "rx_board": "A",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -84.22,
+        "rssi_min_dbm": -87.7,
+        "rssi_max_dbm": -80.8,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 2,
+        "latency_avg_ms": 106.41,
+        "latency_min_ms": 90.83,
+        "latency_max_ms": 124.79,
+        "latency_stddev_ms": 8.51,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 111.97543144226074
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -84.7,
+            "lqi": 0,
+            "latency_ms": 101.65572166442871
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 90.83390235900879
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 104.66217994689941
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 116.2261962890625
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 95.89529037475586
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 122.70426750183105
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 112.15972900390625
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 112.44487762451172
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 122.87545204162598
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -81.7,
+            "lqi": 1,
+            "latency_ms": 122.8797435760498
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -81.7,
+            "lqi": 1,
+            "latency_ms": 116.06764793395996
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -85.7,
+            "lqi": 1,
+            "latency_ms": 111.45305633544922
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 108.17575454711914
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -80.8,
+            "lqi": 0,
+            "latency_ms": 111.63091659545898
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 94.73609924316406
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 108.14070701599121
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 108.95967483520508
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 106.27174377441406
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 97.01895713806152
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 112.3192310333252
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 101.05514526367188
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 102.9818058013916
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 108.40964317321777
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 108.59298706054688
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 114.30954933166504
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 98.28734397888184
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 107.36083984375
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -81.7,
+            "lqi": 1,
+            "latency_ms": 93.46771240234375
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 101.15885734558105
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 92.23222732543945
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 91.86506271362305
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -84.7,
+            "lqi": 2,
+            "latency_ms": 103.7440299987793
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -83.7,
+            "lqi": 1,
+            "latency_ms": 102.87904739379883
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -80.8,
+            "lqi": 1,
+            "latency_ms": 111.3429069519043
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 110.27646064758301
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -82.7,
+            "lqi": 1,
+            "latency_ms": 105.62610626220703
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 100.89826583862305
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 106.53829574584961
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 95.53337097167969
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 113.07334899902344
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 105.61776161193848
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 107.12075233459473
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 124.79305267333984
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -85.7,
+            "lqi": 1,
+            "latency_ms": 101.99880599975586
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 113.43026161193848
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -81.7,
+            "lqi": 0,
+            "latency_ms": 112.63298988342285
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -83.7,
+            "lqi": 0,
+            "latency_ms": 91.06898307800293
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -82.7,
+            "lqi": 0,
+            "latency_ms": 96.76885604858398
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 108.3216667175293
+          }
+        ]
+      },
+      "overall": {
+        "total_sent": 100,
+        "total_received": 100,
+        "total_matched": 100,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -83.71,
+        "rssi_min_dbm": -87.7,
+        "rssi_max_dbm": -80.8,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 2,
+        "passed": true
+      }
+    },
+    {
+      "freq_mhz": 433.0,
+      "phase1_A_to_B": {
+        "tx_board": "A",
+        "rx_board": "B",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -103.28,
+        "rssi_min_dbm": -106.7,
+        "rssi_max_dbm": -99.7,
+        "lqi_avg": 0.3,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "latency_avg_ms": 106.4,
+        "latency_min_ms": 89.99,
+        "latency_max_ms": 124.71,
+        "latency_stddev_ms": 8.6,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 89.99276161193848
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 124.71342086791992
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 119.06099319458008
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 91.3381576538086
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 112.58888244628906
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 100.75139999389648
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 102.0052433013916
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 111.7558479309082
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 102.20980644226074
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -100.7,
+            "lqi": 1,
+            "latency_ms": 101.71914100646973
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 91.7668342590332
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 123.40736389160156
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 107.0852279663086
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 92.87428855895996
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 107.5890064239502
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 107.95450210571289
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 108.63971710205078
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 112.98370361328125
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 108.6273193359375
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 96.4970588684082
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 123.8408088684082
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 106.77886009216309
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 105.6208610534668
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 116.22118949890137
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 102.70071029663086
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 106.39595985412598
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 106.06694221496582
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 106.06789588928223
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 96.0087776184082
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 104.79545593261719
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 103.84702682495117
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -102.7,
+            "lqi": 1,
+            "latency_ms": 118.3922290802002
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 111.5720272064209
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 95.82090377807617
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 102.40530967712402
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 107.38444328308105
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 111.97972297668457
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 105.70335388183594
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 91.94016456604004
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 97.30029106140137
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 102.91028022766113
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -99.7,
+            "lqi": 0,
+            "latency_ms": 118.55435371398926
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 103.36709022521973
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 104.22515869140625
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 107.94663429260254
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 111.81855201721191
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 106.68730735778809
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 96.32372856140137
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 120.3763484954834
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 113.22999000549316
+          }
+        ]
+      },
+      "phase2_B_to_A": {
+        "tx_board": "B",
+        "rx_board": "A",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -104.4,
+        "rssi_min_dbm": -108.7,
+        "rssi_max_dbm": -100.7,
+        "lqi_avg": 0.3,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "latency_avg_ms": 104.27,
+        "latency_min_ms": 89.37,
+        "latency_max_ms": 118.78,
+        "latency_stddev_ms": 7.9,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 105.17168045043945
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 117.81907081604004
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -100.7,
+            "lqi": 0,
+            "latency_ms": 102.04672813415527
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 108.73603820800781
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -108.7,
+            "lqi": 0,
+            "latency_ms": 91.70365333557129
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 98.49071502685547
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 103.52730751037598
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 106.13799095153809
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 107.22064971923828
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 112.3664379119873
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 97.00989723205566
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 103.20520401000977
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 117.66195297241211
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -107.7,
+            "lqi": 0,
+            "latency_ms": 89.89310264587402
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 97.29743003845215
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 113.73114585876465
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 108.77442359924316
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 95.93462944030762
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -100.7,
+            "lqi": 0,
+            "latency_ms": 108.7961196899414
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 108.43515396118164
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 112.05315589904785
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 112.75720596313477
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 102.45180130004883
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 106.26721382141113
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 94.84457969665527
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 101.28474235534668
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -105.7,
+            "lqi": 1,
+            "latency_ms": 106.03189468383789
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 97.67293930053711
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -108.7,
+            "lqi": 0,
+            "latency_ms": 117.60830879211426
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 116.92166328430176
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 113.46244812011719
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 107.0699691772461
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 106.89163208007812
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 108.16097259521484
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 98.84333610534668
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 107.62619972229004
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 107.62381553649902
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 91.16005897521973
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 89.37263488769531
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 107.82408714294434
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -107.7,
+            "lqi": 0,
+            "latency_ms": 96.89974784851074
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -102.7,
+            "lqi": 1,
+            "latency_ms": 96.76337242126465
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 92.95892715454102
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 96.06242179870605
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 98.7856388092041
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 107.38277435302734
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 112.56814002990723
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 96.4665412902832
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 96.91190719604492
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 118.78061294555664
+          }
+        ]
+      },
+      "overall": {
+        "total_sent": 100,
+        "total_received": 100,
+        "total_matched": 100,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -103.84,
+        "rssi_min_dbm": -108.7,
+        "rssi_max_dbm": -99.7,
+        "lqi_avg": 0.3,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "passed": true
+      }
+    },
+    {
+      "freq_mhz": 435.0,
+      "phase1_A_to_B": {
+        "tx_board": "A",
+        "rx_board": "B",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -88.34,
+        "rssi_min_dbm": -90.7,
+        "rssi_max_dbm": -85.7,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "latency_avg_ms": 105.53,
+        "latency_min_ms": 88.28,
+        "latency_max_ms": 123.47,
+        "latency_stddev_ms": 9.56,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 106.3544750213623
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -88.7,
+            "lqi": 1,
+            "latency_ms": 101.11594200134277
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 112.28418350219727
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 116.19973182678223
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 107.8803539276123
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 96.12298011779785
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 97.13578224182129
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 93.9798355102539
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 112.00451850891113
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 116.17159843444824
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 102.83994674682617
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 95.78800201416016
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 95.4275131225586
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 105.06296157836914
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 102.6461124420166
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 108.3686351776123
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 91.522216796875
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 101.12285614013672
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 111.31811141967773
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 122.24078178405762
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 104.7661304473877
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -88.7,
+            "lqi": 0,
+            "latency_ms": 111.65618896484375
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 108.06536674499512
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 106.09149932861328
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 116.35494232177734
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 91.66526794433594
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -88.7,
+            "lqi": 1,
+            "latency_ms": 106.170654296875
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 88.28425407409668
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 100.91829299926758
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 121.44780158996582
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 95.86048126220703
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 122.41673469543457
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 123.47078323364258
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 110.34703254699707
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 102.18691825866699
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 91.55416488647461
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 92.75698661804199
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 118.94989013671875
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 95.12996673583984
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 104.48193550109863
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 106.30297660827637
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 109.15184020996094
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -88.7,
+            "lqi": 1,
+            "latency_ms": 102.27346420288086
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -85.7,
+            "lqi": 0,
+            "latency_ms": 107.67960548400879
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 118.7748908996582
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 90.84510803222656
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 106.97531700134277
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 122.06768989562988
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 93.12725067138672
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -90.7,
+            "lqi": 0,
+            "latency_ms": 111.2360954284668
+          }
+        ]
+      },
+      "phase2_B_to_A": {
+        "tx_board": "B",
+        "rx_board": "A",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -89.52,
+        "rssi_min_dbm": -91.7,
+        "rssi_max_dbm": -86.7,
+        "lqi_avg": 0.3,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "latency_avg_ms": 104.77,
+        "latency_min_ms": 92.06,
+        "latency_max_ms": 122.83,
+        "latency_stddev_ms": 7.48,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -90.7,
+            "lqi": 0,
+            "latency_ms": 95.52001953125
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 106.93788528442383
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 97.77212142944336
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 109.00044441223145
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 110.45575141906738
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 95.42584419250488
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 109.48419570922852
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -90.7,
+            "lqi": 0,
+            "latency_ms": 108.15620422363281
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -91.7,
+            "lqi": 1,
+            "latency_ms": 102.01525688171387
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -90.7,
+            "lqi": 1,
+            "latency_ms": 112.72954940795898
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -91.7,
+            "lqi": 1,
+            "latency_ms": 97.67675399780273
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -86.7,
+            "lqi": 1,
+            "latency_ms": 97.73421287536621
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -91.7,
+            "lqi": 1,
+            "latency_ms": 97.74065017700195
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -91.7,
+            "lqi": 0,
+            "latency_ms": 102.63204574584961
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 118.33953857421875
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 102.38528251647949
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 107.69796371459961
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -91.7,
+            "lqi": 0,
+            "latency_ms": 106.02641105651855
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 95.98803520202637
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 122.82848358154297
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -91.7,
+            "lqi": 0,
+            "latency_ms": 100.46529769897461
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 106.41360282897949
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 97.24903106689453
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 113.09099197387695
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 101.3956069946289
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 106.42480850219727
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -88.7,
+            "lqi": 0,
+            "latency_ms": 108.17956924438477
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 96.29940986633301
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -88.7,
+            "lqi": 1,
+            "latency_ms": 96.21357917785645
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 108.05058479309082
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -91.7,
+            "lqi": 1,
+            "latency_ms": 117.47121810913086
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 100.0518798828125
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 122.74813652038574
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 107.40351676940918
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -87.7,
+            "lqi": 1,
+            "latency_ms": 96.62961959838867
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 107.07998275756836
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -90.7,
+            "lqi": 1,
+            "latency_ms": 118.27516555786133
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 109.82465744018555
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -87.7,
+            "lqi": 0,
+            "latency_ms": 99.5485782623291
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -91.7,
+            "lqi": 0,
+            "latency_ms": 107.72037506103516
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 96.96459770202637
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -90.7,
+            "lqi": 0,
+            "latency_ms": 110.79144477844238
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -89.7,
+            "lqi": 1,
+            "latency_ms": 92.06295013427734
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -90.7,
+            "lqi": 0,
+            "latency_ms": 112.90192604064941
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -88.7,
+            "lqi": 0,
+            "latency_ms": 96.68278694152832
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -89.7,
+            "lqi": 0,
+            "latency_ms": 102.63347625732422
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 105.50355911254883
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -91.7,
+            "lqi": 0,
+            "latency_ms": 97.84579277038574
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -86.7,
+            "lqi": 0,
+            "latency_ms": 108.06512832641602
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -90.7,
+            "lqi": 1,
+            "latency_ms": 98.04296493530273
+          }
+        ]
+      },
+      "overall": {
+        "total_sent": 100,
+        "total_received": 100,
+        "total_matched": 100,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -88.93,
+        "rssi_min_dbm": -91.7,
+        "rssi_max_dbm": -85.7,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "passed": true
+      }
+    },
+    {
+      "freq_mhz": 437.0,
+      "phase1_A_to_B": {
+        "tx_board": "A",
+        "rx_board": "B",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -102.66,
+        "rssi_min_dbm": -107.7,
+        "rssi_max_dbm": -100.7,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "latency_avg_ms": 103.71,
+        "latency_min_ms": 89.95,
+        "latency_max_ms": 126.14,
+        "latency_stddev_ms": 7.91,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 102.73480415344238
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 104.0806770324707
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 126.1439323425293
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 107.09261894226074
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 97.2442626953125
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 103.26194763183594
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 106.58693313598633
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 102.68139839172363
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 106.92787170410156
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 96.04525566101074
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 121.18792533874512
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -100.7,
+            "lqi": 1,
+            "latency_ms": 104.05683517456055
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 96.46892547607422
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 108.62588882446289
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 106.98676109313965
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 110.6114387512207
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 102.17022895812988
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 108.0935001373291
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 98.23846817016602
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 103.13773155212402
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 97.72706031799316
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 92.71740913391113
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 103.30462455749512
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -100.7,
+            "lqi": 0,
+            "latency_ms": 110.97311973571777
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -107.7,
+            "lqi": 0,
+            "latency_ms": 93.14298629760742
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 92.66066551208496
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 99.9443531036377
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 108.45255851745605
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 102.64158248901367
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 111.88459396362305
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 112.71405220031738
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -100.7,
+            "lqi": 1,
+            "latency_ms": 107.47480392456055
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 91.71199798583984
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 117.20466613769531
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 96.85850143432617
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 98.21677207946777
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -100.7,
+            "lqi": 1,
+            "latency_ms": 111.08160018920898
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 90.70038795471191
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 106.15754127502441
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -100.7,
+            "lqi": 0,
+            "latency_ms": 102.23174095153809
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 107.9709529876709
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 98.82235527038574
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 102.86283493041992
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -102.7,
+            "lqi": 1,
+            "latency_ms": 96.54474258422852
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -100.7,
+            "lqi": 0,
+            "latency_ms": 104.85482215881348
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 113.57378959655762
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 97.27001190185547
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 89.94936943054199
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -100.7,
+            "lqi": 1,
+            "latency_ms": 118.50833892822266
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 94.76733207702637
+          }
+        ]
+      },
+      "phase2_B_to_A": {
+        "tx_board": "B",
+        "rx_board": "A",
+        "packets_sent": 50,
+        "packets_received": 50,
+        "packets_matched": 50,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -104.06,
+        "rssi_min_dbm": -107.7,
+        "rssi_max_dbm": -99.7,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "latency_avg_ms": 103.53,
+        "latency_min_ms": 90.57,
+        "latency_max_ms": 118.39,
+        "latency_stddev_ms": 7.15,
+        "per_packet": [
+          {
+            "index": 1,
+            "payload_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 00 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 108.82949829101562
+          },
+          {
+            "index": 2,
+            "payload_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 01 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e",
+            "rssi_dbm": -101.7,
+            "lqi": 1,
+            "latency_ms": 97.43523597717285
+          },
+          {
+            "index": 3,
+            "payload_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 02 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 107.6817512512207
+          },
+          {
+            "index": 4,
+            "payload_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 03 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 108.26396942138672
+          },
+          {
+            "index": 5,
+            "payload_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 04 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 102.39338874816895
+          },
+          {
+            "index": 6,
+            "payload_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 05 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 107.99717903137207
+          },
+          {
+            "index": 7,
+            "payload_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 06 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 96.07267379760742
+          },
+          {
+            "index": 8,
+            "payload_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 07 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 95.73745727539062
+          },
+          {
+            "index": 9,
+            "payload_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 08 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 101.25327110290527
+          },
+          {
+            "index": 10,
+            "payload_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 09 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 102.62131690979004
+          },
+          {
+            "index": 11,
+            "payload_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0a 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 108.39581489562988
+          },
+          {
+            "index": 12,
+            "payload_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0b 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18",
+            "rssi_dbm": -102.7,
+            "lqi": 1,
+            "latency_ms": 107.47385025024414
+          },
+          {
+            "index": 13,
+            "payload_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0c 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19",
+            "rssi_dbm": -107.7,
+            "lqi": 1,
+            "latency_ms": 107.30624198913574
+          },
+          {
+            "index": 14,
+            "payload_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0d 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 108.28065872192383
+          },
+          {
+            "index": 15,
+            "payload_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0e 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 90.57211875915527
+          },
+          {
+            "index": 16,
+            "payload_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 0f 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 98.89531135559082
+          },
+          {
+            "index": 17,
+            "payload_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 10 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 107.83815383911133
+          },
+          {
+            "index": 18,
+            "payload_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 11 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 99.94935989379883
+          },
+          {
+            "index": 19,
+            "payload_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 12 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 90.75546264648438
+          },
+          {
+            "index": 20,
+            "payload_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 13 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 94.37441825866699
+          },
+          {
+            "index": 21,
+            "payload_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 14 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 94.16604042053223
+          },
+          {
+            "index": 22,
+            "payload_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 15 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22",
+            "rssi_dbm": -102.7,
+            "lqi": 0,
+            "latency_ms": 94.61307525634766
+          },
+          {
+            "index": 23,
+            "payload_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 16 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23",
+            "rssi_dbm": -107.7,
+            "lqi": 0,
+            "latency_ms": 98.98185729980469
+          },
+          {
+            "index": 24,
+            "payload_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 17 17 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 104.39848899841309
+          },
+          {
+            "index": 25,
+            "payload_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 18 18 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25",
+            "rssi_dbm": -104.7,
+            "lqi": 0,
+            "latency_ms": 107.66458511352539
+          },
+          {
+            "index": 26,
+            "payload_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 19 19 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26",
+            "rssi_dbm": -105.7,
+            "lqi": 1,
+            "latency_ms": 100.78001022338867
+          },
+          {
+            "index": 27,
+            "payload_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1a 1a 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 112.0302677154541
+          },
+          {
+            "index": 28,
+            "payload_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1b 1b 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28",
+            "rssi_dbm": -106.7,
+            "lqi": 0,
+            "latency_ms": 106.0953140258789
+          },
+          {
+            "index": 29,
+            "payload_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1c 1c 1d 1e 1f 20 21 22 23 24 25 26 27 28 29",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 115.7221794128418
+          },
+          {
+            "index": 30,
+            "payload_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1d 1d 1e 1f 20 21 22 23 24 25 26 27 28 29 2a",
+            "rssi_dbm": -105.7,
+            "lqi": 1,
+            "latency_ms": 100.62193870544434
+          },
+          {
+            "index": 31,
+            "payload_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1e 1e 1f 20 21 22 23 24 25 26 27 28 29 2a 2b",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 102.78868675231934
+          },
+          {
+            "index": 32,
+            "payload_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 1f 1f 20 21 22 23 24 25 26 27 28 29 2a 2b 2c",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 91.97831153869629
+          },
+          {
+            "index": 33,
+            "payload_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 20 20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 97.66697883605957
+          },
+          {
+            "index": 34,
+            "payload_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 21 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 104.05302047729492
+          },
+          {
+            "index": 35,
+            "payload_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 22 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 97.49364852905273
+          },
+          {
+            "index": 36,
+            "payload_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 23 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30",
+            "rssi_dbm": -106.7,
+            "lqi": 1,
+            "latency_ms": 108.19411277770996
+          },
+          {
+            "index": 37,
+            "payload_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 24 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 96.71759605407715
+          },
+          {
+            "index": 38,
+            "payload_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 25 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32",
+            "rssi_dbm": -105.7,
+            "lqi": 0,
+            "latency_ms": 107.70106315612793
+          },
+          {
+            "index": 39,
+            "payload_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 26 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 97.61667251586914
+          },
+          {
+            "index": 40,
+            "payload_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 27 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 92.05913543701172
+          },
+          {
+            "index": 41,
+            "payload_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 28 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 106.27317428588867
+          },
+          {
+            "index": 42,
+            "payload_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 29 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36",
+            "rssi_dbm": -103.7,
+            "lqi": 1,
+            "latency_ms": 107.13315010070801
+          },
+          {
+            "index": 43,
+            "payload_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2a 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37",
+            "rssi_dbm": -99.7,
+            "lqi": 1,
+            "latency_ms": 118.03698539733887
+          },
+          {
+            "index": 44,
+            "payload_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2b 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38",
+            "rssi_dbm": -104.7,
+            "lqi": 1,
+            "latency_ms": 102.00738906860352
+          },
+          {
+            "index": 45,
+            "payload_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2c 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39",
+            "rssi_dbm": -105.7,
+            "lqi": 1,
+            "latency_ms": 109.6045970916748
+          },
+          {
+            "index": 46,
+            "payload_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2d 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 117.8741455078125
+          },
+          {
+            "index": 47,
+            "payload_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2e 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 118.3919906616211
+          },
+          {
+            "index": 48,
+            "payload_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 2f 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 104.57444190979004
+          },
+          {
+            "index": 49,
+            "payload_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 30 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d",
+            "rssi_dbm": -103.7,
+            "lqi": 0,
+            "latency_ms": 116.26553535461426
+          },
+          {
+            "index": 50,
+            "payload_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "received": true,
+            "payload_match": true,
+            "received_hex": "00 31 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e",
+            "rssi_dbm": -101.7,
+            "lqi": 0,
+            "latency_ms": 102.88262367248535
+          }
+        ]
+      },
+      "overall": {
+        "total_sent": 100,
+        "total_received": 100,
+        "total_matched": 100,
+        "packet_loss_pct": 0.0,
+        "rssi_avg_dbm": -103.36,
+        "rssi_min_dbm": -107.7,
+        "rssi_max_dbm": -99.7,
+        "lqi_avg": 0.4,
+        "lqi_min": 0,
+        "lqi_max": 1,
+        "passed": true
+      }
+    }
+  ],
+  "overall": {
+    "total_sent": 400,
+    "total_received": 400,
+    "total_matched": 400,
+    "packet_loss_pct": 0.0,
+    "passed": true
+  }
+}
