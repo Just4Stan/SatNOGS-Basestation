@@ -46,42 +46,11 @@ The devboard firmware and USB CDC binary protocol are described in Chapter~\ref{
 
 The RF traces on the devboard use grounded coplanar waveguide (CPWG) routing. The 4-layer stackup and the absence of HAT form-factor constraints left sufficient board area for the lateral ground planes and via fencing that CPWG requires, making it the natural choice for a prototype board where RF performance takes priority over density. The matching network topology is the same three-path LC network used in the v1 HAT (\S\ref{sec:matching-topology}), with component values from the TI CC1200EM 420--470\,MHz reference design~\cite{swrr122}.
 
-\subsection{Bench Validation}
-\label{sec:devboard-bench}
-
-Two devboards were connected to a host PC and exercised with \file{RF\_Devboard/PC\_test/cc1200\_rf\_test.py}. The test script loads the SmartRF profile (2.4\,kbps 2-GFSK, 5.2\,kHz deviation, 10\,kHz channel filter), tunes both boards to a specified frequency, and runs a bidirectional packet exchange: Board\,A transmits a sequence of fixed-size payloads while Board\,B receives, then the roles are reversed. Payload matching is verified byte-for-byte.
-
-The frequency sweep covered 430--439\,MHz in 1\,MHz steps with 50 packets per direction per frequency (1000 total). Test conditions: 1\,m board separation, wire dipole antennas, indoor lab, CRC-16 enabled. Table~\ref{tab:devboard-bench} shows the per-frequency results averaged over both directions.
-
-\begin{table}[H]
+\begin{figure}[H]
     \centering
-    \caption{Devboard bench test results per frequency, averaged over both directions (50 packets each). LQI lower~=~better.}
-    \small
-    \begin{tabular}{rrrrr}
-        \toprule
-        Freq (MHz) & RSSI avg (dBm) & LQI avg & Latency avg (ms) & Loss (\%) \\
-        \midrule
-        430 & $-$83.6$^\dagger$  & 0.4 & 103.5 & 0.0 \\
-        431 & $-$103.7           & 0.3 & 103.3 & 0.0 \\
-        432 & $-$102.4           & 0.5 & 103.3 & 0.0 \\
-        433 & $-$103.6           & 0.4 & 104.1 & 0.0 \\
-        434 & $-$103.7           & 0.4 & 104.0 & 0.0 \\
-        435 & $-$88.8$^\dagger$  & 0.5 & 106.5 & 0.0 \\
-        436 & $-$103.2           & 0.4 & 104.8 & 0.0 \\
-        437 & $-$103.9           & 0.5 & 103.5 & 0.0 \\
-        438 & $-$103.9           & 0.4 & 104.3 & 0.0 \\
-        439 & $-$103.7           & 0.4 & 103.6 & 0.0 \\
-        \bottomrule
-        \multicolumn{5}{l}{\footnotesize $^\dagger$ Integer-N PLL boundary artefact; see text.}
-    \end{tabular}
-    \label{tab:devboard-bench}
-\end{table}
-
-Zero packet loss and 100\,\% payload match across all 10 frequencies confirm that the CC1200 SPI driver, SmartRF profile loading, COBS framing, TX and RX FIFO paths, sync-word detection, CRC validation, and bidirectional TRX switching all function correctly on the devboard hardware. LQI is a CC1200 demodulator quality metric that accumulates constellation error over 64 symbols after sync detection; lower values indicate smaller error. The uniform averages of 0.3--0.5 across all frequencies reflect near-perfect symbol recovery at short range, and confirm that neither the RSSI anomalies at 430 and 435\,MHz nor the noise-floor readings elsewhere affect demodulator performance. Latency averages of 103--107\,ms are consistent across the sweep, reflecting the end-to-end pipeline from host TX command through USB CDC, CC1200 transmission, and USB CDC return; the flat profile confirms no frequency-dependent timing effects.
-
-The elevated RSSI at 430 and 435\,MHz is a measurement artefact. At these exact 5\,MHz multiples the CC1200 frequency word has \textsc{freq1}\,=\,\textsc{freq0}\,=\,\texttt{0x00}, placing the fractional-N synthesiser at an integer-N boundary where the sigma-delta modulator is not dithering. The resulting lower phase noise, combined with the RSSI sample being taken immediately after packet reception before the running average has decayed to the ambient floor, produces the apparent peaks.
-
-What the bench test does not establish is satellite reception. The devboard was not taken outdoors or connected to a directional antenna. Link-budget analysis (\S\ref{sec:link-budget}) shows that receiving the AetherSpace downlink requires a front-end LNA regardless of which board is used; the bench test scopes the transceiver stack in isolation, not the system sensitivity in a satellite geometry.
+    \includegraphics[width=0.7\textwidth]{photos/RF_Dev.jpg}
+    \caption{Two RF Devboards connected to usb}
+\end{figure}
 
 \section{RF HAT Electrical Design}
 \label{sec:rf-hat-design}
@@ -91,6 +60,18 @@ This section covers the electrical design of the v1 RF HAT. The changes from the
 \subsection{System Overview}
 
 The RF HAT is based on a microcontroller-controlled dual-transceiver architecture supporting both the VHF (144\,MHz) and UHF (433\,MHz) frequency bands.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/rf_hat_front.png}
+    \caption{KiCad 3D render of the v1 RF Hat front}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/rf_hat_back.png}
+    \caption{KiCad 3D render of the v1 RF Hat back}
+\end{figure}
 
 The design consists of the following functional blocks:
 

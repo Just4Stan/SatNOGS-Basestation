@@ -63,26 +63,41 @@ Tracking error was computed per pass from the CSV log (commanded AZ/EL from \cod
 Across passes with peak elevation in the 20\degree--70\degree\ band (the range where the Chapter~\ref{ch:background} link budget closes), both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:problem-statement}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
 
 \section{RF Front-End Measurements}
-\label{sec:rf-measurements}
+\label{sec:devboard-bench}
 
-\textbf{CC1200 verification.} SPI readback confirms part ID 0x20; version reads 0x11 (empirical, not datasheet-specified). SmartRF profile load and register read-back are consistent with the written values. MARC state transitions IDLE$\to$RX$\to$IDLE$\to$TX$\to$IDLE as commanded. TX/RX FIFO access and overflow recovery both work.
+Two devboards were connected to a host PC and exercised with \file{RF\_Devboard/PC\_test/cc1200\_rf\_test.py}. The test script loads the SmartRF profile (2.4\,kbps 2-GFSK, 5.2\,kHz deviation, 10\,kHz channel filter), tunes both boards to a specified frequency, and runs a bidirectional packet exchange: Board\,A transmits a sequence of fixed-size payloads while Board\,B receives, then the roles are reversed. Payload matching is verified byte-for-byte.
 
-\textbf{RSSI.}
+The frequency sweep covered 430--439\,MHz in 1\,MHz steps with 50 packets per direction per frequency (1000 total). Test conditions: 1\,m board separation, dipole antennas, indoor lab, CRC-16 enabled. Table~\ref{tab:devboard-bench} shows the per-frequency results averaged over both directions.
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{ll}
+    \caption{Devboard bench test results per frequency, averaged over both directions (50 packets each). LQI lower~=~better.}
+    \small
+    \begin{tabular}{rrrrr}
         \toprule
-        Environment & RSSI range \\
+        Freq (MHz) & RSSI avg (dBm) & LQI avg & Latency avg (ms) & Loss (\%) \\
         \midrule
-        Indoors (lab) & $-$92 to $-$105~dBm \\
-        Outdoors (open field) & $-$77 to $-$80~dBm \\
+        430 & $-$83.6$^\dagger$  & 0.4 & 103.5 & 0.0 \\
+        431 & $-$103.7           & 0.3 & 103.3 & 0.0 \\
+        432 & $-$102.4           & 0.5 & 103.3 & 0.0 \\
+        433 & $-$103.6           & 0.4 & 104.1 & 0.0 \\
+        434 & $-$103.7           & 0.4 & 104.0 & 0.0 \\
+        435 & $-$88.8$^\dagger$  & 0.5 & 106.5 & 0.0 \\
+        436 & $-$103.2           & 0.4 & 104.8 & 0.0 \\
+        437 & $-$103.9           & 0.5 & 103.5 & 0.0 \\
+        438 & $-$103.9           & 0.4 & 104.3 & 0.0 \\
+        439 & $-$103.7           & 0.4 & 103.6 & 0.0 \\
         \bottomrule
+        \multicolumn{5}{l}{\footnotesize $^\dagger$ Integer-N PLL boundary artefact; see text.}
     \end{tabular}
-    \caption{Measured RSSI across environments (reported by \code{rf\_hat.py} on the assembled RF HAT, $\geq$30~s continuous samples per environment), AGC\_GAIN\_ADJUST = $-$99~dB calibration applied.}
+    \label{tab:devboard-bench}
 \end{table}
 
-The outdoor band is dominated by 433~MHz ISM traffic (weather stations, car keys). Indoor readings are lower than the outdoor interference level but still well above the CC1200 datasheet sensitivity, consistent with the measured effective-sensitivity figure used in the link budget.
+Zero packet loss and 100\,\% payload match across all 10 frequencies confirm that the CC1200 SPI driver, SmartRF profile loading, COBS framing, TX and RX FIFO paths, sync-word detection, CRC validation, and bidirectional TRX switching all function correctly on the devboard hardware. LQI is a CC1200 demodulator quality metric that accumulates constellation error over 64 symbols after sync detection; lower values indicate smaller error. The uniform averages of 0.3--0.5 across all frequencies reflect near-perfect symbol recovery at short range, and confirm that neither the RSSI anomalies at 430 and 435\,MHz nor the noise-floor readings elsewhere affect demodulator performance. Latency averages of 103--107\,ms are consistent across the sweep, reflecting the end-to-end pipeline from host TX command through USB CDC, CC1200 transmission, and USB CDC return; the flat profile confirms no frequency-dependent timing effects.
+
+The elevated RSSI at 430 and 435\,MHz is a measurement artefact. At these exact 5\,MHz multiples the CC1200 frequency word has \textsc{freq1}\,=\,\textsc{freq0}\,=\,\texttt{0x00}, placing the fractional-N synthesiser at an integer-N boundary where the sigma-delta modulator is not dithering. The resulting lower phase noise, combined with the RSSI sample being taken immediately after packet reception before the running average has decayed to the ambient floor, produces the apparent peaks.
+
+What the bench test does not establish is satellite reception. The devboard was not taken outdoors or connected to a directional antenna. Link-budget analysis (\S\ref{sec:link-budget}) shows that receiving the AetherSpace downlink requires a front-end LNA regardless of which board is used; the bench test scopes the transceiver stack in isolation, not the system sensitivity in a satellite geometry.
 
 \textbf{Doppler correction.} The Pi computes the Doppler shift every 500~ms from the TLE-derived radial velocity and sends frequency-word commands to the RF HAT; the firmware applies small deltas via \code{FREQOFF} and rewrites the full \code{FREQ}+\code{FS\_CFG} word on large or forced retunes, with \code{FREQOFF} also read back as a residual-error estimate. The observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum at 433~MHz predicted in \S\ref{sec:doppler} (the commanded offset is clipped at the mid-pass peak that the satellite actually reaches).
 

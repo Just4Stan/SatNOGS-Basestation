@@ -208,25 +208,6 @@ The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in 
     \caption{KiCad 3D render of the v1 MotorPCB.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{photos/motorcontrol.jpg}
-    \caption{v1 MotorPCB assembled prototype, mounted in the rotator electronics bay.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_front.png}
-    \caption{v2 MOTOR\_RF\_HAT (front): 6-layer Pi HAT merging motor control and dual-CC1200 RF.}
-    \label{fig:motor-rf-hat-front}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_back.png}
-    \caption{v2 MOTOR\_RF\_HAT (back).}
-\end{figure}
-
 \section{Bring-Up and Hardware Debugging}
 \label{sec:bringup}
 
@@ -248,6 +229,19 @@ Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-pi
 
 \subsection{v1 (deployed, field-validated)}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/rf_hat_bench.jpg}
+    \caption{v1 RF\_HAT : 6-layer Pi HAT containing the dual-CC1200 tranceivers.}
+    \label{fig:rf-hat-front}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/motorcontrol.jpg}
+    \caption{v1 MotorPCB assembled prototype, mounted in the rotator electronics bay.}
+\end{figure}
+
 \begin{table}[H]
     \centering
     \begin{tabular}{lr}
@@ -268,6 +262,19 @@ Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-pi
 \subsection{v2 (MOTOR\_RF\_HAT, design-complete, ready to order)}
 
 The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT. The A4950 (SOIC-8-EP) replaces the TB6642FG (HSOP-16) for availability (the TB6642FG went out of stock at JLCPCB during the project), and four 100\,$\Omega$ series resistors (R11--R14) on the GPIO-to-driver lines limit transients during bootloader cycling. One RP2040 handles both motor control and RF, so the USB cable and separate 5~V path are removed. Hand assembly avoids JLCPCB's extended-part setup fee ($\sim$€18/board for the many precise RF L/C values).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_front.png}
+    \caption{v2 MOTOR\_RF\_HAT (front): 6-layer Pi HAT merging motor control and dual-CC1200 RF.}
+    \label{fig:motor-rf-hat-front}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{photos/rf_hat_motor_back.png}
+    \caption{v2 MOTOR\_RF\_HAT (back).}
+\end{figure}
 
 \begin{table}[H]
     \centering
