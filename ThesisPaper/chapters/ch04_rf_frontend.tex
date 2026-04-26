@@ -252,9 +252,9 @@ with the effective dielectric constant given by:
 \left( \frac{1}{\sqrt{1 + 12h/w}} \right)
 \end{equation}
 
-where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate. This form is strictly valid for $w/h < 1$; for wider traces a modified expression applies, though the two forms converge near the transition point.
+where $w$ is the trace width, $h$ is the dielectric height between the trace and the ground plane, and $\varepsilon_r$ is the relative permittivity of the substrate. This form is strictly valid for $w/h < 1$; for wider traces a modified expression applies, though the two forms converge near the transition point and their results agree to within 10--15\% at $w/h \approx 1.5$.
 
-Applying these expressions with the selected stackup parameters ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$) yields an initial estimate of $w \approx 0.20$\,mm. This analytical result does not account for copper thickness. Cross-validating with the JLCPCB impedance calculator \cite{jlcpcb_impedance}, which implements a full numerical model including the finite copper thickness (1\,oz, 0.035\,mm), yields $w = 0.1565$\,mm for a 50\,$\Omega$ single-ended non-coplanar microstrip on this stackup. The KiCad net class was set to 0.15\,mm (6\,mil), the nearest standard routing increment, corresponding to approximately 52--53\,$\Omega$, which is within accepted tolerance for the operating frequencies.
+Applying these expressions with the selected stackup parameters ($h = 0.0994$\,mm, $\varepsilon_r = 4.1$) yields an initial estimate of $w \approx 0.20$\,mm, giving $w/h \approx 2.0$. This result falls in the wide-strip regime ($w/h > 1$), outside the strict validity domain of the narrow-strip form; the estimate is therefore used only as an order-of-magnitude check. Cross-validating with the JLCPCB impedance calculator \cite{jlcpcb_impedance}, which implements a full numerical model including the finite copper thickness (1\,oz, 0.035\,mm) and is valid across all $w/h$ ratios, yields $w = 0.1565$\,mm ($w/h \approx 1.57$) for a 50\,$\Omega$ single-ended non-coplanar microstrip on this stackup. The KiCad net class was set to 0.15\,mm (6\,mil), the nearest standard routing increment, corresponding to approximately 52--53\,$\Omega$, which is within accepted tolerance for the operating frequencies.
 
 At the operating frequencies, the free-space wavelengths are approximately 2.08\,m at 144\,MHz and 0.69\,m at 433\,MHz. Since the physical dimensions of the matching network (approximately 10\,mm $\times$ 15\,mm) remain well below $\lambda/10$, the interconnects are electrically short and distributed effects are limited.
 
@@ -275,8 +275,6 @@ To ensure reliable operation across both bands, the PCB layout is designed accor
 \subsection{Summary}
 
 A 6-layer PCB stackup was selected to enable a compact RF front-end while maintaining controlled impedance routing and effective isolation between RF, power, and digital domains. The layout is designed according to the more stringent requirements of the 433\,MHz band, ensuring reliable operation across both frequency bands within the given form factor constraints.
-
-
 
 \section{RF Matching Network}
 

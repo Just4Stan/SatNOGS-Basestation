@@ -40,7 +40,7 @@ AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-retu
 \section{Link Budget}
 \label{sec:link-budget}
 
-The canonical link-budget scenario for the AetherSpace downlink is a 600~km-altitude pass at 30\degree\ peak elevation, giving a slant range of 1075~km at 432~MHz (firmware centre frequency; formula $d = \sqrt{R_E^2 \sin^2\theta + h^2 + 2 R_E h} - R_E \sin\theta$ with $R_E = 6371$~km). Two supporting rows bracket the geometry: a zenith pass at 400~km altitude (best case, 400~km slant) and a horizon pass at 10\degree\ elevation / 600~km altitude (worst case, 1932~km slant). All FSPL values use $L_\text{fs} = 20\log_{10}(d_\text{km}) + 20\log_{10}(f_\text{MHz}) + 32.45$.
+The canonical link-budget scenario for the AetherSpace downlink is a 600~km-altitude pass at 30\degree\ peak elevation, giving a slant range of 1075~km at 433~MHz (formula $d = \sqrt{R_E^2 \sin^2\theta + h^2 + 2 R_E h} - R_E \sin\theta$ with $R_E = 6371$~km). Two supporting rows bracket the geometry: a zenith pass at 400~km altitude (best case, 400~km slant) and a horizon pass at 10\degree\ elevation / 600~km altitude (worst case, 1932~km slant). All FSPL values use $L_\text{fs} = 20\log_{10}(d_\text{km}) + 20\log_{10}(f_\text{MHz}) + 32.45$.
 
 \begin{table}[H]
     \centering
@@ -51,21 +51,21 @@ The canonical link-budget scenario for the AetherSpace downlink is a 600~km-alti
         \midrule
         TX power (AetherSpace)              & +14.0~dBm  & +14.0~dBm  & +14.0~dBm \\
         TX antenna (turnstile/dipole)       & +2.0~dBi   & +2.0~dBi   & +2.0~dBi \\
-        FSPL at 432~MHz                     & $-$145.8~dB & $-$137.2~dB & $-$150.9~dB \\
-        Atmospheric loss (ITU-R P.676~\cite{itu-r-p676}) & $-$0.5~dB  & $-$0.3~dB  & $-$1.0~dB \\
-        Polarisation mismatch (circ/lin)    & $-$3.0~dB & $-$3.0~dB & $-$3.0~dB \\
+        FSPL at 433~MHz                     & $-$145.8~dB & $-$137.2~dB & $-$150.9~dB \\
+        Atmospheric loss (gaseous abs.\ + troposcintillation margin~\cite{itu-r-p676}) & $-$0.5~dB  & $-$0.3~dB  & $-$1.0~dB \\
+        Polarisation mismatch (circ/lin)$^\ddagger$    & $-$3.0~dB & $-$3.0~dB & $-$3.0~dB \\
         RX antenna (Oscar 44, 9~dBi~\cite{siretta-oscar44}) & +9.0~dBi & +9.0~dBi & +9.0~dBi \\
         Feedline loss (3~m RG58)            & $-$0.9~dB  & $-$0.9~dB  & $-$0.9~dB \\
         Pointing loss                       & $-$0.5~dB  & $-$0.3~dB  & $-$0.5~dB \\
         \midrule
         \textbf{Received power at CC1200}   & \textbf{$-$125.7~dBm} & \textbf{$-$116.7~dBm} & \textbf{$-$131.3~dBm} \\
-        CC1200 sensitivity~\cite{cc1200} (2.4~kbps 2-GFSK, interp.) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
+        CC1200 sensitivity~\cite{cc1200} (2.4~kbps 2-GFSK; interp.\ from $-$123~dBm at 1.2~kbps, $-$3~dB/octave in data rate) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
         \textbf{Theoretical margin}         & \textbf{$-$5.7~dB} & \textbf{+3.3~dB} & \textbf{$-$11.3~dB} \\
-        CC1200 effective sensitivity (measured, no LNA) & $-$105~dBm & $-$105~dBm & $-$105~dBm \\
+        CC1200 effective sensitivity (indoor best-case, no LNA; field floor $\approx$$-$96~dBm) & $-$105~dBm & $-$105~dBm & $-$105~dBm \\
         \textbf{Measured margin}            & \textbf{$-$20.7~dB} & \textbf{$-$11.7~dB} & \textbf{$-$26.3~dB} \\
         \bottomrule
     \end{tabularx}
-    \caption{Link budget for the AetherSpace UHF downlink at 432~MHz across three canonical pass geometries.}
+    \caption{Link budget for the AetherSpace UHF downlink at 433~MHz across three canonical pass geometries. $^\ddagger$Assumes a circularly polarised satellite antenna (turnstile); a linearly polarised dipole would give an orientation-dependent mismatch ranging from 0~dB (co-polarised) to $-\infty$~dB (cross-polarised).}
     \label{tab:link-budget}
 \end{table}
 
@@ -86,12 +86,12 @@ At 433~MHz this gives
     \Delta f_{\max} = \frac{7669}{3 \times 10^8} \cdot 433 \times 10^6 = 11.07~\text{kHz} \quad (\pm 11~\text{kHz}).
 \end{equation}
 
-At 145.9~MHz (the VHF uplink target):
+At 145~MHz (representative VHF band centre; no uplink frequency has been defined for AetherSpace at the time of writing):
 \begin{equation}
-    \Delta f_{\max} = \frac{7669}{3 \times 10^8} \cdot 145.9 \times 10^6 = 3.73~\text{kHz} \quad (\pm 3.7~\text{kHz}).
+    \Delta f_{\max} = \frac{7669}{3 \times 10^8} \cdot 145 \times 10^6 = 3.71~\text{kHz} \quad (\pm 3.7~\text{kHz}).
 \end{equation}
 
-The Doppler rate $d(\Delta f)/dt$ peaks at closest approach. The station software applies Doppler correction by writing the CC1200 \code{FREQOFF} register at 2~Hz (\S\ref{sec:pi-stack}). A worst-case rate of approximately 200~Hz/s at 432~MHz near TCA means the residual uncompensated drift between 2~Hz updates is of order 100~Hz, which is small relative to the 10~kHz RX filter bandwidth used for 2.4~kbps 2-GFSK reception.
+The Doppler rate $d(\Delta f)/dt$ peaks at closest approach. The station software applies Doppler correction by writing the CC1200 \code{FREQOFF} register at 2~Hz (\S\ref{sec:pi-stack}). A worst-case rate of approximately 200~Hz/s at 433~MHz near TCA means the residual uncompensated drift between 2~Hz updates is of order 100~Hz, which is small relative to the 10~kHz RX filter bandwidth used for 2.4~kbps 2-GFSK reception.
 
 \section{The SatNOGS Network}
 
