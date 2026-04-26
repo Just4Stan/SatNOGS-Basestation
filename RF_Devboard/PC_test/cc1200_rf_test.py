@@ -596,7 +596,8 @@ def run_phase(
         received = len(rx_payload) > 0
         matched = received and (rx_payload == payload)
 
-        # Extract LQI from APPEND_STATUS byte 2 (bits [6:0])
+        # Extract LQI from APPEND_STATUS byte 2 (bits [6:0]).
+        # CC1200 LQI is an error metric: 0 = best link, higher = worse (SWRU346B §6.13).
         lqi = (append_status[1] & 0x7F) if len(append_status) >= 2 else None
         if lqi is not None:
             result.lqi_values.append(lqi)
@@ -665,7 +666,7 @@ def print_phase_summary(phase: PhaseResult):
     else:
         log(f"  RSSI      : n/a")
     if phase.lqi_values:
-        log(f"  LQI       : avg={phase.lqi_avg:.1f}  min={phase.lqi_min}  max={phase.lqi_max}  (0-127)")
+        log(f"  LQI       : avg={phase.lqi_avg:.1f}  min={phase.lqi_min}  max={phase.lqi_max}  (0=best, 127=worst)")
     else:
         log(f"  LQI       : n/a")
     if phase.latency_values:
@@ -882,7 +883,7 @@ def main():
                     f"min={min(all_rssi):.1f}  max={max(all_rssi):.1f}  dBm")
             if all_lqi:
                 log(f"  LQI  avg={sum(all_lqi)/len(all_lqi):.1f}  "
-                    f"min={min(all_lqi)}  max={max(all_lqi)}  (0-127)")
+                    f"min={min(all_lqi)}  max={max(all_lqi)}  (0=best, 127=worst)")
 
             freq_results.append({
                 "freq_mhz": freq_mhz,
