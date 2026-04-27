@@ -3,6 +3,8 @@
 \label{ch:rf-frontend}
 % ══════════════════════════════════════════════════════════════════════════════
 
+The dual CC1200 hardware-modem approach adopted here departs from the canonical SatNOGS SDR receive chain. The rationale for that choice and the trade-offs against an RTL-SDR alternative are stated in Chapter~\ref{ch:introduction} (\S\,\emph{A deliberate alternative, not a replacement}); in brief, the CC1200 matches the AetherSpace on-board transceiver directly, exercises a complete embedded RF stack as educational scope, and fits within the Raspberry Pi 3A+ memory budget where the SatNOGS Docker stack would not. Chapter~\ref{ch:results} quantifies the sensitivity cost of this choice and identifies the external LNA required to close the link. This chapter details the resulting RF hardware across three design iterations.
+
 \section{RF Design Progression}
 \label{sec:rf-progression}
 

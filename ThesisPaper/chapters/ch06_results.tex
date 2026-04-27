@@ -65,6 +65,8 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
 \section{RF Front-End Measurements}
 \label{sec:devboard-bench}
 
+Chapter~\ref{ch:background} derived a theoretical link margin of $-$5.7~dB at 30\degree\ elevation and predicted that board-level interference would degrade this further. The measurements in this section and \S\ref{sec:packet-reception} quantify the actual outcome.
+
 Two devboards were connected to a host PC and exercised with \file{RF\_Devboard/PC\_test/cc1200\_rf\_test.py}. The test script loads a bench validation SmartRF profile (2.4\,kbps 2-GFSK, 5.2\,kHz deviation, 10\,kHz channel filter; modulation index $h = 2\Delta f/f_b \approx 4.3$, chosen for robustness at short range rather than spectral efficiency — this is not the AetherSpace flight configuration, which remains to be defined once the satellite's modulation parameters are finalised), tunes both boards to a specified frequency, and runs a bidirectional packet exchange: Board\,A transmits a sequence of fixed-size payloads while Board\,B receives, then the roles are reversed. Payload matching is verified byte-for-byte.
 
 The frequency sweep covered 430--439\,MHz in 1\,MHz steps with 50 packets per direction per frequency (1000 total). Test conditions: 1\,m board separation, dipole antennas, indoor lab, CRC-16 enabled. Table~\ref{tab:devboard-bench} shows the per-frequency results averaged over both directions.
@@ -172,7 +174,7 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 
 \subsection{Academic Conclusion}
 
-The two hypotheses behind observations A--F (weak sub-threshold reception vs. receiver-internal effects) are not separable from the available data. The link budget in \S\ref{sec:link-budget} predicts this outcome at the measured effective sensitivity; the required hardware intervention is a front-end LNA (\S\ref{sec:future-work}).
+The primary finding is established independently of observations A--F: the link budget in \S\ref{sec:link-budget} shows a $-$20.7~dB measured margin at 30\degree\ elevation with the assembled hardware (no LNA), making protocol-valid decode physically impossible regardless of which secondary hypothesis explains the statistical patterns. The secondary finding is that A--F are individually consistent with both weak sub-threshold reception and receiver-internal noise artefacts, and cannot be used to distinguish between the two hypotheses. This ambiguity is expected and does not alter the root-cause diagnosis: the measured board-noise floor sits approximately 30~dB above the thermal\,+\,NF baseline, and the required hardware intervention is a front-end LNA (\S\ref{sec:future-work}).
 
 \subsection{AetherSpace-Specific Outlook}
 
@@ -193,7 +195,7 @@ The canonical link-budget table is in \S\ref{sec:link-budget}. The measurement-d
 
 \begin{itemize}
     \item Measured effective noise floor at the CC1200 input on the assembled RF HAT: \textbf{approximately $-$96~dBm} (canonical figure from \file{captures/evidence/signal\_evidence.md}). This is approximately 30~dB above the expected kTB+NF limit of $\sim$$-$127~dBm and is attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) and antenna noise temperature. Pure thermal kTB at 290~K for the CC1200 channel bandwidth is $\sim$$-$134~dBm; the $\sim$$-$127~dBm figure already folds in the CC1200 noise figure.
-    \item Because the system is interference-dominated rather than thermally limited, the primary benefit of a mast-mounted LNA is that its gain ($\sim$20~dB) lifts the received antenna signal above the fixed board-interference floor before it reaches the CC1200, improving the signal-to-noise ratio at the CC1200 input by approximately the LNA gain. A secondary benefit is the reduction of the thermal noise figure from $\sim$7~dB (CC1200 alone) to $<$1~dB (LNA-dominated Friis cascade). The combined effect improves effective sensitivity by $\sim$20~dB, which would move the AetherSpace 30\degree/600~km link margin from the measured $\sim$$-$21~dB towards break-even.
+    \item Because the system is interference-dominated rather than thermally limited, the primary benefit of a mast-mounted LNA is that its gain ($\sim$20~dB) lifts the received antenna signal above the fixed board-interference floor before it reaches the CC1200, improving the signal-to-noise ratio at the CC1200 input by approximately the LNA gain. A secondary benefit is the reduction of the thermal noise figure from $\sim$7~dB (CC1200 alone) to $<$1~dB (LNA-dominated Friis cascade). The 7~dB figure is derived from the datasheet sensitivity: at 1.2~kbps with an 11~kHz channel filter, $kTB = -174 + 10\log_{10}(11000) = -133.6$~dBm; non-coherent FSK requires $E_b/N_0 \approx 13$~dB, which converts to a bandwidth SNR of $13 - 10\log_{10}(B/R_b) = 13 - 9.6 = 3.4$~dB; so $\text{NF} = -123 - (-133.6) - 3.4 \approx 7$~dB. The combined effect improves effective sensitivity by $\sim$20~dB, which would move the AetherSpace 30\degree/600~km link margin from the measured $\sim$$-$21~dB towards break-even.
     \item A higher-gain Yagi contributes additively but is secondary: the dominant gap is the missing front-end gain, not antenna gain.
 \end{itemize}
 
