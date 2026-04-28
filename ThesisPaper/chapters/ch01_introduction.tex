@@ -1,5 +1,6 @@
 % ══════════════════════════════════════════════════════════════════════════════
 \chapter{Introduction}
+\label{ch:introduction}
 % ══════════════════════════════════════════════════════════════════════════════
 
 \begin{figure}[H]
@@ -37,9 +38,9 @@ The canonical SatNOGS receive chain is a Raspberry Pi running the official \code
 This thesis adopts the CC1200 hardware-packet-modem path instead, for three reasons.
 
 \begin{enumerate}
-    \item \textbf{AetherSpace-specific.} AetherSpace carries a CC1200 on-board. Using the same transceiver at the ground end eliminates modulation-parameter matching uncertainty: a single SmartRF Studio register set loaded at both ends configures identical symbol rate, deviation, filter bandwidth, sync word, and packet framing. An SDR receiver would need those values re-measured or re-derived per satellite, per flight revision.
-    \item \textbf{Educational scope.} The thesis is a joint MSc in electronics. The CC1200 path exercises a full embedded-systems stack end-to-end: PCB design with controlled-impedance RF routing and matching networks (Chapter~\ref{ch:rf-frontend}), RP2040 firmware with SPI drivers and a binary COBS protocol (\S\ref{sec:rf-hat-firmware}, with protocol structure in Appendix~\ref{app:protocol}), Pi-side Python controlling CC1200 registers over UART (\S\ref{sec:pi-stack}), and a closed-loop tracking rotator (Chapters~\ref{ch:system-design} and~\ref{ch:firmware-software}).
-    \item \textbf{Form-factor fit.} A Pi 3A+ ships with 512~MB of LPDDR2 SDRAM~\cite{rpi3aplus}; with the default 64~MB GPU split, approximately 416~MB is available to userspace. The SatNOGS Docker stack targets $\geq$1~GB of RAM~\cite{satnogs-main}. The Python stack described in \S\ref{sec:pi-stack} ($\sim$7900 LOC across the Pi packages listed in Appendix~\ref{app:bom}) runs on the 3A+ within a 200--300~MB resident-set footprint measured with \code{top}, leaving margin for the HTTPS dashboard and systemd services.
+    \item AetherSpace-specific. AetherSpace carries a CC1200 on-board. Using the same transceiver at the ground end eliminates modulation-parameter matching uncertainty: a single SmartRF Studio register set loaded at both ends configures identical symbol rate, deviation, filter bandwidth, sync word, and packet framing. An SDR receiver would need those values re-measured or re-derived per satellite, per flight revision.
+    \item Educational scope. The thesis is a joint MSc in electronics. The CC1200 path exercises a full embedded-systems stack end-to-end: PCB design with controlled-impedance RF routing and matching networks (Chapter~\ref{ch:rf-frontend}), RP2040 firmware with SPI drivers and a binary COBS protocol (\S\ref{sec:rf-hat-firmware}, with protocol structure in Appendix~\ref{app:protocol}), Pi-side Python controlling CC1200 registers over UART (\S\ref{sec:pi-stack}), and a closed-loop tracking rotator (Chapters~\ref{ch:system-design} and~\ref{ch:firmware-software}).
+    \item Form-factor fit. A Pi 3A+ ships with 512~MB of LPDDR2 SDRAM~\cite{rpi3aplus}; with the default 64~MB GPU split, approximately 416~MB is available to userspace. The SatNOGS Docker stack targets $\geq$1~GB of RAM~\cite{satnogs-main}. The Python stack described in \S\ref{sec:pi-stack} ($\sim$7900 LOC across the Pi packages listed in Appendix~\ref{app:bom}) runs on the 3A+ within a 200--300~MB resident-set footprint measured with \code{top}, leaving margin for the HTTPS dashboard and systemd services.
 \end{enumerate}
 
 Chapter~\ref{ch:results} quantifies the sensitivity cost of this choice: with the Siretta Oscar 44 Yagi but without an external LNA, the CC1200 receive chain did not decode AetherSpace-class downlinks from orbit during the three field sessions. \S\ref{sec:future-work} identifies the hardware additions required to close the remaining sensitivity gap.
@@ -57,8 +58,8 @@ Chapter~\ref{ch:results} quantifies the sensitivity cost of this choice: with th
 \section{Scope and Division of Work}
 
 \begin{itemize}
-    \item \textbf{Stan Coene}: Mechanical rotator design, motor controller PCB (RP2040 + dual motor driver), rotator firmware, Raspberry Pi software stack, systemd services, web dashboard, field deployment workflow, system integration.
-    \item \textbf{Robbe Lehaen}: RF front-end hardware (dual CC1200 transceiver HAT, UHF 433~MHz assembled + VHF 144/145~MHz routed), matching network design, RF HAT firmware (COBS protocol, SPI driver), CC1200 register configuration.
+    \item Stan Coene: Mechanical rotator design, motor controller PCB (RP2040 + dual motor driver), rotator firmware, Raspberry Pi software stack, systemd services, web dashboard, field deployment workflow, system integration.
+    \item Robbe Lehaen: RF front-end hardware (dual CC1200 transceiver HAT, UHF 433~MHz assembled + VHF 144/145~MHz routed), matching network design, RF HAT firmware (COBS protocol, SPI driver), CC1200 register configuration.
 \end{itemize}
 
 \section{Thesis Outline}

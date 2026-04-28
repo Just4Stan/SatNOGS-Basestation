@@ -35,7 +35,7 @@ The \textit{azimuth} rate, however, is unbounded as a pass approaches true zenit
 
 \section{The AetherSpace CubeSat}
 
-AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. Per the specification provided by the AetherSpace team (2026-03-05): UHF downlink at 433~MHz, TX power approximately +14~dBm ($\approx$25~mW), TX antenna a turnstile or dipole with approximately 2~dBi gain, CC1200 native packet format, modulation and symbol rate not finalised at the time of writing. Previous KU Leuven work by Surkijn and Van Elst (2022) on the Earth--satellite communication chain and Hanssens (2023) on SatNOGS ground-station options~\cite{hanssens2023} scoped the ground-station problem.
+AetherSpace is a 3U CubeSat developed at KU Leuven for a heat-shield sample-return demonstration from LEO, with a planned launch around 2030. Per the specification provided by the AetherSpace team (2026-03-05): UHF downlink at 433~MHz, TX power approximately +14~dBm ($\approx$25~mW), TX antenna a turnstile or dipole with approximately 2~dBi gain, CC1200 native packet format, modulation and symbol rate not finalised at the time of writing. Hanssens (2023) on SatNOGS ground-station options~\cite{hanssens2023} provides the closest prior KU~Leuven work on the ground-station side.
 
 \section{Link Budget}
 \label{sec:link-budget}
@@ -107,7 +107,7 @@ The ecosystem has four components~\cite{satnogs-main, satnogs-network, satnogs-w
     \item[SatNOGS Rotator]: optional reference rotator (3D-printed, NEMA17 bipolar steppers, belt drive, Arduino controller)~\cite{satnogs-rotator-fw}.
 \end{description}
 
-Rotator communication goes through \textbf{hamlib}~\cite{hamlib}: the \code{rotctld} daemon exposes a TCP interface on port 4533 speaking the hamlib \code{rotctl} protocol, and internally translates those commands to EasyComm III ASCII on the serial link to the controller. Any controller that speaks EasyComm III integrates without modification, as hamlib model 204~\cite{jackson1990easycomm}.
+Rotator communication goes through hamlib~\cite{hamlib}: the \code{rotctld} daemon exposes a TCP interface on port 4533 speaking the hamlib \code{rotctl} protocol, and internally translates those commands to EasyComm III ASCII on the serial link to the controller. Any controller that speaks EasyComm III integrates without modification, as hamlib model 204~\cite{jackson1990easycomm}.
 
 \subsection{The EasyComm Protocol}
 

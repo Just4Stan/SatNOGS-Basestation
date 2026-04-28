@@ -1,15 +1,14 @@
-% Abstract — max 3500 characters, English.
+% Abstract, max 3500 characters, English.
 
 This thesis presents the design, implementation, and field validation of a portable, SatNOGS-compatible ground station targeting the AetherSpace CubeSat at 433\,MHz. The station consists of a Raspberry Pi 3A+ with two subsystems.
 
-
-The rotator uses a 3D-printed ASA structure with integrated printed bearing races and steel balls, geared DC motors (516:1 internal, up to 1376:1 total), and a custom RP2040 motor controller PCB. A PID loop achieves sub-0.5\degree\ elevation and 0--3\degree\ azimuth error, validated during live passes. Elevation homing uses an ADXL345 accelerometer; azimuth is calibrated via the phone compass or by powering up pre-aligned to north. 
+The rotator uses a 3D-printed ASA structure with integrated printed bearing races and steel balls, geared DC motors (516:1 internal, up to 1376:1 total), and a custom RP2040 motor controller PCB. A PID loop achieves sub-0.5\degree\ elevation and 0--3\degree\ azimuth error, validated during live passes. Elevation homing uses an ADXL345 accelerometer; azimuth is calibrated via the phone compass or by powering up pre-aligned to north.
 
 The RF front-end is a 6-layer Pi HAT carrying two TI CC1200 transceivers; the UHF (432\,MHz) path is assembled with a matching network derived from the TI CC1200EM reference, while the VHF (144/145\,MHz) path is routed but not populated.
 
 A Python stack on the Pi handles pass prediction, Doppler correction, per-satellite CC1200 reconfiguration, and SiDS telemetry submission. An HTTPS dashboard provides laptop-based field control, with optional phone access. The station speaks standard EasyComm III over hamlib.
 
-Across three field sessions, approximately 210 satellite passes were tracked with a Siretta Oscar 44 Yagi. The CC1200 receive chain was validated for local test frames in short-range ground-to-ground CC1200-to-CC1200 tests but no protocol-valid frames were decoded from orbit. Board-level interference (buck converter harmonics, RP2040 digital noise, Pi GPIO emissions) elevates the effective noise floor approximately 30~dB above the thermal\,+\,NF baseline, degrading the CC1200 sensitivity from its datasheet $-$120~dBm to approximately $-$105~dBm and leaving the AetherSpace link at $-$20.7~dB measured margin at 30\degree\ elevation. The link-budget analysis identifies a mast-mounted LNA as the dominant remaining sensitivity gap. The v2 MOTOR\_RF\_HAT (combined controller/RF board) is design-complete but not yet fabricated at submission.
+Across three field sessions, approximately 210 satellite passes were tracked with a Siretta Oscar 44 Yagi. The CC1200 receive chain was validated for local test frames in short-range ground-to-ground tests but no protocol-valid frames were decoded from orbit. Board-level interference (buck-converter harmonics, RP2040 digital noise, Pi GPIO emissions) lifts the effective noise floor approximately 30~dB above the thermal\,+\,NF baseline, dropping CC1200 sensitivity from its datasheet $-$120~dBm to approximately $-$105~dBm and leaving the AetherSpace link at $-$20.7~dB measured margin at 30\degree\ elevation. The link-budget analysis identifies a mast-mounted LNA as the dominant remaining sensitivity gap. The v2 MOTOR\_RF\_HAT (combined controller/RF board) is design-complete but not fabricated at submission.
 
 
 

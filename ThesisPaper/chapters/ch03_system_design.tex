@@ -7,9 +7,9 @@
 
 Three subsystems connected through a Raspberry Pi 3A+:
 \begin{enumerate}
-    \item \textbf{Rotator}: 2-axis AZ/EL, DC motors, custom RP2040 motor PCB. USB CDC serial, EasyComm III.
-    \item \textbf{RF front-end}: Pi HAT, 2$\times$ CC1200 populated only on UHF (433~MHz); VHF (144/145~MHz) path routed but not populated. Second RP2040, UART link, COBS binary protocol.
-    \item \textbf{Station computer}: Pi runs \code{rotctld} (hamlib), \code{station.py}, \code{dashboard.py}. Pass prediction, Doppler correction, telemetry submission.
+    \item Rotator: 2-axis AZ/EL, DC motors, custom RP2040 motor PCB. USB CDC serial, EasyComm III.
+    \item RF front-end: Pi HAT, 2$\times$ CC1200 populated only on UHF (433~MHz); VHF (144/145~MHz) path routed but not populated. Second RP2040, UART link, COBS binary protocol.
+    \item Station computer: Pi runs \code{rotctld} (hamlib), \code{station.py}, \code{dashboard.py}. Pass prediction, Doppler correction, telemetry submission.
 \end{enumerate}
 
 Architecture keeps rotator and RF independent: either can be tested, replaced, or upgraded alone.
@@ -23,10 +23,10 @@ Architecture keeps rotator and RF independent: either can be tested, replaced, o
 \subsection*{Design constraints}
 
 \begin{itemize}
-    \item \textbf{Portability.} 1/4"-20 UNC tripod thread on the base. Field setup time measured across three sessions: approximately 4 minutes from unpacking to first tracked pass (\S\ref{sec:field-tests}).
-    \item \textbf{Zero-SSH workflow.} All field operations (GPS entry, north alignment, pass selection, park, shutdown) run through the HTTPS dashboard. The UI targets a laptop browser; a phone browser also works for quick field tasks such as supplying a GPS fix.
-    \item \textbf{Cost target.} v2 MOTOR\_RF\_HAT BOM (\S\ref{sec:cost}, Appendix~\ref{app:bom}): $\sim$€40 combined controller/RF PCB, $\sim$€75 rotator hardware, $\sim$€100 station core (excluding antenna, coax, power supply, tripod).
-    \item \textbf{Licensing (intended).} Hardware under CERN-OHL-S v2; firmware and Python stack under MIT. Formal \file{LICENSE} files are added with the open-source release.
+    \item Portability. 1/4"-20 UNC tripod thread on the base. Field setup time measured across three sessions: approximately 4 minutes from unpacking to first tracked pass (\S\ref{sec:field-tests}).
+    \item Zero-SSH workflow. All field operations (GPS entry, north alignment, pass selection, park, shutdown) run through the HTTPS dashboard. The UI targets a laptop browser; a phone browser also works for quick field tasks such as supplying a GPS fix.
+    \item Cost target. v2 MOTOR\_RF\_HAT BOM (\S\ref{sec:cost}, Appendix~\ref{app:bom}): $\sim$€40 combined controller/RF PCB, $\sim$€75 rotator hardware, $\sim$€100 station core (excluding antenna, coax, power supply, tripod).
+    \item Licensing (intended). Hardware under CERN-OHL-S v2; firmware and Python stack under MIT. Formal \file{LICENSE} files are added with the open-source release.
 \end{itemize}
 
 \section{Mechanical Design}
@@ -91,8 +91,8 @@ The gear-ratio bookkeeping:
 Ticks per degree at the output is derived from the encoder count per motor revolution multiplied by the total reduction, divided by 360:
 
 \begin{itemize}
-    \item \textbf{AZ:} $\text{ticks/deg} = \dfrac{64 \times 516 \times (40/15)}{360} = \dfrac{64 \times 516 \times 2.667}{360} = \dfrac{88\,064}{360} = 244.6$ ticks/deg, giving a positioning resolution of $1/244.6 = 0.00409\degree$ per tick.
-    \item \textbf{EL:} $\text{ticks/deg} = \dfrac{64 \times 516 \times (55/40)}{360} = \dfrac{64 \times 516 \times 1.375}{360} = \dfrac{45\,408}{360} = 126.1$ ticks/deg, giving 0.00793\degree\ per tick.
+    \item AZ: $\text{ticks/deg} = \dfrac{64 \times 516 \times (40/15)}{360} = \dfrac{64 \times 516 \times 2.667}{360} = \dfrac{88\,064}{360} = 244.6$ ticks/deg, giving a positioning resolution of $1/244.6 = 0.00409\degree$ per tick.
+    \item EL: $\text{ticks/deg} = \dfrac{64 \times 516 \times (55/40)}{360} = \dfrac{64 \times 516 \times 1.375}{360} = \dfrac{45\,408}{360} = 126.1$ ticks/deg, giving 0.00793\degree\ per tick.
 \end{itemize}
 
 Gears press-fit directly onto the motor's 6~mm D-shafts with additional set-screws.
@@ -119,15 +119,15 @@ The axis motor is the FAPG36-555-EN (FONEACC): a 24~V brushed DC motor with a 51
 Hanssens~\cite{hanssens2023} identified insufficient stepper torque as the failure mode of his azimuth rotation tests. The DC-motor path chosen here multiplies the manufacturer output torque by the external gear ratio:
 
 \begin{itemize}
-    \item \textbf{AZ:} $4~\text{Nm} \times 2.667 = 10.7$~Nm at the output shaft (manufacturer spec $\times$ external ratio).
-    \item \textbf{EL:} $4~\text{Nm} \times 1.375 = 5.5$~Nm at the output shaft.
+    \item AZ: $4~\text{Nm} \times 2.667 = 10.7$~Nm at the output shaft (manufacturer spec $\times$ external ratio).
+    \item EL: $4~\text{Nm} \times 1.375 = 5.5$~Nm at the output shaft.
 \end{itemize}
 
 \paragraph{Measured output torque.} The assembled rotator was bench-measured with a lever-arm-plus-kitchen-scale setup. A rigid arm attached to the axis output pushes down on the scale at a known radius while the axis is commanded to rotate at 95\,\% duty; the peak scale reading gives the output force.
 
 \begin{itemize}
-    \item \textbf{AZ:} 0.71~kgf at 0.50~m lever $\Rightarrow T_\text{AZ} = 0.71 \cdot 9.81 \cdot 0.50 = 3.48$~Nm (Fig.~\ref{fig:torque-az}).
-    \item \textbf{EL:} 1.10~kgf at 0.40~m lever $\Rightarrow T_\text{EL} = 1.10 \cdot 9.81 \cdot 0.40 = 4.32$~Nm (Fig.~\ref{fig:torque-el}).
+    \item AZ: 0.71~kgf at 0.50~m lever $\Rightarrow T_\text{AZ} = 0.71 \cdot 9.81 \cdot 0.50 = 3.48$~Nm (Fig.~\ref{fig:torque-az}).
+    \item EL: 1.10~kgf at 0.40~m lever $\Rightarrow T_\text{EL} = 1.10 \cdot 9.81 \cdot 0.40 = 4.32$~Nm (Fig.~\ref{fig:torque-el}).
 \end{itemize}
 
 Measured EL reaches approximately 80\,\% of the spec-derived 5.5~Nm. Measured AZ reaches approximately 33\,\% of the spec-derived 10.7~Nm; the AZ rig lets the rotor continue to move as the scale deflects, so the reading is the rotating-under-load torque rather than the stalled peak. Both measured values exceed what the Siretta Oscar 44 Yagi (mass $\sim$0.6~kg) requires at the lever of the assembled antenna.
@@ -165,9 +165,9 @@ Measured EL reaches approximately 80\,\% of the spec-derived 5.5~Nm. Measured AZ
 The choice of DC motors over stepper motors was informed by Hanssens' torque test~\cite{hanssens2023} and by three properties of the DC-motor-plus-high-ratio-gearbox path:
 
 \begin{enumerate}
-    \item \textbf{Zero idle current with mechanical position holding.} A brushed DC motor draws no current when stationary, and a 516:1 reduction makes back-driving from the output side require $516\times$ the static friction torque of the unloaded motor rotor, which for a planetary gearbox of this ratio practically prevents back-drive under wind gusts. The station is unpowered at the motor terminals for the $\sim$90\,\% of the orbit it is idle (about 80 minutes out of a 92-minute orbit, per \S\ref{sec:orbital-mechanics}). In contrast, a stepper requires continuous holding current (typically 0.8--1.5~A per phase at rated current per the Pololu stepper catalogue~\cite{pololu-stepper}) to resist back-drive; a de-energised stepper has no holding torque.
-    \item \textbf{Torque retained at low speed.} The 516:1 internal gearbox plus the external stage delivers the torque budget listed above across the full output-speed range used for tracking (0--35\degree/s). Steppers lose torque above their pull-out speed and require microstepping to produce smooth motion, which further reduces available torque per step.
-    \item \textbf{Closed-loop position verification.} The quadrature encoder on the motor shaft gives continuous position feedback. A stepper skipping a step (wind gust, obstruction, or torque-curve excursion) silently diverges commanded from actual position unless an external encoder is added; with the encoder already in place here, the PID loop sees any discrepancy within one control period.
+    \item Zero idle current with mechanical position holding. A brushed DC motor draws no current when stationary, and a 516:1 reduction makes back-driving from the output side require $516\times$ the static friction torque of the unloaded motor rotor, which for a planetary gearbox of this ratio practically prevents back-drive under wind gusts. The station is unpowered at the motor terminals for the $\sim$90\,\% of the orbit it is idle (about 80 minutes out of a 92-minute orbit, per \S\ref{sec:orbital-mechanics}). In contrast, a stepper requires continuous holding current (typically 0.8--1.5~A per phase at rated current per the Pololu stepper catalogue~\cite{pololu-stepper}) to resist back-drive; a de-energised stepper has no holding torque.
+    \item Torque retained at low speed. The 516:1 internal gearbox plus the external stage delivers the torque budget listed above across the full output-speed range used for tracking (0--35\degree/s). Steppers lose torque above their pull-out speed and require microstepping to produce smooth motion, which further reduces available torque per step.
+    \item Closed-loop position verification. The quadrature encoder on the motor shaft gives continuous position feedback. A stepper skipping a step (wind gust, obstruction, or torque-curve excursion) silently diverges commanded from actual position unless an external encoder is added; with the encoder already in place here, the PID loop sees any discrepancy within one control period.
 \end{enumerate}
 
 The trade-off is firmware complexity: the DC-motor path requires a PID loop and quadrature-decode ISRs (\S\ref{sec:rotator-pid}, \S\ref{sec:quadrature}). The encoder feedback also makes safety features possible (runaway detection, soft-limit enforcement) that a stepper-without-encoder cannot implement.
@@ -180,11 +180,11 @@ The v1 MotorPCB is a 4-layer KiCad~9 design with 13 hierarchical sub-sheets, JLC
 
 Components:
 \begin{itemize}
-    \item \textbf{RP2040} (Pi Pico module): EasyComm firmware, PID, encoder ISRs.
-    \item \textbf{2$\times$ TB6642FG}~\cite{tb6642fg}: 50~V absolute-max / 4.5~A peak H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
-    \item \textbf{ADXL345}~\cite{adxl345}: 3-axis accelerometer on SPI0, gravity vector for EL homing.
-    \item \textbf{Encoder inputs}: 4 GPIO with IRQ, 4$\times$ quadrature decoding. RC filter caps removed (see \S\ref{sec:bringup}).
-    \item \textbf{NeoPixel}: optional WS2812B status output: idle = green, tracking = blue, on-target = cyan, fault = red.
+    \item RP2040 (Pi Pico module): EasyComm firmware, PID, encoder ISRs.
+    \item 2$\times$ TB6642FG~\cite{tb6642fg}: 50~V absolute-max / 4.5~A peak H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
+    \item ADXL345~\cite{adxl345}: 3-axis accelerometer on SPI0, gravity vector for EL homing.
+    \item Encoder inputs: 4 GPIO with IRQ, 4$\times$ quadrature decoding. RC filter caps removed (see \S\ref{sec:bringup}).
+    \item NeoPixel: optional WS2812B status output: idle = green, tracking = blue, on-target = cyan, fault = red.
 \end{itemize}
 
 The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in \S\ref{sec:bringup}; the schematic's original GP15 assignment is retained only as bring-up history.
@@ -213,9 +213,9 @@ The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in 
 
 The first-revision MotorPCB shipped with three defects, all fixed with bodge wires and reflected in the v2 design:
 \begin{itemize}
-    \item \textbf{Missing EL driver traces.} OUT1/OUT2 on the elevation TB6642FG were unrouted; bodged through unused NC pins (6, 11).
-    \item \textbf{Encoder RC filters (C1--C4).} 100~nF caps on the Hall-sensor lines low-passed the signal into unusability; removed. Debouncing is handled in firmware.
-    \item \textbf{AZ driver blown by bootloader cycling.} The 1200-baud bootloader trick with 24~V connected damaged the TB6642FG IN1 ESD diode and the GP15 pad; driver replaced and IN1 rerouted to GP16.
+    \item Missing EL driver traces. OUT1/OUT2 on the elevation TB6642FG were unrouted; bodged through unused NC pins (6, 11).
+    \item Encoder RC filters (C1--C4). 100~nF caps on the Hall-sensor lines low-passed the signal into unusability; removed. Debouncing is handled in firmware.
+    \item AZ driver blown by bootloader cycling. The 1200-baud bootloader trick with 24~V connected damaged the TB6642FG IN1 ESD diode and the GP15 pad; driver replaced and IN1 rerouted to GP16.
 \end{itemize}
 
 The v2 MOTOR\_RF\_HAT corrects all three natively: routed EL outputs, no encoder caps, and 100\,$\Omega$ series resistors (R11--R14) on every GPIO-to-driver line. Merging the motor controller and RF front-end onto one Pi HAT also removes the USB cable and separate 5\,V path.
@@ -223,7 +223,7 @@ The v2 MOTOR\_RF\_HAT corrects all three natively: routed EL outputs, no encoder
 \section{Cost}
 \label{sec:cost}
 
-Two hardware configurations are costed: the \textbf{as-deployed v1} setup used for field validation (separate MotorPCB + RF HAT, connected via USB and UART), and the \textbf{v2 combined MOTOR\_RF\_HAT} which is the thesis's final hardware deliverable (design-complete, routed, BOM finalised, ready to order but not yet fabricated at the time of writing). The strict "under €50 full rotator" target is not met once motors and mechanics are included; v2 reaches $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware excluding the Pi, and $\sim$€100 for the station core. v1 existed to validate the architecture and firmware and to allow both sides (RF and rotator) to be developed separately.
+Two hardware configurations are costed: the as-deployed v1 setup used for field validation (separate MotorPCB + RF HAT, connected via USB and UART), and the v2 combined MOTOR\_RF\_HAT which is the thesis's final hardware deliverable (design-complete, routed, BOM finalised, ready to order but not yet fabricated at the time of writing). The strict "under €50 full rotator" target is not met once motors and mechanics are included; v2 reaches $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware excluding the Pi, and $\sim$€100 for the station core. v1 existed to validate the architecture and firmware and to allow both sides (RF and rotator) to be developed separately.
 
 Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-piece order). Full BOM in Appendix~\ref{app:bom} and \file{ThesisPaper/bom\_complete.csv}.
 
@@ -306,4 +306,4 @@ The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT.
     \caption{v2 (MOTOR\_RF\_HAT, projected) cost breakdown. Excludes antenna, coax, power supply, and tripod.}
 \end{table}
 
-Excludes antenna, coax, power supply, and tripod (user-supplied). v2 brings the rotator BOM (PCB + motors + mechanics, excluding the Pi) to $\sim$€75, or $\sim$€40 for the combined controller/RF PCB alone. This misses a strict full-rotator €50 target but remains far below existing open-source and commercial alternatives (Table~\ref{tab:rotator-comparison}).
+Excludes antenna, coax, power supply, and tripod (user-supplied). v2 brings the rotator BOM (PCB + motors + mechanics, excluding the Pi) to $\sim$€75, or $\sim$€40 for the combined controller/RF PCB alone. This misses a strict full-rotator €50 target but stays well below existing open-source and commercial rotators (Table~\ref{tab:rotator-comparison}).

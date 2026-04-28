@@ -17,10 +17,10 @@ The closed-loop controller is a discrete-time PID at 100~Hz, executed from the m
 Implementation details:
 
 \begin{itemize}
-    \item \textbf{Anti-windup.} Integral accumulation is skipped when $|u| \geq 0.95$ and the error sign would grow the integral further.
-    \item \textbf{Derivative filter.} First-order LPF on the derivative term, $\alpha = 0.15$, suppresses encoder-quantisation noise at the 0.004\degree--0.008\degree\ resolution from \S\ref{sec:gearing}.
-    \item \textbf{Duty output filter.} First-order LPF on the PWM duty, $\alpha = 0.05$ initially; raised to $\alpha = 0.15$ during field testing (\S\ref{sec:pid-step}).
-    \item \textbf{Maximum duty}: 0.95, to avoid TB6642FG overcurrent on stall.
+    \item Anti-windup. Integral accumulation is skipped when $|u| \geq 0.95$ and the error sign would grow the integral further.
+    \item Derivative filter. First-order LPF on the derivative term, $\alpha = 0.15$, suppresses encoder-quantisation noise at the 0.004\degree--0.008\degree\ resolution from \S\ref{sec:gearing}.
+    \item Duty output filter. First-order LPF on the PWM duty, $\alpha = 0.05$ initially; raised to $\alpha = 0.15$ during field testing (\S\ref{sec:pid-step}).
+    \item Maximum duty: 0.95, to avoid TB6642FG overcurrent on stall.
 \end{itemize}
 
 Both axes share the same PID. The elevation axis sets \code{kElInvert = true} in \file{config.h}, which inverts both the encoder reading and the PID output sign. Inverting only one of the two produces the positive-feedback runaway documented in \S\ref{sec:bringup}.
@@ -36,9 +36,9 @@ The decoder is a GPIO-IRQ-driven Gray-code state machine running on core 0. At t
 
 \section{Homing and Calibration}
 
-\textbf{EL:} ADXL345 gravity vector $\to$ drive to horizontal $\to$ zero encoder. The \code{RECAL} command re-homes during operation.
+EL: ADXL345 gravity vector $\to$ drive to horizontal $\to$ zero encoder. The \code{RECAL} command re-homes during operation.
 
-\textbf{AZ:} assume north at boot. User points the station north (guided by a compass, conveniently the phone compass when browsing the dashboard on a phone) and confirms via the setup wizard; the \code{ZERO} command sets the current position as 0\degree.
+AZ: assume north at boot. User points the station north (guided by a compass, conveniently the phone compass when browsing the dashboard on a phone) and confirms via the setup wizard; the \code{ZERO} command sets the current position as 0\degree.
 
 \begin{figure}[H]
     \centering
@@ -49,9 +49,9 @@ The decoder is a GPIO-IRQ-driven Gray-code state machine running on core 0. At t
 \section{Safety}
 
 \begin{itemize}
-    \item \textbf{Runaway detection}: e-stop if position exceeds soft limits by 50\degree.
-    \item \textbf{Shortest-path wrapping}: 350\degree $\to$ 10\degree\ takes a 20\degree\ path rather than 340\degree; re-centres the encoder after settling near $\pm$360\degree.
-    \item \textbf{8~s hardware watchdog} enabled after EL homing completes. Homing is protected by its own 15~s software timeout.
+    \item Runaway detection: e-stop if position exceeds soft limits by 50\degree.
+    \item Shortest-path wrapping: 350\degree $\to$ 10\degree\ takes a 20\degree\ path rather than 340\degree; re-centres the encoder after settling near $\pm$360\degree.
+    \item 8~s hardware watchdog enabled after EL homing completes. Homing is protected by its own 15~s software timeout.
 \end{itemize}
 
 \section{EasyComm Implementation}
@@ -67,7 +67,7 @@ Custom commands are invisible to hamlib, so compatibility with \code{rotctld}, G
 
 The devboard firmware runs on the RP2040 and communicates with a host PC over USB CDC. The transport uses the same COBS framing and CRC-16/CCITT-FALSE as the later RF HAT firmware, but over USB instead of UART. The RP2040 drives the CC1200 over SPI0 at 5\,MHz; on startup it resets the transceiver and reads the part identification registers to confirm communication before entering the protocol polling loop.
 
-The runtime SmartRF register profile loading mechanism — the three-phase \textsc{profile\_begin} / \textsc{profile\_chunk} / \textsc{profile\_apply} sequence that writes all register values in a single atomic batch with the radio held in \textsc{idle} — was designed and validated on the devboard and carried over unchanged to the RF HAT firmware (\S\ref{sec:rf-hat-firmware}).
+The runtime SmartRF register profile loading mechanism, the three-phase \textsc{profile\_begin} / \textsc{profile\_chunk} / \textsc{profile\_apply} sequence that writes all register values in a single atomic batch with the radio held in \textsc{idle}, was designed and validated on the devboard and carried over unchanged to the RF HAT firmware (\S\ref{sec:rf-hat-firmware}).
 
 \section{RF HAT Firmware}
 \label{sec:rf-hat-firmware}
@@ -98,15 +98,17 @@ The CC1200's default FIFO mode requires sync-word detection before delivering da
 
 The CC1200 is reconfigured for synchronous serial output (\code{PKT\_FORMAT=0x01}, \code{FIFO\_EN=0}, \code{SYNC\_MODE=0x00}) with GPIO0 carrying the demodulated bitstream and GPIO2 carrying the recovered bit clock. The internal demodulator runs continuously, outputting every demodulated bit.
 
-A 3-instruction PIO program (\file{serial\_rx.pio.h}) captures the bitstream into the CPU via autopush:
+A 3-instruction PIO program (\file{serial\_rx.pio.h}) captures the bitstream into the CPU via autopush (Listing~\ref{lst:pio-serial}).
 
-\begin{verbatim}
+\begin{lstlisting}[language={[x86masm]Assembler},
+    caption={PIO program: clock-synchronous bit capture from the CC1200.},
+    label={lst:pio-serial}]
 .wrap_target
     wait 1 pin 2    ; SERIAL_CLK rising edge
     in pins, 1      ; shift in SERIAL_RX
     wait 0 pin 2    ; SERIAL_CLK falling edge
 .wrap
-\end{verbatim}
+\end{lstlisting}
 
 The PIO is gated by the CC1200 clock output, so no baud-rate setup is needed on the RP2040 side.
 
@@ -115,87 +117,239 @@ In blind mode the CC1200 outputs samples at approximately $15\times$ the configu
 Two serial sub-modes are selected via the \code{MSG\_SET\_SERIAL\_MODE} body byte:
 
 \begin{enumerate}
-    \item \textbf{Mode 1: raw serial.} Demodulated bytes go to a 256-byte ring buffer, forwarded to the Pi as \code{EVT\_RX\_DATA} every 50~ms or 32~bytes. Used for blind capture of unknown framing.
-    \item \textbf{Mode 2: AX.25 G3RUH decode.} Each resampled bit is fed through a three-stage pipeline implemented in \file{ax25\_decode.c}:
+    \item Mode 1: raw serial. Demodulated bytes go to a 256-byte ring buffer, forwarded to the Pi as \code{EVT\_RX\_DATA} every 50~ms or 32~bytes. Used for blind capture of unknown framing.
+    \item Mode 2: AX.25 G3RUH decode. Each resampled bit is fed through a three-stage pipeline implemented in \file{ax25\_decode.c}:
     \begin{itemize}
-        \item \textbf{G3RUH descrambler}: 17-bit LFSR, polynomial $x^{17} + x^{12} + 1$, reverses the AMSAT scrambler.
-        \item \textbf{NRZ-I decoder}: differential to absolute.
-        \item \textbf{HDLC deframer}: 0x7E flag detection, bit-stuffing removal after five consecutive ones, LSB-first byte assembly, CRC-16/CCITT check (poly 0x8408, residual 0xF0B8). Minimum valid frame 17~bytes (14 address + 1 control + 2 FCS).
+        \item G3RUH descrambler: 17-bit LFSR, polynomial $x^{17} + x^{12} + 1$, reverses the AMSAT scrambler.
+        \item NRZ-I decoder: differential to absolute.
+        \item HDLC deframer: 0x7E flag detection, bit-stuffing removal after five consecutive ones, LSB-first byte assembly, CRC-16/CCITT check (poly 0x8408, residual 0xF0B8). Minimum valid frame 17~bytes (14 address + 1 control + 2 FCS).
     \end{itemize}
     CRC-valid frames go up as \code{EVT\_RX\_DATA} with \code{type=0x01}; raw bytes are forwarded in parallel for diagnostics.
 \end{enumerate}
 
 \code{station.py} selects serial mode automatically for satellites at $\geq$4800~bps FSK/GFSK (likely G3RUH), and FIFO mode with the AX.100 sync word 0x930B51DE for lower-rate satellites using the GOMspace NanoCom format.
 
-\section{Raspberry Pi Software Stack}
+\section{Software Architecture and Data Flow}
+\label{sec:software-architecture}
 \label{sec:pi-stack}
 
-\subsection*{station.py}
+The Raspberry Pi software stack is organised as three cooperating layers that exchange data through well-defined boundaries: a real-time tracking daemon (\file{Pi/station.py}, $\sim$2950~LOC), a stateless HTTP/HTTPS gateway (\file{Pi/dashboard.py}, $\sim$2060~LOC), and a single-page browser application (\file{Pi/dashboard.html}, $\sim$5650~lines of HTML/CSS/JavaScript).
 
-Main orchestration, two modes: manual (\code{--sat "ISS"} or auto-pick the next pass) and daemon (systemd service, waits for GPS from the dashboard, loops passes continuously). During a pass:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{figures/system_architecture.png}
+    \caption{End-to-end data flow: external sources, Pi services, browser.}
+    \label{fig:software-flow}
+\end{figure}
 
+External data sources. Three external services feed the station: (i)~the AMSAT bulletin \file{nasabare.txt} as primary TLE source; (ii)~CelesTrak \texttt{GROUP=stations/amateur/weather/noaa} as fallbacks, plus per-NORAD CelesTrak queries for satellites listed in \file{sat\_profiles.json} (typically MEO objects outside the AMSAT bulletin); and (iii)~the SatNOGS DB transmitter API at \url{https://db.satnogs.org/api/transmitters/} for satellite frequency, modulation, and protocol metadata. Local cache files written under \file{\textasciitilde/} (\file{.station\_tles.json}, \file{.station\_status.json}, \file{.station\_pass\_history.json}) decouple the tracking loop from network availability.
+
+Process boundaries. \code{station.py} owns the rotator (via the hamlib \code{rotctld} TCP socket on port 4533) and the RF HAT (via UART \file{/dev/serial0}). It writes a single atomic JSON snapshot, \file{\textasciitilde/.station\_status.json}, every 200~ms during an active pass (5~Hz, gated by \code{tick~\%~2~==~0} at the 10~Hz tracking rate). \code{dashboard.py} runs in a separate process: it reads the same JSON every 500~ms (2~Hz internal poll), augments it with \code{rotctld} actuals, station configuration, and Pi system metrics, and exposes \code{/api/status}, \code{/api/passes}, \code{/api/pass-history}, \code{/api/track}, \code{/api/auto-track}, \code{/api/freq}, and a handful of control endpoints over HTTPS on port 5000. The browser polls \code{/api/status} every 500~ms (2~Hz), \code{/api/passes} every 15~s, and \code{/api/pass-history} every 30~s. The status JSON is written via \code{tempfile.mkstemp~+~os.rename}, so the dashboard never observes a partial write.
+
+Why separate the daemon from the dashboard. Two reasons. First, isolation: a browser disconnect, a TLS handshake stall, or a misbehaving HTTP client cannot pause the 10~Hz rotator command loop. Second, the dashboard exits cleanly during firmware updates while the daemon continues tracking. The price is a 200~ms write/read latency budget, which is well below the human-perceivable threshold for a status display.
+
+\section{TLE Sources, Pass Prediction, and Profile Selection}
+\label{sec:tle-and-profile}
+
+\subsection*{TLE acquisition}
+
+Two-line element sets are fetched in this order (\file{Pi/station.py:353}):
 \begin{enumerate}
-    \item Fetch TLEs from AMSAT (\file{nasabare.txt}), with CelesTrak as a fallback, and compute the trajectory with PyEphem.
-    \item Pre-position rotator to AOS azimuth.
-    \item Stream AZ/EL to \code{rotctld} at 10~Hz.
-    \item Configure the CC1200 for the satellite's frequency/modulation from the local profile DB, falling back to the SatNOGS DB API.
-    \item Compute Doppler shift at 2~Hz from the TLE radial-velocity prediction and send a frequency-word command to the RF HAT. Firmware applies small deltas via \code{FREQOFF} and rewrites the full \code{FREQ}+\code{FS\_CFG} word on large or forced retunes; \code{FREQOFF} is also read back as a residual-error estimate.
-    \item Drain RX packets and log telemetry (position, RSSI, freq, Doppler, range) to CSV at 5~Hz.
-    \item Write \file{\textasciitilde/.station\_status.json} at 5~Hz for the dashboard.
+    \item Read \file{\textasciitilde/.station\_tles.json}, accepted if its file modification time is within 7200~s (2~h). The dashboard maintains this file in its own background thread.
+    \item Otherwise, GET AMSAT's \file{nasabare.txt} ($\sim$80--100 amateur satellites of interest).
+    \item Fall back to CelesTrak \code{GROUP=amateur/stations/weather/noaa} on AMSAT failure.
+    \item For any satellite listed in \file{sat\_profiles.json} with a NORAD ID outside the AMSAT bulletin, issue a per-NORAD CelesTrak GET (\code{?CATNR=}).
 \end{enumerate}
 
-Scan mode cycles through visible satellites near peak elevation with a 30~s dwell each.
+The in-memory cache is gated by a 1800~s (30~min) TTL inside \code{fetch\_tles()} so a single tracking process never re-issues network requests within half an hour. The on-disk cache (2~h TTL) survives Pi reboots, so a station that loses internet between passes still tracks until TLE accuracy degrades.
 
-\subsection*{rf\_hat.py: CC1200Link}
+\subsection*{Pass prediction}
 
-Threaded serial interface: COBS framing, CRC verification, SmartRF parsing, frequency calculation across 136--960~MHz, modulation config (2-FSK, 2-GFSK, 4-FSK, OOK), per-satellite radio configuration.
+\code{dashboard.py} owns pass computation. PyEphem propagates each TLE against an \code{ephem.Observer} positioned at the station's GPS coordinates from \file{station.conf}. The cache TTL is 300~s (5~min, \code{PASS\_CACHE\_SECONDS}) and recomputation runs in a background thread so HTTP requests never block. Each pass dictionary holds rise/set times, max-elevation azimuth, sampled trajectory, and the resolved per-satellite frequency, modulation, and protocol from the SatNOGS transmitter cache (\code{TRANSMITTER\_CACHE\_SECONDS = 7200}, 2~h). The \code{station.py} daemon does its own per-tick PyEphem computation at 10~Hz so the live trajectory advances continuously rather than in 5--10~s steps.
 
-\subsection*{dashboard.py: HTTPS web dashboard}
+\subsection*{Per-satellite profile selection}
 
-The dashboard is a self-contained HTTPS server built on the Python standard library only (no Flask, no npm). It serves a single-page app at \url{https://<pi-ip>:5000} that was developed and operated primarily on a laptop; a phone browser can also reach it (useful for feeding GPS in the field), but the layout is not optimised for small screens.
+Before a pass begins, \code{station.py} resolves a \code{SatProfile} for the target (\file{Pi/sat\_library.py}) in three layers:
 
-HTTPS is required because the browser Geolocation API needs a secure context. A self-signed TLS certificate is auto-generated on first run (\file{\textasciitilde/.station\_ssl/}); the user accepts the browser warning on first visit.
+\begin{enumerate}
+    \item Local override. \file{Pi/sat\_profiles.json} is consulted first, with a three-pass match priority: NORAD ID + name match, then name substring, then NORAD ID alone. Hand-curated entries pin a known-good frequency, modulation, symbol rate, deviation, RX bandwidth, sync word, and packet config. Approximately 30 satellites are pre-entered.
+    \item SatNOGS DB fallback. Unknown satellites trigger \code{lookup\_with\_satnogs\_fallback()}, which scans the cached transmitter list, picks the best UHF transmitter (preferring active, non-CW, non-1200-baud-AFSK, CC1200-compatible modes), and fills in a profile via the \code{SATNOGS\_MODE\_MAP} dictionary that translates SatNOGS DB mode strings (e.g., ``GMSK 9k6'') into CC1200 modulation parameters.
+    \item Protocol inference. A second pass over the SatNOGS DB description string classifies the protocol: keywords \code{ax100}, \code{usp}, \code{ccsds}, \code{geoscan}, and \code{g3ruh} map to dedicated decoders; high-baud unknown modes are tentatively assumed to be G3RUH-scrambled AX.25 (marked \code{\_assumed} in the status feed so the dashboard can colour them yellow rather than green).
+\end{enumerate}
 
-Three pages:
+The resolved profile is then applied to the CC1200 in one of three configuration tiers (\file{Pi/station.py:807}):
+
 \begin{itemize}
-    \item \textbf{Track}: sky plot, live AZ/EL (commanded vs. actual), RSSI, packet count, Doppler, pass progress. Upcoming passes come from TLE propagation enriched with SatNOGS DB frequency and modulation data. Filters: band (UHF/VHF), minimum elevation, CC1200-compatible modulation.
-    \item \textbf{Control}: numeric AZ/EL goto, six preset positions (park, zenith, N/E/S/W at 45\degree\ EL), and a CC1200 debug panel (MARC state, FIFO levels, overflow count, raw register values).
-    \item \textbf{Settings}: GPS entry, WiFi configuration, station parameters, and the setup wizard.
+    \item Tier~A (frequency-only). Keep the default 2.4~kbps 2-GFSK SmartRF profile and only retune the synthesizer. A handful of register writes per pass.
+    \item Tier~B (modulation override). Compute the $\sim$15 critical CC1200 registers (\code{MODCFG\_DEV\_E}, \code{DEVIATION\_M}, \code{SYMBOL\_RATE\_*}, \code{CHAN\_BW}, \code{SYNC\_*}, \code{PKT\_CFG*}, \code{PKT\_LEN}) from the profile values and stream them via \code{WRITE\_REG} messages.
+    \item Tier~C (full SmartRF). Stream a complete TI SmartRF Studio export via the \code{PROFILE\_BEGIN}/\code{CHUNK}/\code{APPLY} sequence of \S\ref{sec:rf-hat-firmware}. Used for satellites whose modulation parameters do not fit Tier~B (e.g., very low symbol rates, unusual deviation/bandwidth ratios). Chunked transfer is required because a full profile exceeds the COBS frame size.
 \end{itemize}
 
-The setup wizard has five steps: (1) GPS fix $\to$ Pi (typically supplied by a phone browser, which has a GPS sensor), (2) point the station north and confirm with the ``Use Phone Compass'' button, which calls \code{onboardCalibrate()} in the dashboard and sends the EasyComm \code{ZERO} command to the rotator, (3) attach the antenna (the station is level from IMU homing), (4) select receiver type, (5) ready. Tracking begins automatically after step 5.
+The active tier is exposed in the status JSON as \code{rf.radio\_config.config\_tier} and rendered on the dashboard so the operator can verify which path was taken.
+
+\section{Doppler Correction Loop}
+\label{sec:doppler-loop}
+
+The radial velocity of the satellite, $v_r$, is computed every 500~ms from the PyEphem solution (\code{DOPPLER\_HZ = 2}, \file{Pi/station.py:214}); the Doppler-shifted frequency is
+
+\begin{equation}
+    f_{\mathrm{rx}} = f_0 \left(1 - \frac{v_r}{c}\right)
+\end{equation}
+
+with $c = 299\,792\,458$~m/s (\file{Pi/rf\_hat.py:359}). At $f_0 = 432$~MHz and a worst-case LEO radial velocity of $\pm 7.5$~km/s the maximum Doppler is $\pm 10.8$~kHz; the observed sweep across a high-elevation pass is $\pm 9$~kHz, consistent with the radial-velocity flattening at high elevation. The implementation is shown in Listing~\ref{lst:doppler}.
+
+\begin{lstlisting}[language=Python,
+    caption={Doppler shift helper from \file{Pi/rf\_hat.py}.},
+    label={lst:doppler}]
+def doppler_shift(freq_hz: float, range_rate_m_s: float) -> float:
+    """range_rate > 0: receding (red shift); range_rate < 0: approaching."""
+    c = 299_792_458.0
+    return freq_hz * (1.0 - range_rate_m_s / c)
+\end{lstlisting}
+
+The CC1200 is retuned in two ways. The full \code{FREQ}+\code{FS\_CFG} rewrite requires \code{SIDLE} (a few ms of receiver downtime) and is used at AOS, on tier change, or on a forced retune. Mid-pass updates are written to the 16-bit \code{FREQOFF} register, which adds an offset directly to the synthesizer without dropping out of RX. The same register, read back as \code{FREQOFF\_EST}, is used as a residual-error display in the CC1200 debug panel: a non-zero estimate after Doppler correction indicates either a TLE error or a transmitter offset.
+
+\section{Status JSON Schema}
+\label{sec:status-json}
+
+The \file{\textasciitilde/.station\_status.json} file is the single source of truth between \code{station.py} and the dashboard. The top-level keys reflect the layered architecture:
+
+\begin{itemize}
+    \item \code{satellite}, \code{pass\_progress}, \code{los\_seconds}, \code{duration}, \code{cmd\_az}, \code{cmd\_el}, \code{rise\_az}, \code{set\_az}, \code{max\_el}, \code{range\_km}, \code{range\_rate}, \code{doppler\_hz}: per-tick orbital state from \code{station.py}.
+    \item \code{rf}: \code{rssi} (dBm), \code{freq\_mhz} (Doppler-corrected), \code{packets}, \code{streaming}, \code{rx\_mode}, \code{protocol}, \code{radio\_config} (Tier, sync, modulation, packet config), and a \code{cc1200} sub-object exposing low-level register state (\code{marc}, \code{flags}, \code{rssi\_dbm\_x10}, \code{freqoff\_est\_hz}, \code{lqi}, \code{rx\_total\_bytes}, \code{rx\_overflow\_count}, \code{rx\_fifo\_err\_count}, \code{tx\_fifo\_err\_count}, \code{uptime\_ms}).
+    \item \code{rotator}: \code{az}, \code{el}, \code{connected}, \code{state}, populated by \code{dashboard.py} from \code{rotctld} (the \code{p} command, every 500~ms).
+    \item \code{auto\_mode} (\code{off} / \code{track} / \code{scan}), \code{auto\_track}, \code{rf\_mode}, \code{scan\_settings}: read from \file{station.conf} by \code{dashboard.py} and merged into the status payload.
+    \item \code{system}: \code{cpu\_temp} (\file{/sys/class/thermal/thermal\_zone0/temp}), \code{ram\_used\_mb}, \code{ram\_total\_mb} (\file{/proc/meminfo}), filled in by \code{dashboard.py}.
+    \item \code{location}: \code{lat}, \code{lon}, \code{elev} from \file{station.conf}.
+    \item \code{satnogs}: \code{enabled}, \code{station\_id}, \code{submitted}, \code{queued}, \code{failed}, \code{last\_submit} from the SiDS submission helper.
+\end{itemize}
+
+\section{Operating Modes: Off / Track / Scan}
+\label{sec:operating-modes}
+
+\code{station.py} runs in one of three modes, persisted as \code{auto\_mode} in \file{station.conf} and switchable from the dashboard. The mode is re-read at every loop iteration so the operator's choice takes effect within one tracking tick.
+
+\begin{itemize}
+    \item Off: rotator parked, RF idle. The daemon still refreshes TLEs and reports system metrics in the background, but it does not move the rotator or configure the CC1200. Used during transport and bench testing.
+    \item Track: the daemon picks the next pass that exceeds the configured minimum elevation (default 5\degree, \code{MIN\_ELEV} in \file{Pi/station.py:215}; the dashboard exposes 10\degree\ as the operator-facing default), pre-positions to AOS, then commands the rotator and CC1200 through the pass. After LOS it idles until the next visible pass.
+    \item Scan: continuous multi-satellite cycling driven by \code{run\_scan\_cycle()} (\file{Pi/station.py:2053}). The daemon builds a \code{build\_schedule()} of all currently-visible passes above \code{scan\_min\_el} (default 10\degree) for the next \code{scan\_hours} (default 4~h) and dwells \code{scan\_dwell} seconds (default 30~s) on each visit, then advances. The schedule is rebuilt on every cycle, so a freshly-risen satellite joins the queue automatically. Scan mode is used as an idle-time activity logger: it accumulates packets across many low-priority targets without operator intervention.
+\end{itemize}
+
+The switch between modes is non-disruptive: a track-to-scan change, for instance, completes the current pass before rebuilding the schedule.
+
+\section{The HTTPS Dashboard}
+\label{sec:dashboard}
+
+The dashboard is a self-contained HTTPS server built on the Python standard library only, no Flask, no Node toolchain, no build step. The server is approximately 2060~LOC; the front end is a single \file{Pi/dashboard.html} of approximately 5650~lines (HTML + inline CSS + vanilla JavaScript). The deliberate absence of a build step makes the dashboard deployable as a single \code{git pull}.
+
+HTTPS is mandatory because the browser Geolocation API, used to bootstrap the station's GPS coordinates from a phone, requires a secure context. A 2048-bit RSA self-signed certificate is generated on first run via the system \code{openssl} binary and stored in \file{\textasciitilde/.station\_ssl/}; the operator accepts the browser warning once.
+
+The single-page application has three tabs:
+
+\begin{itemize}
+    \item Track: pass selection (idle) or live tracking (active pass). The two states of this tab are the subject of Figures~\ref{fig:gui-pretrack} and~\ref{fig:gui-track} below.
+    \item Control: manual rotator control (numeric AZ/EL goto, six preset positions including park, zenith, and the four cardinals at 45\degree\ elevation), a CC1200 register read/write panel, and a buzzer-pattern test grid.
+    \item Settings: GPS entry, WiFi configuration, station identification (name, callsign, SatNOGS station ID, SatNOGS DB API token), antenna parameters, link-budget overrides, and the first-run setup wizard.
+\end{itemize}
+
+\subsection{Pre-Tracking View: Pass Selection}
+\label{sec:dashboard-pretrack}
+
+Figure~\ref{fig:gui-pretrack} shows the Track tab in its idle state. The polar plot displays the trajectories of all visible upcoming passes (sourced from the cached \code{/api/passes} payload), colour-coded by satellite. Three operator-facing elements (numbered in the figure) drive the workflow:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{gui_track_withdata.png}
-    \caption{Dashboard Track page during a live AVUM R/B pass, viewed in a laptop browser.}
+    \includegraphics[width=\textwidth]{GUI_Select_Sattelite.png}
+    \caption{Pre-tracking view: filter + mode segmented control (1), upcoming-passes list (2), recent-passes log (3).}
+    \label{fig:gui-pretrack}
 \end{figure}
+
+Marker 1, filter and mode controls. The \code{Filter} button (left) opens a panel that constrains the upcoming-passes list by band (UHF/VHF), receiver type (CC1200 / SDR), minimum elevation, and recent activity. The three-button segmented control (\code{Off} / \code{Track} / \code{Scan}, right) is the daemon's mode selector and is wired to \code{POST /api/auto-track}, which writes \code{auto\_mode} into \file{station.conf}; \code{station.py} re-reads the file every loop iteration. Click semantics:
+\begin{itemize}
+    \item Off: manual operation only, the daemon ignores the schedule and parks the rotator. The status banner reads ``MANUAL, Select a satellite'' (visible in Fig.~\ref{fig:gui-pretrack}).
+    \item Track: auto-track the next pass above the elevation threshold. The banner becomes ``AUTO, Waiting'' until rise, then ``TRACKING, \textit{sat}''.
+    \item Scan: enter the multi-satellite scan cycle described in \S\ref{sec:operating-modes}; the banner becomes ``SCAN, \textit{sat}''.
+\end{itemize}
+
+Marker 2, upcoming-passes list. Each card is one element of the array returned by \code{/api/passes}. The dashboard renders the satellite name, the maximum-elevation badge (orange \textless 30\degree, green \textgreater 30\degree), the time-to-AOS or time-remaining-during-pass countdown, the total duration, and the per-satellite frequency, modulation format, and symbol rate from the resolved \code{SatProfile}. The play button posts to \code{/api/track} with the satellite name; \code{station.py} picks the new target up on its next loop iteration and aborts any current pass for the new target. Countdown timers re-render every 3~s in the browser (\code{setInterval(applyPasses, 3000)}) so the visible list stays live without re-fetching from the server.
+
+Marker 3, recent-passes log. The last 20 completed passes, served by \code{/api/pass-history} (refreshed every 30~s). The history file (\file{\textasciitilde/.station\_pass\_history.json}) is appended on each LOS by \code{record\_pass\_history()} in \file{Pi/station.py:298}; entries are deduplicated within a 60~s window when the satellite name and \code{max\_el} match (within 1\degree), so scan-mode visits do not re-record the same pass.
+
+\subsection{Active-Tracking View: Live Telemetry}
+\label{sec:dashboard-track}
+
+Figure~\ref{fig:gui-track} shows the Track tab during an active AVUM~R/B pass. Every numerical and graphical element on the page is driven by the same 2~Hz \code{/api/status} poll.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{skyplot.png}
-    \caption{Sky plot view with trajectories of all upcoming passes.}
+    \includegraphics[width=\textwidth]{gui_track_withdata.png}
+    \caption{Live-tracking dashboard: signal-strength sparkline (1), range/Doppler tile (2), pointing tile (3), RF status panel (4), sky plot (5), top status bar (6).}
+    \label{fig:gui-track}
 \end{figure}
 
-\subsection*{Systemd services and auto-start}
+Marker 1, signal-strength sparkline. The numeric value is \code{rf.rssi} (in dBm). The CC1200 reports RSSI through the \code{EXT\_RSSI1} (1-dB resolution) and \code{EXT\_RSSI0} (additional 1/8-dB) registers; the RF~HAT firmware combines these and reports an integer in 0.1-dB units (\code{rssi\_dbm\_x10}) which the Pi divides by 10. The sparkline is a 20-sample rolling history rendered into an HTML5 canvas, with the colour transitioning from green ($>-60$~dBm) through amber to red ($<-80$~dBm). Update cadence: 1~Hz from the firmware to \code{station.py} (\code{METRICS\_INTERVAL\_S = 1.0}), 2~Hz onward to the canvas.
+
+Marker 2, range and Doppler tile. \code{range\_km} is \code{ephem.Body.range / 1000} for the current observer position; the small print under the number is the radial velocity in km/s with a sign convention (negative = approaching, the satellite is closing in). \code{doppler\_hz} is computed by the Doppler equation in \S\ref{sec:doppler-loop} and reported even when Doppler correction is disabled at the radio side, so the operator always sees the predicted shift. Both values update at the daemon's 10~Hz tick and are sampled by the dashboard at 2~Hz.
+
+Marker 3, pointing tile. A 2$\times$3 grid showing commanded AZ/EL (\code{cmd\_az}/\code{cmd\_el} from \code{station.py}), actual AZ/EL (from \code{rotctld}, populated by the dashboard's polling thread), and absolute error per axis. The error column is computed in JavaScript: \code{|cmd~-~actual|} for each axis, coloured green (\textless 0.5\degree) / amber (\textless 2\degree) / red. The values in the figure ($-0.0$\degree\ AZ, $-0.2$\degree\ EL during a 9.9\degree\ EL portion of the pass) are typical of mid-pass tracking and demonstrate that the closed-loop rotator is following the orbital trajectory.
+
+Marker 4, RF status panel (right column). The widest information block, rendering the full state of the CC1200:
+\begin{itemize}
+    \item RSSI gauge: the same value as marker~1, rendered on a $-120$~to~$-40$~dBm scale.
+    \item FREQ: current frequency in MHz including Doppler offset (\code{rf.freq\_mhz}).
+    \item MOD: modulation format and symbol rate from \code{rf.radio\_config.modulation} and \code{symbol\_rate\_bps}.
+    \item PACKETS: counter of CRC-passing frames received since AOS.
+    \item PROTOCOL: the per-satellite protocol resolved by \S\ref{sec:tle-and-profile}, suffixed \code{[serial]} or \code{[pkt]} depending on \code{rx\_mode}. Rendered green for known, amber for assumed (\code{*\_assumed}), red for unknown.
+    \item STATUS: a compact readiness word, ``Serial RX'', ``Idle'', ``Configuring'', ``Streaming'', derived from the \code{RfHatManager} state machine.
+    \item Radio Config sub-card: tier (A/B/C), sync threshold, deviation, channel-filter bandwidth, packet-config flags, and the pre-Doppler base frequency. This is the operator's verification that the resolved profile reached the radio.
+    \item Raw-dump banner: indicates whether raw byte capture is active; ``not active'' when the standard packet pipeline is running.
+    \item CC1200 sub-card: low-level CC1200 telemetry from \code{rf.cc1200}: \code{MARC} state name (looked up against the 24-state main-state-machine table), suffixed \code{[SERIAL]} when bit~4 of the firmware status flags indicates synchronous serial mode is active; FREQ ERR (the \code{FREQOFF\_EST} read-back, sign-extended to Hz); LQI; rolling RSSI min/max/avg over the pass; cumulative RX byte count and rate (B/s); error counters (\code{rx\_overflow}, \code{rx\_fifo\_err}, \code{tx\_fifo\_err}); firmware uptime.
+\end{itemize}
+
+Marker 5, sky plot. The polar canvas is rendered entirely client-side. Three layers compose:
+\begin{enumerate}
+    \item \emph{Pre-baked trajectory}: the array of $\{az,\,el,\,t\}$ samples pre-computed by \code{dashboard.py} for the current pass. Drawn as a faint guide polyline.
+    \item \emph{Live trajectory}: per-tick \code{cmd\_az}/\code{cmd\_el} samples accumulated in browser memory since AOS, drawn with the satellite-coloured stroke. The trail visually confirms the daemon's command stream matches the prediction.
+    \item \emph{Overlays}: the satellite marker (a coloured disc with a label), the antenna heading arrow from rotctld, elevation rings at 30\degree\ steps, and cardinal labels (N/E/S/W). The polar projection uses $r = 90 - \mathrm{el}$ and $\theta = \mathrm{az}$.
+\end{enumerate}
+The canvas is redrawn only when a watched value changes, which keeps the per-frame cost below 1~ms even on the Pi 3A+ when the dashboard is loaded locally.
+
+Marker 6, top status bar. The persistent header collapses the most operator-relevant state into one line:
+\begin{itemize}
+    \item Logo + connection dot (green when the daemon's status JSON is fresh, red when stale or absent).
+    \item GPS coordinates pill, derived from \code{location.lat}/\code{lon}.
+    \item State word + target satellite, composed from \code{state} and \code{rf.satellite}: ``TRACKING, \textit{sat}'' (active), ``SCAN, \textit{sat}'' (scan), ``AUTO, Waiting'' (auto-track armed), ``MANUAL, Select a satellite'' (idle).
+    \item Pass progress \code{pass\_progress} = $(1 - \mathrm{los\_seconds}/\mathrm{duration}) \cdot 100$ and the LOS countdown.
+    \item Stop button, writes \file{\textasciitilde/.station\_stop}, which the daemon detects on the next tick and breaks out of the pass loop.
+    \item Live AZ/EL readout from rotctld.
+    \item Pi CPU temperature (\file{/sys/class/thermal/thermal\_zone0/temp}, divided by 1000) and RAM utilisation (\file{/proc/meminfo}, \code{MemTotal $-$ MemAvailable}).
+    \item Wall-clock time, formatted client-side.
+\end{itemize}
+
+\subsection{Setup Wizard}
+
+The setup wizard has five steps: (1)~GPS fix transferred from a phone browser via the Geolocation API and posted to \code{/api/location}; (2)~the operator points the station north and confirms with \code{Use Phone Compass}, which calls \code{/api/calibrate-north} and forwards the EasyComm \code{ZERO} command to the rotator; (3)~attach the antenna (the station is already level from IMU homing); (4)~select the receiver type (CC1200 default; RTL-SDR scaffolded but not field-validated); (5)~ready. Tracking begins automatically after step~5.
+
+\section{Background Services and Auto-Start}
 
 Five systemd units run the station autonomously after boot:
 
 \begin{enumerate}
-    \item \file{rotctld.service}: hamlib rotator daemon, model 204, listening on TCP 4533. Restarts automatically if the USB connection to the rotator Pico is interrupted.
-    \item \file{dashboard.service}: HTTPS dashboard on port 5000. Starts immediately on boot.
-    \item \file{station.service}: station controller in daemon mode. Waits for \file{station.conf} (written by the dashboard when the user provides GPS), then continuously fetches TLEs, computes passes, and tracks them in a loop.
-    \item \file{wifi-provision.service}: captive-portal SSID/password entry if WiFi credentials are missing.
-    \item \file{rfkill-unblock.service}: generated inline by \file{setup-pi.sh} to clear the default-blocked WiFi on Debian Trixie at boot.
+    \item \file{rotctld.service}, hamlib rotator daemon (model 204), listening on TCP~4533. Restarts automatically if the USB connection to the rotator Pico is interrupted.
+    \item \file{dashboard.service}, HTTPS dashboard on port~5000. Starts immediately on boot.
+    \item \file{station.service}, the tracking daemon. Waits for \file{station.conf} (written by the dashboard when the operator provides GPS), then continuously fetches TLEs, computes passes, and tracks them in a loop.
+    \item \file{wifi-provision.service}, captive-portal SSID/password entry if WiFi credentials are missing.
+    \item \file{rfkill-unblock.service}, generated inline by \file{setup-pi.sh} to clear the default-blocked WiFi on Debian Trixie at boot.
 \end{enumerate}
 
-A setup script (\file{Pi/services/setup-pi.sh}) configures a fresh Raspberry Pi with all dependencies, UART configuration (\code{enable\_uart=1}, \code{dtoverlay=disable-bt}), a WiFi rfkill workaround (Debian Trixie blocks WiFi by default), and service installation. The script is idempotent.
+A setup script (\file{Pi/services/setup-pi.sh}) configures a fresh Raspberry Pi with all dependencies, UART (\code{enable\_uart=1}, \code{dtoverlay=disable-bt}), the WiFi rfkill workaround, and service installation. The script is safe to re-run.
 
-\subsection*{SatNOGS network integration}
+\section{SatNOGS Network Integration}
+\label{sec:satnogs-integration}
 
-The station is registered as station 4712 (``Aether-Basestation'') on \url{network.satnogs.org}. SiDS telemetry submission to \url{db.satnogs.org} is verified (HTTP 201 OK).
+The station is registered as station~4712 (``Aether-Basestation'') on \url{network.satnogs.org}. SiDS (Simple Downlink Sharing Convention) telemetry submission to \url{https://db.satnogs.org/api/telemetry/} is verified end-to-end (HTTP~201 on each CRC-valid frame; \file{Pi/satnogs.py:104}). Failed submissions (no internet, server error) are persisted to \file{\textasciitilde/.satnogs\_queue.json} and retried by \code{flush\_queue()} between passes.
 
-Because the CC1200 emits decoded packets rather than raw IQ, \code{satnogs-client} (GNU~Radio + SoapySDR) cannot be used as-is; frames are submitted directly to the SatNOGS DB over the SiDS API. The station therefore appears ``offline'' on the network map (no job-polling heartbeat) but still contributes telemetry on decode. The rationale for this trade-off is covered in \S\ref{sec:problem-statement} and \S\ref{sec:cc1200-deviation}.
+Because the CC1200 emits decoded packets rather than raw IQ samples, \code{satnogs-client} (GNU~Radio + SoapySDR) cannot be used as-is: that client drives an SDR through GNU~Radio flow graphs and decodes in software, which does not fit a hardware modem. Frames are therefore submitted directly to the SatNOGS DB via the SiDS API. The trade-off is that the station appears ``offline'' on the SatNOGS network observation map (no job-polling heartbeat), even though it submits decoded telemetry. The reasoning behind this deviation is in \S\ref{sec:problem-statement} and \S\ref{sec:cc1200-deviation}.
 
 \section{Field Deployment Workflow}
 

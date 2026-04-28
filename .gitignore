@@ -65,6 +65,9 @@ ThesisPaper/**/*.run.xml
 ThesisPaper/**/*.synctex.gz
 ThesisPaper/**/*.toc
 ThesisPaper/**/*.xdv
+ThesisPaper/**/*-SAVE-ERROR
+# macOS Finder duplicates ("filename 2.pdf", "filename 2.png")
+ThesisPaper/**/* [0-9].*
 
 # Station credentials (API tokens, location)
 station.conf
