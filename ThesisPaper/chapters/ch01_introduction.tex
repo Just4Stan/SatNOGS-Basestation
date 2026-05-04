@@ -9,6 +9,10 @@
     \caption{Assembled, field-deployed ground station tracking a pass.}
 \end{figure}
 
+University CubeSat programmes are proliferating: a 3U spacecraft can carry a meaningful scientific payload, be assembled by a small student team, and reach orbit on a rideshare for a fraction of the cost of a dedicated launch. KU Leuven's AetherSpace mission is one such programme, targeting a heat-shield sample-return demonstration from LEO around 2030. Once in orbit, however, a CubeSat is only as useful as the ground infrastructure that receives its telemetry. Commercial antenna tracking systems suitable for a 433\,MHz LEO link cost \euro{}760--1300; even the community-built SatNOGS v3 reference design requires \euro{}300--500 in parts. For a student team without a permanent rooftop installation, this cost and the associated setup complexity make routine contact difficult.
+
+This thesis addresses that gap by designing, building, and field-validating a portable, SatNOGS-compatible ground station that can be assembled for approximately \euro{}100 in station-core components, deploys from a standard camera tripod in about four minutes, and integrates with the SatNOGS rotator ecosystem through the standard EasyComm\,III interface. The target application is the AetherSpace CubeSat, but the rotator and software stack are general-purpose: any satellite reachable from the SatNOGS DB can be tracked, and any operator with a hamlib-compatible rotator can reuse the software.
+
 \section{Problem Statement}
 \label{sec:problem-statement}
 
@@ -20,7 +24,7 @@ A LEO satellite at 400~km altitude is visible from a given ground station for 5-
 with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E+h = 6771$~km~\cite{montenbruck2000orbits}. The instantaneous azimuth rate exceeds 10\degree/s near zenith because a small displacement of the sub-satellite point maps to a large arc in azimuth.
 
 \paragraph{Link.}
-The Siretta Oscar 44 Yagi used in this work (9~dBi peak, 54\degree$\times$48\degree\ 3-dB beamwidths at 434~MHz~\cite{siretta-oscar44}) is required to close the link against 145.8~dB of free-space path loss at 433~MHz and 30\degree\ elevation (Chapter~\ref{ch:background}, Table~\ref{tab:link-budget}). Its narrow beam sets the pointing-accuracy requirement on the rotator.
+The Siretta Oscar 44 Yagi used in this work (9~dBi peak, 54\degree$\times$48\degree\ 3-dB beamwidths at 434~MHz~\cite{siretta-oscar44,stutzman2012antenna}) is required to close the link against 145.8~dB of free-space path loss at 433~MHz and 30\degree\ elevation (Chapter~\ref{ch:background}, Table~\ref{tab:link-budget}). Its narrow beam sets the pointing-accuracy requirement on the rotator.
 
 \paragraph{Cost.}
 Commercial rotators cost \euro{}760--900 (Yaesu G-5500~\cite{yaesu-g5500}) to \euro{}1200--1300 (SPID RAS~\cite{rfham-spid}); the SatNOGS v3 open-source rotator costs \euro{}300--500 in parts~\cite{satnogs-v3, satnogs-v3-bom}. The v2 MOTOR\_RF\_HAT BOM derived here (\S\ref{sec:cost}, design-complete) is approximately \euro{}40 for the combined controller/RF PCB, \euro{}75 for the full rotator hardware (PCB + motors + mechanics, excluding the Pi), and \euro{}100 for the station core (excluding antenna, coax, power supply, tripod).
@@ -47,12 +51,21 @@ Chapter~\ref{ch:results} quantifies the sensitivity cost of this choice: with th
 
 \section{Research Questions}
 
+The central question of this thesis is:
+
+\begin{quote}
+    Can an economical, portable SatNOGS-compatible ground station be designed, built, and field-validated as the ground segment for the AetherSpace CubeSat mission?
+\end{quote}
+
+This breaks down into five sub-questions:
+
 \begin{enumerate}
     \item Can a satellite-tracking rotator be built for under \euro{}50 in materials?
     \item What pointing accuracy is achievable with geared DC motors, 3D-printed structure, and encoder-based PID control?
     \item Can the system integrate with the SatNOGS network using only the standard EasyComm/hamlib interface?
     \item What are the empirical trade-offs of DC motors versus stepper motors for satellite tracking?
-    \item Is battery-powered portable operation feasible?
+    \item What sensitivity does the assembled CC1200 receive chain achieve in practice, and what is the dominant factor limiting it relative to the datasheet specification?
+    \item Is a CC1200 hardware-modem approach a viable alternative to the SDR-based SatNOGS receive chain for the AetherSpace mission?
 \end{enumerate}
 
 \section{Scope and Division of Work}

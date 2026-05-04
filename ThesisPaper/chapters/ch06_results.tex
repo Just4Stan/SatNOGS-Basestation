@@ -64,7 +64,6 @@ Across passes with peak elevation in the 20\degree--70\degree\ band (the range w
 
 \section{RF Front-End Measurements}
 \label{sec:rf-measurements}
-\label{sec:devboard-bench}
 
 Chapter~\ref{ch:background} derived a theoretical link margin of $-$5.7~dB at 30\degree\ elevation and predicted that board-level interference would degrade this further. The measurements in this section and \S\ref{sec:packet-reception} quantify the actual outcome.
 
@@ -118,7 +117,7 @@ As of April 2026, no protocol-valid frames have been decoded from orbit. Across 
     \item Zero decoded packets submitted to the SatNOGS DB from real satellites.
 \end{itemize}
 
-The receive chain has been validated for local test frames in a short-range ground-to-ground configuration between two devboards (\S\ref{sec:devboard-bench}): transmitted test frames decode at the receiver with valid sync word and zero payload errors across all tested frequencies, exercising the RF path, SmartRF register set, FIFO drain, and host-side decoders under those conditions. This ground validation confirms the digital and RF path is internally consistent; it does not establish that the system is receiving orbital signals.
+The receive chain has been validated for local test frames in a short-range ground-to-ground configuration between two devboards (\S\ref{sec:rf-measurements}): transmitted test frames decode at the receiver with valid sync word and zero payload errors across all tested frequencies, exercising the RF path, SmartRF register set, FIFO drain, and host-side decoders under those conditions. This ground validation confirms the digital and RF path is internally consistent; it does not establish that the system is receiving orbital signals.
 
 The April 1 session predates the RSSI-readout fix (AGC\_GAIN\_ADJUST calibration) and is used as the negative control in the analysis below; the April 9 and April 12 sessions use the post-fix calibration.
 
