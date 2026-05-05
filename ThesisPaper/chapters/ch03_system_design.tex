@@ -38,18 +38,12 @@ Five systemd units start the station autonomously after the Pi finishes booting:
 \paragraph{Subsystem independence.}
 The architecture deliberately keeps rotator and RF independent: each subsystem has its own RP2040 and its own protocol to the Pi (USB CDC EasyComm vs.\ UART COBS), so either side can be tested, replaced, or upgraded in isolation. The v2 MOTOR\_RF\_HAT collapses both PCBs onto a single 6-layer Pi HAT (\S\ref{sec:cost}), but the firmware boundary stays the same: the merged board still presents two logically distinct devices to the Pi.
 
-\subsection*{Design constraints}
-
-\begin{itemize}
-    \item Portability. 1/4"-20 UNC tripod thread on the base. Field setup time measured across three sessions: approximately 4 minutes from unpacking to first tracked pass (\S\ref{sec:field-tests}).
-    \item Zero-SSH workflow. All field operations (GPS entry, north alignment, pass selection, park, shutdown) run through the HTTPS dashboard. The UI targets a laptop browser; a phone browser also works for quick field tasks such as supplying a GPS fix.
-    \item Cost target. v2 MOTOR\_RF\_HAT BOM (\S\ref{sec:cost}, Appendix~\ref{app:bom}): $\sim$€40 combined controller/RF PCB, $\sim$€75 rotator hardware, $\sim$€100 station core (excluding antenna, coax, power supply, tripod).
-    \item Licensing (intended). Hardware under CERN-OHL-S v2; firmware and Python stack under MIT. Formal \file{LICENSE} files are added with the open-source release.
-\end{itemize}
+\paragraph{Design constraints.}
+Four constraints shape the architecture. Portability is enforced by a 1/4"-20 UNC tripod thread on the base, with the full setup measured at approximately 4 minutes from unpacking to first tracked pass across three field sessions (\S\ref{sec:field-tests}). The zero-SSH workflow routes every field operation, GPS entry, north alignment, pass selection, park, and shutdown, through the HTTPS dashboard, which targets a laptop browser but also works on a phone for quick tasks such as supplying a GPS fix. The cost target is the v2 MOTOR\_RF\_HAT BOM derived in \S\ref{sec:cost} and listed in Appendix~\ref{app:bom}: $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware, $\sim$€100 for the station core (excluding antenna, coax, power supply, tripod). The intended licensing is CERN-OHL-S v2 for hardware and MIT for firmware and Python stack, with the formal \file{LICENSE} files added on the open-source release.
 
 \section{Mechanical Design}
 
-The rotator is designed in Onshape and printable on consumer FDM machines with a 220$\times$220~mm bed (the largest single printed part is 205$\times$160$\times$120~mm). All structural prints are in ASA (Acrylonitrile Styrene Acrylate). ASA is chosen over PLA for two properties: (i) UV stability from the acrylate rubber phase (a polymer-science property of ASA copolymers; ASA substitutes the acrylate rubber for the butadiene phase of ABS, eliminating the UV-degradation vector), and (ii) a glass transition $T_g \approx 100$\degC / Vicat softening $\approx$~105\degC, compared to $T_g \approx 60$\degC\ for PLA; this margin avoids thermal deformation in direct sunlight. PETG was considered and rejected because of lower interlayer adhesion and creep under sustained load compared with ASA at equivalent print settings.
+The rotator is designed in Onshape and printable on consumer FDM machines with a 220$\times$220~mm bed (the largest single printed part is 205$\times$160$\times$120~mm). All structural prints are in ASA (Acrylonitrile Styrene Acrylate); recent industry surveys identify ASA as the standard outdoor-grade engineering filament for desktop FDM~\cite{wohlers2024}. ASA is chosen over PLA for two properties: (i) UV stability from the acrylate rubber phase (a polymer-science property of ASA copolymers; ASA substitutes the acrylate rubber for the butadiene phase of ABS, eliminating the UV-degradation vector), and (ii) a glass transition $T_g \approx 100$\degC / Vicat softening $\approx$~105\degC, compared to $T_g \approx 60$\degC\ for PLA; this margin avoids thermal deformation in direct sunlight. PETG was considered and rejected because of lower interlayer adhesion and creep under sustained load compared with ASA at equivalent print settings.
 
 \begin{figure}[H]
     \centering
@@ -226,6 +220,13 @@ The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in 
     \caption{KiCad 3D render of the v1 MotorPCB.}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[page=1,width=\textwidth]{schematics/MotorPCB_schematic.pdf}
+    \caption{Top-level hierarchical schematic of the v1 MotorPCB. The 13 sub-sheets (RP2040 controller, solder-pad breakouts, encoder front-end, AZ/EL H-bridges, IMU, status LED, USB, power, etc.) are exported in full in the project KiCad repository (\file{MotorPCB/}).}
+    \label{fig:motorpcb-schematic}
+\end{figure}
+
 \section{Bring-Up and Hardware Debugging}
 \label{sec:bringup}
 
@@ -241,7 +242,7 @@ The v2 MOTOR\_RF\_HAT corrects all three natively: routed EL outputs, no encoder
 \section{Cost}
 \label{sec:cost}
 
-Two hardware configurations are priced separately. The first is the as-deployed v1 setup that was used for field validation (a separate MotorPCB and RF~HAT, connected to the Pi via USB and UART respectively); v1 existed to validate the architecture and firmware and to let the RF and rotator subsystems be developed in parallel. The second is the v2 combined MOTOR\_RF\_HAT, the thesis's final hardware deliverable: design-complete, routed, BOM finalised, ready to order but not yet fabricated at the time of writing. v2 reaches $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware excluding the Pi, and $\sim$€100 for the station core, which misses the strict ``under €50 full rotator'' target once motors and mechanics are included but stays an order of magnitude below the commercial floor.
+Two hardware configurations are priced separately. The first is the as-deployed v1 setup that was used for field validation (a separate MotorPCB and RF~HAT, connected to the Pi via USB and UART respectively); v1 existed to validate the architecture and firmware and to let the RF and rotator subsystems be developed in parallel. The second is the v2 combined MOTOR\_RF\_HAT, the thesis's final hardware deliverable: design-complete, routed, BOM finalised, ready to order but not yet fabricated at the time of writing. v2 reaches $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware excluding the Pi, and $\sim$€100 for the station core, which misses the strict ``under €50 full rotator'' target once motors and mechanics are included but lands at approximately one-eighth of the cheapest commercial unit (€760 Yaesu G-5500~\cite{yaesu-g5500}).
 
 Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-piece order). Full BOM in Appendix~\ref{app:bom} and \file{ThesisPaper/bom\_complete.csv}.
 

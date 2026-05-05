@@ -27,11 +27,11 @@ This work designs, builds, and field-validates a portable SatNOGS-compatible gro
 The chapter opener established the mission (AetherSpace), the ecosystem (SatNOGS), and the gap (no cheap, portable, student-buildable station exists). This section turns those into engineering constraints. Five aspects of the problem set the design envelope: the geometry of a LEO pass, the link budget against the AetherSpace transmitter, the cost ceiling, the AetherSpace target itself, and the radio-architecture choice that follows from picking the same transceiver at both ends.
 
 \paragraph{Geometry.}
-A LEO satellite at 400~km altitude is visible from a given ground station for 5--10~minutes per 92-minute orbit. The total angular rate at zenith is bounded by
+A LEO satellite at 400~km altitude is visible from a given ground station for 5--8~minutes per 92-minute orbit. The total angular rate at zenith is bounded by
 \begin{equation}
     \dot{\theta}_{\max} = \frac{v}{h} = \frac{7.67~\text{km/s}}{400~\text{km}} = 0.01918~\text{rad/s} = 1.10~\text{deg/s},
 \end{equation}
-with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E+h = 6771$~km~\cite{montenbruck2000orbits}. The instantaneous azimuth rate exceeds 10\degree/s near zenith because a small displacement of the sub-satellite point maps to a large arc in azimuth.
+with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E+h = 6771$~km~\cite{montenbruck2000orbits}. For passes with closest-approach elevation above $\sim$70\degree\ the instantaneous azimuth rate exceeds 10\degree/s for a few seconds, because a small displacement of the sub-satellite point maps to a large arc in azimuth.
 
 \paragraph{Link.}
 The Siretta Oscar 44 Yagi used in this work (9~dBi peak, 54\degree$\times$48\degree\ 3-dB beamwidths at 434~MHz~\cite{siretta-oscar44}) is required to close the link against 145.8~dB of free-space path loss at 433~MHz and 30\degree\ elevation (Chapter~\ref{ch:background}, Table~\ref{tab:link-budget}). Its narrow beam sets the pointing-accuracy requirement on the rotator~\cite{stutzman2012antenna}.
@@ -40,7 +40,7 @@ The Siretta Oscar 44 Yagi used in this work (9~dBi peak, 54\degree$\times$48\deg
 Commercial rotators cost \euro{}760--900 (Yaesu G-5500~\cite{yaesu-g5500}) to \euro{}1200--1300 (SPID RAS~\cite{rfham-spid}); the SatNOGS v3 open-source rotator costs \euro{}300--500 in parts~\cite{satnogs-v3, satnogs-v3-bom}. The v2 MOTOR\_RF\_HAT BOM derived here (\S\ref{sec:cost}, design-complete) is approximately \euro{}40 for the combined controller/RF PCB, \euro{}75 for the full rotator hardware (PCB + motors + mechanics, excluding the Pi), and \euro{}100 for the station core (excluding antenna, coax, power supply, tripod).
 
 \paragraph{Target.}
-The AetherSpace CubeSat is a 3U spacecraft under development at KU~Leuven for a heat-shield sample-return demonstration from LEO, launch $\sim$2030. Per AetherSpace specification (2026-03-05): 433~MHz UHF downlink, $+$14~dBm ($\approx$25~mW), 2~dBi turnstile/dipole antenna, CC1200 native packet format. The link budget in Chapter~\ref{ch:background} closes with positive theoretical margin only near zenith; at 30\degree\ elevation the theoretical margin is $-5.7$~dB (Table~\ref{tab:link-budget}).
+The full AetherSpace specification is given in \S\ref{sec:aetherspace}. The constraint it imposes here is link-budget closure: against a +14~dBm transmitter into a 2~dBi turnstile, the link in Chapter~\ref{ch:background} closes with positive theoretical margin only near zenith, and at 30\degree\ elevation the theoretical margin is $-5.7$~dB (Table~\ref{tab:link-budget}). Mid-elevation passes therefore demand both a directional receive antenna and a low-noise front end.
 
 \paragraph{Radio choice.}
 The station uses the CC1200 transceiver~\cite{cc1200} at both ends. This deviates from the canonical SatNOGS receive chain (SDR + GNU Radio software demodulation) but eliminates per-satellite modulation-parameter uncertainty: both ends share the same SmartRF register set once the flight configuration is finalised.
@@ -49,13 +49,13 @@ The station uses the CC1200 transceiver~\cite{cc1200} at both ends. This deviate
 
 The canonical SatNOGS receive chain is a Raspberry Pi running the official \code{satnogs-client} daemon, an RTL-SDR v3 dongle feeding GNU Radio flowgraphs (\code{gr-satnogs}) through SoapySDR, and a hamlib-compatible rotator~\cite{satnogs-main, hamlib}. That stack decodes a broad range of amateur-satellite modulations (FSK, GFSK, AFSK, BPSK, LoRa chirp, CW, SSTV) in software, is maintained by the Libre Space Foundation, and remains the more flexible choice for a general-purpose amateur-radio ground station. The rotator produced by this thesis plugs into that stack unchanged over EasyComm III (hamlib model 204~\cite{jackson1990easycomm}).
 
-This thesis adopts the CC1200 hardware-packet-modem path instead, for three reasons.
+This thesis adopts the CC1200 hardware-packet-modem path for three reasons.
 
-\begin{enumerate}
-    \item AetherSpace-specific. AetherSpace carries a CC1200 on-board. Using the same transceiver at the ground end eliminates modulation-parameter matching uncertainty: a single SmartRF Studio register set loaded at both ends configures identical symbol rate, deviation, filter bandwidth, sync word, and packet framing. An SDR receiver would need those values re-measured or re-derived per satellite, per flight revision.
-    \item Educational scope. The thesis is a joint MSc in electronics. The CC1200 path exercises a full embedded-systems stack end-to-end: PCB design with controlled-impedance RF routing and matching networks (Chapter~\ref{ch:rf-frontend}), RP2040 firmware with SPI drivers and a binary COBS protocol (\S\ref{sec:rf-hat-firmware}, with protocol structure in Appendix~\ref{app:protocol}), Pi-side Python controlling CC1200 registers over UART (\S\ref{sec:pi-stack}), and a closed-loop tracking rotator (Chapters~\ref{ch:system-design} and~\ref{ch:firmware-software}).
-    \item Form-factor fit. A Pi 3A+ ships with 512~MB of LPDDR2 SDRAM~\cite{rpi3aplus}; with the default 64~MB GPU split, approximately 416~MB is available to userspace. The SatNOGS Docker stack targets $\geq$1~GB of RAM~\cite{satnogs-main}. The Python stack described in \S\ref{sec:pi-stack} ($\sim$7900 LOC across the Pi packages listed in Appendix~\ref{app:bom}) runs on the 3A+ within a 200--300~MB resident-set footprint measured with \code{top}, leaving margin for the HTTPS dashboard and systemd services.
-\end{enumerate}
+The first is mission alignment. AetherSpace carries a CC1200 on-board, and using the same transceiver at the ground end eliminates modulation-parameter matching uncertainty: a single SmartRF Studio register set loaded at both ends configures identical symbol rate, deviation, filter bandwidth, sync word, and packet framing. An SDR receiver would need those values re-measured or re-derived per satellite and per flight revision.
+
+The second is educational scope. The thesis is a joint MSc in electronics, and the CC1200 path exercises a full embedded-systems stack end-to-end: PCB design with controlled-impedance RF routing and matching networks (Chapter~\ref{ch:rf-frontend}), RP2040 firmware with SPI drivers and a binary COBS protocol (\S\ref{sec:rf-hat-firmware}, with protocol structure in Appendix~\ref{app:protocol}), Pi-side Python controlling CC1200 registers over UART (\S\ref{sec:pi-stack}), and a closed-loop tracking rotator (Chapters~\ref{ch:system-design} and~\ref{ch:firmware-software}).
+
+The third is form-factor fit. A Pi 3A+ ships with 512~MB of LPDDR2 SDRAM~\cite{rpi3aplus}, of which approximately 416~MB is available to userspace after the default 64~MB GPU split. The SatNOGS Docker stack targets at least 1~GB of RAM~\cite{satnogs-main}; the Python stack described in \S\ref{sec:pi-stack} ($\sim$7900 LOC across the Pi packages listed in Appendix~\ref{app:bom}) runs on the 3A+ within a 200--300~MB resident-set footprint measured with \code{top}, leaving margin for the HTTPS dashboard and the systemd services.
 
 Chapter~\ref{ch:results} quantifies the sensitivity cost of this choice: with the Siretta Oscar 44 Yagi but without an external LNA, the CC1200 receive chain did not decode AetherSpace-class downlinks from orbit during the three field sessions. \S\ref{sec:future-work} identifies the hardware additions required to close the remaining sensitivity gap.
 

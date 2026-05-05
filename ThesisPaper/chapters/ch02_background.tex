@@ -38,7 +38,7 @@ The total angular rate as seen from the ground station reaches its bound at zeni
     \dot{\theta}_{\max} = \frac{v}{h} = \frac{7669}{400 \times 10^3}~\text{rad/s} = 1.10~\text{deg/s}.
 \end{equation}
 
-The \textit{azimuth} rate, however, is unbounded as a pass approaches true zenith: for passes with closest-approach elevation above $\sim$80\degree, the AZ axis alone needs to move through a large arc in a short time, so instantaneous AZ rates can exceed 10\degree/s for a few seconds. This is a speed-limit concern for the mechanical rotator (\S\ref{sec:tracking-accuracy}) rather than an accuracy concern.
+The \textit{azimuth} rate, however, is unbounded as a pass approaches true zenith: for passes with closest-approach elevation above $\sim$70\degree, the AZ axis alone needs to move through a large arc in a short time, so instantaneous AZ rates can exceed 10\degree/s for a few seconds. This is a speed-limit concern for the mechanical rotator (\S\ref{sec:tracking-accuracy}) rather than an accuracy concern.
 
 The satellite's radial velocity relative to the ground station also produces a Doppler shift on the received carrier frequency. Because the radial velocity changes continuously throughout the pass, the received frequency must be tracked in real time; the magnitude and correction strategy are derived in \S\ref{sec:doppler}.
 
