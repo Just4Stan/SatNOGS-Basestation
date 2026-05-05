@@ -293,18 +293,7 @@ Marker 2, range and Doppler tile. \code{range\_km} is \code{ephem.Body.range / 1
 
 Marker 3, pointing tile. A 2$\times$3 grid showing commanded AZ/EL (\code{cmd\_az}/\code{cmd\_el} from \code{station.py}), actual AZ/EL (from \code{rotctld}, populated by the dashboard's polling thread), and absolute error per axis. The error column is computed in JavaScript: \code{|cmd~-~actual|} for each axis, coloured green (\textless 0.5\degree) / amber (\textless 2\degree) / red. The values in the figure ($-0.0$\degree\ AZ, $-0.2$\degree\ EL during a 9.9\degree\ EL portion of the pass) are typical of mid-pass tracking and demonstrate that the closed-loop rotator is following the orbital trajectory.
 
-Marker 4, RF status panel (right column). The widest information block, rendering the full state of the CC1200:
-\begin{itemize}
-    \item RSSI gauge: the same value as marker~1, rendered on a $-120$~to~$-40$~dBm scale.
-    \item FREQ: current frequency in MHz including Doppler offset (\code{rf.freq\_mhz}).
-    \item MOD: modulation format and symbol rate from \code{rf.radio\_config.modulation} and \code{symbol\_rate\_bps}.
-    \item PACKETS: counter of CRC-passing frames received since AOS.
-    \item PROTOCOL: the per-satellite protocol resolved by \S\ref{sec:tle-and-profile}, suffixed \code{[serial]} or \code{[pkt]} depending on \code{rx\_mode}. Rendered green for known, amber for assumed (\code{*\_assumed}), red for unknown.
-    \item STATUS: a compact readiness word, ``Serial RX'', ``Idle'', ``Configuring'', ``Streaming'', derived from the \code{RfHatManager} state machine.
-    \item Radio Config sub-card: tier (A/B/C), sync threshold, deviation, channel-filter bandwidth, packet-config flags, and the pre-Doppler base frequency. This is the operator's verification that the resolved profile reached the radio.
-    \item Raw-dump banner: indicates whether raw byte capture is active; ``not active'' when the standard packet pipeline is running.
-    \item CC1200 sub-card: low-level CC1200 telemetry from \code{rf.cc1200}: \code{MARC} state name (looked up against the 24-state main-state-machine table), suffixed \code{[SERIAL]} when bit~4 of the firmware status flags indicates synchronous serial mode is active; FREQ ERR (the \code{FREQOFF\_EST} read-back, sign-extended to Hz); LQI; rolling RSSI min/max/avg over the pass; cumulative RX byte count and rate (B/s); error counters (\code{rx\_overflow}, \code{rx\_fifo\_err}, \code{tx\_fifo\_err}); firmware uptime.
-\end{itemize}
+Marker 4, RF status panel (right column). The widest information block on the page, rendering the full state of the CC1200. The headline values appear at the top: an RSSI gauge on a $-120$ to $-40$~dBm scale (the same value as marker~1), the current frequency in MHz including Doppler offset (\code{rf.freq\_mhz}), the modulation format and symbol rate from the resolved \code{SatProfile} (\code{rf.radio\_config.modulation}, \code{symbol\_rate\_bps}), and a counter of CRC-passing frames received since AOS. Below those, two text fields summarise the per-satellite reception state: PROTOCOL gives the protocol resolved by \S\ref{sec:tle-and-profile} suffixed \code{[serial]} or \code{[pkt]} depending on \code{rx\_mode}, coloured green for a known protocol, amber for one inferred from the SatNOGS DB description (\code{*\_assumed}), and red for unknown; STATUS is a compact readiness word (``Serial RX'', ``Idle'', ``Configuring'', ``Streaming'') derived from the \code{RfHatManager} state machine. A Radio Config sub-card below those exposes the radio configuration that was actually programmed into the chip, tier (A/B/C), sync threshold, deviation, channel-filter bandwidth, packet-config flags, and the pre-Doppler base frequency, so that the operator can confirm the resolved profile reached the radio rather than just trusting the per-satellite metadata. Underneath, a raw-dump banner indicates whether raw byte capture is active or not. The bottom of the panel is a CC1200 sub-card showing low-level telemetry from \code{rf.cc1200}: the \code{MARC} state name (looked up against the 24-state main-state-machine table, suffixed \code{[SERIAL]} when bit~4 of the firmware status flags indicates synchronous serial mode), FREQ ERR (the \code{FREQOFF\_EST} read-back, sign-extended to Hz), LQI, rolling RSSI min/max/avg over the pass, cumulative RX byte count and instantaneous byte rate, the three FIFO error counters (\code{rx\_overflow}, \code{rx\_fifo\_err}, \code{tx\_fifo\_err}), and the firmware uptime.
 
 Marker 5, sky plot. The polar canvas is rendered entirely client-side. Three layers compose:
 \begin{enumerate}
@@ -314,17 +303,7 @@ Marker 5, sky plot. The polar canvas is rendered entirely client-side. Three lay
 \end{enumerate}
 The canvas is redrawn only when a watched value changes, which keeps the per-frame cost below 1~ms even on the Pi 3A+ when the dashboard is loaded locally.
 
-Marker 6, top status bar. The persistent header collapses the most operator-relevant state into one line:
-\begin{itemize}
-    \item Logo + connection dot (green when the daemon's status JSON is fresh, red when stale or absent).
-    \item GPS coordinates pill, derived from \code{location.lat}/\code{lon}.
-    \item State word + target satellite, composed from \code{state} and \code{rf.satellite}: ``TRACKING, \textit{sat}'' (active), ``SCAN, \textit{sat}'' (scan), ``AUTO, Waiting'' (auto-track armed), ``MANUAL, Select a satellite'' (idle).
-    \item Pass progress \code{pass\_progress} = $(1 - \mathrm{los\_seconds}/\mathrm{duration}) \cdot 100$ and the LOS countdown.
-    \item Stop button, writes \file{\textasciitilde/.station\_stop}, which the daemon detects on the next tick and breaks out of the pass loop.
-    \item Live AZ/EL readout from rotctld.
-    \item Pi CPU temperature (\file{/sys/class/thermal/thermal\_zone0/temp}, divided by 1000) and RAM utilisation (\file{/proc/meminfo}, \code{MemTotal $-$ MemAvailable}).
-    \item Wall-clock time, formatted client-side.
-\end{itemize}
+Marker 6, top status bar. The persistent header collapses the most operator-relevant state into a single line that is visible from every tab. Reading left to right: the logo and a connection dot (green when the daemon's status JSON has been refreshed within the last poll interval, red when stale or absent), the GPS-coordinates pill derived from \code{location.lat}/\code{lon}, and a state word concatenated with the target satellite from \code{state} and \code{rf.satellite}, which renders as ``TRACKING, \textit{sat}'' during an active pass, ``SCAN, \textit{sat}'' during the scan-mode dwell, ``AUTO, Waiting'' when auto-track is armed but no pass is rising, or ``MANUAL, Select a satellite'' when the daemon is idle. To the right of the state word, a pass-progress percentage computed in the browser as $(1 - \mathrm{los\_seconds}/\mathrm{duration}) \cdot 100$ is displayed alongside the LOS countdown, and a Stop button writes \file{\textasciitilde/.station\_stop}, which the daemon detects on the next tick and breaks out of the pass loop. The right-hand cluster shows the live AZ/EL readout from rotctld, the Pi's CPU temperature (\file{/sys/class/thermal/thermal\_zone0/temp}, divided by 1000) and RAM utilisation (\file{/proc/meminfo}, computed as \code{MemTotal $-$ MemAvailable}), and the wall-clock time, formatted client-side.
 
 \subsection{Setup Wizard}
 

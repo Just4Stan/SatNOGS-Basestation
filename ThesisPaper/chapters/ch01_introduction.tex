@@ -9,31 +9,28 @@
     \caption{Assembled, field-deployed ground station tracking a pass.}
 \end{figure}
 
-University CubeSat programmes are proliferating: a 3U spacecraft can carry a meaningful scientific payload, be assembled by a small student team, and reach orbit on a rideshare for a fraction of the cost of a dedicated launch. KU Leuven's AetherSpace mission is one such programme, targeting a heat-shield sample-return demonstration from LEO around 2030. Once in orbit, however, a CubeSat is only as useful as the ground infrastructure that receives its telemetry. Commercial antenna tracking systems suitable for a 433\,MHz LEO link cost \euro{}760--1300; even the community-built SatNOGS v3 reference design requires \euro{}300--500 in parts. For a student team without a permanent rooftop installation, this cost and the associated setup complexity make routine contact difficult.
+AetherSpace is a 3U CubeSat under development at KU~Leuven, targeting a heat-shield sample-return demonstration from low Earth orbit with launch around 2030. The flight transceiver is a Texas Instruments CC1200~\cite{cc1200} on a 433~MHz UHF downlink at +14~dBm ($\approx$25~mW) into a 2~dBi turnstile/dipole; the modulation parameters and packet format will be fixed once the flight hardware is finalised. A satellite of this class is only as useful as the ground infrastructure that receives its telemetry, and providing that ground segment is the subject of this thesis.
 
-This thesis addresses that gap by designing, building, and field-validating a portable, SatNOGS-compatible ground station that can be assembled for approximately \euro{}100 in station-core components, deploys from a standard camera tripod in about four minutes, and integrates with the SatNOGS rotator ecosystem through the standard EasyComm\,III interface. The target application is the AetherSpace CubeSat, but the rotator and software stack are general-purpose: any satellite reachable from the SatNOGS DB can be tracked, and any operator with a hamlib-compatible rotator can reuse the software.
+The natural ecosystem to plug into is SatNOGS (Satellite Networked Open Ground Station), an open-source network of amateur ground stations that share scheduling and telemetry through a public website. Each participating station tracks the satellites it can see, decodes the frames it captures, and uploads them to a central database; AetherSpace's mission operations can then query that database without owning any of the receiving hardware. A station enters the network by speaking two standard interfaces, EasyComm~III over serial to the rotator and SiDS HTTP to the telemetry database, so the choice of how to build the station is left to the operator. A full ecosystem walk-through, including the SatNOGS Network scheduler, the SDR-based receive client, and the comparison against earlier centralised projects such as GENSO, is given in the 2023 KU~Leuven masterproef by Hanssens~\cite{hanssens2023}, on which this work builds; \S\ref{sec:satnogs} summarises only the parts that load-bear for the design decisions in this thesis.
+
+What does not yet exist for AetherSpace is a station that is cheap, portable, and student-buildable. Commercial AZ/EL rotators able to track a 433~MHz LEO link cost \euro{}760--1300~\cite{yaesu-g5500,rfham-spid}; the open-source SatNOGS v3 reference design itself still requires \euro{}300--500 in parts~\cite{satnogs-v3,satnogs-v3-bom}, and assumes a permanent rooftop installation that a student team without dedicated facilities cannot easily realise. This thesis designs, builds, and field-validates a portable SatNOGS-compatible ground station that targets approximately \euro{}100 in station-core components, deploys from a standard camera tripod in about four minutes, and integrates with the SatNOGS rotator ecosystem through the standard EasyComm~III/hamlib interface. The target application is the AetherSpace mission, but neither the rotator nor the Pi-side software stack is AetherSpace-specific: any satellite present in the SatNOGS DB can be tracked, and any operator with a hamlib-compatible rotator can reuse the software.
 
 \section{Problem Statement}
 \label{sec:problem-statement}
 
-\paragraph{Geometry.}
+Three constraints set the design envelope: the geometry of a LEO pass, the link budget against the AetherSpace transmitter, and the cost ceiling that justifies the project relative to off-the-shelf hardware.
+
 A LEO satellite at 400~km altitude is visible from a given ground station for 5--10~minutes per 92-minute orbit. The total angular rate at zenith is bounded by
 \begin{equation}
     \dot{\theta}_{\max} = \frac{v}{h} = \frac{7.67~\text{km/s}}{400~\text{km}} = 0.01918~\text{rad/s} = 1.10~\text{deg/s},
 \end{equation}
-with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E+h = 6771$~km~\cite{montenbruck2000orbits}. The instantaneous azimuth rate exceeds 10\degree/s near zenith because a small displacement of the sub-satellite point maps to a large arc in azimuth.
+with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$/s$^2$ and $R_E+h = 6771$~km~\cite{montenbruck2000orbits}. The instantaneous azimuth rate, however, exceeds 10\degree/s near zenith because a small displacement of the sub-satellite point maps to a large arc in azimuth, which sets a slew-rate requirement on the rotator that the average angular rate alone hides.
 
-\paragraph{Link.}
-The Siretta Oscar 44 Yagi used in this work (9~dBi peak, 54\degree$\times$48\degree\ 3-dB beamwidths at 434~MHz~\cite{siretta-oscar44}) is required to close the link against 145.8~dB of free-space path loss at 433~MHz and 30\degree\ elevation (Chapter~\ref{ch:background}, Table~\ref{tab:link-budget}). Its narrow beam sets the pointing-accuracy requirement on the rotator~\cite{stutzman2012antenna}.
+Closing the link against the AetherSpace transmitter requires a directional receive antenna. The Siretta Oscar~44 Yagi used in this work delivers 9~dBi peak gain with 54\degree$\times$48\degree\ 3-dB beamwidths at 434~MHz~\cite{siretta-oscar44}, against 145.8~dB of free-space path loss at 433~MHz and 30\degree\ elevation (Chapter~\ref{ch:background}, Table~\ref{tab:link-budget}). The narrow beamwidth turns rotator pointing into a hard requirement: a half-degree of EL error is recoverable, several degrees is not~\cite{stutzman2012antenna}.
 
-\paragraph{Cost.}
-Commercial rotators cost \euro{}760--900 (Yaesu G-5500~\cite{yaesu-g5500}) to \euro{}1200--1300 (SPID RAS~\cite{rfham-spid}); the SatNOGS v3 open-source rotator costs \euro{}300--500 in parts~\cite{satnogs-v3, satnogs-v3-bom}. The v2 MOTOR\_RF\_HAT BOM derived here (\S\ref{sec:cost}, design-complete) is approximately \euro{}40 for the combined controller/RF PCB, \euro{}75 for the full rotator hardware (PCB + motors + mechanics, excluding the Pi), and \euro{}100 for the station core (excluding antenna, coax, power supply, tripod).
+The financial gap that motivates a custom build is wide. Commercial rotators range from \euro{}760--900 (Yaesu G-5500~\cite{yaesu-g5500}) to \euro{}1200--1300 (SPID RAS~\cite{rfham-spid}); the SatNOGS v3 open-source reference still costs \euro{}300--500 in parts~\cite{satnogs-v3,satnogs-v3-bom}. The v2 MOTOR\_RF\_HAT BOM derived in \S\ref{sec:cost} (design-complete at submission) projects to approximately \euro{}40 for the combined controller/RF PCB, \euro{}75 for the full rotator hardware (PCB + motors + mechanics, excluding the Pi), and \euro{}100 for the station core (excluding antenna, coax, power supply, tripod), an order of magnitude below the commercial floor.
 
-\paragraph{Target.}
-The AetherSpace CubeSat is a 3U spacecraft under development at KU~Leuven for a heat-shield sample-return demonstration from LEO, launch $\sim$2030. Per AetherSpace specification (2026-03-05): 433~MHz UHF downlink, $+$14~dBm ($\approx$25~mW), 2~dBi turnstile/dipole antenna, CC1200 native packet format. The link budget in Chapter~\ref{ch:background} closes with positive theoretical margin only near zenith; at 30\degree\ elevation the theoretical margin is $-5.7$~dB (Table~\ref{tab:link-budget}).
-
-\paragraph{Radio choice.}
-The station uses the CC1200 transceiver~\cite{cc1200} at both ends. This deviates from the canonical SatNOGS receive chain (SDR + GNU Radio software demodulation) but eliminates per-satellite modulation-parameter uncertainty: both ends share the same SmartRF register set once the flight configuration is finalised.
+A consequence of building specifically for AetherSpace is that the same CC1200 transceiver~\cite{cc1200} sits at both ends of the link. This deviates from the canonical SatNOGS receive chain, which is SDR + GNU Radio software demodulation, but eliminates per-satellite modulation-parameter uncertainty: both ends share the same SmartRF register set once the flight configuration is finalised. The implications of that choice are unpacked next.
 
 \subsection*{A deliberate alternative, not a replacement}
 
@@ -57,7 +54,7 @@ The central question of this thesis is:
     Can an economical, portable SatNOGS-compatible ground station be designed, built, and field-validated as the ground segment for the AetherSpace CubeSat mission?
 \end{quote}
 
-This breaks down into five sub-questions:
+This breaks down into six sub-questions:
 
 \begin{enumerate}
     \item Can a satellite-tracking rotator be built for under \euro{}50 in materials?
