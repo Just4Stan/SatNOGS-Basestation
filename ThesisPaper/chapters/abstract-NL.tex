@@ -6,7 +6,7 @@ Deze masterproef beschrijft het ontwerp, de implementatie en de veldvalidatie va
 
 De rotator gebruikt een 3D-geprinte ASA-structuur met geïntegreerde geprinte lagerbanen en stalen kogels, gereduceerde DC-motoren (516:1 intern, tot 1376:1 totaal) en een op maat ontworpen RP2040-motorcontroller-PCB. Een PID-regellus haalt sub-0,5\degree\ elevatie- en 0--3\degree\ azimutfout, gevalideerd tijdens live passages. Elevatiekalibratie gebeurt via een ADXL345-accelerometer; azimut wordt gekalibreerd via het telefoonkompas of door op te starten vooraf op het noorden gericht.
 
-Het RF-front-end is een 6-laags Pi HAT met twee TI CC1200 transceivers; het UHF-pad (432\,MHz) is bestukt met een matching network afgeleid van de TI CC1200EM-referentie, terwijl het VHF-pad (144/145\,MHz) gerouteerd is maar niet bestukt.
+Het RF-front-end is een 6-laags Pi HAT met twee TI CC1200 transceivers; het UHF-pad (433\,MHz) is bestukt met een matching network afgeleid van de TI CC1200EM-referentie, terwijl het VHF-pad (144/145\,MHz) gerouteerd is maar niet bestukt.
 
 Een Python-stack op de Pi verzorgt passagevoorspelling, Dopplercorrectie, per-satelliet CC1200-herconfiguratie en indiening van SiDS-telemetrie. Een HTTPS-dashboard biedt laptop-gestuurd veldbeheer, met optionele telefoontoegang. Het station spreekt standaard EasyComm III via hamlib.
 
