@@ -54,5 +54,6 @@
   "latex-workshop.latex.clean.fileTypes": [
     "*.aux", "*.bbl", "*.bcf", "*.blg", "*.fdb_latexmk", "*.fls",
     "*.log", "*.out", "*.run.xml", "*.synctex.gz", "*.toc", "*.lof", "*.lot"
-  ]
+  ],
+  "cmake.sourceDirectory": "/Users/stan/Documents/GitHub/SatNOGS-Basestation/RF_Devboard"
 }
