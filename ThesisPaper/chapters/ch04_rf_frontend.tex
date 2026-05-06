@@ -32,7 +32,7 @@ The RF front-end was developed across three hardware iterations. Each iteration 
     \label{tab:rf-iterations}
 \end{table}
 
-The devboard was the first physical instantiation of the CC1200 transceiver stack. Its purpose was validation rather than integration: confirming that the SPI driver, SmartRF register loading, COBS binary protocol, and bidirectional TX/RX FIFO paths all function correctly on real silicon, before any HAT-specific constraints were imposed. Section~\ref{sec:rf-devboard} describes the devboard architecture and presents the bench test results.
+The devboard was the first physical instantiation of the CC1200 transceiver stack. Its purpose was validation rather than integration: confirming that the SPI driver, SmartRF register loading, COBS binary protocol, and bidirectional TX/RX FIFO paths all function correctly on a real prototype, before any HAT-specific constraints were imposed. Section~\ref{sec:rf-devboard} describes the devboard architecture and presents the bench test results.
 
 Once the devboard confirmed the RF stack, the v1 RF HAT translated the design to the Raspberry Pi HAT form factor. The transition introduced four changes: the 4-layer stackup became 6 layers to achieve controlled-impedance routing within the HAT footprint; a second CC1200 was added for a VHF uplink path; the USB CDC host interface was replaced by UART to connect directly to the Pi's GPIO header; and the devboard's dedicated power chain (24\,V buck + dual 3.3\,V LDOs) was replaced by the Pico module's onboard regulator to reduce cost and component count. The CC1200 driver, matching-network topology (\S\ref{sec:matching-topology}), and COBS protocol were carried over unchanged.
 
@@ -145,7 +145,7 @@ The RF HAT communicates with the Pi over a single-wire UART at 115200~baud (GPIO
 
 The HAT is powered from a 24\,V supply via an XT30 connector. The 24\,V is stepped down to 5\,V on-board by an LMR51420 buck converter~\cite{lmr51420}, and the 5\,V rail feeds both the Raspberry Pi host (through the GPIO header) and the Raspberry Pi Pico VSYS pin. The Pico's onboard RT6150 buck-boost regulator~\cite{rt6150} generates the 3.3\,V rail that supplies both CC1200 transceivers and the surrounding digital logic. A switching 3.3\,V rail is acceptable for the digital side but is not the optimum choice for the RF analog supply; \S\ref{sec:future-work} flags a dedicated LDO on the RF section as a candidate v3 improvement.
 
-Local decoupling at every active component combines a 100\,nF MLCC at the supply pin with a 10\,$\mu$F bulk capacitor on the same rail within 5\,mm. The 3.3\,V rail at the CC1200 pins was not scope-measured at the time of writing, so the supply ripple cannot be quoted in mV$_{\mathrm{pp}}$; the noise floor measured at the antenna in \S\ref{sec:packet-reception} ($-$96~dBm outdoors, approximately 30~dB above the kTB+NF limit) is dominated by board-level radiated and conducted interference rather than by supply ripple, and the dominant mitigation is a mast-mounted LNA (\S\ref{sec:future-work}).
+Local decoupling at every active component combines a 100\,nF MLCC at the supply pin with a 10\,$\mu$F bulk capacitor on the same rail within 5\,mm. 
 
 \section{RF HAT PCB Layout}
 \label{sec:rf-hat-layout}
