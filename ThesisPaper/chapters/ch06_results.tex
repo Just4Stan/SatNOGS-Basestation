@@ -62,10 +62,8 @@ Tracking error was computed per pass from the CSV log (commanded AZ/EL from \cod
 
 Across passes with peak elevation in the 20\degree--70\degree\ band (the range where the Chapter~\ref{ch:background} link budget closes), both axes remain inside the Siretta Oscar 44 3-dB beamwidths (54\degree\ H-plane, 48\degree\ E-plane; \S\ref{sec:problem-statement}). The near-zenith AZ excursions exceed the 35\degree/s motor ceiling from \S\ref{sec:slew-speed} for a few seconds per pass; this is a speed-limit event, not an accuracy-limit one, and the error decreases monotonically as the satellite descends below 70\degree\ elevation.
 
-\section{RF Front-End Measurements}
+\section{RF Devboard Validation}
 \label{sec:rf-measurements}
-
-Chapter~\ref{ch:background} derived a theoretical link margin of $-$5.7~dB at 30\degree\ elevation and predicted that board-level interference would degrade this further. The measurements in this section and \S\ref{sec:packet-reception} quantify the actual outcome.
 
 Two devboards were connected to a host PC and exercised with \file{cc1200\_rf\_test.py}. The test script loads a bench validation SmartRF profile (2.4\,kbps 2-GFSK, 5.2\,kHz deviation, 10\,kHz channel filter; modulation index $h = 2\Delta f/f_b \approx 4.3$, chosen for robustness at short range rather than spectral efficiency, this is not the AetherSpace flight configuration, which remains to be defined once the satellite's modulation parameters are finalised), tunes both boards to a specified frequency, and runs a bidirectional packet exchange: Board\,A transmits a sequence of fixed-size payloads while Board\,B receives, then the roles are reversed. Payload matching is verified byte-for-byte.
 
@@ -101,14 +99,34 @@ The elevated RSSI at 430 and 435\,MHz is a measurement artefact rooted in the CC
 
 What the bench test does not establish is satellite reception. The devboard was not taken outdoors or connected to a directional antenna. Link-budget analysis (\S\ref{sec:link-budget}) shows that receiving the AetherSpace downlink requires a front-end LNA regardless of which board is used; the bench test scopes the transceiver stack in isolation, not the system sensitivity in a satellite geometry.
 
-Doppler correction. The Pi computes the Doppler shift at 2~Hz from the TLE-derived radial velocity and sends frequency-word commands to the RF HAT; the firmware applies small deltas via \code{FREQOFF} and rewrites the full \code{FREQ}+\code{FS\_CFG} word on large or forced retunes, with \code{FREQOFF} also read back as a residual-error estimate. The observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum at 433~MHz predicted in \S\ref{sec:doppler} (the commanded offset is clipped at the mid-pass peak that the satellite actually reaches).
+\section{Field Deployment and Live-Pass Observations}
+\label{sec:field-tests}
 
-VHF. Not populated on the assembled board; not tested.
+Three field sessions were conducted with the complete station on a camera tripod in an open field, powered from a bench supply via extension cord and using an iPhone hotspot for internet. Total setup time from unpacking to first tracked pass was approximately 4 minutes, with no SSH session or laptop-side configuration required beyond opening the dashboard in a browser.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{photos/station_wide.jpg}
+    \caption{Wide shot of the deployed station in the field.}
+\end{figure}
+
+CSV pass logs (timestamp, commanded AZ/EL, encoder AZ/EL, RSSI, frequency, Doppler offset, slant range, packet count, 5~Hz cadence) were written to \file{captures/20260409/pass\_logs/} and \file{captures/20260412/}. Across all three sessions 210 passes were logged. The Doppler correction loop ran throughout: the observed $\pm$9~kHz sweep at 432~MHz is consistent with the $\pm$11~kHz maximum predicted in \S\ref{sec:doppler}, with the commanded offset clipped at the peak radial velocity the satellite actually reaches. The noise floor and reception outcome derived from these logs are reported in \S\ref{sec:packet-reception} and are not repeated here.
+
+\subsection{Firmware bugs surfaced by live passes}
+
+Four firmware/software defects were diagnosed during field sessions and fixed in the same session:
+
+\begin{itemize}
+    \item AZ integral windup after zenith crossing. When the AZ axis saturated during a high-rate zenith crossing, the PID integral accumulated a large error; after the satellite descended and the rate dropped, the integral fought the proportional term and oscillated. Fixed with the saturation-based anti-windup described in \S\ref{sec:rotator-pid}: the integral stops accumulating when $|u| \geq 0.95$ and the error sign would grow it further.
+    \item Duty output filter too slow. The PWM output LPF at $\alpha = 0.05$ (time constant 0.2~s) made the AZ axis unresponsive at tracking rates below $\sim$1\degree/s. $\alpha$ was raised to 0.15 (0.067~s) with no observed increase in motor-current transients; this is the deployed setting used throughout \S\ref{sec:pid-step}.
+    \item Doppler base-frequency compounding. A defect in \code{set\_frequency()} overwrote the per-satellite base frequency with the Doppler-corrected value, so each successive 2~Hz update accumulated on top of the last correction. Fixed by introducing a separate \code{uhf\_base\_freq\_hz} variable that holds the satellite's nominal frequency constant across the pass, with the Doppler offset applied only when writing the CC1200 FREQ/FREQOFF registers.
+    \item Rotator socket timeout. The TCP \code{set\_position()} call to \code{rotctld} blocked up to 5~s on the receive side, limiting effective tracking rate. Reduced to 0.5~s with fire-and-forget sends, plus a 15~s keepalive ping during AOS wait to keep the socket responsive. Implementation in \code{station.py}.
+\end{itemize}
 
 \section{Packet Reception: Result and Interpretation}
 \label{sec:packet-reception}
 
-As of April 2026, no protocol-valid frames have been decoded from orbit. Across three field-test sessions the station tracked approximately 210 satellite passes (16 on April 1 baseline with uncalibrated RSSI readout, 184 on April 9, and 10 on April 12) and captured tens of megabytes of raw binary data, but:
+As of April 2026, no protocol-valid frames have been decoded from orbit. Across the three field sessions the station tracked approximately 210 satellite passes (16 on April 1 baseline with uncalibrated RSSI readout, 184 on April 9, and 10 on April 12) and captured tens of megabytes of raw binary data, but:
 
 No CRC-16/CCITT-valid HDLC frames (with or without G3RUH descrambling), no AX.25 frames with valid FCS, no AX.100 Mode~5 frames passing Reed--Solomon RS(255,223) correction, and consequently no decoded packets submitted to the SatNOGS DB from real satellites.
 
@@ -127,7 +145,7 @@ Two RX modes were used, selected per satellite by \code{station.py} (\S\ref{sec:
 
 \subsection{Why no decoded frames}
 
-The \S\ref{sec:link-budget} link budget shows the AetherSpace downlink is already marginal at the datasheet CC1200 sensitivity and $-$20~dB at the measured effective sensitivity. CRC-16 is error detection, not correction; RS(255,223) cannot compensate for a deficit of that size. The zero-frame outcome is the predicted outcome.
+The \S\ref{sec:link-budget} link budget shows the AetherSpace downlink is already marginal at the datasheet CC1200 sensitivity ($-$5.7~dB theoretical margin at 30\degree\ elevation). In the field, board-level interference raises the effective noise floor to $-$96~dBm, burying the received signal of $-$125.7~dBm approximately 30~dB below the detection threshold. CRC-16 is error detection, not correction; RS(255,223) cannot compensate for a deficit of that size. The zero-frame outcome is the predicted outcome.
 
 Three factors contribute:
 
@@ -143,11 +161,9 @@ The captures contain statistical patterns that are individually compatible with 
 
 \paragraph{A. Elevation-binned mean RSSI (suggestive).} Grouping 62 tracked passes by peak elevation, mean peak RSSI increases monotonically by +4.2~dB from the 0--20\degree\ bin to the 60--90\degree\ bin. Weak satellite RF entering the front end at higher elevations is one possible explanation. However, the dataset is also confounded by pointing-dependent antenna temperature, local 433~MHz interference, AGC behaviour, and pass-selection effects; a passive antenna pointed at cold sky would normally lower the noise floor relative to the horizon, so this trend cannot be treated as proof of satellite reception without calibrated controls.
 
-Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
-
 \paragraph{B. Cross-capture byte matching on SNUGLITE-II (suggestive, inconclusive).} Four independent SNUGLITE-II captures contain shared subsequences up to 81 bytes long. Two hypotheses are compatible: (i) repeated beacon frames captured at different orbital points, and (ii) a CC1200 demodulator/idle pattern emitted repeatedly at false sync triggers. The April 9 log explicitly identifies a 99-byte CC1200 idle pattern appearing identically across all satellites at all frequencies; the SNUGLITE-II matches have not yet been shown to differ structurally from this idle pattern, so (ii) is not excluded.
 
-\paragraph{C. Pass-profile RSSI range (weak).} A small subset of passes show an AOS-to-peak-to-LOS RSSI excursion of several dB, loosely consistent with $1/r^2$ path-loss modulation of a real signal but equally consistent with antenna noise-temperature variation as the beam sweeps across ground and sky. Not diagnostic. Raw per-pass numbers: \file{captures/evidence/signal\_evidence.md}.
+\paragraph{C. Pass-profile RSSI range (weak).} A small subset of passes show an AOS-to-peak-to-LOS RSSI excursion of several dB, loosely consistent with $1/r^2$ path-loss modulation of a real signal but equally consistent with antenna noise-temperature variation as the beam sweeps across ground and sky. Not diagnostic.
 
 \begin{figure}[H]
     \centering
@@ -169,43 +185,11 @@ Full numerical analysis: \file{captures/evidence/signal\_evidence.md}.
 
 \subsection{Academic Conclusion}
 
-The primary finding is established independently of observations A--F: the theoretical margin at 30\degree\ elevation is already $-$5.7~dB at datasheet CC1200 sensitivity, and the field-measured noise floor of $-$96~dBm buries the $-$125.7~dBm received signal by approximately 30~dB, making protocol-valid decode physically impossible regardless of which secondary hypothesis explains the statistical patterns. The secondary finding is that A--F are individually consistent with both weak sub-threshold reception and receiver-internal noise artefacts, and cannot be used to distinguish between the two hypotheses. This ambiguity is expected and does not alter the root-cause diagnosis: the board-noise floor sits approximately 30~dB above the thermal\,+\,NF baseline, and the required hardware intervention is a front-end LNA (\S\ref{sec:future-work}).
+The primary finding is established independently of observations A--F: the theoretical margin at 30\degree\ elevation is already $-$5.7~dB at datasheet CC1200 sensitivity, and the field-measured noise floor of $-$96~dBm buries the $-$125.7~dBm received signal by approximately 30~dB, making protocol-valid decode physically impossible regardless of which secondary hypothesis explains the statistical patterns. The secondary finding is that A--F are individually consistent with both weak sub-threshold reception and receiver-internal noise artefacts, and cannot be used to distinguish between the two hypotheses. This ambiguity is expected and does not alter the root-cause diagnosis: the board-noise floor sits approximately 30~dB above the thermal\,+\,NF baseline. A mast-mounted front-end LNA is the primary intervention: its gain lifts the received signal above the fixed board-interference floor before it reaches the CC1200. However, with the field noise floor at $-$96~dBm, a 20~dB LNA still leaves the signal approximately 10~dB below the detection threshold, so the LNA must be combined with board-level EMI mitigation: improved buck-converter output filtering, a post-buck LDO on the CC1200 supply rails to suppress conducted switching noise, and a SAW bandpass filter on the antenna port to reject out-of-band interference before it reaches the LNA (\S\ref{sec:future-work}).
 
 \subsection{AetherSpace-Specific Outlook}
 
 For AetherSpace the modulation-match risk is lower than for arbitrary satellites because the CubeSat and the ground station use the same CC1200 transceiver, provided both sides load the same finalised SmartRF register set. The remaining risk is sensitivity, addressed in \S\ref{sec:future-work}. The software architecture already exposes an \code{RfBackend} abstraction with both CC1200 and RTL-SDR implementations, allowing an SDR-based wideband IQ capture to serve as an independent verification path once an LNA is installed.
-
-\section{Field Tests and Link Budget}
-\label{sec:field-tests}
-
-Three field sessions were conducted with the complete station on a camera tripod in an open field, powered from a bench supply via extension cord and using an iPhone hotspot for internet. The session calendar is given in \S\ref{sec:packet-reception}; total setup time from unpacking to first tracked pass was measured at approximately 4 minutes, with no laptop or SSH session used.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{photos/station_wide.jpg}
-    \caption{Wide shot of the deployed station in the field.}
-\end{figure}
-
-The canonical link-budget table is in \S\ref{sec:link-budget}. The measurement-derived numbers that tie it to this chapter:
-
-\begin{itemize}
-    \item Measured effective noise floor at the CC1200 input on the assembled RF HAT: approximately $-$96~dBm, taken as the typical idle CC1200 RSSI reading across the April~9 and April~12 post-calibration field sessions. This is approximately 30~dB above the expected kTB+NF limit of $\sim$$-$127~dBm and is attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) and antenna noise temperature. Pure thermal kTB at 290~K for the CC1200 channel bandwidth is $\sim$$-$134~dBm; the $\sim$$-$127~dBm figure already folds in the CC1200 noise figure.
-    \item Because the system is interference-dominated rather than thermally limited, the primary benefit of a mast-mounted LNA is that its gain ($\sim$20~dB) lifts the received antenna signal above the fixed board-interference floor before it reaches the CC1200, improving the signal-to-noise ratio at the CC1200 input by approximately the LNA gain. A secondary benefit is the reduction of the thermal noise figure from $\sim$7~dB (CC1200 alone) to $<$1~dB (LNA-dominated Friis cascade~\cite{friis1944noise}). The 7~dB figure is derived from the datasheet sensitivity: at 1.2~kbps with an 11~kHz channel filter, $kTB = -174 + 10\log_{10}(11000) = -133.6$~dBm; non-coherent FSK requires $E_b/N_0 \approx 13$~dB, which converts to a bandwidth SNR of $13 - 10\log_{10}(B/R_b) = 13 - 9.6 = 3.4$~dB; so $\text{NF} = -123 - (-133.6) - 3.4 \approx 7$~dB. With the measured field noise floor at $-$96~dBm, a 20~dB LNA moves the received signal from $-$125.7~dBm to $-$105.7~dBm at the CC1200, still approximately 10~dB below the noise floor. Closing the link therefore requires both the LNA and board-level EMI mitigation (v2 PSU layout, enclosure shielding, or both).
-    \item A higher-gain Yagi contributes additively but is secondary: the dominant gap is the missing front-end gain, not antenna gain.
-\end{itemize}
-
-CSV pass logs (timestamp, commanded AZ/EL, encoder AZ/EL, RSSI, frequency, Doppler offset, slant range, packet count, 5~Hz cadence) were written to \file{captures/20260409/pass\_logs/} and \file{captures/20260412/}. Total: $16 + 184 + 10 = 210$ files across the three sessions. Tracking-accuracy and Doppler-sweep results derived from these logs are reported in \S\ref{sec:tracking-accuracy} and \S\ref{sec:rf-measurements} respectively and are not repeated here.
-
-\subsection{Firmware bugs surfaced by live passes}
-
-Four firmware/software defects were diagnosed during field sessions and fixed in the same session:
-
-\begin{itemize}
-    \item AZ integral windup after zenith crossing. When the AZ axis saturated during a high-rate zenith crossing, the PID integral accumulated a large error; after the satellite descended and the rate dropped, the integral fought the proportional term and oscillated. Fixed with the saturation-based anti-windup described in \S\ref{sec:rotator-pid}: the integral stops accumulating when $|u| \geq 0.95$ and the error sign would grow it further.
-    \item Duty output filter too slow. The PWM output LPF at $\alpha = 0.05$ (time constant 0.2~s) made the AZ axis unresponsive at tracking rates below $\sim$1\degree/s. $\alpha$ was raised to 0.15 (0.067~s) with no observed increase in motor-current transients; this is the deployed setting used throughout \S\ref{sec:pid-step}.
-    \item Doppler base-frequency compounding. A defect in \code{set\_frequency()} overwrote the per-satellite base frequency with the Doppler-corrected value, so each successive 2~Hz update accumulated on top of the last correction. Fixed by introducing a separate \code{uhf\_base\_freq\_hz} variable that holds the satellite's nominal frequency constant across the pass, with the Doppler offset applied only when writing the CC1200 FREQ/FREQOFF registers.
-    \item Rotator socket timeout. The TCP \code{set\_position()} call to \code{rotctld} blocked up to 5~s on the receive side, limiting effective tracking rate. Reduced to 0.5~s with fire-and-forget sends, plus a 15~s keepalive ping during AOS wait to keep the socket responsive. Implementation in \code{station.py}.
-\end{itemize}
 
 \section{Cost Comparison}
 
