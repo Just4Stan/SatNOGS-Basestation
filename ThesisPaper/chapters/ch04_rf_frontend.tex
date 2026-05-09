@@ -233,7 +233,7 @@ The receiver input of the CC1200 consists of a differential low-noise amplifier 
 
 The transmitter output is single-ended at the \texttt{PA} pin and requires a DC path to the supply voltage.
 
-In addition, the CC1200 provides a \texttt{TRX\_SW} output pin that the chip drives high during transmission and low during reception \cite{cc1200}. The external matching network uses this switching signal to route signals between the PA output, the LNA input, and the shared antenna port. During transmission, \texttt{TRX\_SW} couples the PA output through the TX matching path to the SMA connector; during reception, it decouples the PA and connects the antenna signal through a coupling network to the differential LNA inputs. This mechanism allows a single SMA connector per transceiver to serve both transmit and receive without an external RF switch.
+In addition, the CC1200 provides a \texttt{TRX\_SW} output pin that is pulled low (to GND internally) during transmission and left floating (high-impedance) during reception \cite{cc1200}. The external matching network uses this switching signal to route signals between the PA output, the LNA input, and the shared antenna port. During transmission, \texttt{TRX\_SW} couples the PA output through the TX matching path to the SMA connector; during reception, it decouples the PA and connects the antenna signal through a coupling network to the differential LNA inputs. This mechanism allows a single SMA connector per transceiver to serve both transmit and receive without an external RF switch.
 
 \subsubsection{Optimum Source and Load Impedance}
 
@@ -291,7 +291,7 @@ During transmission, the CC1200 drives the single-ended \texttt{PA} pin. The TX 
 
 \subsubsection{TRX Switching Path}
 
-The \texttt{TRX\_SW} pin output drives a coupling network (L5, C3) that connects the TX and RX paths to the shared antenna node. During transmission, \texttt{TRX\_SW} is high and the coupling network routes the PA signal to the antenna. During reception, it is low, isolating the PA and directing the antenna signal toward the LNA balun. This arrangement avoids the insertion loss of an external RF switch.
+The \texttt{TRX\_SW} pin output drives a coupling network (L5, C3) that connects the TX and RX paths to the shared antenna node. During transmission, \texttt{TRX\_SW} is pulled low and the coupling network routes the PA signal to the antenna. During reception, it is floating, isolating the PA and directing the antenna signal toward the LNA balun. This arrangement avoids the insertion loss of an external RF switch.
 
 \subsubsection{RX Path: SMA to Differential LNA Input}
 
