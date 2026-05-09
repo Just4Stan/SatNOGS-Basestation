@@ -34,7 +34,7 @@ The RF front-end was developed across three hardware iterations. Each iteration 
 
 The devboard was the first physical instantiation of the CC1200 transceiver stack. Its purpose was validation rather than integration: confirming that the SPI driver, SmartRF register loading, COBS binary protocol, and bidirectional TX/RX FIFO paths all function correctly on a real prototype, before any HAT-specific constraints were imposed. Section~\ref{sec:rf-devboard} describes the devboard architecture and presents the bench test results.
 
-Once the devboard confirmed the RF stack, the v1 RF HAT translated the design to the Raspberry Pi HAT form factor. The transition introduced four changes: the 4-layer stackup became 6 layers to achieve controlled-impedance routing within the HAT footprint; a second CC1200 was added for a VHF uplink path; the USB CDC host interface was replaced by UART to connect directly to the Pi's GPIO header; and the devboard's dedicated power chain (24\,V buck + dual 3.3\,V LDOs) was replaced by the Pico module's onboard regulator to reduce cost and component count. The CC1200 driver, matching-network topology (\S\ref{sec:matching-topology}), and COBS protocol were carried over unchanged.
+Once the devboard confirmed the RF stack, the v1 RF HAT translated the design to the Raspberry Pi HAT form factor. The transition introduced four changes: the 4-layer stackup became 6 layers to achieve controlled-impedance routing within the HAT footprint; a second CC1200 was added for a VHF uplink path; the USB CDC host interface was replaced by UART to connect directly to the Pi's GPIO header; and the devboard's dedicated power chain (5\,V buck + dual 3.3\,V LDOs) was replaced by the Pico module's onboard regulator to reduce cost and component count. The CC1200 driver, matching-network topology (\S\ref{sec:matching-topology}), and COBS protocol were carried over unchanged.
 
 The v2 MOTOR\_RF\_HAT merges the motor controller and RF front-end onto a single Pi HAT. The RF sub-circuit, matching networks, and SMA connectors are identical to v1. Changes are limited to the board-level integration: one RP2040 replaces the two separate Pico modules, and the A4950 motor driver replaces the discontinued TB6642FG. Section~\ref{sec:v2-rf} summarises the RF-relevant differences; Chapter~\ref{ch:system-design} covers the mechanical and cost implications.
 
@@ -43,7 +43,7 @@ The v2 MOTOR\_RF\_HAT merges the motor controller and RF front-end onto a single
 
 \subsection{Architecture}
 
-The RF devboard is a 4-layer standalone PCB implementing a single CC1200 UHF transceiver controlled by a bare RP2040 chip mounted directly on the board \cite{rp2040ds}. It connects to a host PC over USB CDC using a COBS-framed binary protocol, and exposes a single SMA antenna connector. There is no HAT connector and no VHF path. The power design is self-contained: a 24\,V input is stepped down to 5\,V by a buck converter, followed by two separate 3.3\,V LDOs, one supplying the digital logic and one dedicated to the CC1200. Because the devboard is an engineering prototype not intended for reproduction, the added complexity of routing the RP2040's decoupling network, crystal, and flash directly on the board was acceptable. The v1 HAT switched to a Raspberry Pi Pico module for the reasons described in \S\ref{sec:rf-hat-mcu}.
+The RF devboard is a 4-layer standalone PCB implementing a single CC1200 UHF transceiver controlled by a bare RP2040 chip mounted directly on the board \cite{rp2040ds}. It connects to a host PC over USB CDC using a COBS-framed binary protocol, and exposes a single SMA antenna connector. There is no HAT connector and no VHF path. The power design is self-contained: a 24\,V input is stepped down to 5\,V by a buck converter, followed by two separate 3.3\,V LDOs, one supplying the digital logic and one dedicated to the CC1200. The v1 HAT switched to a Raspberry Pi Pico module for the reasons described in \S\ref{sec:rf-hat-mcu}.
 
 The devboard firmware and USB CDC binary protocol are described in Chapter~\ref{ch:firmware-software} (\S\ref{sec:devboard-firmware}).
 
@@ -88,41 +88,42 @@ The HAT integrates an RP2040 controller (Raspberry Pi Pico module), two CC1200 t
 \subsection{Microcontroller Subsystem}
 \label{sec:rf-hat-mcu}
 
-The v1 RF HAT uses a Raspberry Pi Pico module rather than a bare RP2040 chip \cite{rp2040ds}. The devboard used the bare chip directly on the PCB, which required designing the full supporting circuit: a 12~MHz crystal, 2~MB QSPI flash, per-pin decoupling capacitors on all power domains, and a USB connector with ESD protection. This is feasible for a one-off prototype but raises the barrier for anyone who wants to reproduce the hardware. Switching to the Pico module on the HAT offloads all of that to a pre-tested castellated sub-board: the Pico already integrates the RP2040, its RT6150 buck-boost regulator, decoupling network, crystal, flash, and USB connector. The RF HAT only needs to route 5~V to the Pico's VSYS pin; no discrete power-sequencing or oscillator components are required. This reduces the HAT component count and makes the design straightforwardly reproducible from standard off-the-shelf parts.
+The v1 RF HAT uses a Raspberry Pi Pico module rather than a bare RP2040 chip \cite{rp2040ds}. The devboard carries a bare RP2040 chip, meaning all supporting components are discrete: a 12~MHz crystal, 2~MB QSPI flash, per-pin decoupling capacitors on all power domains, and a USB connector. This higher component count is manageable for a one-off prototype but makes the board harder to reproduce for anyone unfamiliar with these parts. Switching to the Pico module on the HAT offloads all of that to a pre-tested castellated sub-board: the Pico already integrates the RP2040, its RT6150 buck-boost regulator, decoupling network, crystal, flash, and USB connector. The RF HAT only needs to route 5~V to the Pico's VSYS pin; no discrete power-sequencing or oscillator components are required. This reduces the HAT component count and makes the design straightforwardly reproducible from standard off-the-shelf parts.
 
-The RP2040 was chosen for both boards because of its two independent hardware SPI peripherals (SPI0 and SPI1). Each peripheral has dedicated FIFO, DMA, and clock-divider registers, so the UHF and VHF CC1200 transceivers can be driven independently without bus contention or external demultiplexing. A single-SPI microcontroller would require either a software bit-bang second bus (introducing clock-edge jitter) or an external SPI switch (adding routing complexity and a potential failure point).
+The RP2040 was chosen for both boards because of its two independent hardware SPI peripherals (SPI0 and SPI1). Each peripheral has dedicated FIFO, DMA, and clock-divider registers, allowing the UHF and VHF CC1200 transceivers to be accessed concurrently without one blocking the other. Both transceivers could in principle share a single SPI bus using their chip-select lines, but that would serialize all register access and prevent simultaneous operation of the two radio paths.
 
 The Pico's USB port, unused in production, was used during firmware development for \code{printf} debugging without occupying the UART line reserved for Pi communication.
 
 \begin{table}[H]
-\centering
-\caption{RP2040 Pin Assignment for v1 RF HAT}
-\begin{tabular}{|c|c|c|}
-\hline
-\textbf{GPIO} & \textbf{Function} & \textbf{Connected To} \\
-\hline
-GPIO0  & UART TX & Raspberry Pi RX (J3) \\
-GPIO1  & UART RX & Raspberry Pi TX (J3) \\
-\hline
-GPIO10 & SPI (UHF) SCLK & CC1200 UHF SCLK \\
-GPIO11 & SPI (UHF) MOSI & CC1200 UHF SI \\
-GPIO12 & SPI (UHF) MISO & CC1200 UHF SO \\
-GPIO13 & SPI (UHF) CS   & CC1200 UHF \texttt{\textasciitilde CS} \\
-GPIO8  & UHF reset      & CC1200 UHF \texttt{\textasciitilde RESET} \\
-GPIO7  & UHF GPIO0      & CC1200 UHF GPIO0 \\
-GPIO9  & UHF GPIO2      & CC1200 UHF GPIO2 \\
-GPIO6  & UHF GPIO3      & CC1200 UHF GPIO3 \\
-\hline
-GPIO18 & SPI (VHF) SCLK & CC1200 VHF SCLK \\
-GPIO19 & SPI (VHF) MOSI & CC1200 VHF SI \\
-GPIO16 & SPI (VHF) MISO & CC1200 VHF SO \\
-GPIO17 & SPI (VHF) CS   & CC1200 VHF \texttt{\textasciitilde CS} \\
-GPIO20 & VHF reset      & CC1200 VHF \texttt{\textasciitilde RESET} \\
-GPIO22 & VHF GPIO0      & CC1200 VHF GPIO0 \\
-GPIO21 & VHF GPIO2      & CC1200 VHF GPIO2 \\
-GPIO26 & VHF GPIO3      & CC1200 VHF GPIO3 \\
-\hline
-\end{tabular}
+    \centering
+    \caption{RP2040 pin assignment for v1 RF HAT.}
+    \small
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        \textbf{GPIO} & \textbf{Function} & \textbf{Connected To} \\
+        \midrule
+        GPIO0  & UART TX        & Raspberry Pi RX (J3) \\
+        GPIO1  & UART RX        & Raspberry Pi TX (J3) \\
+        \midrule
+        GPIO10 & SPI (UHF) SCLK & CC1200 UHF SCLK \\
+        GPIO11 & SPI (UHF) MOSI & CC1200 UHF SI \\
+        GPIO12 & SPI (UHF) MISO & CC1200 UHF SO \\
+        GPIO13 & SPI (UHF) CS   & CC1200 UHF \texttt{\textasciitilde CS} \\
+        GPIO8  & UHF reset      & CC1200 UHF \texttt{\textasciitilde RESET} \\
+        GPIO7  & UHF GPIO0      & CC1200 UHF GPIO0 \\
+        GPIO9  & UHF GPIO2      & CC1200 UHF GPIO2 \\
+        GPIO6  & UHF GPIO3      & CC1200 UHF GPIO3 \\
+        \midrule
+        GPIO18 & SPI (VHF) SCLK & CC1200 VHF SCLK \\
+        GPIO19 & SPI (VHF) MOSI & CC1200 VHF SI \\
+        GPIO16 & SPI (VHF) MISO & CC1200 VHF SO \\
+        GPIO17 & SPI (VHF) CS   & CC1200 VHF \texttt{\textasciitilde CS} \\
+        GPIO20 & VHF reset      & CC1200 VHF \texttt{\textasciitilde RESET} \\
+        GPIO22 & VHF GPIO0      & CC1200 VHF GPIO0 \\
+        GPIO21 & VHF GPIO2      & CC1200 VHF GPIO2 \\
+        GPIO26 & VHF GPIO3      & CC1200 VHF GPIO3 \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 \subsection{RF Transceiver Subsystem}
@@ -242,7 +243,7 @@ The CC1200 does not present a fixed 50\,$\Omega$ interface; the optimum source i
 
 The CC1200 datasheet specifies $-$123~dBm sensitivity at 1.2~kbps 2-FSK (4~kHz deviation, 11~kHz channel filter) in the 433~MHz band under optimal matching conditions \cite{cc1200}. This sensitivity figure is defined at the antenna port with the source impedance equal to the CC1200's optimum complex input impedance ($100 + j60$~$\Omega$ differential). Any deviation from this optimum degrades both gain and noise figure simultaneously, since the LNA noise figure is minimised at the same optimum source impedance. A 3~dB mismatch loss at the LNA input translates directly to 3~dB less sensitivity at the system level.
 
-In the assembled HAT this sensitivity is not achieved in field conditions: board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) elevates the effective noise floor to approximately $-$105~dBm in bench conditions and $-$96~dBm outdoors, as quantified in Chapter~\ref{ch:results} (\S\ref{sec:packet-reception}). The matching network itself was not validated against a signal generator; the bench test in \S\ref{sec:rf-measurements} confirms correct transceiver operation at 1~m range but does not isolate the matching network's contribution to the sensitivity degradation.
+In the assembled HAT this sensitivity is not achieved in field conditions: board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions) elevates the effective noise floor to approximately $-$96~dBm in field conditions, as quantified in Chapter~\ref{ch:results} (\S\ref{sec:packet-reception}). The matching network itself was not validated against a signal generator; the bench test in \S\ref{sec:rf-measurements} confirms correct transceiver operation at 1~m range but does not isolate the matching network's contribution to the sensitivity degradation.
 
 \subsubsection{Output Power and Power Consumption}
 

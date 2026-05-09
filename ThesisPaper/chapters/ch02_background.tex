@@ -66,17 +66,13 @@ Table~\ref{tab:link-budget} presents the complete link budget for the AetherSpac
         \textbf{Received power at CC1200}   & \textbf{$-$125.7~dBm} & \textbf{$-$116.7~dBm} & \textbf{$-$131.3~dBm} \\
         CC1200 datasheet sensitivity~\cite{cc1200} at 1.2~kbps: $-$123~dBm; authors' estimate at 2.4~kbps by $-$3~dB/octave scaling (noise bandwidth linear in symbol rate under matched-filter conditions) & $-$120~dBm & $-$120~dBm & $-$120~dBm \\
         \textbf{Theoretical margin}         & \textbf{$-$5.7~dB} & \textbf{+3.3~dB} & \textbf{$-$11.3~dB} \\
-        CC1200 effective sensitivity (bench test, no LNA, no RF isolation; field floor $\approx$$-$96~dBm) & $-$105~dBm & $-$105~dBm & $-$105~dBm \\
-        \textbf{Measured margin}            & \textbf{$-$20.7~dB} & \textbf{$-$11.7~dB} & \textbf{$-$26.3~dB} \\
         \bottomrule
     \end{tabularx}
     \caption{Link budget for the AetherSpace UHF downlink at 433~MHz across three canonical pass geometries. $^\ddagger$Assumes a circularly polarised satellite antenna (turnstile); a linearly polarised dipole would give an orientation-dependent mismatch ranging from 0~dB (co-polarised) to $-\infty$~dB (cross-polarised).}
     \label{tab:link-budget}
 \end{table}
 
-Two observations follow~\cite{pratt2003satellite,roddy2006satellite}. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the assembled RF HAT's noise floor is elevated well above the thermal+NF limit by board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions), pushing the measured margin deeply negative across all geometries.
-
-The two sensitivity figures in the table reflect two different operating conditions. The $-$105~dBm row is the best-case figure from a basic indoor bench test (no RF isolation, no anechoic shielding) where the CC1200 RSSI floor reads as low as $-$105~dBm (\S\ref{sec:rf-measurements}); this is not the operating environment for satellite reception. Even at this optimistic bench figure the link margin is $-$20.7~dB. The $-$96~dBm canonical figure (\file{captures/evidence/signal\_evidence.md}; \S\ref{sec:packet-reception}) is the typical outdoor noise floor from the field sessions, sitting approximately 30~dB above the expected kTB+NF limit of $-$127~dBm; at this floor the received signal of $-$125.7~dBm is buried 29~dB in noise, making decode without an external LNA impossible regardless of link geometry. The full Friis cascade analysis~\cite{friis1944noise} of the LNA improvement is given in the link-budget reference document maintained alongside the thesis (\file{ThesisPaper/draft\_link\_budget.md}).
+Two observations follow~\cite{pratt2003satellite,roddy2006satellite}. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the field-measured noise floor at the CC1200 input sits approximately 30~dB above the expected kTB+NF limit of $-$127~dBm, attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions); at this floor the received signal of $-$125.7~dBm is buried well below the noise, making decode without an external LNA impossible regardless of link geometry (\S\ref{sec:packet-reception}). The Friis cascade analysis of the LNA improvement is given in \S\ref{sec:field-tests}.
 
 \section{Doppler Shift}
 \label{sec:doppler}
