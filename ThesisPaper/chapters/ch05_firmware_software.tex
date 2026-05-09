@@ -48,11 +48,7 @@ AZ: assume north at boot. User points the station north (guided by a compass, co
 
 \section{Safety}
 
-\begin{itemize}
-    \item Runaway detection: e-stop if position exceeds soft limits by 50\degree.
-    \item Shortest-path wrapping: 350\degree $\to$ 10\degree\ takes a 20\degree\ path rather than 340\degree; re-centres the encoder after settling near $\pm$360\degree.
-    \item 8~s hardware watchdog enabled after EL homing completes. Homing is protected by its own 15~s software timeout.
-\end{itemize}
+Three interlocks protect the rotator during operation. Runaway detection issues an e-stop if the measured position exceeds the configured soft limits by more than 50\degree, cutting motor drive before a mechanical stop or cable wrap is reached. Shortest-path wrapping ensures that a move from 350\degree\ to 10\degree\ takes the 20\degree\ arc rather than the 340\degree\ arc; the encoder is re-centred after settling near $\pm$360\degree\ to keep the accumulator away from overflow. Finally, an 8~s hardware watchdog is armed once EL homing completes; if the main loop stalls, the RP2040 resets automatically. Homing itself is guarded by a separate 15~s software timeout, preventing the system from hanging on a missing IMU acknowledgement.
 
 \section{EasyComm Implementation}
 \label{sec:easycomm}
@@ -133,7 +129,7 @@ Two serial sub-modes are selected via the \code{MSG\_SET\_SERIAL\_MODE} body byt
 \label{sec:software-architecture}
 \label{sec:pi-stack}
 
-The Raspberry Pi software stack is organised as three cooperating layers that exchange data through well-defined boundaries: a real-time tracking daemon (\file{Pi/station.py}, $\sim$2950~LOC), a stateless HTTP/HTTPS gateway (\file{Pi/dashboard.py}, $\sim$2060~LOC), and a single-page browser application (\file{Pi/dashboard.html}, $\sim$5650~lines of HTML/CSS/JavaScript).
+The Raspberry Pi software stack is organised as three cooperating layers that exchange data through well-defined boundaries: a real-time tracking daemon (\file{Pi/station.py}), a stateless HTTP/HTTPS gateway (\file{Pi/dashboard.py}), and a single-page browser application (\file{Pi/dashboard.html}).
 
 \begin{figure}[H]
     \centering
@@ -177,15 +173,7 @@ Before a pass begins, \code{station.py} resolves a \code{SatProfile} for the tar
     \item Protocol inference. A second pass over the SatNOGS DB description string classifies the protocol: keywords \code{ax100}, \code{usp}, \code{ccsds}, \code{geoscan}, and \code{g3ruh} map to dedicated decoders; high-baud unknown modes are tentatively assumed to be G3RUH-scrambled AX.25 (marked \code{\_assumed} in the status feed so the dashboard can colour them yellow rather than green).
 \end{enumerate}
 
-The resolved profile is then applied to the CC1200 in one of three configuration tiers (\file{Pi/station.py:807}):
-
-\begin{itemize}
-    \item Tier~A (frequency-only). Keep the default 2.4~kbps 2-GFSK SmartRF profile and only retune the synthesizer. A handful of register writes per pass.
-    \item Tier~B (modulation override). Compute the $\sim$15 critical CC1200 registers (\code{MODCFG\_DEV\_E}, \code{DEVIATION\_M}, \code{SYMBOL\_RATE\_*}, \code{CHAN\_BW}, \code{SYNC\_*}, \code{PKT\_CFG*}, \code{PKT\_LEN}) from the profile values and stream them via \code{WRITE\_REG} messages.
-    \item Tier~C (full SmartRF). Stream a complete TI SmartRF Studio export via the \code{PROFILE\_BEGIN}/\code{CHUNK}/\code{APPLY} sequence of \S\ref{sec:rf-hat-firmware}. Used for satellites whose modulation parameters do not fit Tier~B (e.g., very low symbol rates, unusual deviation/bandwidth ratios). Chunked transfer is required because a full profile exceeds the COBS frame size.
-\end{itemize}
-
-The active tier is exposed in the status JSON as \code{rf.radio\_config.config\_tier} and rendered on the dashboard so the operator can verify which path was taken.
+The resolved profile is then applied to the CC1200 in one of three configuration tiers (\file{Pi/station.py:807}). Tier~A (frequency-only) keeps the default 2.4~kbps 2-GFSK SmartRF profile and only retunes the synthesizer, requiring a handful of register writes per pass. Tier~B (modulation override) computes the $\sim$15 critical CC1200 registers (\code{MODCFG\_DEV\_E}, \code{DEVIATION\_M}, \code{SYMBOL\_RATE\_*}, \code{CHAN\_BW}, \code{SYNC\_*}, \code{PKT\_CFG*}, \code{PKT\_LEN}) from the profile values and streams them via \code{WRITE\_REG} messages. Tier~C (full SmartRF) streams a complete TI SmartRF Studio export via the \code{PROFILE\_BEGIN}/\code{CHUNK}/\code{APPLY} sequence of \S\ref{sec:rf-hat-firmware}; it is used for satellites whose modulation parameters do not fit Tier~B, such as very low symbol rates or unusual deviation/bandwidth ratios, and chunked transfer is required because a full profile exceeds the COBS frame size. The active tier is exposed in the status JSON as \code{rf.radio\_config.config\_tier} and rendered on the dashboard so the operator can verify which path was taken.
 
 \section{Doppler Correction Loop}
 \label{sec:doppler-loop}
