@@ -72,7 +72,7 @@ Table~\ref{tab:link-budget} presents the complete link budget for the AetherSpac
     \label{tab:link-budget}
 \end{table}
 
-Two observations follow~\cite{pratt2003satellite,roddy2006satellite}. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the field-measured noise floor at the CC1200 input sits approximately 30~dB above the expected kTB+NF limit of $-$127~dBm, attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions); at this floor the received signal of $-$125.7~dBm is buried well below the noise, making decode without an external LNA impossible regardless of link geometry (\S\ref{sec:packet-reception}). The Friis cascade analysis of the LNA improvement is given in \S\ref{sec:field-tests}.
+Two observations follow~\cite{pratt2003satellite,roddy2006satellite}. First, even at the datasheet CC1200 sensitivity the AetherSpace link closes with positive margin only at high elevations; mid-elevation and horizon geometries are negative. Second, the field-measured noise floor at the CC1200 input sits approximately 30~dB above the expected kTB+NF limit of $-$127~dBm, attributable to board-level interference (LMR51420 buck harmonics, RP2040 digital noise, Pi GPIO emissions); at this floor the received signal of $-$125.7~dBm is buried well below the noise, making decode without an external LNA impossible regardless of link geometry (\S\ref{sec:packet-reception}).
 
 \section{Doppler Shift}
 \label{sec:doppler}
