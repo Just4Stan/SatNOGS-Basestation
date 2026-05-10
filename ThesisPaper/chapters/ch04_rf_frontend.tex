@@ -66,19 +66,21 @@ The RF HAT is based on a microcontroller-controlled dual-transceiver architectur
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{photos/rf_hat_front.png}
-    \caption{KiCad 3D render of the v1 RF Hat front}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[height=6cm,keepaspectratio]{photos/rf_hat_front.png}
+        \caption{KiCad 3D render of the v1 RF HAT front.}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[height=6cm,keepaspectratio]{photos/rf_hat_back.png}
+        \caption{KiCad 3D render of the v1 RF HAT back.}
+    \end{minipage}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{photos/rf_hat_back.png}
-    \caption{KiCad 3D render of the v1 RF Hat back}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[page=1,width=\textwidth]{schematics/RF_HAT_schematic.pdf}
+    \includegraphics[page=1,width=0.9\textwidth]{schematics/RF_HAT_schematic.pdf}
     \caption{Top-level hierarchical schematic of the v1 RF HAT. The four sub-sheets (Pico SPI host, dual CC1200 UHF/VHF, Pi GPIO header) are exported in full in the project KiCad repository (\file{RF\_HAT/RF\_HAT\_out/}).}
     \label{fig:rfhat-schematic}
 \end{figure}
