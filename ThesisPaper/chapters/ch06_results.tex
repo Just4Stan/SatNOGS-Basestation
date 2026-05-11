@@ -97,7 +97,7 @@ Zero packet loss and 100\,\% payload match across all 10 frequencies confirm tha
 
 The elevated RSSI at 430 and 435\,MHz is a measurement artefact rooted in the CC1200's fractional-N PLL. In a fractional-N synthesiser the divider ratio is not an exact integer, so a sigma-delta modulator continuously switches the divider between neighbouring integer values, a process called dithering, which spreads quantisation noise across a broad frequency range and produces typical phase-noise behaviour. At 430\,MHz the FREQ register evaluates to an exact integer multiple (\textsc{freq2}\,=\,\texttt{0x2B}, \textsc{freq1}\,=\,\textsc{freq0}\,=\,\texttt{0x00}), placing the synthesiser at a true integer-N boundary where the sigma-delta is idle and dithering does not occur. At 435\,MHz the fractional part is exactly one-half (\textsc{freq2}\,=\,\texttt{0x2B}, \textsc{freq1}\,=\,\texttt{0x80}, \textsc{freq0}\,=\,\texttt{0x00}), so the sigma-delta alternates between only two adjacent divider states rather than spanning a broader range; dithering is minimal rather than absent. Both conditions produce lower-than-typical local-oscillator phase noise, which, combined with the RSSI sample being taken immediately after packet reception before the running average has decayed to the ambient floor, produces the apparent peaks.
 
-What the bench test does not establish is satellite reception. The devboard was not taken outdoors or connected to a directional antenna. Link-budget analysis (\S\ref{sec:link-budget}) shows that receiving the AetherSpace downlink requires a front-end LNA regardless of which board is used; the bench test scopes the transceiver stack in isolation, not the system sensitivity in a satellite geometry.
+What the bench test does not establish is satellite reception, the bench test scopes the transceiver stack in isolation, not the system sensitivity in a satellite geometry.
 
 \section{Field Deployment and Live-Pass Observations}
 \label{sec:field-tests}
@@ -150,9 +150,9 @@ The \S\ref{sec:link-budget} link budget shows the AetherSpace downlink is alread
 Three factors contribute:
 
 \begin{enumerate}
-    \item Front-end noise figure and board interference. No LNA, so the CC1200 AGC operates on antenna noise plus on-board interference (LMR51420 buck harmonics, RP2040 digital, Pi GPIO/HDMI); measured noise floor sits approximately 30~dB above the expected kTB+NF limit at the CC1200 input.
-    \item Modulation parameter uncertainty. The SatNOGS DB does not always publish exact symbol rate / deviation / sync word for non-AetherSpace satellites; any mismatch in FIFO mode produces zero output.
-    \item Link geometry. A +14~dBm / +2~dBi CubeSat leaves negative theoretical margin at mid-elevation even with a perfect receiver.
+    \item \textbf{Front-end noise figure and board interference.} No LNA, so the CC1200 AGC operates on antenna noise plus on-board interference (LMR51420 buck harmonics, RP2040 digital, Pi GPIO/HDMI); measured noise floor sits approximately 30~dB above the expected kTB+NF limit at the CC1200 input.
+    \item \textbf{Modulation parameter uncertainty.} The SatNOGS DB does not always publish exact symbol rate / deviation / sync word for non-AetherSpace satellites; any mismatch in FIFO mode produces zero output.
+    \item \textbf{Link geometry.} A +14~dBm / +2~dBi CubeSat leaves negative theoretical margin at mid-elevation even with a perfect receiver.
 \end{enumerate}
 
 \subsection{What was observed: suggestive but not diagnostic}
