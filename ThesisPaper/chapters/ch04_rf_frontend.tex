@@ -26,7 +26,7 @@ The RF front-end was developed across three hardware iterations. Each iteration 
         RF routing      & CPWG                 & Microstrip                & Microstrip \\
         Host interface  & USB CDC              & UART                      & UART \\
         Motor control   & No                   & No                        & Yes \\
-        Status          & Bench-validated      & Field-deployed            & Design-complete \\
+        Status          & Bench-validated      & Field-deployed            & Design stage \\
         \bottomrule
     \end{tabularx}
     \label{tab:rf-iterations}
@@ -36,8 +36,7 @@ The devboard was the first physical instantiation of the CC1200 transceiver stac
 
 Once the devboard confirmed the RF stack, the v1 RF HAT translated the design to the Raspberry Pi HAT form factor. The transition introduced four changes: the 4-layer stackup became 6 layers to achieve controlled-impedance routing within the HAT footprint; a second CC1200 was added for a VHF uplink path; the USB CDC host interface was replaced by UART to connect directly to the Pi's GPIO header; and the devboard's dedicated power chain (5\,V buck + dual 3.3\,V LDOs) was replaced by the Pico module's onboard regulator to reduce cost and component count. The CC1200 driver, matching-network topology (\S\ref{sec:matching-topology}), and COBS protocol were carried over unchanged.
 
-The v2 MOTOR\_RF\_HAT merges the motor controller and RF front-end onto a single Pi HAT. The RF sub-circuit, matching networks, and SMA connectors are identical to v1. Changes are limited to the board-level integration: one RP2040 replaces the two separate Pico modules, and the A4950 motor driver replaces the discontinued TB6642FG. Section~\ref{sec:v2-rf} summarises the RF-relevant differences; Chapter~\ref{ch:system-design} covers the mechanical and cost implications.
-
+The v2 MOTOR\_RF\_HAT merges the motor controller and RF front-end onto a single Pi HAT. The RF sub-circuit, matching networks, and SMA connectors are identical to v1. Changes are limited to the board-level integration: one RP2040 replaces the two separate Pico modules, and the A4950 motor driver replaces the discontinued TB6642FG.
 \section{RF Devboard}
 \label{sec:rf-devboard}
 
@@ -95,38 +94,6 @@ The v1 RF HAT uses a Raspberry Pi Pico module rather than a bare RP2040 chip \ci
 The RP2040 was chosen for both boards because of its two independent hardware SPI peripherals (SPI0 and SPI1). Each peripheral has dedicated FIFO, DMA, and clock-divider registers, allowing the UHF and VHF CC1200 transceivers to be accessed concurrently without one blocking the other. Both transceivers could in principle share a single SPI bus using their chip-select lines, but that would serialize all register access and prevent simultaneous operation of the two radio paths.
 
 The Pico's USB port, unused in production, was used during firmware development for \code{printf} debugging without occupying the UART line reserved for Pi communication.
-
-\begin{table}[H]
-    \centering
-    \caption{RP2040 pin assignment for v1 RF HAT.}
-    \small
-    \begin{tabular}{@{}lll@{}}
-        \toprule
-        \textbf{GPIO} & \textbf{Function} & \textbf{Connected To} \\
-        \midrule
-        GPIO0  & UART TX        & Raspberry Pi RX (J3) \\
-        GPIO1  & UART RX        & Raspberry Pi TX (J3) \\
-        \midrule
-        GPIO10 & SPI (UHF) SCLK & CC1200 UHF SCLK \\
-        GPIO11 & SPI (UHF) MOSI & CC1200 UHF SI \\
-        GPIO12 & SPI (UHF) MISO & CC1200 UHF SO \\
-        GPIO13 & SPI (UHF) CS   & CC1200 UHF CS \\
-        GPIO8  & UHF reset      & CC1200 UHF RESET \\
-        GPIO7  & UHF GPIO0      & CC1200 UHF GPIO0 \\
-        GPIO9  & UHF GPIO2      & CC1200 UHF GPIO2 \\
-        GPIO6  & UHF GPIO3      & CC1200 UHF GPIO3 \\
-        \midrule
-        GPIO18 & SPI (VHF) SCLK & CC1200 VHF SCLK \\
-        GPIO19 & SPI (VHF) MOSI & CC1200 VHF SI \\
-        GPIO16 & SPI (VHF) MISO & CC1200 VHF SO \\
-        GPIO17 & SPI (VHF) CS   & CC1200 VHF CS \\
-        GPIO20 & VHF reset      & CC1200 VHF RESET \\
-        GPIO22 & VHF GPIO0      & CC1200 VHF GPIO0 \\
-        GPIO21 & VHF GPIO2      & CC1200 VHF GPIO2 \\
-        GPIO26 & VHF GPIO3      & CC1200 VHF GPIO3 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 
 \subsection{RF Transceiver Subsystem}
 
