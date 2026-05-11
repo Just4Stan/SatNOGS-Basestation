@@ -39,7 +39,7 @@ Five systemd units start the station autonomously after the Pi finishes booting:
 The architecture deliberately keeps rotator and RF independent: each subsystem has its own RP2040 and its own protocol to the Pi (USB CDC EasyComm vs.\ UART COBS), so either side can be tested, replaced, or upgraded in isolation. The v2 MOTOR\_RF\_HAT collapses both PCBs onto a single 6-layer Pi HAT (\S\ref{sec:cost}), but the firmware boundary stays the same: the merged board still presents two logically distinct devices to the Pi.
 
 \paragraph{Design constraints.}
-Four constraints shape the architecture. Portability is enforced by a 1/4"-20 UNC tripod thread on the base, with the full setup measured at approximately 4 minutes from unpacking to first tracked pass across three field sessions (\S\ref{sec:field-tests}). The zero-SSH workflow routes every field operation, GPS entry, north alignment, pass selection, park, and shutdown, through the HTTPS dashboard, which targets a laptop browser but also works on a phone for quick tasks such as supplying a GPS fix. The cost target is the v2 MOTOR\_RF\_HAT BOM derived in \S\ref{sec:cost} and listed in Appendix~\ref{app:bom}: $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware, $\sim$€100 for the station core (excluding antenna, coax, power supply, tripod). The intended licensing is CERN-OHL-S v2 for hardware and MIT for firmware and Python stack, with the formal \file{LICENSE} files added on the open-source release.
+Four constraints shape the architecture. Portability is enforced by a 1/4"-20 UNC tripod thread on the base, with the full setup measured at approximately 4 minutes from unpacking to first tracked pass across three field sessions (\S\ref{sec:field-tests}). The zero-SSH workflow routes every field operation, GPS entry, north alignment, pass selection, park, and shutdown, through the HTTPS dashboard, which targets a laptop browser but also works on a phone for quick tasks such as supplying a GPS fix. The cost target is the v2 MOTOR\_RF\_HAT BOM derived in \S\ref{sec:cost} and listed in Appendix~\ref{app:bom}: $\sim$€40 for the combined controller/RF PCB, $\sim$€75 for the rotator hardware, $\sim$€100 for the station core (excluding antenna, coax, power supply, tripod).
 
 \section{Mechanical Design}
 
@@ -278,7 +278,7 @@ Component prices from the LCSC BOM tool (April 2026), bare PCB from JLCPCB (5-pi
     \caption{v1 (as-deployed) cost breakdown.}
 \end{table}
 
-\subsection{v2 (MOTOR\_RF\_HAT, design-complete, ready to order)}
+\subsection{v2 (MOTOR\_RF\_HAT, initial design-complete)}
 
 The v2 board merges motor control and RF front-end onto a single 6-layer Pi HAT. The A4950 (SOIC-8-EP) replaces the TB6642FG (HSOP-16) for availability (the TB6642FG went out of stock at JLCPCB during the project), and four 100\,$\Omega$ series resistors (R11--R14) on the GPIO-to-driver lines limit transients during bootloader cycling. One RP2040 handles both motor control and RF, so the USB cable and separate 5~V path are removed. Hand assembly avoids JLCPCB's extended-part setup fee ($\sim$€18/board for the many precise RF L/C values).
 
