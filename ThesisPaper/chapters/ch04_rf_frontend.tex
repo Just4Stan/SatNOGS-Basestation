@@ -3,7 +3,7 @@
 \label{ch:rf-frontend}
 % ══════════════════════════════════════════════════════════════════════════════
 
-Chapter~\ref{ch:introduction} (\S\,\emph{A deliberate alternative, not a replacement}) covers the rationale for the CC1200 hardware-modem path and the trade-offs against an SDR alternative. Chapter~\ref{ch:results} quantifies the sensitivity cost of the choice and identifies the external LNA required to close the link. This chapter details the resulting RF hardware across three design iterations.
+Chapter~\ref{ch:introduction} covers the rationale for the CC1200 hardware-modem path and the trade-offs against an SDR alternative. Chapter~\ref{ch:results} quantifies the sensitivity cost of the choice and identifies the external LNA required to close the link. This chapter covers the specifics of the RF front-end.
 
 \section{RF Design Progression}
 \label{sec:rf-progression}
@@ -51,7 +51,7 @@ The RF traces on the devboard use grounded coplanar waveguide (CPWG) routing. Th
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{photos/RF_Dev.jpg}
-    \caption{Two RF Devboards connected to usb}
+    \caption{Two RF Devboards connected to USB}
 \end{figure}
 
 \section{RF HAT Electrical Design}
@@ -97,7 +97,7 @@ The Pico's USB port, unused in production, was used during firmware development 
 
 \subsection{RF Transceiver Subsystem}
 
-Two CC1200 transceivers are placed on the HAT, one for UHF (U1, 433~MHz) and one for the optional VHF path (U2, 144/145~MHz). Each transceiver has its own 40~MHz crystal oscillator, its own three-path LC matching network and SMA connector, and its own independent SPI bus to the RP2040. Keeping the two transceivers fully independent eliminates the band-select relay that a shared-antenna single-transceiver topology would require: relays introduce insertion loss in the receive path ($>$0.3~dB typical for a PIN-diode type), add a switching-transient risk near the sensitive LNA input, and complicate the TX/RX switching already handled by the CC1200's own \code{TRX\_SW} pin.
+Two CC1200 transceivers are placed on the HAT, one for UHF (U1, 433~MHz) and one for the optional VHF path (U2, 144/145~MHz). Each transceiver has its own 40~MHz crystal oscillator, its own three-path LC matching network and SMA connector, and its own independent SPI bus to the RP2040. Each transceiver is dedicated to its own band, with band-specific matching network and antenna.
 
 Only U1 (UHF) is assembled on the v1 HAT; U2 footprint and its matching network are present but unpopulated. The schematic and matching network details for both paths are covered in \S\ref{sec:matching-topology}.
 

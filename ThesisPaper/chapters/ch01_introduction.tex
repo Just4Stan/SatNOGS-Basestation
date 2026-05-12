@@ -37,7 +37,7 @@ with $v = \sqrt{\mu/(R_E+h)} = 7.67$~km/s for $\mu = 3.986 \times 10^{14}$~m$^3$
 The Siretta Oscar 44 Yagi used in this work (9~dBi peak, 54\degree$\times$48\degree\ 3-dB beamwidths at 434~MHz~\cite{siretta-oscar44}) is required to close the link against 145.8~dB of free-space path loss at 433~MHz and 30\degree\ elevation (Chapter~\ref{ch:background}, Table~\ref{tab:link-budget}). Its narrow beam sets the pointing-accuracy requirement on the rotator~\cite{stutzman2012antenna}.
 
 \paragraph{Cost.}
-Commercial rotators cost \euro{}760--900 (Yaesu G-5500~\cite{yaesu-g5500}) to \euro{}1200--1300 (SPID RAS~\cite{rfham-spid}); the SatNOGS v3 open-source rotator costs \euro{}300--500 in parts~\cite{satnogs-v3, satnogs-v3-bom}. The v2 MOTOR\_RF\_HAT BOM derived here (\S\ref{sec:cost}, design-complete) is approximately \euro{}40 for the combined controller/RF PCB, \euro{}75 for the full rotator hardware (PCB + motors + mechanics, excluding the Pi), and \euro{}100 for the station core (excluding antenna, coax, power supply, tripod).
+Commercial rotators cost \euro{}760--900 (Yaesu G-5500~\cite{yaesu-g5500}) to \euro{}1200--1300 (SPID RAS~\cite{rfham-spid}); the SatNOGS v3 open-source rotator costs \euro{}300--500 in parts~\cite{satnogs-v3, satnogs-v3-bom}. The v2 MOTOR\_RF\_HAT BOM derived here (\S\ref{sec:cost}) is approximately \euro{}40 for the combined controller/RF PCB, \euro{}75 for the full rotator hardware (PCB + motors + mechanics, excluding the Pi), and \euro{}100 for the station core (excluding antenna, coax, power supply, tripod).
 
 \paragraph{Target.}
 The full AetherSpace specification is given in \S\ref{sec:aetherspace}. The constraint it imposes here is link-budget closure: against a +14~dBm transmitter into a 2~dBi turnstile, the link in Chapter~\ref{ch:background} closes with positive theoretical margin only near zenith, and at 30\degree\ elevation the theoretical margin is $-5.7$~dB (Table~\ref{tab:link-budget}). Mid-elevation passes therefore demand both a directional receive antenna and a low-noise front end.
@@ -84,6 +84,7 @@ This breaks down into six sub-questions:
     \item Robbe Lehaen: RF front-end hardware (dual CC1200 transceiver HAT, UHF 433~MHz assembled + VHF 144/145~MHz routed), matching network design, Assembly of PCB's, RF HAT firmware (COBS protocol, SPI driver), CC1200 register configuration.
 \end{itemize}
 
+\newpage
 \section{Thesis Outline}
 
 \begin{description}[style=unboxed, leftmargin=0pt]
@@ -91,6 +92,6 @@ This breaks down into six sub-questions:
     \item[Chapter~\ref{ch:system-design}] presents the system architecture, mechanical design, rotator controller PCB, power distribution, bring-up lessons, and cost analysis.
     \item[Chapter~\ref{ch:rf-frontend}] describes the dual-CC1200 RF front-end HAT: PCB design, layout, and matching networks.
     \item[Chapter~\ref{ch:firmware-software}] covers the rotator firmware, RF HAT firmware, Raspberry Pi software stack, and field-deployment workflow.
-    \item[Chapter~\ref{ch:results}] gives results and validation: tracking accuracy, RF measurements, field tests, and reception analysis. The link-budget derivation itself lives in Chapter~\ref{ch:background} and is only referenced here.
+    \item[Chapter~\ref{ch:results}] gives results and validation: tracking accuracy, RF measurements, field tests, and reception analysis.
     \item[Chapter~\ref{ch:conclusion}] provides conclusions, limitations, and future work.
 \end{description}
