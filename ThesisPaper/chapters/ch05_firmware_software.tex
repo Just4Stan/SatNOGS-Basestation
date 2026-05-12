@@ -184,7 +184,7 @@ The radial velocity of the satellite, $v_r$, is computed every 500~ms from the P
     f_{\mathrm{rx}} = f_0 \left(1 - \frac{v_r}{c}\right)
 \end{equation}
 
-with $c = 299\,792\,458$~m/s (\file{Pi/rf\_hat.py:359}). At $f_0 = 432$~MHz and a worst-case LEO radial velocity of $\pm 7.5$~km/s the maximum Doppler is $\pm 10.8$~kHz; the observed sweep across a high-elevation pass is $\pm 9$~kHz, consistent with the radial-velocity flattening at high elevation. The implementation is shown in Listing~\ref{lst:doppler}.
+with $c = 299\,792\,458$~m/s (\file{Pi/rf\_hat.py:359}). The firmware tunes the CC1200 to $f_0 = 432$~MHz, near the centre of the 433~MHz band used throughout this thesis for the AetherSpace link budget. At $f_0 = 432$~MHz and a worst-case LEO radial velocity of $\pm 7.5$~km/s the maximum Doppler is $\pm 10.8$~kHz; the observed sweep across a high-elevation pass is $\pm 9$~kHz, consistent with the radial-velocity flattening at high elevation. The implementation is shown in Listing~\ref{lst:doppler}.
 
 \begin{lstlisting}[language=Python,
     caption={Doppler shift helper from \file{Pi/rf\_hat.py}.},

@@ -148,10 +148,6 @@ This thesis substitutes a CC1200 hardware packet modem for the SDR front-end. Th
 
 Most university ground stations (UPSat/University of Patras~\cite{upsat}, TU Delft/Delfi-C3~\cite{tudelft-delfi}, AraMiS/Politecnico di Torino~\cite{masera2005aramis}) buy commercial rotators and focus on the RF or software layers. Custom mechanical rotator design for university CubeSat ground stations is comparatively rare; SuperAntennaz~\cite{superantennaz} is an open-source outlier targeting heavy-antenna loads ($>$10~kg) using steppers.
 
-\section{Comparison with Hanssens (2023)}
+\section{Prior KU~Leuven Work}
 
-This thesis continues the 2023 masterproef by Serge Hanssens~\cite{hanssens2023}, which surveyed the SatNOGS ecosystem, assessed hardware options (rotators, SDRs, antennas), and tested a Stepperdrive MSD-50-5.6D stepper motor driver for azimuth rotation.
-
-Hanssens' load-bearing finding for the present thesis is that the stepper motor he tested did not deliver sufficient torque for reliable azimuth rotation under wind loading~\cite{hanssens2023}. He measured the required torque for azimuth movement on a cantilevered Yagi and concluded that a higher-torque motor or higher gear ratio was needed. This directly informed the choice in the present work of geared DC motors (FAPG36-555-EN, 516:1 internal planetary gearbox) with a further 2.667:1 external reduction, covered in \S\ref{sec:motors}.
-
-Hanssens' research questions were survey-oriented; the present work's are implementation-oriented, and the two studies therefore compare as scope rather than as competing results.
+This thesis builds on the 2023 masterproef by Serge Hanssens~\cite{hanssens2023}, which surveyed the SatNOGS ecosystem and tested a Stepperdrive MSD-50-5.6D stepper motor driver for azimuth rotation. Hanssens reported that the tested stepper did not deliver sufficient torque for reliable azimuth rotation under wind loading on a cantilevered Yagi, and concluded that a higher-torque motor or higher gear ratio was required. That finding directly informs the motor selection in \S\ref{sec:motors}: geared DC motors (FAPG36-555-EN, 516:1 internal planetary gearbox) with a further external reduction.

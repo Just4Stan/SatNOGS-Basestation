@@ -57,9 +57,9 @@ The chassis consists of a base plate with an integrated azimuth bearing race, tw
 
 The station mounts to any standard camera tripod through a 1/4"-20 UNC brass heat-set insert in the base plate. Using the tripod standard rather than a custom mount lets the station share hardware with existing camera tripods in the user's toolkit.
 
-The elevation axis is a PVC pipe passing through both side plates. The elevation gear is clamped directly onto this pipe by integrated 3D-printed screw clamps. The clamp geometry lets the EL gear be slid along the pipe during assembly to set mesh with the motor pinion, without set screws or adhesives.
+The elevation axis is a PVC pipe passing through both side plates. The elevation gear and any other parts mounted to the pipe are fixed in place with three radial set screws each, which can be slid along the pipe during assembly to set mesh with the motor pinion before being tightened.
 
-All fasteners are M4$\times$10~mm countersunk screws for structural joints and M3$\times$8~mm for motor mounts. The assembly uses no adhesives (every joint is either a press-fit, a screw fastener, or a clamp), so the station disassembles for transport or repair without destructive separation.
+All fasteners are M4$\times$10~mm countersunk screws (used both for structural joints and as set screws on the elevation-pipe clamps) and M3$\times$8~mm for motor mounts. The assembly uses no adhesives, so the station disassembles for transport or repair without destructive separation.
 
 \subsection{Bearings}
 
@@ -196,7 +196,6 @@ Components:
     \item 2$\times$ TB6642FG~\cite{tb6642fg}: 50~V absolute-max / 4.5~A peak H-bridge. IN1/IN2 + PWM. 20~kHz PWM frequency.
     \item ADXL345~\cite{adxl345}: 3-axis accelerometer on SPI0, gravity vector for EL homing.
     \item Encoder inputs: 4 GPIO with IRQ, 4$\times$ quadrature decoding. RC filter caps removed (see \S\ref{sec:bringup}).
-    \item NeoPixel: optional WS2812B status output: idle = green, tracking = blue, on-target = cyan, fault = red.
 \end{itemize}
 
 The fielded v1 firmware uses GP16 for AZ IN1 after the GP15 damage described in \S\ref{sec:bringup}; the schematic's original GP15 assignment is retained only as bring-up history.
