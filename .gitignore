@@ -33,6 +33,10 @@ CLAUDE.md
 # Reference papers (not for public distribution)
 Papers/
 
+# Defense / presentation material and private prep notes (not for public repo)
+*.pptx
+docs/defense_evaluation_criteria.md
+
 # Thesis - hide build artifacts, draft, and PDF
 ThesisPaper/draft.md
 ThesisPaper/thesis.pdf
