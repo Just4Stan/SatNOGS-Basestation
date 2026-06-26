@@ -4,8 +4,8 @@ Portable, SatNOGS-compatible ground station for the **AetherSpace CubeSat** at 4
 Built as a joint Master's thesis at KU Leuven (Campus Geel), 2025–2026.
 
 <p align="center">
-  <img src="ThesisPaper/images/photos/rotator_hero_1.jpg" width="400" alt="Rotator assembly"/>
   <img src="ThesisPaper/images/photos/rotator_hero_2.jpg" width="400" alt="Rotator assembly"/>
+  <img src="ThesisPaper/images/photos/station_wide.jpg" width="400" alt="Deployed ground station"/>
 </p>
 
 <p align="center">
@@ -52,7 +52,7 @@ If you want a general-purpose SatNOGS station today, run **`satnogs-client` + RT
 ```
 
 > **v1** (above) is the field-validated configuration — two separate boards, USB for the rotator, UART for the RF HAT.
-> **v2** (`MOTOR_RF_HAT/`) is the design-complete successor — one Pi HAT, A4950 motor drivers, TVS diodes, GPIO series resistors. Routed and BOM-finalised; not yet fabricated.
+> **v2** (`MOTOR_RF_HAT/`) is the design-complete successor — one Pi HAT, A4950 motor drivers, 100 Ω GPIO series resistors on the driver lines. Routed and BOM-finalised; not yet fabricated.
 
 ---
 
@@ -70,15 +70,16 @@ If you want a general-purpose SatNOGS station today, run **`satnogs-client` + RT
 | [`ThesisPaper/images/`](ThesisPaper/images/) | All thesis visuals: `figures/` (plots), `figures/evidence/` (reception evidence plots), `photos/` (hardware + CAD) — consumed by LaTeX `\graphicspath{./images/}` |
 | [`ThesisPaper/`](ThesisPaper/) | LaTeX thesis (KU Leuven FIIW template) + rendered figures |
 | [`tools/`](tools/) | Analysis utilities (`analyze_passes.py` — generates the reception-evidence report) |
-| [`docs/`](docs/) | Project-level documentation: system diagrams, session logs |
+| [`RF_Devboard/`](RF_Devboard/) | CC1200 RF dev board (predecessor to the HAT): Altium PCB, Pico SDK driver, PC test GUI |
+| [`docs/`](docs/) | System architecture diagram (`.drawio` + HTML render) |
 | `captures/` | Raw RF captures per pass (gitignored — kept on disk only) |
 | `Papers/` | Reference material including Hanssens (2023) baseline thesis (gitignored) |
 
 | Firmware artifact (at repo root) | Built by |
 |----------------------------------|----------|
-| `firmware.uf2` | `Firmware/rp2040-satnogs-rotator/` |
-| `rf_hat_firmware.uf2` | `Firmware/rp2040-rf-hat/` |
-| `motor_rf_hat_firmware.uf2` | future v2 combined firmware (placeholder) |
+| `firmware.uf2` | `Firmware/rp2040-satnogs-rotator/` (v1 rotator) |
+| `rf_hat_firmware.uf2` | `Firmware/rp2040-rf-hat/` (v1 RF HAT) |
+| `motor_rf_hat_firmware.uf2` | `Firmware/rp2040-motor-rf-hat/` (v2 combined) |
 
 ---
 
@@ -93,7 +94,7 @@ If you want a general-purpose SatNOGS station today, run **`satnogs-client` + RT
 | **Encoders** | 2-channel Hall (64 edges/rev, 4× quadrature) |
 | **IMU** | ADXL345 3-axis accelerometer (EL auto-homing at boot) |
 | **RF** | 2× TI CC1200 on 6-layer Pi HAT — UHF (432 MHz) populated, VHF (144 MHz) routed only |
-| **Antenna** | LPRS YAGI-434A, 434 MHz, 10 dBi (recommended); turnstile (~2 dBi) used in v1 testing |
+| **Antenna** | Siretta Oscar 44 Yagi, 434 MHz, ~9 dBi (used in field testing) over 3 m RG-58 |
 | **Station computer** | Raspberry Pi 3 Model A+, Debian 13 (Trixie), armhf 32-bit |
 
 ### Axis gearing
@@ -205,7 +206,7 @@ Decoded frames are submitted directly to `db.satnogs.org/api/telemetry/` via the
 
 ## Design philosophy
 
-- **Economical.** v2 MOTOR_RF_HAT BOM under €50 for the rotator controller board + motors + mechanics; under €100 including the Pi.
+- **Economical.** v2 rotator BOM (controller board + motors + mechanics) ≈ €75; ≈ €100 including the Pi.
 - **Reproducible.** 3D-printable rotator on a consumer FDM printer, standard 1/4"-20 tripod, LCSC-basic components where possible.
 - **Stock-protocol.** EasyComm + hamlib on the rotator; SiDS on the DB side. No proprietary glue.
 - **Open source.** Hardware CERN-OHL-S, firmware and software MIT.
@@ -214,8 +215,7 @@ Decoded frames are submitted directly to `db.satnogs.org/api/telemetry/` via the
 
 ## Further reading
 
-- `ThesisPaper/draft.md` — full thesis draft (local only; not checked into repo).
-- `ThesisPaper/draft_link_budget.md` — link-budget analysis with LNA impact.
-- `captures/evidence/signal_evidence.md` — 2026-04-13 authoritative synthesis of the reception data.
-- `docs/sessions/` — overnight test plans and results.
-- `docs/system_architecture.drawio` — editable system diagram.
+- [`ThesisPaper/`](ThesisPaper/) — full LaTeX thesis (KU Leuven FIIW template) and figures.
+- [`ThesisPaper/draft_link_budget.md`](ThesisPaper/draft_link_budget.md) — link-budget analysis with LNA impact.
+- [`docs/system_architecture.drawio`](docs/system_architecture.drawio) — editable system diagram (`docs/system_diagram.html` renders it).
+- Per-board READMEs under [`Firmware/`](Firmware/), [`Pi/`](Pi/), [`MotorPCB/`](MotorPCB/), [`RF_HAT/`](RF_HAT/), and [`MOTOR_RF_HAT/`](MOTOR_RF_HAT/).
